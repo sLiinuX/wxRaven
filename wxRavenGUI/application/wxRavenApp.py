@@ -141,13 +141,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     RPC Stuff, maybe to remove later but it provide quck access to commands from childs
     
     """
-    
-    def NewViewDialog(self):
-        
-        #print("NewViewDialog")
-        nViewDialog = RavenAddViewDialog(self)
-        nViewDialog.Show()
-    
+
     def RegisterOnConnexionChanged(self, callback):
         return self.ConnexionManager.RegisterOnConnexionChanged(callback)
     
@@ -223,7 +217,13 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     
     
     def OnNewView(self, event):
-        self.NewViewDialog()
+        self.Views.ShowAddViewDialog()
+    
+    
+    
+    def OnPreferenceDialog(self, event):
+        self.Settings.ShowSettingsDialog()
+    
     
     """
     

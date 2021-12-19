@@ -14,7 +14,8 @@ from .rpcConnectorManager import *
 
 from wxRavenGUI.application.core.wxMenuAndToolbar import *
 from wxRavenGUI.application.core.wxPerspectiveManager import *
-from wxRavenGUI.application.wxPluginsManager import *
+from wxRavenGUI.application.core.wxPluginsManager import *
 from wxRavenGUI.application.core.wxSettingsManager import *
 from wxRavenGUI.application.core.wxViewsManager import *
+
 from wxRavenGUI.application.wxRavenSplashScreen import *

@@ -6,7 +6,7 @@ Created on 13 déc. 2021
 
 
 import inspect
-from wxRavenGUI.view import *
+from wxRavenGUI.view import wxRavenAddView
 
 import wx
 import wx.aui
@@ -290,15 +290,15 @@ class ViewsManager(object):
         if str(type(notebook)).__contains__("wx._aui.AuiNotebook"):
             notebook.AddPage(obj, t, bitmap = icon)
             #print("notebook.AddPage()")
-        if str(type(notebook)).__contains__("RavenNotebookToolbox"):
+        elif str(type(notebook)).__contains__("RavenNotebookToolbox"):
             notebook.AddPage(obj, t, icon)
             #print("notebook.AddPage()")
         
         elif str(type(notebook)).__contains__("wx._core.Notebook"): 
-            self.RaiseViewLog("AddInNotebook impossible, not supported type : " + str(type(notebook)) , "warning")  
+            self.RaiseViewLog("Unable to addview '"+ nameFrame+"' not supported type target : " + str(type(notebook)) , "warning")  
             
         else: 
-            self.RaiseViewLog("AddInNotebook impossible, unknown type : " + str(type(notebook)) , "error")
+            self.RaiseViewLog("Unable to addview '"+ nameFrame+"' unknown type : " + str(type(notebook)) , "error")
         #self.AddView(nameFrame, obj, icon)
         self.UpdateGUIManager()
         
@@ -307,7 +307,12 @@ class ViewsManager(object):
         
         
         
-        
+    
+    
+    
+    def ShowAddViewDialog(self):
+        nViewDialog = RavenAddViewDialog(self.parentframe)
+        nViewDialog.Show()    
         
         
         
@@ -334,6 +339,10 @@ class RavenAddViewDialog(wxRavenAddView):
     def __init__(self, parentFrame):
         super().__init__(parentFrame)
         self.parentframe = parentFrame
+        
+        icon = wx.EmptyIcon()
+        icon.CopyFromBitmap(wx.Bitmap( u"res/default_style/normal/new_view.png", wx.BITMAP_TYPE_ANY ))
+        self.SetIcon(icon)
         
         self._selected_plugin = ""
         self._selected_view = {}

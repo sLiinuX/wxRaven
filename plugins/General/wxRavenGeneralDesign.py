@@ -44,7 +44,7 @@ class wxRavenErrorLogConsolePanel ( wx.Panel ):
 		
 		bSizer1.Add( self.m_auiToolBar1, 0, wx.ALL|wx.EXPAND, 5 )
 		
-		self.m_listCtrl1 = TestListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
+		self.m_listCtrl1 = wxRavenListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
 		bSizer1.Add( self.m_listCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		
@@ -73,8 +73,16 @@ class wxNotebookToolbar ( wx.Panel ):
 		
 		self.SetSizer( bSizer2 )
 		self.Layout()
+		
+		# Connect Events
+		self.m_auinotebook1.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnPageClose )
 	
 	def __del__( self ):
 		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnPageClose( self, event ):
+		event.Skip()
 	
 

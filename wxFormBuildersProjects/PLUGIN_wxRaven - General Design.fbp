@@ -302,7 +302,7 @@
                         <property name="center_pane">0</property>
                         <property name="class"></property>
                         <property name="close_button">1</property>
-                        <property name="construction">self.m_listCtrl1 = TestListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )</property>
+                        <property name="construction">self.m_listCtrl1 = wxRavenListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )</property>
                         <property name="context_help"></property>
                         <property name="context_menu">1</property>
                         <property name="declaration"></property>

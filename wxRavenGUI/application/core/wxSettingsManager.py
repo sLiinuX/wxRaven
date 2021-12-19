@@ -9,6 +9,8 @@ import inspect
 
 
 
+from wxRavenGUI.view import  wxRavenSettingDialog
+
 
 
 class SettingsManager(object):
@@ -233,3 +235,32 @@ class SettingsManager(object):
                 dict1[option] = None
         return dict1    
         
+        
+        
+        
+        
+    def ShowSettingsDialog(self):
+        settingsDialog = wxRavenSettingDialogLogic(self.parentframe)
+        settingsDialog.Show()
+        
+        
+        
+
+
+import wx       
+        
+class wxRavenSettingDialogLogic(wxRavenSettingDialog):
+    
+    
+    parentFrame = None
+    
+    
+    def __init__(self, parentFrame):
+        wxRavenSettingDialog.__init__(self, parentFrame)
+        self.parentFrame=parentFrame
+
+        icon = wx.EmptyIcon()
+        icon.CopyFromBitmap(wx.Bitmap( u"res/default_style/normal/wizard-prefs.png", wx.BITMAP_TYPE_ANY ))
+        self.SetIcon(icon)
+
+

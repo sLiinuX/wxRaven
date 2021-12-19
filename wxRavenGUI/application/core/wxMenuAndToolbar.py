@@ -91,7 +91,7 @@ class MenuAndToolBarManager(object):
         #toolbar as well    
         self.parentframe.wxRavenNetworkBarIcon = icon
         self.parentframe.rpcConnexions_dropdown_button.SetBitmap(icon)
-        
+        #self.parentframe.rpcConnexions_dropdown_button.Layout()
         
         
         self.parentframe.wxRavenStatusBarIcon = wx.StaticBitmap(self.parentframe.wxRavenStatusBar, -1, icon, (16, 16))
