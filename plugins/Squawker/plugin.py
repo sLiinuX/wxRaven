@@ -65,6 +65,17 @@ class wxRavenPlugin(PluginObject):
             datas = self.find_latest_messages("POLITICOIN", 50)
             self.setData("_lastMessage",datas)
             
+            
+            """
+            
+            As tentative of squawker lib porting
+            
+            _allAccountsDatas = self.parentFrame.getRvnRPC().squawker.** works too
+            
+            """
+            
+            
+            
             #_globalBalance = self.parentFrame.getNetwork().getbalance()['result']
             
            

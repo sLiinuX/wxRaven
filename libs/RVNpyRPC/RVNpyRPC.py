@@ -48,6 +48,9 @@ class Ravencoin:
 
 
 from ._wallet import *
+from ._squawker import *
+
+
 
 
 class RavenpyRPC(object):
@@ -65,6 +68,7 @@ class RavenpyRPC(object):
         Constructor
         '''
         self.RPCconnexion = connexion
-        self.wallet = RVNpyRPC.RVNpyRPC_Wallet(connexion) 
+        self.wallet = RVNpyRPC_Wallet(connexion) 
+        self.squawker = RVNpyRPC_Squawker(connexion)
         
         

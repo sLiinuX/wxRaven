@@ -1,7 +1,7 @@
-from .serverside import *
-from .profile import *
+from serverside import *
+from profile import Profile
 import json
-from .squawker_errors import *
+import squawker_errors
 
 
 class Message():
@@ -14,7 +14,7 @@ class Message():
             self.sender = self.tx["address"]
             self.profile = Profile(self.sender)
         except:
-            raise NotMessage(f"No profile in ipfs hash {tx['message']}")
+            raise squawker_errors.NotMessage(f"No profile in ipfs hash {tx['message']}")
 
     def get_raw_message(self):
         try:
@@ -23,9 +23,9 @@ class Message():
             if "profile" in raw_message:
                 return raw_message
             else:
-                raise NotMessage(f"No profile in ipfs hash {tx['message']}")
-        except NotMessage as e:
-            raise NotMessage(str(e))
+                raise squawker_errors.NotMessage(f"No profile in ipfs hash {tx['message']}")
+        except squawker_errors.NotMessage as e:
+            raise squawker_errors.NotMessage(str(e))
         except Exception as e:
             #print(type(e), e)
             pass

@@ -10,21 +10,10 @@ from wx import *
 import threading
 
 
-#from wxRavenGUI.application import *
 from libs.RVNpyRPC import *
-from wxRavenGUI.application.core.rpcConnectorManager import *
-
-
 from wxRavenGUI.view import *
-from wxRavenGUI.application.wxcomponents import *
+from wxRavenGUI.application.core import *
 
-"""
-from wxRavenGUI.application.wxPluginsManager import *
-from wxRavenGUI.application.wxcomponents.wxPerspectiveManager import *
-from wxRavenGUI.application.wxcomponents.wxViewsManager import *
-from wxRavenGUI.application.wxcomponents.wxSettingsManager import *
-from wxRavenGUI.application.wxcomponents.wxMenuAndToolbar import *
-"""
 
 CONFIG_PATH = os.getcwd() + "/config/"
 PLUGIN_PATH = os.getcwd() + "/plugins/"
@@ -64,40 +53,31 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         #splash.Show()
         
-        
-        
-        
-        
+
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(wx.Bitmap( u"res/default_style/normal/mainnet-mini.png", wx.BITMAP_TYPE_ANY ))
         self.SetIcon(icon)
         
         
-        
-        
-        
-        
+        # Setting manager will be used to load settings, both for app and plugin.
         self.Settings = SettingsManager(self)
         
-        
-        
-        
-        
+        # Managing views
         self.Views = ViewsManager(self)
         
+        # Simple class to handle multiple RPC connexions
         self.ConnexionManager  =  RvnRPC_ConnectorManager(self)
+        
+        # Homemade work in progress API which intend to be END USER 
+        # any basic data that requires multiple RPC call could finish in this
         self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getCurrentConnexion())
         
         
-        
-        
-        
-        
-        
+        # Tools and menu management
         self.MenusAndTool = MenuAndToolBarManager(self)
+
         
-        
-        
+        # Plugins management
         self.Plugins = pluginsManager(PLUGIN_PATH, self, loadPath=False)   
         self.Plugins.Initialize()
         
@@ -107,11 +87,6 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         
         #self.MenusAndTool.refreshViewsListMenu()
-        
-        
-        
-        
-        
         
 
         self.PerspectiveManager = perspectiveManager(self, CONFIG_PATH, loadLastView=self.Settings.resumeViewOnStartup)  
@@ -136,21 +111,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
        
         #splash.Close()
         
-        
-        
-        
-    """    
-    def OnPageClose( self, event ):
-        objNotebook = event.GetEventObject()
-        index = event.GetSelection()
-        page = objNotebook.GetPage(index)
-        label = objNotebook.GetPageText(index)
-        print("view instance to delete !")
-        self.Plugins.DeleteViewInstance(label)
-        wx.CallAfter(self.MenusAndTool.refreshViewsListMenu, ())
-        event.Skip()   
-        
-    """    
+
         
         
          
@@ -287,7 +248,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     """
         
     def Add(self, obj, nameFrame, position="mgr", icon=None):
-        print("Add()->"+position)
+        #print("Add()->"+position)
         self.Views.Add(obj, nameFrame, position, icon)
      
     
@@ -320,12 +281,17 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
     def OnClose(self, event):
         
+        
+        self.Settings.SaveSettingsToFile()
+        
+        
         #print( str(self.wxRavenMenuBar_Window_Perspectives.IsChecked(self.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId())) )
         if self.wxRavenMenuBar_Window_Perspectives.IsChecked(self.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId()):
+            
             self.PerspectiveManager.SaveLastPerspective()
             self.Plugins.SaveAllPluginState()
             #print( str(self.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.IsCheck()) )
-            self.Settings.SaveSettingsToFile()
+            
         
         
         self.Destroy()

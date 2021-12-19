@@ -78,7 +78,7 @@ class RvnRPC_ConnectorManager(object):
                 
                 
                 if isFirst:
-                    print("set current " + conName)
+                    #print("set current " + conName)
                     defaultCurrent = conName
                     isFirst = False
                 
@@ -93,11 +93,12 @@ class RvnRPC_ConnectorManager(object):
                 
         
         
-        print("defau"  + defaultCurrent)
+        #print("defau"  + defaultCurrent)
         self.rpc_connectors = defaultConnectors
         self.rpc_current = defaultCurrent
             
-            
+        if defaultCurrent == "":
+            self.__initDemo__()    
             
             
     

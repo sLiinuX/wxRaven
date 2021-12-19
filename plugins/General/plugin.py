@@ -57,6 +57,13 @@ class wxRavenPlugin(PluginObject):
                     
                     
                 ]
+        
+        
+        
+        self.PLUGIN_SETTINGS = {
+                'showError' : ['error','message']
+            }
+        
 
         self.ALLOW_MULTIPLE_VIEWS_INSTANCE = True
         

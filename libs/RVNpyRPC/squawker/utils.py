@@ -1,4 +1,4 @@
-from .serverside import *
+from serverside import *
 
 
 def tx_to_self(tx, size=1):

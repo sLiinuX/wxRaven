@@ -26,7 +26,7 @@
         <property name="ui_table">UI</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
-        <object class="Frame" expanded="1">
+        <object class="Frame" expanded="0">
             <property name="aui_managed">1</property>
             <property name="aui_manager_style">wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_DEFAULT</property>
             <property name="bg"></property>
@@ -88,7 +88,7 @@
             <event name="OnSetFocus"></event>
             <event name="OnSize"></event>
             <event name="OnUpdateUI"></event>
-            <object class="wxMenuBar" expanded="1">
+            <object class="wxMenuBar" expanded="0">
                 <property name="bg"></property>
                 <property name="context_help"></property>
                 <property name="context_menu">1</property>
@@ -143,7 +143,7 @@
                     <property name="name">wxRavenMenuBar_Edit</property>
                     <property name="permission">protected</property>
                 </object>
-                <object class="wxMenu" expanded="1">
+                <object class="wxMenu" expanded="0">
                     <property name="label">Window</property>
                     <property name="name">wxRavenMenuBar_Window</property>
                     <property name="permission">protected</property>
@@ -187,7 +187,7 @@
                         <property name="name">wxRavenMenuBar_Window_Views</property>
                         <property name="permission">protected</property>
                     </object>
-                    <object class="submenu" expanded="1">
+                    <object class="submenu" expanded="0">
                         <property name="bitmap">Load From File; res/default_style/normal/default_persp.png</property>
                         <property name="label">Perspectives</property>
                         <property name="name">wxRavenMenuBar_Window_Perspectives</property>
@@ -258,7 +258,7 @@
                         </object>
                     </object>
                 </object>
-                <object class="wxMenu" expanded="1">
+                <object class="wxMenu" expanded="0">
                     <property name="label">Help</property>
                     <property name="name">wxRavenMenuBar_Help</property>
                     <property name="permission">protected</property>
@@ -277,11 +277,11 @@
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
                     </object>
-                    <object class="separator" expanded="1">
+                    <object class="separator" expanded="0">
                         <property name="name">m_separator5</property>
                         <property name="permission">none</property>
                     </object>
-                    <object class="wxMenuItem" expanded="1">
+                    <object class="wxMenuItem" expanded="0">
                         <property name="bitmap">Load From File; res/default_style/normal/help_view.png</property>
                         <property name="checked">0</property>
                         <property name="enabled">1</property>
@@ -298,7 +298,7 @@
                     </object>
                 </object>
             </object>
-            <object class="wxAuiToolBar" expanded="1">
+            <object class="wxAuiToolBar" expanded="0">
                 <property name="BottomDockable">1</property>
                 <property name="LeftDockable">1</property>
                 <property name="RightDockable">1</property>
@@ -313,7 +313,7 @@
                 <property name="caption"></property>
                 <property name="caption_visible">1</property>
                 <property name="center_pane">0</property>
-                <property name="close_button">1</property>
+                <property name="close_button">0</property>
                 <property name="context_help"></property>
                 <property name="context_menu">1</property>
                 <property name="default_pane">0</property>
@@ -338,11 +338,11 @@
                 <property name="moveable">0</property>
                 <property name="name">m_auiToolBar2</property>
                 <property name="packing">1</property>
-                <property name="pane_border">1</property>
+                <property name="pane_border">0</property>
                 <property name="pane_position"></property>
                 <property name="pane_size"></property>
                 <property name="permission">protected</property>
-                <property name="pin_button">1</property>
+                <property name="pin_button">0</property>
                 <property name="pos"></property>
                 <property name="resize">Resizable</property>
                 <property name="separation">5</property>
@@ -356,7 +356,7 @@
                 <property name="use_explicit_ids">0</property>
                 <property name="window_extra_style"></property>
                 <property name="window_name"></property>
-                <property name="window_style"></property>
+                <property name="window_style">wxFULL_REPAINT_ON_RESIZE</property>
                 <event name="OnChar"></event>
                 <event name="OnEnterWindow"></event>
                 <event name="OnEraseBackground"></event>
@@ -1672,7 +1672,7 @@
                 </object>
             </object>
         </object>
-        <object class="Dialog" expanded="1">
+        <object class="Dialog" expanded="0">
             <property name="aui_managed">0</property>
             <property name="aui_manager_style">wxAUI_MGR_DEFAULT</property>
             <property name="bg"></property>
@@ -1734,7 +1734,7 @@
             <event name="OnSetFocus"></event>
             <event name="OnSize"></event>
             <event name="OnUpdateUI"></event>
-            <object class="wxBoxSizer" expanded="1">
+            <object class="wxBoxSizer" expanded="0">
                 <property name="minimum_size"></property>
                 <property name="name">bSizer8</property>
                 <property name="orient">wxVERTICAL</property>
@@ -1820,11 +1820,11 @@
                         <event name="OnUpdateUI"></event>
                     </object>
                 </object>
-                <object class="sizeritem" expanded="1">
+                <object class="sizeritem" expanded="0">
                     <property name="border">5</property>
                     <property name="flag">wxALIGN_CENTER_HORIZONTAL|wxALL</property>
                     <property name="proportion">0</property>
-                    <object class="wxStaticText" expanded="1">
+                    <object class="wxStaticText" expanded="0">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>

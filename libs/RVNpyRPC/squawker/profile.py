@@ -1,6 +1,6 @@
-from .utils import tx_to_self
-from .serverside import *
-from .squawker_errors import *
+from utils import tx_to_self
+from serverside import *
+import squawker_errors
 import json
 
 
@@ -19,7 +19,7 @@ class Profile():
             for key in data:
                 self.__dict__[key] = data[key]
         except json.decoder.JSONDecodeError:
-            raise InvalidProfileJSON(f"{ipfs_hash} did not decode")
+            raise squawker_errors.InvalidProfileJSON(f"{ipfs_hash} did not decode")
         try:
             self.picture = ipfs.cat(self.profile_picture)
         except AttributeError:

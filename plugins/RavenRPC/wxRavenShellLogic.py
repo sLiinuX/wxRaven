@@ -81,6 +81,8 @@ class shellMainPanel(wxRavenShellPanel):
         _locals['rpc']  = self.parent_frame.getNetwork
         _locals['api']  = self.parent_frame.getRvnRPC
         
+        _locals['wxRaven']  = self.parent_frame
+        
         
         
         #advShell = py.crust.Crust(self , intro=startupText , locals = _locals)
@@ -194,6 +196,8 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
         
         _locals['rpc']  = self.parent_frame.getNetwork
         _locals['api']  = self.parent_frame.getRvnRPC
+        
+        _locals['wxRaven']  = self.parent_frame
         
         advShell = py.crust.Crust(self , intro=startupText , locals = _locals)
         

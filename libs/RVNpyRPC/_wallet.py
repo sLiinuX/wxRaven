@@ -5,9 +5,8 @@ Created on 11 déc. 2021
 '''
 
 import requests
-from .RVNpyRPC import RavenpyRPC
 
-class RVNpyRPC_Wallet(RavenpyRPC):
+class RVNpyRPC_Wallet():
     '''
     classdocs
     '''

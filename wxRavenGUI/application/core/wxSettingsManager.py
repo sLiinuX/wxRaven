@@ -22,6 +22,7 @@ class SettingsManager(object):
     
     application_config_file = "config.ini"
     
+    ConfigFileInstance = None
     
     
     
@@ -35,6 +36,10 @@ class SettingsManager(object):
     
     
     parentframe = None
+    
+    
+    
+    
     
     
 
@@ -59,6 +64,7 @@ class SettingsManager(object):
         
         
         self.allconnexions = {}
+        self.ConfigFileInstance = ConfigParser()
         
         try:
             self.LoadSettingsFromFile()
@@ -87,11 +93,15 @@ class SettingsManager(object):
         cfgfile = open(self.CONFIG_PATH+self.application_config_file ,'w')
         
         Config = ConfigParser()
+        
+        #Config.exist
 
         #resumeViewOnStartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
         #print("Save resumeViewOnStartup = " +resumeViewOnStartup)
         self._SaveGeneralSettings(Config)
         self._SaveConnexionSettings(Config)
+        
+        self._SaveAllPluginsSettings(Config)
         
 
         #Config.set('General','connexionChangedCallbackInSafeMode',str(self.connexionChangedCallbackInSafeMode))
@@ -105,11 +115,14 @@ class SettingsManager(object):
         resumeViewOnStartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
         #print("Save resumeViewOnStartup = " +resumeViewOnStartup)
         
-        configObj.add_section('General')
-        configObj.set('General','resumeViewOnStartup',resumeViewOnStartup)
-        configObj.set('General','forceInPrincipalAuiManager',str(self.forceInPrincipalAuiManager))
-        configObj.set('General','resumePluginState',str(self.resumePluginState))
-        configObj.set('General','safeMode',str(self.safeMode))
+        configObj.add_section('Application')
+        configObj.set('Application','resumeViewOnStartup',resumeViewOnStartup)
+        configObj.set('Application','forceInPrincipalAuiManager',str(self.forceInPrincipalAuiManager))
+        configObj.set('Application','resumePluginState',str(self.resumePluginState))
+        configObj.set('Application','safeMode',str(self.safeMode))
+        
+        
+        return configObj
         
         
     def _SaveConnexionSettings(self, configObj):
@@ -123,6 +136,39 @@ class SettingsManager(object):
     
     
     
+    def _SavePluginSettings(self, pname, _pInstance, conf):
+        
+        
+        for key in _pInstance.PLUGIN_SETTINGS:
+            conf.set(pname,key,str(_pInstance.PLUGIN_SETTINGS[key]))
+        
+        
+        return  conf   
+    
+    
+    def _SaveAllPluginsSettings(self, configObj):
+        
+        
+        for _p in self.parentframe.Plugins.plugins:
+            
+            _plugin_instance = self.parentframe.Plugins.GetPlugin(_p)
+            if _plugin_instance != None:
+                
+                try:
+                    configObj.add_section(_p)
+                except:
+                    pass
+                
+                
+                self._SavePluginSettings(_p , _plugin_instance, configObj)
+                
+                
+        return  configObj     
+            
+    
+    
+    
+    
     
     def LoadSettingsFromFile(self):    
         
@@ -133,28 +179,41 @@ class SettingsManager(object):
         self._LoadGeneralConfig(Config)
         self._LoadConnexionSettings(Config)
     
-    
+        self.ConfigFileInstance = Config
     
     
     def _LoadGeneralConfig(self, configObj):
-        
-        self.resumeViewOnStartup = configObj.getboolean("General", "resumeViewOnStartup")
+        #
+        # View options
+        #
+        self.resumeViewOnStartup = configObj.getboolean("Application", "resumeViewOnStartup", fallback = False)
         self.parentframe.wxRavenMenuBar_Window_Perspectives.Check(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId(), self.resumeViewOnStartup )
         
-        self.forceInPrincipalAuiManager = configObj.getboolean("General", "forceInPrincipalAuiManager") 
-        self.resumePluginState= configObj.getboolean("General", "resumePluginState") 
-        self.resumePluginState= configObj.getboolean("General", "safeMode") 
+        self.resumePluginState= configObj.getboolean("Application", "resumePluginState", fallback = True) 
+        
+        #
+        # Hidden configuration for dev purpose
+        #
+        self.forceInPrincipalAuiManager = configObj.getboolean("Application", "forceInPrincipalAuiManager", fallback = False) 
+        self.resumePluginState= configObj.getboolean("Application", "safeMode", fallback = True) 
     
     
     def _LoadConnexionSettings(self, configObj):
+        #_raw = configObj.get('Connexions', fallback={}) 
         _raw = configObj['Connexions'] 
         self.allconnexions = _raw
-        #for key in _raw:
-            #print(key)
-        #print("_LoadConnexionSettings")
     
     
     
+    def _GetPluginSettings(self, pluginName):
+        _pluginsSettings = {}
+        
+        
+        if self.ConfigFileInstance.__contains__(pluginName):
+            for key in self.ConfigFileInstance[pluginName]:
+                _pluginsSettings[key] = self.ConfigFileInstance.get(pluginName, key)
+    
+        return _pluginsSettings
     
     
         

@@ -120,13 +120,14 @@ class perspectiveManager(object):
             
             all_panes = self.parentframe.m_mgr.GetAllPanes()
             for ii in range(len(all_panes)):
+                
                 if not all_panes[ii].IsToolbar():
                     #print(all_panes[ii])
                     capt = all_panes[ii].caption
                     na = all_panes[ii].name
                     
-                    print(capt)
-                    print(na)
+                    #print(capt)
+                    #print(na)
                     #print(ic)
                     #icon = wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY )
                     
@@ -140,7 +141,9 @@ class perspectiveManager(object):
                         
                     self.parentframe.m_mgr.GetPane(na).Icon(icon)
             
-            
+                else:
+                    all_panes[ii].Hide()
+                    all_panes[ii].Show()
             
             
             

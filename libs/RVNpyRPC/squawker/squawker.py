@@ -1,21 +1,10 @@
-
-from .squawker_errors import *
-from .account import *
-from .message import *
-import json
-from .utils import *
-
-
-from .serverside import *
-
-"""
 import squawker_errors
 from account import Account
 from message import Message
-
+import json
 from utils import tx_to_self
 from serverside import *
-"""
+
 debug = 0
 
 
@@ -109,14 +98,14 @@ if __name__ == "__main__":
             for m in latest:
                 try:
                     print(Message(m))
-                except NotMessage:
+                except squawker_errors.NotMessage:
                     pass
         elif str(intent).strip() == "3":
             latest = find_latest_messages()
             for m in latest:
                 try:
                     print(Message(m).xml())
-                except NotMessage:
+                except squawker_errors.NotMessage:
                     pass
         elif str(intent).strip() == "4":
             msg = input("Are you sure?(y/N)")

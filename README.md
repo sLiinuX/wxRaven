@@ -2,12 +2,13 @@ About
 -----
 
 wxRaven is a free and open source cross-platform Integrated Environment framework
-for the Ravencoin community who want to write advanced GUI applications using native controls.
+for the Ravencoin community who want to write advanced GUI applications connected to the Ravencoin blockchain. 
 
 
-    
     
 ![wxRaven Logo](res/splash-test.png)
+
+Written in Python 3.x and using the wxWidget Library with the inspiration of Eclipse IDE, wxRaven natively support the plugin approach and the view/perspective concept.
 
 It provides usefull built-in functions to create and develop your own "Use-case specific application" as one or multiple plugin of this integrated environment itself such as :
 
@@ -17,8 +18,7 @@ It provides usefull built-in functions to create and develop your own "Use-case 
 - Highly Customizable End User Interface / Components
 - ... More to come !
 	
-Written in Python 3.x and using the wxWidget Library with the inspiration of Eclipse IDE, wxRaven natively support the 
-plugin approach and the view/perspective concept.
+
 
 
 Platforms

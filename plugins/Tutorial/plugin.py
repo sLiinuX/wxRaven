@@ -57,6 +57,25 @@ class wxRavenPlugin(PluginObject):
        
         self.PLUGIN_NAME = "Tutorial"
         self.PLUGIN_ICON = wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
+        
+        
+        
+        
+        #
+        #    View Object declare all the 'Views' that can be instanciated
+        #    {
+        #             'viewid':                  a unique id for the view
+        #             'name':                    a name for the view
+        #             'title':                   a title id for the view
+        #             'position':, 
+        #             'icon':
+        #             'class': 
+        #             'default':                 Boolean to determine if the view is open by default at startup
+        #             'multipleViewAllowed':     Boolean to determine if the view allow multiple instance of it 
+        #}
+        #        
+        
+        
         self.PLUGINS_VIEWS= [ 
                     
                     
@@ -75,19 +94,31 @@ class wxRavenPlugin(PluginObject):
                     
                 ]
         
+
+        
         #
-        #    View Object declare all the 'Views' that can be instanciated
+        #    Setting Object declare all the 'default settings' 
+        #    Once the plugin loaded for the first time, those settings will be saved
+        #    in the config.ini file in a dedicated section when app close.
+        #
+        #    On next plugin load, if the config file contains plugins settings
+        #    those will be overwritten in the _LoadPluginSettings() function
+        #    
+        #    you need to declare your own function as later in the file to CAST datas 
+        #    that come from the ConfigParser in String only
+        #
         #    {
-        #             'viewid':                  a unique id for the view
-        #             'name':                    a name for the view
-        #             'title':                   a title id for the view
-        #             'position':, 
-        #             'icon':
-        #             'class': 
-        #             'default':                 Boolean to determine if the view is open by default at startup
-        #             'multipleViewAllowed':     Boolean to determine if the view allow multiple instance of it 
-        #}
-        #
+        #             'key':                 value
+        #    }
+        #        
+        
+        
+        self.PLUGIN_SETTINGS = {
+                'showError' : ['error','message']
+            }
+        
+        
+        
         
         
         #
@@ -110,7 +141,35 @@ class wxRavenPlugin(PluginObject):
         #
         self.LoadPluginFrames()
         
+    
+    
+    
+    
+    """
+    
+    Plugins setting management
+    
+    Note, this method must be overwritten on plugins that use settings since
+    config parser only use STRING values.
+    
+    
+    """
+    
+    def _LoadPluginSettings(self):
+        _recordedSettings = self.parentFrame.Settings._GetPluginSettings(self.PLUGIN_NAME)
         
+        
+        for key in _recordedSettings:
+            
+            
+            #
+            # _recordedSettings[key] Return string only, do your own mapping for complex datastructure
+            #
+            self.PLUGIN_SETTINGS[key] = _recordedSettings[key]
+            
+            
+            
+                
         
     '''
     

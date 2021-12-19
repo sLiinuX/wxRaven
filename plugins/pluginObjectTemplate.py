@@ -34,6 +34,9 @@ class PluginObject(object):
     PLUGINS_DATAS_CACHE = {}
     
     
+    PLUGIN_SETTINGS = {}
+    
+    
     #parentFrame = None
     position = None
 
@@ -45,6 +48,7 @@ class PluginObject(object):
         self.position = position
         self.VIEWS_INSTANCES = []
         self.PLUGINS_VIEWS = []
+        self.PLUGIN_SETTINGS = {}
         self.ALLOW_MULTIPLE_VIEWS_INSTANCE = False
         self.PLUGINS_DATAS_CACHE = {}
     
@@ -329,6 +333,39 @@ class PluginObject(object):
     
     
     
+    
+    
+    """
+    
+    Plugins setting management
+    
+    Note, this method must be overwritten on plugins that use settings since
+    config parser only use STRING values.
+    
+    
+    """
+    
+    def _LoadPluginSettings(self):
+        _recordedSettings = self.parentFrame.Settings._GetPluginSettings(self.PLUGIN_NAME)
+        
+        
+        for key in _recordedSettings:
+            self.PLUGIN_SETTINGS[key] = _recordedSettings[key]
+            
+            #print("" +key + " : " +_recordedSettings[key] )
+    
+    
+    
+    
+    
+    
+    
+    
+    """
+    
+    Var Saving management (for the view persistence)
+    
+    """
     
     def __saveVar__(self, varName, varData):
         try:

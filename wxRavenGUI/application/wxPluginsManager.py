@@ -109,9 +109,7 @@ class pluginsManager(object):
     
     def DeleteViewInstance(self, viewname):
         
-        
-        
-        
+ 
         for p in self.plugins:
             pinst = self.plugins[p]
             pviews = pinst.VIEWS_INSTANCES
@@ -130,7 +128,7 @@ class pluginsManager(object):
             
             if toremove != {}:
                 pinst.VIEWS_INSTANCES.remove(toremove)
-                print("Removed !")
+                #print("Removed !")
                 #print( "Removed !" + str(toremove))
     
     
@@ -211,13 +209,28 @@ class pluginsManager(object):
             except Exception as e:
                 #source = str(inspect.stack()[1][0])
                 self.RaisePluginError( "Error occurs retrieving Plugin '"+pluginName+"' :" + str(e))
-                
-                
-                
-                
-            
-            
+     
         return p
+    
+    
+    
+    #
+    #
+    # Note : this method 
+    #
+    """
+    def _LoadPluginSettings(self, pname, pinstance:PluginObject):
+        _recordedSettings = self.appmainframe.Settings._GetPluginSettings(pname)
+        
+        
+        for key in _recordedSettings:
+            pinstance.PLUGIN_SETTINGS[key] = _recordedSettings[key]
+    
+        return pinstance
+    
+    
+    """
+    
     
     def LoadPlugin(self, pname):
         
@@ -234,6 +247,11 @@ class pluginsManager(object):
             
             plugin_instance = plugin_init_classe(self.appmainframe)
             plugin_name = plugin_instance.PLUGIN_NAME
+            
+            
+            #plugin_instance = self._LoadPluginSettings(pname,plugin_instance )
+            plugin_instance._LoadPluginSettings()
+            
             #print("Loading Plugin : " + plugin_name)
             #print("    - Class : " + str(plugin_init_classe) )
             self.plugins[plugin_name] = plugin_instance

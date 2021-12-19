@@ -286,7 +286,7 @@ class ViewsManager(object):
             icon = wx.Bitmap( u"res/default_style/normal/mainnet-mini.png", wx.BITMAP_TYPE_ANY )
         
         
-        print(str(type(notebook)))
+        #print(str(type(notebook)))
         if str(type(notebook)).__contains__("wx._aui.AuiNotebook"):
             notebook.AddPage(obj, t, bitmap = icon)
             #print("notebook.AddPage()")
@@ -297,7 +297,7 @@ class ViewsManager(object):
         elif str(type(notebook)).__contains__("wx._core.Notebook"): 
             self.RaiseViewLog("AddInNotebook impossible, not supported type : " + str(type(notebook)) , "warning")  
             
-        elif str(type(notebook)).__contains__("wx._core.Notebook"): 
+        else: 
             self.RaiseViewLog("AddInNotebook impossible, unknown type : " + str(type(notebook)) , "error")
         #self.AddView(nameFrame, obj, icon)
         self.UpdateGUIManager()

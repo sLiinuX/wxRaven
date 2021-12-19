@@ -22,7 +22,8 @@ def rvnrpc(network=None):
 
 """
 
-
+import sys, os
+#sys.stderr = open(os.getcwd() + "session.log", "wb")
     
 
 if __name__ == '__main__':

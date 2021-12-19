@@ -84,13 +84,13 @@ class wxRavenMainFrame ( wx.Frame ):
 		
 		self.SetMenuBar( self.wxRavenMenuBar )
 		
-		self.m_auiToolBar2 = wx.aui.AuiToolBar( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT ) 
+		self.m_auiToolBar2 = wx.aui.AuiToolBar( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT|wx.FULL_REPAINT_ON_RESIZE ) 
 		self.rpcConnexions_dropdown_button = self.m_auiToolBar2.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
 		self.m_auiToolBar2.SetToolDropDown( self.rpcConnexions_dropdown_button.GetId(), True );
 		
 		
 		self.m_auiToolBar2.Realize()
-		self.m_mgr.AddPane( self.m_auiToolBar2, wx.aui.AuiPaneInfo().Name( u"wxRavenToolBar" ).Top().PinButton( True ).Movable( False ).Dock().Resizable().FloatingSize( wx.DefaultSize ).Layer( 10 ).ToolbarPane() )
+		self.m_mgr.AddPane( self.m_auiToolBar2, wx.aui.AuiPaneInfo().Name( u"wxRavenToolBar" ).Top().CloseButton( False ).PaneBorder( False ).Movable( False ).Dock().Resizable().FloatingSize( wx.DefaultSize ).Layer( 10 ).ToolbarPane() )
 		
 		self.rpcConnexions_dropdown_menu = wx.Menu()
 		self.Bind( wx.EVT_RIGHT_DOWN, self.wxRavenMainFrameOnContextMenu ) 
