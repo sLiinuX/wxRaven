@@ -5,7 +5,7 @@ Created on 16 déc. 2021
 '''
 
 from .wxRavenGeneralDesign import *
-
+import wx.aui
 
 class RavenNotebookToolbox(wxNotebookToolbar):
     '''
@@ -19,8 +19,8 @@ class RavenNotebookToolbox(wxNotebookToolbar):
     default_position = "mgr"
     
     
-    icon = wx.Bitmap( u"res/default_style/normal/tab_view.png", wx.BITMAP_TYPE_ANY )
-    
+    #icon = wx.Bitmap( u"res/default_style/normal/tab_view.png", wx.BITMAP_TYPE_ANY )
+    icon = 'tab_view'
     
     
     allIcons = {}
@@ -36,7 +36,9 @@ class RavenNotebookToolbox(wxNotebookToolbar):
         self.view_name = viewName
         self.parent_frame = parentFrame
         self.default_position = position
-        parentFrame.Add(self, self.view_name ,position, self.icon)
+        
+        
+        parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
         
 
         self.SetAutoLayout(True)

@@ -5,19 +5,23 @@ Created on 19 déc. 2021
 '''
 
 
+"""
+
+    Simple utils for buttons and coloring, hovering event
+
+
+"""
+
+
 import wx
 
-
+#
+# Simple 
+#
 class wxRavenButton(wx.Button):
-    
-    
-    
-    def __init__(self, parent, Label="wxRavenButton"):
-        
+    def __init__(self, obj):
         #btn ().__init__( parent, wx.ID_ANY, Label, wx.DefaultPosition, wx.DefaultSize,0)
-        
-        self._bt = wx.Button( parent )
-        
+        self.obj = obj
         self._bt.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
         
         
@@ -30,15 +34,8 @@ class wxRavenColorButton(wx.Button):
     _backColors = []
     
     def __init__(self,obj, backgroundColors=[]):
-        
-        #wxRavenButton.__init__(self, parent, Label)
-        
-        
-        
         self.obj = obj
-        
         self._backColors = backgroundColors
-        
         obj.Bind( wx.EVT_ENTER_WINDOW, self.OnHover )
         obj.Bind( wx.EVT_LEAVE_WINDOW, self.OnLeaveHover )
         
@@ -71,8 +68,7 @@ class wxRavenApplyButton(wxRavenColorButton):
     def __init__(self, obj ):
         '''
         Constructor
-        '''
-        
+        '''  
         _fgColor = wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW )
         _bgColor = wx.Colour( 0, 159, 0 )
         wxRavenColorButton( obj, [_bgColor])
@@ -85,18 +81,13 @@ class wxRavenCancelButon(wxRavenColorButton):
     '''
     classdocs
     '''
-
-
     def __init__(self,obj):
         '''
         Constructor
         '''
         _fgColor = wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW )
         _bgColor = wx.Colour( 255, 159, 159 ) 
-        
-        
         wxRavenColorButton( obj, [_bgColor])
-        #wxRavenButton.__init__( parent, wx.ID_ANY, Label, wx.DefaultPosition, wx.DefaultSize, 0 )
         
         
         

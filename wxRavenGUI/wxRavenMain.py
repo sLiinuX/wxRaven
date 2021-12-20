@@ -5,7 +5,7 @@ Created on 9 déc. 2021
 '''
 import wx
 
-from wxRavenGUI.application import *
+from wxRavenGUI.application import * 
 
 
 

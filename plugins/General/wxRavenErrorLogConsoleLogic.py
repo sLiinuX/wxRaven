@@ -32,8 +32,8 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
     default_position = "mgr"
     
     
-    icon = wx.Bitmap( u"res/default_style/normal/error_log.png", wx.BITMAP_TYPE_ANY )
-    
+    #icon = wx.Bitmap( u"res/default_style/normal/error_log.png", wx.BITMAP_TYPE_ANY )
+    icon = "error_log"
     
     
     allIcons = {}
@@ -58,7 +58,7 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
         self.InitConsoleLog()
         
         
-        parentFrame.Add(self, self.view_name ,position, self.icon)
+        parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
         
         
         
@@ -177,11 +177,20 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
         
         
         self.il = wx.ImageList(16, 16)
-
+        
+        """
         self.allIcons['error'] = self.il.Add(wx.Bitmap( u"res/default_style/normal/error_tsk.png", wx.BITMAP_TYPE_ANY ))
         self.allIcons['info'] = self.il.Add(wx.Bitmap( u"res/default_style/normal/info_obj.png", wx.BITMAP_TYPE_ANY ))
         self.allIcons['msg'] = self.il.Add(wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY ))
         self.allIcons['warning'] = self.il.Add(wx.Bitmap( u"res/default_style/normal/warning_obj.png", wx.BITMAP_TYPE_ANY ))
+        """
+        
+        
+        self.allIcons['error'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('error_tsk') )
+        self.allIcons['info'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('info_obj') )
+        self.allIcons['msg'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('help_view') )
+        self.allIcons['warning'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('warning_obj') )
+        
         
         self.m_listCtrl1.SetImageList(self.il, wx.IMAGE_LIST_SMALL)
         

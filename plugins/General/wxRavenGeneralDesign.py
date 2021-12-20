@@ -86,3 +86,43 @@ class wxNotebookToolbar ( wx.Panel ):
 		event.Skip()
 	
 
+###########################################################################
+## Class GeneralSettingPanel
+###########################################################################
+
+class GeneralSettingPanel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer3 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_button1 = wx.Button( self, wx.ID_ANY, u"MyButton", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer3.Add( self.m_button1, 0, wx.ALL, 5 )
+		
+		self.m_staticText1 = wx.StaticText( self, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText1.Wrap( -1 )
+		bSizer3.Add( self.m_staticText1, 0, wx.ALL, 5 )
+		
+		self.m_textCtrl1 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer3.Add( self.m_textCtrl1, 0, wx.ALL, 5 )
+		
+		self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText2.Wrap( -1 )
+		bSizer3.Add( self.m_staticText2, 0, wx.ALL, 5 )
+		
+		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer3.Add( self.m_textCtrl2, 0, wx.ALL, 5 )
+		
+		m_comboBox1Choices = []
+		self.m_comboBox1 = wx.ComboBox( self, wx.ID_ANY, u"Combo!", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, 0 )
+		bSizer3.Add( self.m_comboBox1, 0, wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer3 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+

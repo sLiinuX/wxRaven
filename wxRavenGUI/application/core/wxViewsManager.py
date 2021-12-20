@@ -257,8 +257,8 @@ class ViewsManager(object):
         t, n = self.getFrameTitleAndName(obj, nameFrame)
         title = ""+t+" ("+ n +")" 
         if icon==None:
-            icon = wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY )
-        
+            #icon = wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY )
+            icon = self.parentframe.RessourcesProvider.GetImage('view_default_frame')
         #print("Add Frame :" + nameFrame)
         #self.parentframe.m_mgr.AddPane( obj, wx.aui.AuiPaneInfo() .Bottom() .Icon(icon) .Name( nameFrame ) .Caption( u"> "+title+"" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Dock().Resizable().FloatingSize( wx.DefaultSize ) )
         self.parentframe.m_mgr.AddPane( obj, wx.aui.AuiPaneInfo() .Bottom() .Icon(icon)  .Name( nameFrame ) .Caption( u"> "+title+"" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Dock().Resizable().FloatingSize( wx.DefaultSize ) )
@@ -283,7 +283,8 @@ class ViewsManager(object):
         
         #print(title)
         if icon==None:
-            icon = wx.Bitmap( u"res/default_style/normal/mainnet-mini.png", wx.BITMAP_TYPE_ANY )
+            #icon = wx.Bitmap( u"res/default_style/normal/mainnet-mini.png", wx.BITMAP_TYPE_ANY )
+            icon = self.parentframe.RessourcesProvider.GetImage('ravencoin')
         
         
         #print(str(type(notebook)))
@@ -341,7 +342,7 @@ class RavenAddViewDialog(wxRavenAddView):
         self.parentframe = parentFrame
         
         icon = wx.EmptyIcon()
-        icon.CopyFromBitmap(wx.Bitmap( u"res/default_style/normal/new_view.png", wx.BITMAP_TYPE_ANY ))
+        icon.CopyFromBitmap( parentFrame.RessourcesProvider.GetImage('new_view') )
         self.SetIcon(icon)
         
         self._selected_plugin = ""
@@ -373,9 +374,9 @@ class RavenAddViewDialog(wxRavenAddView):
         
         
         
-        fldridx     = il.Add(wx.Bitmap( u"res/default_style/normal/packagefolder_obj.gif", wx.BITMAP_TYPE_ANY ))
-        fldrOpenidx     = il.Add(wx.Bitmap( u"res/default_style/normal/packagefolder_obj.gif", wx.BITMAP_TYPE_ANY ))
-        viewIdx     = il.Add(wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY ))
+        fldridx     = il.Add(self.parentframe.RessourcesProvider.GetImage('packagefolder_obj') )
+        fldrOpenidx     = il.Add(self.parentframe.RessourcesProvider.GetImage('packagefolder_obj'))
+        viewIdx     = il.Add( self.parentframe.RessourcesProvider.GetImage('view_default_frame'))
         
         
         self.imagesListReference['folder'] = fldridx

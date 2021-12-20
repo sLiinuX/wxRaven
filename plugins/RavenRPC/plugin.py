@@ -8,7 +8,7 @@ Created on 10 déc. 2021
 
 import threading
 from .wxRavenShellLogic import *
-from plugins.pluginObjectTemplate import *
+from wxRavenGUI.application.pluginsframework import *
 import datetime
 
 import re
@@ -25,7 +25,7 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_NAME = "RavenRPC"
-        self.PLUGIN_ICON = wx.Bitmap( u"res/default_style/normal/shell.png", wx.BITMAP_TYPE_ANY )
+        self.PLUGIN_ICON = self.RessourcesProvider.GetImage('shell') 
         self.PLUGINS_VIEWS= [ 
                     {
                      'viewid':'RavenRPC Shell', 
@@ -71,6 +71,10 @@ class wxRavenPlugin(PluginObject):
         self.setData("_icon", wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY ))
         self.setData("_dataTimeStamp", '')
         """
+        
+        
+        
+       
         
         
         self.setData("_CmdList", {})
@@ -120,7 +124,7 @@ class wxRavenPlugin(PluginObject):
         
         self.setData("all_connexion", [])
         self.setData("current_connexion", '')
-        self.setData("_icon", wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY ))
+        self.setData("_icon", self.RessourcesProvider.GetImage('network') )
         self.setData("_dataTimeStamp", '')
         
         try:

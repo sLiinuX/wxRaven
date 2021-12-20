@@ -135,7 +135,8 @@ class perspectiveManager(object):
                     #self.parentframe.Plugins.GetViewNameInstance(na)
                     
                     if icon == None:
-                        icon = wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY )
+                        icon = self.parentframe.RessourcesProvider.GetImage('view_default_frame')
+                        #icon = wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY )
                     else:
                         icon = icon['icon']
                         

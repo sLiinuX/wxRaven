@@ -15,7 +15,7 @@ class testPanel(basicTestMessageRead):
     parent_frame = None
     default_position = "main"
     
-    icon = wx.Bitmap( u"res/default_style/normal/message.png", wx.BITMAP_TYPE_ANY )
+    icon = 'message'#wx.Bitmap( u"res/default_style/normal/message.png", wx.BITMAP_TYPE_ANY )
     
 
     def __init__(self, parentFrame, position = "main", viewName= "SquawkerTest"):
@@ -29,7 +29,7 @@ class testPanel(basicTestMessageRead):
         self.view_name = viewName
         self.parent_frame = parentFrame
         self.default_position = position
-        parentFrame.Add(self, self.view_name ,position, self.icon)
+        parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
 
     
     

@@ -5,7 +5,7 @@ Created on 10 déc. 2021
 '''
 import importlib
 import os
-from plugins.pluginObjectTemplate import *
+from wxRavenGUI.application.pluginsframework import *
 import inspect
 
 class pluginsManager(object):

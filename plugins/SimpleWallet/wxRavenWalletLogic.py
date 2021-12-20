@@ -14,7 +14,7 @@ class walletMainPanel(wxRavenWalletMain):
     parent_frame = None
     default_position = "main"
     
-    icon = wx.Bitmap( u"res/default_style/normal/wallet.png", wx.BITMAP_TYPE_ANY )
+    icon = 'wallet'#wx.Bitmap( u"res/default_style/normal/wallet.png", wx.BITMAP_TYPE_ANY )
     
 
     def __init__(self, parentFrame, position = "main", viewName= "Simple Wallet"):
@@ -28,7 +28,7 @@ class walletMainPanel(wxRavenWalletMain):
         self.view_name = viewName
         self.parent_frame = parentFrame
         self.default_position = position
-        parentFrame.Add(self, self.view_name ,position, self.icon)
+        parentFrame.Add(self, self.view_name ,position,  parentFrame.RessourcesProvider.GetImage(self.icon))
         self.initAllPanels()
         
         
@@ -36,16 +36,16 @@ class walletMainPanel(wxRavenWalletMain):
     def initAllPanels(self):
         
         self.panelOverview = walletOverviewPane(self.parent_frame )
-        
-        self.wxRavenWalletBook.AddPage(self.panelOverview, "Wallet Overview" , bitmap = self.panelOverview.icon)
+        # self.parent_frame.RessourcesProvider.GetImage(self.panelOverview.icon)
+        self.wxRavenWalletBook.AddPage(self.panelOverview, "Wallet Overview" , bitmap = self.parent_frame.RessourcesProvider.GetImage(self.panelOverview.icon))
         
         self.panelAssets = walletAssetsOverview(self.parent_frame )
         
-        self.wxRavenWalletBook.AddPage(self.panelAssets, "Assets", bitmap = self.panelAssets.icon)
+        self.wxRavenWalletBook.AddPage(self.panelAssets, "Assets", bitmap = self.parent_frame.RessourcesProvider.GetImage(self.panelAssets.icon))
         
         self.pannelSend = walletSendPane(self.parent_frame )
         
-        self.wxRavenWalletBook.AddPage(self.pannelSend, "Send", bitmap = self.pannelSend.icon)
+        self.wxRavenWalletBook.AddPage(self.pannelSend, "Send", bitmap = self.parent_frame.RessourcesProvider.GetImage(self.pannelSend.icon))
         
         
 
@@ -62,7 +62,7 @@ class walletOverviewPane(wxRavenWalletOverview):
     parent_frame = None
     
     
-    icon = wx.Bitmap( u"res/default_style/normal/UserAccount.png", wx.BITMAP_TYPE_ANY )
+    icon = 'UserAccount' #wx.Bitmap( u"res/default_style/normal/UserAccount.png", wx.BITMAP_TYPE_ANY )
     
 
     def __init__(self, parentFrame):
@@ -266,7 +266,7 @@ class walletAssetsOverview(wxRavenWalletAssetsOverview):
     parent_frame = None
     
     
-    icon = wx.Bitmap( u"res/default_style/normal/asset.png", wx.BITMAP_TYPE_ANY )
+    icon = 'asset'#wx.Bitmap( u"res/default_style/normal/asset.png", wx.BITMAP_TYPE_ANY )
     
     
     lastaddresses = []
@@ -338,8 +338,8 @@ class walletSendPane(wxRavenWalletSend):
     parent_frame = None
     
     
-    icon = wx.Bitmap( u"res/default_style/normal/send_from_wallet.png", wx.BITMAP_TYPE_ANY )
-    
+    icon = 'send_from_wallet' #wx.Bitmap( u"res/default_style/normal/send_from_wallet.png", wx.BITMAP_TYPE_ANY )
+    #self.parent_frame.RessourcesProvider.GetImage(self.pannelSend.icon)
     
     lastaddresses = []
 

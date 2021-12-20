@@ -9,6 +9,13 @@ import pickle
 import inspect
 
 
+from ._pluginSettingsTreeObject import *
+
+#
+#
+# Plugin object to create as basic for your plugin
+#
+
 class PluginObject(object):
     '''
     classdocs
@@ -37,6 +44,10 @@ class PluginObject(object):
     PLUGIN_SETTINGS = {}
     
     
+    
+    PLUGIN_SETTINGS_GUI = []
+    
+    
     #parentFrame = None
     position = None
 
@@ -46,11 +57,32 @@ class PluginObject(object):
         '''
         self.parentFrame = parentFrame
         self.position = position
+        self.PLUGIN_NAME = "defaultName"
+        self.PLUGIN_ICON = None
+        
+        
+        
+        
+        self.RessourcesProvider = parentFrame.RessourcesProvider
+        
+        
         self.VIEWS_INSTANCES = []
         self.PLUGINS_VIEWS = []
         self.PLUGIN_SETTINGS = {}
         self.ALLOW_MULTIPLE_VIEWS_INSTANCE = False
         self.PLUGINS_DATAS_CACHE = {}
+        
+        
+        self.PLUGIN_SETTINGS_GUI = []
+        
+        
+        
+        
+       
+        
+        
+        
+        
     
     def checkSaveDirectory(self):
         if not os.path.exists(self.CONFIG_PATH):
@@ -356,10 +388,7 @@ class PluginObject(object):
     
     
     
-    
-    
-    
-    
+
     
     """
     

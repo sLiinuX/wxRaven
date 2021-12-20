@@ -330,7 +330,7 @@ class wxRavenSettingDialog ( wx.Dialog ):
 		self.settingsSearchCtrl.ShowCancelButton( False )
 		bSizer7.Add( self.settingsSearchCtrl, 0, wx.ALL|wx.EXPAND, 5 )
 		
-		self.settingsTreeCtrl = wx.TreeCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_DEFAULT_STYLE )
+		self.settingsTreeCtrl = wx.TreeCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_DEFAULT_STYLE|wx.TR_HIDE_ROOT )
 		bSizer7.Add( self.settingsTreeCtrl, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		
@@ -343,11 +343,11 @@ class wxRavenSettingDialog ( wx.Dialog ):
 		
 		bSizer11 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.settingNameLabel = wx.StaticText( self.m_panel1, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.settingNameLabel = wx.StaticText( self.m_panel1, wx.ID_ANY, u"MyLabel ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.settingNameLabel.Wrap( -1 )
 		self.settingNameLabel.SetFont( wx.Font( 11, 70, 90, 92, False, wx.EmptyString ) )
 		
-		bSizer11.Add( self.settingNameLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		bSizer11.Add( self.settingNameLabel, 5, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_auiToolBar2 = wx.aui.AuiToolBar( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT ) 
 		self.m_auiToolBar2.Realize() 
@@ -422,5 +422,27 @@ class wxRavenSettingDialog ( wx.Dialog ):
 	
 	def OnLeaveHover( self, event ):
 		event.Skip()
+	
+
+###########################################################################
+## Class wxRavenNotAvailablePanel
+###########################################################################
+
+class wxRavenNotAvailablePanel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 459,382 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer14 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_bitmap3 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/not_available_large.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer14.Add( self.m_bitmap3, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer14 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
 	
 

@@ -13,8 +13,11 @@ import threading
 from libs.RVNpyRPC import *
 from wxRavenGUI.view import *
 from wxRavenGUI.application.core import *
+from wxRavenGUI.application.core.wxRessourcesProvider import RessourcesProvider
 
 
+ROOT_PATH = os.getcwd()
+RES_PATH = os.getcwd() + "/res/"
 CONFIG_PATH = os.getcwd() + "/config/"
 PLUGIN_PATH = os.getcwd() + "/plugins/"
 
@@ -44,6 +47,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     PerspectiveManager = None
     MenusAndTool = None
     
+    Ressources = None
     
     def __init__(self):
         
@@ -54,13 +58,26 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         #splash.Show()
         
 
-        icon = wx.EmptyIcon()
-        icon.CopyFromBitmap(wx.Bitmap( u"res/default_style/normal/mainnet-mini.png", wx.BITMAP_TYPE_ANY ))
-        self.SetIcon(icon)
+        
         
         
         # Setting manager will be used to load settings, both for app and plugin.
         self.Settings = SettingsManager(self)
+        self.RessourcesProvider = RessourcesProvider(RES_PATH, theme="default_style")
+        
+        
+        
+        icon = wx.EmptyIcon()
+        #icon.CopyFromBitmap(wx.Bitmap( u"res/default_style/normal/ravencoin.png", wx.BITMAP_TYPE_ANY ))
+        icon.CopyFromBitmap(self.RessourcesProvider.GetImage('ravencoin'))
+        self.SetIcon(icon)
+        
+        
+        
+        
+        
+        
+        
         
         # Managing views
         self.Views = ViewsManager(self)
@@ -232,7 +249,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     """
 
     def demoBook(self):
-        icon = wx.Bitmap( u"res/default_style/normal/mainnet-mini.png", wx.BITMAP_TYPE_ANY )
+        icon = self.RessourcesProvider.GetImage('ravencoin') #wx.Bitmap( u"res/default_style/normal/mainnet-mini.png", wx.BITMAP_TYPE_ANY )
         for num in range(1, 5):
             page = wx.TextCtrl(self, -1, "This is page %d" % num ,
                                style=wx.TE_MULTILINE)

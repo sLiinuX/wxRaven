@@ -13,13 +13,15 @@ Each plugin must have a plugin.py file which declare a class wxRavenPlugin(Plugi
 
 
 #import the class form above level, it contains predefined functions to overwrite.
-from plugins.pluginObjectTemplate import *
+#from plugins.pluginObjectTemplate import * 
+from wxRavenGUI.application.pluginsframework import *
 #import the design of your plugin made in FormBuilder
 from .wxRavenTutorialPluginDesign import *
 #import the logic of your plugin (inherit design class with logic)
 from .wxRavenTutorialPluginLogic import *
 
-
+#import the plugin setting panels, from another file to be more simple
+from .pluginSettings import MyTutorialSettingPanel_WithLogic
 
 
 #used for long datas requests
@@ -56,7 +58,7 @@ class wxRavenPlugin(PluginObject):
         
        
         self.PLUGIN_NAME = "Tutorial"
-        self.PLUGIN_ICON = wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
+        self.PLUGIN_ICON = self.RessourcesProvider.GetImage('help_view') #wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
         
         
         
@@ -114,10 +116,22 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_SETTINGS = {
+                'booleanSetting' : True,
                 'showError' : ['error','message']
             }
         
         
+        
+        
+        #
+        # Lets put some setting pannels from pluginsetting file (to define as well)
+        #
+        self.PLUGIN_SETTINGS_GUI = []
+        
+        _prefIcon = self.RessourcesProvider.GetImage('wizard-prefs')
+        _MyTutorialSettingPanel_WithLogic = PluginSettingsTreeObject("Tutorial", _prefIcon, classPanel=MyTutorialSettingPanel_WithLogic, _childs=None)
+        self.PLUGIN_SETTINGS_GUI.append(_MyTutorialSettingPanel_WithLogic)
+
         
         
         

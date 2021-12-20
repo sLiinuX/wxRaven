@@ -32,14 +32,17 @@ class RvnRPC_ConnectorManager(object):
     
     
 
-    def __init__(self ,parentObjSynch=None):
+    def __init__(self ,parentObjSynch):
         '''
         Constructor
         '''
         
         if parentObjSynch != None:
             self.parentObjSynch = parentObjSynch
-        self.net_icon = wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY )    
+            
+            
+            
+        self.net_icon = parentObjSynch.RessourcesProvider.GetImage('network')# wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY )    
         self.safemode =  parentObjSynch.Settings.safeMode 
          
          
@@ -215,19 +218,19 @@ class RvnRPC_ConnectorManager(object):
     """
     
     def __iconCompute__(self, networkName, checkIt=False):
-        icon = wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY )
+        icon = self.parentObjSynch.RessourcesProvider.GetImage('network')#wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY )
         
         if networkName.__contains__("mainnet"):
-            icon = wx.Bitmap( u"res/default_style/normal/mainnet.png", wx.BITMAP_TYPE_ANY )
+            icon = self.parentObjSynch.RessourcesProvider.GetImage('mainnet')#wx.Bitmap( u"res/default_style/normal/mainnet.png", wx.BITMAP_TYPE_ANY )
         if networkName.__contains__("testnet"):
-            icon = wx.Bitmap( u"res/default_style/normal/testnet.png", wx.BITMAP_TYPE_ANY )  
+            icon = self.parentObjSynch.RessourcesProvider.GetImage('testnet')#wx.Bitmap( u"res/default_style/normal/testnet.png", wx.BITMAP_TYPE_ANY )  
         
         if checkIt:  
             
             isActive = self.CheckConnexionStatus(networkName)
               
             if not isActive:
-                icon = wx.Bitmap( u"res/default_style/normal/network_fail.png", wx.BITMAP_TYPE_ANY )
+                icon = self.parentObjSynch.RessourcesProvider.GetImage('network_fail')#wx.Bitmap( u"res/default_style/normal/network_fail.png", wx.BITMAP_TYPE_ANY )
         
         
             if networkName == self.rpc_current:

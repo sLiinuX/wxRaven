@@ -7,7 +7,7 @@ Created on 17 déc. 2021
 
 from .wxRavenSquawkerDesign import *
 from .wxRavenSquawkerLogic import *
-from plugins.pluginObjectTemplate import *
+from wxRavenGUI.application.pluginsframework import *
 
 import threading
 
@@ -23,7 +23,7 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_NAME = "Squawker"
-        self.PLUGIN_ICON = wx.Bitmap( u"res/default_style/normal/message.png", wx.BITMAP_TYPE_ANY )
+        self.PLUGIN_ICON = self.RessourcesProvider.GetImage('message') #wx.Bitmap( u"res/default_style/normal/message.png", wx.BITMAP_TYPE_ANY )
         self.PLUGINS_VIEWS= [ 
                     {
                      'viewid':'SquawkerTest', 
@@ -38,6 +38,10 @@ class wxRavenPlugin(PluginObject):
                      }
                     
                 ]
+        
+        
+        
+        
 
         self.ALLOW_MULTIPLE_VIEWS_INSTANCE = False
         self.parentFrame = parentFrame

@@ -4,7 +4,7 @@ Created on 10 déc. 2021
 @author: slinux
 '''
 
-from plugins.pluginObjectTemplate import *
+from wxRavenGUI.application.pluginsframework import *
 import threading
 from datetime import datetime
 import inspect
@@ -13,7 +13,7 @@ import inspect
 
 from .wxRavenErrorLogConsoleLogic import *
 from .wxNotebookToolbox import *
-
+from .pluginSettings import *
 
 class wxRavenPlugin(PluginObject):
     
@@ -25,8 +25,8 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_NAME = "General"
-        self.PLUGIN_ICON = wx.Bitmap( u"res/default_style/normal/dialog_default.png", wx.BITMAP_TYPE_ANY )
-        
+        #self.PLUGIN_ICON = wx.Bitmap( u"res/default_style/normal/dialog_default.png", wx.BITMAP_TYPE_ANY )
+        self.PLUGIN_ICON = self.RessourcesProvider.GetImage('dialog_default')
         
         self.PLUGINS_VIEWS= [ 
                     {
@@ -34,7 +34,7 @@ class wxRavenPlugin(PluginObject):
                      'name':'Error Log Console', 
                      'title':'Error Log Console', 
                      'position':'mgr', 
-                     'icon':wx.Bitmap( u"res/default_style/normal/error_log.png", wx.BITMAP_TYPE_ANY ), 
+                     'icon':  self.RessourcesProvider.GetImage('error_log'), 
                      'class': RavenErrorLogConsole ,
                      'default':True,
                      'multipleViewAllowed':True
@@ -46,7 +46,7 @@ class wxRavenPlugin(PluginObject):
                      'name':'Notebook Toolbox', 
                      'title':'Notebook Toolbox', 
                      'position':'mgr', 
-                     'icon':wx.Bitmap( u"res/default_style/normal/tab_view.png", wx.BITMAP_TYPE_ANY ), 
+                     'icon':   self.RessourcesProvider.GetImage('tab_view') , 
                      'class': RavenNotebookToolbox ,
                      'default':False,
                      'multipleViewAllowed':True,
@@ -63,6 +63,53 @@ class wxRavenPlugin(PluginObject):
         self.PLUGIN_SETTINGS = {
                 'showError' : ['error','message']
             }
+        
+        
+        
+        
+        """
+        
+        
+        Settings pannel tree, using the objhect PluginSettingsTreeObject
+        
+        
+        """
+        self.PLUGIN_SETTINGS_GUI = []
+        
+        """
+        _prefIcon = wx.Bitmap( u"res/default_style/normal/wizard-prefs.png", wx.BITMAP_TYPE_ANY )
+        _viewIcon = wx.Bitmap( u"res/default_style/normal/perspective_default.png", wx.BITMAP_TYPE_ANY )
+        _conIcon = wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY )
+        _appIcon = wx.Bitmap( u"res/default_style/normal/frame_default.png", wx.BITMAP_TYPE_ANY )
+        """
+        
+        _prefIcon = self.RessourcesProvider.GetImage('wizard-prefs')
+        _viewIcon = self.RessourcesProvider.GetImage('perspective_default')
+        _conIcon = self.RessourcesProvider.GetImage('network')
+        _appIcon = self.RessourcesProvider.GetImage('frame_default')
+
+        _generalPannel = PluginSettingsTreeObject("General", _prefIcon, classPanel=wxRavenGeneralSettingPanel, _childs=None)
+        _viewPannel = PluginSettingsTreeObject("Views", _viewIcon, classPanel=None, _childs=None)
+        _connexionPannel = PluginSettingsTreeObject("Connexions", _conIcon, classPanel=None, _childs=None)
+        
+        
+        self.PLUGIN_SETTINGS_GUI.clear()
+        
+        self.PLUGIN_SETTINGS_GUI.append(_generalPannel)
+        self.PLUGIN_SETTINGS_GUI.append(_viewPannel)
+        self.PLUGIN_SETTINGS_GUI.append(_connexionPannel)
+        
+        
+        
+        
+        """
+        _prefIcon = self.RessourcesProvider.GetImage('wizard-prefs')
+        _generalPannel = PluginSettingsTreeObject("General", _prefIcon, classPanel=None, _childs=None)
+        self.PLUGIN_SETTINGS_GUI.append(_generalPannel)
+       
+        """
+        
+        
         
 
         self.ALLOW_MULTIPLE_VIEWS_INSTANCE = True

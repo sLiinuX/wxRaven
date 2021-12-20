@@ -21,7 +21,7 @@ class shellMainPanel(wxRavenShellPanel):
     default_position = "toolbox1"
     
     
-    icon = wx.Bitmap( u"res/default_style/normal/shell.png", wx.BITMAP_TYPE_ANY )
+    icon = 'shell' #wx.Bitmap( u"res/default_style/normal/shell.png", wx.BITMAP_TYPE_ANY )
     
 
     def __init__(self, parentFrame, position = "toolbox1", viewName= "Shell"):
@@ -44,7 +44,7 @@ class shellMainPanel(wxRavenShellPanel):
         
         self.simpleShell()
         
-        parentFrame.Add(self, self.view_name ,position, self.icon)
+        parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
         #parentFrame.AddInMainFrame(self, "Shell" )
         #parentFrame.AddInNotebook(self, "Shell",parentFrame.wxRavenMainBook )
         #parentFrame.AddInNotebook(self, "Shell",parentFrame.wxRavenToolBook1 , self.icon)
@@ -109,7 +109,7 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
     default_position = "toolbox1"
     
     
-    icon = wx.Bitmap( u"res/default_style/normal/shell.png", wx.BITMAP_TYPE_ANY )
+    icon = 'shell' # wx.Bitmap( u"res/default_style/normal/shell.png", wx.BITMAP_TYPE_ANY )
     
     
     
@@ -143,7 +143,7 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
         
         self.helpCommandPannel = None
         
-        parentFrame.Add(self, self.view_name ,position, self.icon)        
+        parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))        
         
         self.defaultShell()
         
@@ -336,11 +336,18 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
             #print("None")
             
             newHelpPanel = ShellDocumentationHelper(self.parent_frame, position="wxRavenAdvancedShellPanelNotebook")
-            self.wxRavenAdvancedShellPanelNotebook.AddPage(newHelpPanel, "RPC Command List", bitmap = newHelpPanel.icon)
+            #self.wxRavenAdvancedShellPanelNotebook.AddPage(newHelpPanel, "RPC Command List", bitmap = newHelpPanel.icon)
+            _panIcon =  self.parent_frame.RessourcesProvider.GetImage(newHelpPanel.icon)
+            
+            self.wxRavenAdvancedShellPanelNotebook.AddPage(newHelpPanel, "RPC Command List", bitmap = _panIcon)
+            
+           
+            
             self.helpCommandPannel = newHelpPanel
             #self.helpCommandPannel.FillHelpDocumentationTreebook()
         else:
             #self.helpCommandPannel.FillHelpDocumentationTreebook()
+            print("already")
             pass
 
 
@@ -354,7 +361,7 @@ class ShellDocumentationHelper(wxRavenShellDocumentation):
     default_position = "main"
     
     
-    icon = wx.Bitmap( u"res/default_style/normal/bookmarks_view.png", wx.BITMAP_TYPE_ANY )
+    icon = 'bookmarks_view' #wx.Bitmap( u"res/default_style/normal/bookmarks_view.png", wx.BITMAP_TYPE_ANY )
     
     
 
@@ -383,10 +390,12 @@ class ShellDocumentationHelper(wxRavenShellDocumentation):
         #parentFrame.Add(self, self.view_name ,position, self.icon)  
         
         if position != "wxRavenAdvancedShellPanelNotebook":
-            parentFrame.Add(self, self.view_name ,position, self.icon)
+            parentFrame.Add(self, self.view_name ,position, self.parent_frame.RessourcesProvider.GetImage(self.icon))
         
         self.SetupTreebook() 
         self.FillHelpDocumentationTreebook()
+        
+        self.Show()
     
     """
     def LoadHelpDocumentation_T(self, networkName=""):    
@@ -404,7 +413,7 @@ class ShellDocumentationHelper(wxRavenShellDocumentation):
     
     def SetupTreebook(self):
         self.il = wx.ImageList(16, 16)
-        self.defaultIcon = self.il.Add(self.icon)
+        self.defaultIcon = self.il.Add(self.parent_frame.RessourcesProvider.GetImage(self.icon))
         self.m_customControl2.AssignImageList(self.il)
     
     

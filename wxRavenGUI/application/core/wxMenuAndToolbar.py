@@ -206,14 +206,16 @@ class MenuAndToolBarManager(object):
             self.parentframe.wxRavenMenuBar_Window_Views.AppendSeparator()
             
             itemShowAll = self.parentframe.wxRavenMenuBar_Window_Views.Append(-1, "Show All...")
-            itemShowAll.SetBitmap(wx.Bitmap( u"res/default_style/normal/perspective_default.png", wx.BITMAP_TYPE_ANY ))
+            
+            #self.parentframe.RessourcesProvider.GetImage('perspective_default')
+            itemShowAll.SetBitmap(self.parentframe.RessourcesProvider.GetImage('perspective_default'))
             self.parentframe.Bind(wx.EVT_MENU, self.OnViewShowAll, itemShowAll)
         
         
         
-        
+            #self.parentframe.RessourcesProvider.GetImage('close_view')
             itemCloseAll = self.parentframe.wxRavenMenuBar_Window_Views.Append(-1, "Close/Destroy All non visible...")
-            itemCloseAll.SetBitmap(wx.Bitmap( u"res/default_style/normal/close_view.png", wx.BITMAP_TYPE_ANY ))
+            itemCloseAll.SetBitmap(self.parentframe.RessourcesProvider.GetImage('close_view'))
             
             self.parentframe.Bind(wx.EVT_MENU, self.OnViewDetroyNonVisible, itemCloseAll)
             
@@ -299,12 +301,13 @@ class MenuAndToolBarManager(object):
         
         
         index=self.parentframe.wxRavenMenuBar_Window.FindItem("Views")
-        self.parentframe.wxRavenMenuBar_Window.FindItemById(index).SetBitmap(wx.Bitmap( u"res/default_style/normal/dialog_default.png", wx.BITMAP_TYPE_ANY ))
+        #self.parentframe.RessourcesProvider.GetImage('dialog_default')
+        self.parentframe.wxRavenMenuBar_Window.FindItemById(index).SetBitmap(self.parentframe.RessourcesProvider.GetImage('dialog_default'))
         
         
         #res\default_style\normal\main_tab.png
         index=self.parentframe.wxRavenMenuBar_Window.FindItem("Perspectives")
-        self.parentframe.wxRavenMenuBar_Window.FindItemById(index).SetBitmap(wx.Bitmap( u"res/default_style/normal/perspective_default.png", wx.BITMAP_TYPE_ANY ))
+        self.parentframe.wxRavenMenuBar_Window.FindItemById(index).SetBitmap( self.parentframe.RessourcesProvider.GetImage('perspective_default'))
         #res\default_style\normal\default_persp.png
         
         

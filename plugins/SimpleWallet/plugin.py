@@ -9,7 +9,7 @@ import threading
 import datetime
 from .wxRavenWalletDesign import *
 from .wxRavenWalletLogic import *
-from plugins.pluginObjectTemplate import *
+from wxRavenGUI.application.pluginsframework import *
 
 
 class wxRavenPlugin(PluginObject):
@@ -20,7 +20,7 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_NAME = "SimpleWallet"
-        self.PLUGIN_ICON = wx.Bitmap( u"res/default_style/normal/wallet.png", wx.BITMAP_TYPE_ANY )
+        self.PLUGIN_ICON = self.RessourcesProvider.GetImage('wallet')
         self.PLUGINS_VIEWS= [ 
                     {
                      'viewid':'Simple Wallet', 
@@ -35,6 +35,13 @@ class wxRavenPlugin(PluginObject):
                      }
                     
                 ]
+
+
+        
+        
+        
+        
+        
 
         self.ALLOW_MULTIPLE_VIEWS_INSTANCE = False
         self.parentFrame = parentFrame

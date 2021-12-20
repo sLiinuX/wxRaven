@@ -23,7 +23,7 @@ class MyTutorialView_WithLogic(MyTutorialView):
     view_name = "Tutorial View"
     parent_frame = None
     default_position = "main"
-    icon = wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
+    icon = 'help_view'#wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
     
     
     
@@ -52,7 +52,7 @@ class MyTutorialView_WithLogic(MyTutorialView):
         #In this case the position in main app must not be managed (see rpc command panel as example)
         #
         if not isInternalPluginView:
-            parentFrame.Add(self, self.view_name ,position, self.icon)
+            parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
             
             
     #Override the UpdateView method to define what happen when plugin call UpdateViews()        
