@@ -330,7 +330,7 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         
         if self._currentPannel!=None:
             #self._currentPannel.Destroy()
-            self.OPEN_PANEL_CACHE[self._currentPannelText] = self._currentPannel
+            
             self._currentPannel.Hide()
         
         
@@ -340,7 +340,7 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             
             _NewPanel = _pannel(self.settingContentPlaceHolderPannel,self.parentFrame , self._pagesAndPluginsMapping[self.wxTree._currentText])
             
-            print(_NewPanel._Panel)
+            #print(_NewPanel._Panel)
             
             sizer = wx.BoxSizer(wx.VERTICAL)
             sizer.Add(_NewPanel._Panel , 1, wx.EXPAND|wx.ALL, 5)
@@ -348,6 +348,12 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         
             self._currentPannel = _NewPanel
             self._currentPannelText = self.wxTree._currentText
+            
+            self.OPEN_PANEL_CACHE[self._currentPannelText] = self._currentPannel
+            
+            
+            
+            _NewPanel.LoadPanelSettings()
             
         else:
             self._currentPannel = self.OPEN_PANEL_CACHE[self.wxTree._currentText]
@@ -423,16 +429,17 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             try:
                 
                 
-                print(_plugin.PLUGIN_NAME)
-                print(_plugin.PLUGIN_ICON)
+                #print(_plugin.PLUGIN_NAME)
+                #print(_plugin.PLUGIN_ICON)
                 
                 self.wxTree.addImage(_plugin.PLUGIN_NAME, _plugin.PLUGIN_ICON)
                 _treeItem = self.wxTree.addItem(_treeParentItem, _plugin.PLUGIN_NAME ,data= wxRavenNotAvailableSettingPanel, iconname_normal=_plugin.PLUGIN_NAME)
                 self._addMapping(_plugin.PLUGIN_NAME, _pNme)
             
             #self.PLUGIN_SETTINGS_GUI.append(_generalPannel)
-            except:
-                print("exception tree" )
+            except Exception as e:
+                #print("exception tree" )
+                self.parentFrame.Log("Unable to load Setting panel in "+_pNme + " : "+ str(e) , type="error")
             
         
     def setupPluginsSettings(self):
@@ -450,7 +457,20 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         self.setupPluginsSettings()
         
 
-
+    
+    
+    def CheckUnsaveAlertDialog(self):
+        dlg = wx.MessageDialog(self, 'Some settings has been modified, quit without saving ?',
+                               'A Message Box',
+                               wx.YES_NO  | wx.ICON_EXCLAMATION
+                               #wx.YES_NO | wx.NO_DEFAULT | wx.CANCEL | wx.ICON_INFORMATION
+                               )
+        res = dlg.ShowModal()
+        dlg.Destroy()
+        
+        return res
+        
+        
 
     
     def OnCancel(self, event):
@@ -458,11 +478,66 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         #
         #to implement the rest
         #
-        self.Close(force=True)
+        
+        _doClose = False
+        _hasChanged = False
+        
+        for _p in self.OPEN_PANEL_CACHE:
+            _pObj = self.OPEN_PANEL_CACHE[_p]
+            
+            if _pObj._settingsHasChanged:
+                _hasChanged = True
+                break
+        
+        if _hasChanged:
+            wtd = self.CheckUnsaveAlertDialog()
+            
+
+            if wtd == 5103:
+                _doClose = True
+        else:
+            _doClose = True
+        
+        if _doClose:
+            self.Close(force=True)
     
     def OnApplyCloseButton(self, event):
         #
         #
         #to implement the rest
         #
-        pass
+        _doClose = True
+        
+        
+        for _p in self.OPEN_PANEL_CACHE:
+            _pObj = self.OPEN_PANEL_CACHE[_p]
+            
+            if _pObj._settingsHasChanged:
+            #if True:
+                
+                try:
+                    print("save tree" )
+                    _pObj.SavePanelSettings()
+                    _pObj._Panel.Destroy()
+                except Exception as e:
+                    #_doClose = False
+                    self.parentFrame.Log("Unable to Save Setting in "+_pObj.PLUGIN_NAME + " : "+ str(e) , type="error")
+                    #print("exception tree" )
+        
+        
+                
+        if _doClose:
+            self.Close(force=True)   
+            
+            
+        self.parentFrame.Settings.SaveSettingsToFile() 
+        """
+        else:
+            dlg = wx.MessageDialog(self, 'Some errors occured during the saving, the windows ha',
+                               'A Message Box',
+                               wx.OK  | wx.ICON_EXCLAMATION
+                               #wx.YES_NO | wx.NO_DEFAULT | wx.CANCEL | wx.ICON_INFORMATION
+                               )
+            res = dlg.ShowModal()
+            dlg.Destroy()   
+        """

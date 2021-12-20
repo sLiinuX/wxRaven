@@ -174,6 +174,13 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         p = self.Plugins.GetPlugin(pname, loadIfNone=False)
         if p != None:
             return p.getData(varname)
+        
+    def GetPluginSetting(self, pname, varname):
+        p = self.Plugins.GetPlugin(pname, loadIfNone=False)
+        if p != None:
+            
+            if p.PLUGIN_SETTINGS.__contains__(varname):
+                return p.PLUGIN_SETTINGS[varname]
     
     
     def Log(self ,message , source="", timestamp=None, type="msg"):

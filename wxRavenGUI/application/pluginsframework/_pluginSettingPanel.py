@@ -9,7 +9,7 @@ Created on 20 déc. 2021
 
 from wxRavenGUI.view import wxRavenNotAvailablePanel
 
-
+import wx
 
 
 
@@ -28,6 +28,7 @@ class PluginSettingsPanelObject(object):
     
     _Panel = None
     _settingsHasChanged = False
+    _needReboot = False
 
     def __init__(self, _panel,parentFrame, pluginName):
         '''
@@ -39,7 +40,9 @@ class PluginSettingsPanelObject(object):
         self._Panel = _panel
         
         self._settingsHasChanged = False
-    
+        self._needReboot = False
+        
+        
 
 
     def Show(self):
@@ -47,7 +50,11 @@ class PluginSettingsPanelObject(object):
         
     def Hide(self):
         self._Panel.Hide()
-
+    
+    
+    
+    def OnChanged(self, evt):
+        self._settingsHasChanged = True
     
     #
     #
