@@ -36,3 +36,41 @@ class MyTutorialView ( wx.Panel ):
 		pass
 	
 
+###########################################################################
+## Class MyTutorialSettingPanel
+###########################################################################
+
+class MyTutorialSettingPanel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer2 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer3 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.booleanSetting = wx.CheckBox( self, wx.ID_ANY, u"booleanSetting", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer3.Add( self.booleanSetting, 0, wx.ALL, 5 )
+		
+		
+		bSizer2.Add( bSizer3, 0, 0, 5 )
+		
+		self.ApplyButton = wx.Button( self, wx.ID_ANY, u"MyButton", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer2.Add( self.ApplyButton, 0, wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer2 )
+		self.Layout()
+		
+		# Connect Events
+		self.ApplyButton.Bind( wx.EVT_BUTTON, self.OnSettingPanelApply )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnSettingPanelApply( self, event ):
+		event.Skip()
+	
+
