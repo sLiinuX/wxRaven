@@ -61,7 +61,8 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_SETTINGS = {
-                'showError' : ['error','message']
+                'showError' : ['error','message'],
+                'defaultViewArea':'main'
             }
         
         

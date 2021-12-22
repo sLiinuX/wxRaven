@@ -261,11 +261,17 @@ class MenuAndToolBarManager(object):
         text = item.GetItemLabelText()
         #self.parentframe.ConnexionManager.setCurrentConnexion(text)
         
-        wx.MessageBox("You selected the view '%s'" % text) 
-        self.RaiseMenuAndToolLog("Not implemented.", "msg")
+        #wx.MessageBox("You selected the view '%s'" % text) 
+        #self.RaiseMenuAndToolLog("Not implemented.", "msg")
         
           
         viewInstance = self.parentframe.Plugins.GetViewNameInstance(text)
+        
+        
+        self.parentframe.m_mgr.GetPane(text).Show()
+        
+        self.parentframe.Views.UpdateGUIManager()
+        
         #print("viewInstance="+str(viewInstance))
     
     

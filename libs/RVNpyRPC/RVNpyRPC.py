@@ -49,8 +49,8 @@ class Ravencoin:
 
 from ._wallet import *
 from ._squawker import *
-
-
+from ._asset import *
+from ._utils import *
 
 
 class RavenpyRPC(object):
@@ -62,6 +62,9 @@ class RavenpyRPC(object):
     RPCconnexion = None
     
     wallet = None
+    squawker = None
+    asset = None
+    utils = None
 
     def __init__(self, connexion):
         '''
@@ -70,5 +73,11 @@ class RavenpyRPC(object):
         self.RPCconnexion = connexion
         self.wallet = RVNpyRPC_Wallet(connexion) 
         self.squawker = RVNpyRPC_Squawker(connexion)
+        self.asset = RVNpyRPC_Asset(connexion, self)
+        
+        self.utils = RVNpyRPC_Utils(connexion)
+    
+    
+    
         
         

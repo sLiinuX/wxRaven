@@ -53,7 +53,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         
         wxRavenMainFrame.__init__(self,None)
-        
+        self._isReady = False
         
         #splash.Show()
         
@@ -99,7 +99,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         self.Plugins.Initialize()
         
         
-        self.demoBook()
+        #self.demoBook()
         
         
         
@@ -119,11 +119,11 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         self.Log("wxRaven is ready !" )
         
-        self.ConnexionManager.setCurrentConnexion("testnet_localhost")
+        self.ConnexionManager.setCurrentConnexion("mainnet_localhost")
         self.initDialogOptions()
         
         
-        
+        self._isReady = True
         #self.wxRavenToolBook3.SetArtProvider(wx.aui.AuiSimpleTabArt())
        
         #splash.Close()
@@ -305,6 +305,9 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
     def OnClose(self, event):
         
+        busy = wx.BusyInfo("One moment please, saving datas...")
+        
+        
         
         self.Settings.SaveSettingsToFile()
         
@@ -318,8 +321,16 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
             
         
         
+        self.Plugins.CloseAllPlugin()
+        
         self.Destroy()
-        event.Skip() 
+        
+        del busy
+        
+        #wx.GetApp().ExitMainLoop()
+        
+        
+        #raise SystemExit
         #self.m_mgr.AddPane( wxRavenMainShellFrame(self).getShell() , aui.AuiPaneInfo() .Name( u"dsfsdf" ).Left() .Caption( u"SHEEEL" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Dock().Resizable().FloatingSize( wx.Size( 42,59 ) ).Layer( 1 ) )
         
         

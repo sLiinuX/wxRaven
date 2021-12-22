@@ -25,7 +25,7 @@ class pluginsManager(object):
     
     resumestate = True
     
-    
+   
     
     safemode = True
     
@@ -107,6 +107,11 @@ class pluginsManager(object):
     
     
     
+    
+    
+    
+    
+    
     def DeleteViewInstance(self, viewname):
         
  
@@ -135,7 +140,18 @@ class pluginsManager(object):
     #def LoadNewView(self, viewName, position):
     #    new_view_callbacks = []
     
-
+    
+    
+    
+    
+    def CloseAllPlugin(self):
+        for p in self.plugins:
+            pinst = self.plugins[p]
+            pinst._stop = True
+            #pinst.StopAllServices()
+    
+    
+    
     
     def SaveAllPluginState(self):
         

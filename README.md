@@ -10,11 +10,12 @@ for the Ravencoin community who want to write advanced GUI applications connecte
 
 Written in Python 3.x and using the wxWidget Library with the inspiration of Eclipse IDE, wxRaven natively support the plugin approach and the view/perspective concept.
 
-It provides usefull built-in functions to create and develop your own "Use-case specific application" as one or multiple plugin of this integrated environment itself such as :
+It provides usefull built-in functions to create and develop your own "Use-case specific application" as one or multiple [plugins](plugins/README.me) of this integrated environment itself such as :
 
 - Built-in RPC connexion
 - High Level RPC API Commands
 - RPC Shell & Command list
+- Asset Search
 - Highly Customizable End User Interface / Components
 - ... More to come !
 	

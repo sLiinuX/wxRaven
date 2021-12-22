@@ -21,3 +21,4 @@ Example of usefull and targeted suff :
 from .CustomListCtrl import *
 from .CustomButton import *
 from .CustomTreeView import *
+from .CustomLoading import *

@@ -34,6 +34,6 @@ class wxRavenMainApp(object):
         
     def runApp(self):
         #self.appmainframe.Show()
-        self.app.MainLoop()   
+        self.app.MainLoop()  
          
     

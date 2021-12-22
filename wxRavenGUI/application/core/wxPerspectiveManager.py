@@ -144,7 +144,12 @@ class perspectiveManager(object):
             
                 else:
                     all_panes[ii].Hide()
+                    all_panes[ii].Float()
+                    all_panes[ii].Dock()
                     all_panes[ii].Show()
+            
+            
+            
             
             
             
@@ -156,7 +161,7 @@ class perspectiveManager(object):
             self.RaisePerspectiveLog("No last perspective found.", "info")  
             
         self.parentframe.m_mgr.Update()
-        
+        self.parentframe.Layout()
         
             
     def LoadLastPerspective(self):

@@ -5,3 +5,5 @@ jsonrpcclient
 ravenrpc
 wxPython
 ipfshttpclient
+sqlalchemy
+python-socketio

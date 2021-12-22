@@ -8,6 +8,7 @@ import os
 import pickle
 import inspect
 
+import json
 
 from ._pluginSettingsTreeObject import *
 
@@ -48,6 +49,9 @@ class PluginObject(object):
     PLUGIN_SETTINGS_GUI = []
     
     
+    PLUGIN_BACKGROUNDS_THREADS = []
+    
+    _stop = False
     #parentFrame = None
     position = None
 
@@ -59,9 +63,9 @@ class PluginObject(object):
         self.position = position
         self.PLUGIN_NAME = "defaultName"
         self.PLUGIN_ICON = None
+        self.PLUGIN_BACKGROUNDS_THREADS =[]
         
-        
-        
+        self._stop = False
         
         self.RessourcesProvider = parentFrame.RessourcesProvider
         
@@ -364,9 +368,20 @@ class PluginObject(object):
         return self.PLUGINS_VIEWS
     
     
+    """
     
+    Plugin thread services
     
+    """
     
+        
+    #
+    # TODO
+    #
+    #
+    
+        
+        
     """
     
     Plugins setting management
@@ -383,9 +398,20 @@ class PluginObject(object):
         
         for key in _recordedSettings:
             self.PLUGIN_SETTINGS[key] = _recordedSettings[key]
+
+            _str  = _recordedSettings[key]
+            try:
+                convertedData = json.loads(_str.replace('\'','"'))
+                self.PLUGIN_SETTINGS[key] = convertedData
+                
+            except Exception as e:
+                #print("NOT json data :" + str(e))
+                pass
             
-            #print("" +key + " : " +_recordedSettings[key] )
-    
+            if _str == "True":
+                self.PLUGIN_SETTINGS[key] = True
+            elif _str == "False":
+                self.PLUGIN_SETTINGS[key] = False
     
     
 

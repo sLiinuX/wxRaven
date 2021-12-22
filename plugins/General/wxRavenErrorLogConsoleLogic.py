@@ -77,7 +77,7 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
         
         #print("RavenErrorLogConsole Update !")
         
-        _allLogs = self.parent_frame.GetPluginData("General","allLogs")
+        _allLogs = self.parent_frame.GetPluginData("General","allLogs").copy()
         
         
         _currentViewCursor = self._logCurrentCursor

@@ -408,11 +408,20 @@ class RavenAddViewDialog(wxRavenAddView):
         for _areas in self.parentframe.Views.GetAllAreas():
             self.m_choice1.Append(_areas)
             
-            
-        default = self.m_choice1.FindString("mgr")
-        self.m_choice1.SetSelection(default)
         
-        self._target = "mgr"
+        
+        
+        _defaultViewSett = self.parentframe.GetPluginSetting("General", 'defaultViewArea')#main
+        
+        if _defaultViewSett == None:
+            _defaultViewSett = "main"
+            
+        default = self.m_choice1.FindString(_defaultViewSett)
+        self.m_choice1.SetSelection(default)
+        self._target = _defaultViewSett
+        
+        
+        
         self.Bind(wx.EVT_CHOICE, self.EvtChoice, self.m_choice1)
         
         
