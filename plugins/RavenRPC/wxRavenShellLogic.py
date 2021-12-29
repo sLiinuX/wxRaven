@@ -58,6 +58,14 @@ class shellMainPanel(wxRavenShellPanel):
     
     
     
+    
+
+    
+    
+    
+    
+    
+    
     def simpleShell(self):
         
         
@@ -83,8 +91,17 @@ class shellMainPanel(wxRavenShellPanel):
         
         _locals['wxRaven']  = self.parent_frame
         
-        
-        
+        try:
+            _addinLocals = self.parent_frame.GetPlugin("RavenRPC").getAddinsLocals()
+            startupText = startupText + "- All additionals : ["
+            for _loc in _addinLocals:
+                _locals[_loc]  = _addinLocals[_loc]
+                startupText = startupText+ " "+ _loc + ", "
+            startupText = startupText + "]\n"    
+        except Exception as e:
+            
+            print(str(e))
+            pass
         #advShell = py.crust.Crust(self , intro=startupText , locals = _locals)
         
         
@@ -199,9 +216,23 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
         
         _locals['wxRaven']  = self.parent_frame
         
+        
+        try:
+            _addinLocals = self.parent_frame.GetPlugin("RavenRPC").getAddinsLocals()
+            startupText = startupText + "- All additionals from plugins : ["
+            for _loc in _addinLocals:
+                _locals[_loc]  = _addinLocals[_loc]
+                startupText = startupText+ " "+ _loc + ", "
+            startupText = startupText + "]\n" 
+            
+        except Exception as e:
+            print(str(e))
+            
+            
+        
         advShell = py.crust.Crust(self , intro=startupText , locals = _locals)
-        
-        
+        #advShell = py.crust.CrustFrame(self ,  locals = _locals)
+        #advShell.ToggleTools()
         _titlePage = "PyRPC Shell (" + _networkName + ")"
         
         

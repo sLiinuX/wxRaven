@@ -20,14 +20,25 @@ from .wxRavenRavencoreAssetExplorerLogic import *
 #import the logic of your plugin (inherit design class with logic)
 from .wxRavenRavencoreDesign import *
 
+from .pluginSettings import *
+
+
+
 #import the plugin setting panels, from another file to be more simple
 #from .pluginSettings import MyTutorialSettingPanel_WithLogic
 import json
 
 #used for long datas requests
 import threading
+from plugins.Ravencore.wxRavenRavencoreAssetNavigatorLogic import RavencoreAssetNavigator
 
 
+try:
+    import pyperclip
+except ImportError:
+    from libs import pyperclip
+    
+    
 
 class wxRavenPlugin(PluginObject):
     '''
@@ -86,8 +97,20 @@ class wxRavenPlugin(PluginObject):
                      'name':'Asset Search', 
                      'title':'Asset Search', 
                      'position':position, 
-                     'icon':self.PLUGIN_ICON, 
+                     'icon':self.RessourcesProvider.GetImage('search_ravencoin'), 
                      'class': RavencoreAssetExplorer ,
+                     'default':False,
+                     'multipleViewAllowed':True
+                     } ,
+                    
+                    
+                    {
+                     'viewid':'Asset Navigator', 
+                     'name':'Asset Navigator', 
+                     'title':'Asset Navigator', 
+                     'position':position, 
+                     'icon':self.RessourcesProvider.GetImage('asset_navigation'), 
+                     'class': RavencoreAssetNavigator ,
                      'default':False,
                      'multipleViewAllowed':True
                      }
@@ -116,11 +139,19 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_SETTINGS = {
-                'assetSearchLimit' : 50,
-                'strictName' : False,
-                'onlyMainAsset':False,
-                'ipfsgateway_default' : 'https://gateway.ravenclause.com/ipfs/',
-                'ipfsgateway_providers':['https://ravencoinipfs-gateway.com/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/']
+                'assetsearchlimit' : 50,
+                'strictname' : False,
+                'filtertype' : False,
+                'filtertypelist' : [],
+                'ipfsgateway_default' : 'https://ravencoinipfs-gateway.com/ipfs/',
+                'ipfsgateway_providers':['https://ravencoinipfs-gateway.com/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/'],
+                
+                'bookmark_list':['My Assets'],
+                'navigation_use_cache' : True,
+                'tree_display_regroupby_main':False,
+                'tree_display_virtual_sort':False,
+            
+            
             }
         
         
@@ -137,6 +168,31 @@ class wxRavenPlugin(PluginObject):
         self.PLUGIN_SETTINGS_GUI.append(_MyTutorialSettingPanel_WithLogic)
 
         """
+        self.PLUGIN_SETTINGS_GUI.clear()
+        
+        
+        _Icon = self.RessourcesProvider.GetImage('ravencoin')
+        _generalPannel = PluginSettingsTreeObject("Ravencore", _Icon, classPanel=wxRavencore_GeneralSettings_WithLogic, _childs=None)
+        
+        
+        
+        
+        _Icon = self.RessourcesProvider.GetImage('bookmarks_view')
+        _bmrkPannel = PluginSettingsTreeObject("Bookmarks", _Icon, classPanel=wxRavencore_BookmarksSettings_WithLogic, _childs=None)
+        
+        
+        _Icon = self.RessourcesProvider.GetImage('raven_ipfs')
+        _ipfsPannel = PluginSettingsTreeObject("IPFS", _Icon, classPanel=wxRavencore_IPFSSettings_WithLogic, _childs=None)
+        
+        #wxRavencore_IPFSSettings_WithLogic
+        
+        
+        _generalPannel._childs.append(_ipfsPannel)
+        _generalPannel._childs.append(_bmrkPannel)
+        
+        
+        self.PLUGIN_SETTINGS_GUI.append(_generalPannel)
+        #self.PLUGIN_SETTINGS_GUI.append(_bmrkPannel)
         
         
         #
@@ -148,6 +204,10 @@ class wxRavenPlugin(PluginObject):
         #self.setData("myPluginData2", False)
         self.setData("_LastSearch", "")
         self.setData("_AssetSearchResult", {})
+        
+        
+        self.setData("_AssetLibraryList", {'My Assets':None})
+        self.setData("_CurrentLibrary", 'My Assets')
         
         
         
@@ -162,7 +222,7 @@ class wxRavenPlugin(PluginObject):
         #
         # Finally, this last line is MANDATORY to load the default views.
         #
-        self.LoadPluginFrames()
+        #self.LoadPluginFrames()
         
     
     
@@ -204,8 +264,25 @@ class wxRavenPlugin(PluginObject):
             elif _str == "False":
                 self.PLUGIN_SETTINGS[key] = False
             
-            
+        
+        self.__create__libcache__()    
+        
+        
+
                 
+    
+    def __create__libcache__(self):
+        
+        _AssetLibraryList = {}
+        
+        _bkmrk = self.PLUGIN_SETTINGS['bookmark_list']
+        
+        for _bookmark in _bkmrk:
+            _AssetLibraryList[_bookmark] = None
+        
+        self.setData("_AssetLibraryList", _AssetLibraryList)
+    
+    
         
     '''
     
@@ -214,37 +291,31 @@ class wxRavenPlugin(PluginObject):
     '''
         
     def OnSearchRequested_T(self, keyword="", limit=50, onlyMain=False):    
-        t=threading.Thread(target=self.OnUpdatePluginDatas, args=(keyword,limit, onlyMain))
+        t=threading.Thread(target=self.OnUpdatePluginDatas_SEARCH, args=(keyword,limit, onlyMain))
         t.start()        
         
     def OnNetworkChanged_T(self, networkName=""):    
-        t=threading.Thread(target=self.OnUpdatePluginDatas)
-        t.start()
+        #t=threading.Thread(target=self.OnUpdatePluginDatas)
+        #t.start()
+        pass
         
         
-    def OnUpdatePluginDatas(self, keyword="", limit=50, onlyMain=False):
+    def OnUpdatePluginDatas_SEARCH(self, keyword="", limit=50, onlyMain=False):
         
         #self.setData("myPluginData", {})
         #self.setData("myPluginData2", False)
         _AssetSearchResult = {}
         #try:
-                    
-        
         try:
-            
             
             _lastSearch = self.getData("_LastSearch")
             
             if _lastSearch == keyword:
                 wx.CallAfter(self.UpdateActiveViews, ())
                 return
-            
-            
             if keyword == "":
                 keyword =  self.getData("_LastSearch")
-                
-                
-                
+  
             _SkipChars = []
             if onlyMain:
                 _SkipChars = ['#', "/", '$']
@@ -257,8 +328,7 @@ class wxRavenPlugin(PluginObject):
             
             self.setData("_AssetSearchResult", _AssetSearchResult)
             self.setData("_LastSearch", keyword)
-            
-            
+               
             #self.setData("myPluginData2", myPluginData2)
 
             #When datas are loaded, add a call after to trigger plugins view update
@@ -266,8 +336,158 @@ class wxRavenPlugin(PluginObject):
             
         except Exception as e:
             self.RaisePluginLog( "Unable to search asset :"+ str(e), type="error")
+    
+    
+    
+    
+    
+    def OnNavigateRequested_T(self, library=""):    
+        self.setData("_CurrentLibrary", library)
+        t=threading.Thread(target=self.OnUpdatePluginDatas_NAVIGATE, args=(library,))
+        t.start() 
+    
+    def OnUpdatePluginDatas_NAVIGATE(self, library=""):
+        
+        
+        if library == "":
+            library = "My Assets"
             
             
+        _resultData = None 
+        
+        _allLibs = self.getData("_AssetLibraryList")
+        
+        
+        navigation_use_cache = self.PLUGIN_SETTINGS['navigation_use_cache']
+        
+        _virtualReorganizationButtonState = self.PLUGIN_SETTINGS['tree_display_virtual_sort']
+        _organizeByMainAssetButtonState  = self.PLUGIN_SETTINGS['tree_display_regroupby_main']
+        
+        if navigation_use_cache:
+            if _allLibs.__contains__(library):
+                if _allLibs[library] != None:
+                    wx.CallAfter(self.UpdateActiveViews, ())
+                    return
         
         
         
+        
+        if library == "My Assets":
+            _resultData = self.parentFrame.getRvnRPC().asset.ExploreWalletAsset(OrganizeByMainAsset=_organizeByMainAssetButtonState)
+            _allLibs[library] = _resultData
+           
+        else:
+            _resultData = self.parentFrame.getRvnRPC().asset.ExploreAsset(library, _limit=99999, _skipchars=[])
+            
+            
+            if _virtualReorganizationButtonState:
+                #print("EXPERIMENTAL =  TRY TO REORGANIZE DATAS")
+                _resultData.Reorganize_Series(regularExp="^#[a-zA-Z0-9]+" , minOccurence=1)
+                #print(_resultData)
+            
+            _allLibs[library] = _resultData
+        
+        
+        
+        
+        self.setData("_AssetLibraryList", _allLibs)
+        #self.setData("_CurrentLibrary", library)
+        
+        wx.CallAfter(self.UpdateActiveViews, ())
+        
+        #self.RaisePluginLog( "Unable to explore asset '"+keyword+"' :"+ str(e), type="error")
+    
+    
+    
+    def AddAssetInBookmark(self, assetName):
+        currentBk = self.PLUGIN_SETTINGS['bookmark_list']
+        if not currentBk.__contains__(assetName):
+            currentBk.append(assetName)
+            
+            
+            _allLibs = self.getData("_AssetLibraryList")
+            _allLibs[assetName] = None
+            self.setData("_AssetLibraryList", _allLibs)
+            
+        self.PLUGIN_SETTINGS['bookmark_list'] = currentBk
+        wx.CallAfter(self.UpdateActiveViews, ())
+        
+    
+    
+    def NaviguateAsset(self, assetName):
+        print("Plugin navigation requested:"+str(assetName))
+        
+        self.OnNavigateRequested_T(assetName)
+        
+        
+        vcount = 0
+        _views = []
+        
+        _navViewDatas = {}
+        
+        for r in self.VIEWS_INSTANCES:
+            rView = r['instance']
+            vName = r['viewid']
+            
+
+            if vName == "Asset Navigator":
+                rView.ShowLoading()
+                vcount = vcount+1
+                _views.append(rView)
+                
+        if vcount ==0:
+            _newView = self.LoadView(self.SearchPluginView("Asset Navigator"), "main")
+            _newView.ShowLoading()
+        #_allLibs = self.getData("_AssetLibraryList")
+        
+    
+    
+    def previewIPFS(self, ItemURL, openNew=False):
+        #wx.Log.SetActiveTarget(wx.LogStderr())
+        
+        _PreviewWindow = self.getData("_PreviewWindow")
+        
+        
+        if _PreviewWindow == None or openNew:
+            _PreviewWindow = RavencoreHTMLViewer(self.parentFrame, ItemURL, 'mgr')
+            self.setData("_PreviewWindow", _PreviewWindow)
+        
+        else:
+            _PreviewWindow.wv.LoadURL(ItemURL)
+            
+            
+        self.parentFrame.Views.ShowParentInManager(_PreviewWindow)
+        #self.parent_frame.Views.OpenView("Simple Wallet", pluginname='', createIfNull=True)
+    
+        #self.parent_frame.m_mgr.GetPane("Asset Preview").Show()
+        #self.parent_frame.Views.UpdateGUIManager()    
+        
+    
+    def OpenIPFSinWebBrowser(self, _data, provider=""):
+        
+        print(_data)
+        
+        _ipfsgateway_default = self.parentFrame.GetPluginSetting("Ravencore","ipfsgateway_default")
+        
+        _gateway = provider
+        if provider == "":
+            _gateway = _ipfsgateway_default
+        
+        #_data= self._datacache[self._currentItem]
+        print(_data['has_ipfs'])
+        
+        if _data['has_ipfs']:
+            _url = _gateway  +_data['ipfs_hash']
+            webbrowser.open(_url)
+            
+            
+            
+    def CopyClip(self, _data):
+        #itemData = self._datacache[self._currentItem]
+        
+        print(_data)
+        if _data['has_ipfs']:
+            pyperclip.copy(_data['ipfs_hash'])
+        
+        #self.infoMessage("IPFS Hash copied to the clipboard", wx.ICON_INFORMATION)
+    

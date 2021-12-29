@@ -24,7 +24,7 @@ class MyTutorialSettingPanel_WithLogic(PluginSettingsPanelObject):
     
     
         
-        self._Panel.booleanSetting.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        self._Panel.booleansetting.Bind( wx.EVT_CHECKBOX, self.OnChanged )
     
     
     
@@ -33,13 +33,13 @@ class MyTutorialSettingPanel_WithLogic(PluginSettingsPanelObject):
     # method to be called on close and apply
     #    
     def SavePanelSettings(self):
-        _newValueForBoolSetting = self._Panel.booleanSetting.IsChecked()
+        _newValueForBoolSetting = self._Panel.booleansetting.IsChecked()
         
         #now its up to the dev to chose how to take this information
-        #in our demo lets do simple and just change the  booleanSetting in PLUGIN_SETTINGS
+        #in our demo lets do simple and just change the  booleansetting in PLUGIN_SETTINGS
         
         myPlugin = self.parentFrame.GetPlugin(self.pluginName)
-        myPlugin.PLUGIN_SETTINGS['booleanSetting'] = _newValueForBoolSetting
+        myPlugin.PLUGIN_SETTINGS['booleansetting'] = _newValueForBoolSetting
     
         print("SavePanelSettings" + str(_newValueForBoolSetting))
     #
@@ -49,9 +49,9 @@ class MyTutorialSettingPanel_WithLogic(PluginSettingsPanelObject):
     def LoadPanelSettings(self):
         
         myPlugin = self.parentFrame.GetPlugin(self.pluginName)
-        _currentValue = myPlugin.PLUGIN_SETTINGS['booleanSetting']
+        _currentValue = myPlugin.PLUGIN_SETTINGS['booleansetting']
         
-        self._Panel.booleanSetting.SetValue(_currentValue)
+        self._Panel.booleansetting.SetValue(_currentValue)
         
         print("LoadPanelSettings" + str(_currentValue))
         

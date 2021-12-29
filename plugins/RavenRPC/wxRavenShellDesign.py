@@ -164,3 +164,44 @@ class wxRavenShellCommandDescriber ( wx.Panel ):
 		pass
 	
 
+###########################################################################
+## Class wxRavenShell_SettingsPanel
+###########################################################################
+
+class wxRavenShell_SettingsPanel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 547,450 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer4 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer5 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap1 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/shell.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer5.Add( self.m_bitmap1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText1 = wx.StaticText( self, wx.ID_ANY, u"Integrate your own classes in the CONSOLE :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText1.Wrap( -1 )
+		self.m_staticText1.SetFont( wx.Font( 11, 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer5.Add( self.m_staticText1, 0, wx.ALL, 5 )
+		
+		
+		bSizer4.Add( bSizer5, 0, wx.EXPAND, 5 )
+		
+		bSizer6 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, u"- addLocalVarInShell(_data, _dataName)\n\tAdd the variable in the shell _locals_\n\n- removeLocalVarInShell( _dataName)\n\tRemove the variable in the shell _locals_\n\n\nExemple :\n\n<data> = <plugin>.getData(<dataname>)\nself.parent_frame.GetPlugin(\"RavenRPC\").addLocalVarInShell(  <data>, <dataname>)", wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
+		bSizer6.Add( self.m_textCtrl2, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer4.Add( bSizer6, 1, wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer4 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+

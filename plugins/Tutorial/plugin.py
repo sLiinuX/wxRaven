@@ -116,8 +116,8 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_SETTINGS = {
-                'booleanSetting' : True,
-                'showError' : ['error','message']
+                'booleansetting' : True,
+                'showerror' : ['error','message']
             }
         
         
@@ -152,8 +152,8 @@ class wxRavenPlugin(PluginObject):
         
         #
         # Finally, this last line is MANDATORY to load the default views.
-        #
-        self.LoadPluginFrames()
+        # REMOVED AND REPLACED BY AN AUTO LOAD
+        #self.LoadPluginFrames()
         
     
     
@@ -169,6 +169,12 @@ class wxRavenPlugin(PluginObject):
     
     """
     
+    #
+    # Seems not mandatory with new LoadSetting Generic function but in case of specific
+    # Types, better redeclare it!
+    #
+    
+    """
     def _LoadPluginSettings(self):
         _recordedSettings = self.parentFrame.Settings._GetPluginSettings(self.PLUGIN_NAME)
         
@@ -182,7 +188,7 @@ class wxRavenPlugin(PluginObject):
             self.PLUGIN_SETTINGS[key] = _recordedSettings[key]
             
             
-            
+    """        
                 
         
     '''

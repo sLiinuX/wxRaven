@@ -15,6 +15,8 @@ from .wxRavenErrorLogConsoleLogic import *
 from .wxNotebookToolbox import *
 from .pluginSettings import *
 
+from .wxRavenWelcomePanel import wxRavenWelcomeTabLogic
+
 class wxRavenPlugin(PluginObject):
     
     
@@ -56,13 +58,27 @@ class wxRavenPlugin(PluginObject):
                     
                     
                     
+                     {
+                     'viewid':'Welcome', 
+                     'name':'Welcome', 
+                     'title':'Welcome', 
+                     'position':'main', 
+                     'icon':   self.RessourcesProvider.GetImage('welcome16') , 
+                     'class': wxRavenWelcomeTabLogic ,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'isArea':True
+                     
+                     },
+                    
+                    
                 ]
         
         
         
         self.PLUGIN_SETTINGS = {
-                'showError' : ['error','message'],
-                'defaultViewArea':'main'
+                'showerror' : ['error','message'],
+                'defaultviewarea':'main'
             }
         
         
@@ -122,14 +138,42 @@ class wxRavenPlugin(PluginObject):
         self.setData("_cursor",0)
         
         
-        self.LoadPluginFrames()
+        #self.LoadPluginFrames()
     
     
     
     
     
     
-    
+    def _LoadPluginSettings(self):
+        _recordedSettings = self.parentFrame.Settings._GetPluginSettings(self.PLUGIN_NAME)
+        
+        
+        for key in _recordedSettings:
+            
+            
+            #
+            # _recordedSettings[key] Return string only, do your own mapping for complex datastructure
+            #
+            self.PLUGIN_SETTINGS[key] = _recordedSettings[key]
+
+            _str  = _recordedSettings[key]
+            try:
+                convertedData = json.loads(_str.replace('\'','"'))
+                self.PLUGIN_SETTINGS[key] = convertedData
+                
+            except Exception as e:
+                #print("NOT json data :" + str(e))
+                pass
+            
+            if _str == "True":
+                self.PLUGIN_SETTINGS[key] = True
+            elif _str == "False":
+                self.PLUGIN_SETTINGS[key] = False
+                
+                
+            #print(key) 
+            #print(self.PLUGIN_SETTINGS[key])
     
     
         

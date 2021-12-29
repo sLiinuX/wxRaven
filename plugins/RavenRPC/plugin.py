@@ -13,6 +13,9 @@ import datetime
 
 import re
 
+
+from .pluginSettings import wxRavenRPCPluginSettings
+
 class wxRavenPlugin(PluginObject):
     
     
@@ -73,16 +76,25 @@ class wxRavenPlugin(PluginObject):
         """
         
         
+        #
+        # Lets put some setting pannels from pluginsetting file (to define as well)
+        #
+        self.PLUGIN_SETTINGS_GUI = []
         
+        _Icon = self.RessourcesProvider.GetImage('shell')
+        _setPanel = PluginSettingsTreeObject("RavenRPC", _Icon, classPanel=wxRavenRPCPluginSettings, _childs=None)
+        self.PLUGIN_SETTINGS_GUI.append(_setPanel)
        
         
         
         self.setData("_CmdList", {})
         self.setData("_CmdListInCache", False)
         
+        self.setData("_ShellLocalsAddins", {})
+        
         self.ALLOW_MULTIPLE_VIEWS_INSTANCE = True
         self.parentFrame.ConnexionManager.RegisterOnConnexionChanged(self.OnNetworkChanged_T)
-        self.LoadPluginFrames()
+        #self.LoadPluginFrames()
         
         #self.LoadView(self.PLUGINS_VIEWS[1], 'mgr')
         
@@ -108,6 +120,52 @@ class wxRavenPlugin(PluginObject):
         
     
     
+    """
+     allow other plugins to add some locals var , warning this is dangerous !
+    """
+    
+    #self.parent_frame.GetPlugin("RavenRPC").addLocalVarInShell( _data, _dataName)
+    def addLocalVarInShell(self, _data, _dataName):
+        
+        _added=False
+        _ShellLocalsAddins = self.getData("_ShellLocalsAddins")
+        
+        
+        if not _ShellLocalsAddins.__contains__(_dataName):
+        
+            _ShellLocalsAddins[_dataName] = _data
+            _added=True
+        
+        
+        self.setData("_ShellLocalsAddins", _ShellLocalsAddins)
+    
+    
+    def removeLocalVarInShell(self, _dataName):
+        
+        _added=False
+        _ShellLocalsAddins = self.getData("_ShellLocalsAddins")
+        
+        
+        if not _ShellLocalsAddins.__contains__(_dataName):
+        
+            _ShellLocalsAddins[_dataName] = None
+            _added=True
+        
+        
+        self.setData("_ShellLocalsAddins", _ShellLocalsAddins)
+    
+    
+    def getAddinsLocals(self):
+        _ShellLocalsAddins = self.getData("_ShellLocalsAddins")
+        _addinsLocals= {}
+        for key in _ShellLocalsAddins:
+            
+            _data = _ShellLocalsAddins[key]
+            
+            if _data != None:
+                _addinsLocals[key] = _data
+    
+        return _addinsLocals
     '''
     
     Plugin Triggers for data update , DO NOT CALL WX UPDATE OUT OUF wx.CallAfter(cb, param)

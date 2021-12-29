@@ -191,7 +191,7 @@ class RVNpyRPC_Wallet():
     
     
     
-    def getaddressbalance(self,walletAdress="*", showAsset=True):
+    def getaddressbalance(self,walletAdress="*", showAsset=True, _includeChangesAddresses=False):
         
         
         #print(self.RPCconnexion)
@@ -219,3 +219,67 @@ class RVNpyRPC_Wallet():
         #response = self.__runRPCmethod__("getaddressbalance", [searchAdressListJSON ,showAsset])
         response = self.RPCconnexion.getaddressbalance(searchAdressListJSON ,showAsset)
         return response    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    def checkaddresseUnspent(self, walletAdress, specificAsset="RVN"):
+        searchAdressListJSON = {"addresses":[walletAdress],"assetName":specificAsset}
+        response = self.RPCconnexion.getaddressdeltas(searchAdressListJSON)['result']
+        
+        #print("All transactions :" + str(response))
+        
+        _matchs = []
+        
+        for _transactions in response:
+            if _transactions['satoshis'] < 0:
+                
+                _txid = _transactions['txid']
+                #print("Scan TX with negative value")
+                #_transactionDetails = self.RPCconnexion.gettransaction(_txid)['result']
+                
+                _count = 1
+                _lastTx  = self.RPCconnexion.gettxout(_txid,0)
+                
+                #print(_lastTx)
+                while _lastTx != None:
+                    
+                    #print(f"Scan TX {_count} with negative value")
+                    
+                    if _lastTx.__contains__("result"):
+                        if _lastTx['result'] != None:
+                            try:
+                                _lastTxData = _lastTx['result']['scriptPubKey']['addresses']
+                                
+                                for ad in _lastTxData:
+                                    if _count > 1:
+                                        _matchs.append(ad)
+                                        #print(f"add {ad} ")
+                                    
+                                    
+                            except Exception as e:
+                                pass
+                                #print(f"error in transaction {_count} scan {e}")
+                        else:
+                            break        
+                    
+                    _count = _count+1 
+                    _lastTx  = self.RPCconnexion.gettxout(_txid,_count)
+                    #print(_lastTx)
+                            
+                            
+                            
+                #_matchs = _lastTx
+                
+                
+                    
+        return  _matchs          
+                    
+                    
+                    
+                    

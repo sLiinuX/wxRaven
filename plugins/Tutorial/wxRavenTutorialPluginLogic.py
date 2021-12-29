@@ -69,13 +69,13 @@ class MyTutorialView_WithLogic(MyTutorialView):
         try:
        
             myPluginData = self.parent_frame.GetPluginData("Tutorial","myPluginData2")
-            myPluginSetting =  self.parent_frame.GetPluginSetting("Tutorial","booleanSetting")#SavePanelSettings GetPluginSetting
+            myPluginSetting =  self.parent_frame.GetPluginSetting("Tutorial","booleansetting")#SavePanelSettings GetPluginSetting
             #
             #Update your panel
             #       
             
             
-            textToPrint = " booleanSetting = " + str(myPluginSetting)
+            textToPrint = " booleansetting = " + str(myPluginSetting)
             textToPrint = textToPrint + "\n\n myPluginData2 = " + str(myPluginData)
              
             self.m_staticText2.SetLabel(str(textToPrint)) 

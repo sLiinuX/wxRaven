@@ -26,12 +26,12 @@ class ViewsManager(object):
     force_mgr = False
     
 
-    def __init__(self, parentframe, forceInPrincipalAuiManager=False):
+    def __init__(self, parentframe, forceinprincipalauimanager=False):
         '''
         Constructor
         '''
         self.parentframe = parentframe
-        self.force_mgr = forceInPrincipalAuiManager
+        self.force_mgr = forceinprincipalauimanager
     
         self.InitViewManager()
     
@@ -174,7 +174,7 @@ class ViewsManager(object):
                 
     def UpdateGUIManager(self):
         
-
+        self.parentframe.m_mgr.GetPane("wxRavenToolBar").window.Realize()
         self.parentframe.m_mgr.Update()
         self.parentframe.Layout()
         #self.parentframe.Centre( wx.BOTH )   
@@ -221,6 +221,163 @@ class ViewsManager(object):
             print("RaiseViewError() " + str(e))  
     
     
+    
+    
+    
+    
+    
+    
+    
+    def ShowParentInManager(self, instanceParent):
+        
+        all_panes = self.parentframe.m_mgr.GetAllPanes()
+        for ii in range(len(all_panes)):
+            if not all_panes[ii].IsToolbar():
+                print(all_panes[ii].name)
+                print(all_panes[ii].caption)
+                
+                if all_panes[ii].window == instanceParent:
+                    all_panes[ii].Show(True)
+                
+        self.UpdateGUIManager()
+    
+    
+    
+    
+    
+    
+    def OpenView(self, viewName, pluginname="", createIfNull=False):
+        
+        
+        _defaultArea = self.parentframe.GetPluginSetting("General", 'defaultviewarea')
+        
+        _v = None 
+        
+        
+        if pluginname == "":
+            
+            for _p in self.parentframe.Plugins.plugins:
+                #print(f"scanning {_p}")
+                _plugin = self.parentframe.GetPlugin(_p)
+                _v = _plugin.GetViewAttrDetails(viewName, attr="name")
+                if _v != None:
+                    #print("found!")
+                    break
+        
+        
+        else:
+            _plugin = self.parentframe.GetPlugin(_p)
+            _v = _plugin.GetViewAttrDetails(viewName, attr="name")
+        
+        
+        
+        if _v != None:
+            #print(_v)
+            
+            if _v['position'] == 'mgr':
+                #print(f"{_v['position']} will be managed dynamically with Manager")
+                self.parentframe.m_mgr.GetPane(_v['name']).Show(True)
+                self.UpdateGUIManager()
+            
+            elif _v['position'] == 'main':
+                #print(f"{_v['position']} will be managed dynamically with MainNotebook")
+                self.SetCurrentView_Notebook(viewName, self.parentframe.wxRavenMainBook)
+            
+            elif _v['position'] == 'toolbox1':
+                #print(f"{_v['position']} will be managed dynamically with Toolbox")
+                
+                _parent = self.GetArea(_v['position'])
+                #self.parentframe.m_mgr.GetPane("Toolbox1").Show(True)
+                self.SetCurrentView_Notebook(viewName, _parent)
+                
+                self.ShowParentInManager(_parent)
+                
+            
+            else:
+                #print(f"{_v['position']} will be managed dynamically with getParent")
+                
+                self.SetCurrentView_Notebook(viewName, _v['instance'].GetParent())
+                    
+                self.ShowParentInManager(_v['instance'].GetParent())
+                
+                
+                
+        else:
+            
+            if createIfNull:
+                
+                
+                
+                _viewObj = None
+                if pluginname == "":
+                    
+                    for _p in self.parentframe.Plugins.plugins:
+                        #print(f"scanning {_p}")
+                        _plugin = self.parentframe.GetPlugin(_p)
+                        _viewObj = _plugin.SearchPluginView(viewName)
+                        if _viewObj != None:
+                        #print("found!")
+                            pluginname = _p
+                            break
+                
+                else:
+                    _plugin = self.parentframe.GetPlugin(_p)
+                    _viewObj = _plugin.SearchPluginView(viewName)
+                    
+                    
+                if _viewObj != None:
+                    _plugin = self.parentframe.GetPlugin(_p)
+                    _plugin.LoadView(_viewObj, _defaultArea)
+                
+                
+                
+                
+                
+                
+                
+                
+                """
+                cp = self.parentframe.wxRavenMainBook.GetCurrentPage()
+                cpi = self.parentframe.wxRavenMainBook.GetPageIndex(cp)
+                cpText = self.parentframe.wxRavenMainBook.GetPageText( cpi)
+                print(f"current mainbook page {cp}   {cpText}")
+                
+                
+                for _x in range(0, self.parentframe.wxRavenMainBook.GetPageCount()-1):
+                    _xname = self.parentframe.wxRavenMainBook.GetPageText(_x)
+                    print(f"current mainbook page {_x}   {_xname}")
+                    
+                    if _xname == viewName:
+                        self.parentframe.wxRavenMainBook.SetSelection(_x)
+                        print(f"selecting {_x}")
+                        
+                """
+            
+            
+            
+                
+    
+        return _v
+    
+    
+    
+    
+    
+    
+    def SetCurrentView_Notebook(self, viewname, notebook):
+        cp = notebook.GetCurrentPage()
+        cpi = notebook.GetPageIndex(cp)
+        cpText = notebook.GetPageText( cpi)
+        #print(f"current mainbook page {cp}   {cpText}")
+                
+                
+        for _x in range(0, self.parentframe.wxRavenMainBook.GetPageCount()):
+            _xname = notebook.GetPageText(_x)
+            #print(f"current mainbook page {_x}   {_xname}")
+                    
+            if _xname == viewname:
+                notebook.SetSelection(_x)
+                #print(f"selecting {_x}")
     
     
               
@@ -312,7 +469,12 @@ class ViewsManager(object):
     
     
     def ShowAddViewDialog(self):
-        nViewDialog = RavenAddViewDialog(self.parentframe)
+        
+        _defaultViewSett = self.parentframe.GetPluginSetting("General", 'defaultviewarea')#main
+        #print(_defaultViewSett)
+        
+        
+        nViewDialog = RavenAddViewDialog(self.parentframe, _defaultViewSett)
         nViewDialog.Show()    
         
         
@@ -337,7 +499,7 @@ class RavenAddViewDialog(wxRavenAddView):
     
     _target = "mgr"
     
-    def __init__(self, parentFrame):
+    def __init__(self, parentFrame, targetDefault="main"):
         super().__init__(parentFrame)
         self.parentframe = parentFrame
         
@@ -347,6 +509,8 @@ class RavenAddViewDialog(wxRavenAddView):
         
         self._selected_plugin = ""
         self._selected_view = {}
+        
+        self._target = targetDefault
         
         self.openButton.Enable(False)
         
@@ -411,14 +575,16 @@ class RavenAddViewDialog(wxRavenAddView):
         
         
         
-        _defaultViewSett = self.parentframe.GetPluginSetting("General", 'defaultViewArea')#main
+        #_defaultViewSett = self.parentframe.GetPluginSetting("General", 'defaultviewarea')#main
+        #print(_defaultViewSett)
+        #if _defaultViewSett == None:
+        #    _defaultViewSett = "main"
         
-        if _defaultViewSett == None:
-            _defaultViewSett = "main"
-            
-        default = self.m_choice1.FindString(_defaultViewSett)
+        
+        #print(_defaultViewSett)
+        
+        default = self.m_choice1.FindString(self._target)
         self.m_choice1.SetSelection(default)
-        self._target = _defaultViewSett
         
         
         

@@ -120,7 +120,7 @@ class MenuAndToolBarManager(object):
     
     def setupToolBar(self):
         self.parentframe.Bind( wx.EVT_TOOL, self.OnContextMenu_ShowNetworkList, id = self.parentframe.rpcConnexions_dropdown_button.GetId() )
-    
+        self.parentframe.m_auiToolBar2.Realize()
     
     
     def showNetworkListMenu(self):
@@ -265,12 +265,11 @@ class MenuAndToolBarManager(object):
         #self.RaiseMenuAndToolLog("Not implemented.", "msg")
         
           
-        viewInstance = self.parentframe.Plugins.GetViewNameInstance(text)
+        #viewInstance = self.parentframe.Plugins.GetViewNameInstance(text)
+        #self.parentframe.m_mgr.GetPane(text).Show()
+        #self.parentframe.Views.UpdateGUIManager()
         
-        
-        self.parentframe.m_mgr.GetPane(text).Show()
-        
-        self.parentframe.Views.UpdateGUIManager()
+        self.parentframe.Views.OpenView(text)
         
         #print("viewInstance="+str(viewInstance))
     
@@ -298,6 +297,16 @@ class MenuAndToolBarManager(object):
     
     def OnAboutWxRaven(self, evt):
         aboutDial = wxRavenAbout(self.parentframe)
+        
+        
+        from wxRavenGUI.version import __VERSION__, __BUILD_ID__
+        
+        versionDetails = aboutDial.m_textCtrl2.GetValue()
+        versionDetails = versionDetails.replace("<VERSION>", __VERSION__)
+        versionDetails = versionDetails.replace("<BUILD_ID>", __BUILD_ID__)
+        
+        aboutDial.m_textCtrl2.SetValue(versionDetails)
+        
         aboutDial.Show(show=1)
         
     

@@ -47,7 +47,7 @@ class wxRavenPlugin(PluginObject):
         self.parentFrame = parentFrame
         self.parentFrame.ConnexionManager.RegisterOnConnexionChanged(self.OnNetworkChanged_T)
         
-        self.LoadPluginFrames()
+        #self.LoadPluginFrames()
 
 
 

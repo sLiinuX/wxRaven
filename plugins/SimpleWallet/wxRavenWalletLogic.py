@@ -123,7 +123,7 @@ class walletOverviewPane(wxRavenWalletOverview):
             
             
             
-            if self.parent_frame.isCurrentNetworkActive():
+            if self.parent_frame.isCurrentNetworkActive() and self.parent_frame._isReady:
             
                 try:
                     
@@ -182,7 +182,7 @@ class walletOverviewPane(wxRavenWalletOverview):
             allAccountsDatas = []
             globalAssetBalance = []
             
-            if self.parent_frame.isCurrentNetworkActive():
+            if self.parent_frame.isCurrentNetworkActive() and self.parent_frame._isReady:
             
                 try:
                     
@@ -300,36 +300,38 @@ class walletAssetsOverview(wxRavenWalletAssetsOverview):
     
     
     def UpdateAssetList(self):
-        try:
-            
-            
-            globalAssetBalance = []
-            
-            
-            if self.parent_frame.isCurrentNetworkActive():
-            
-                try:
-                    
-                    
-                    globalAssetBalance = self.parent_frame.GetPluginData("SimpleWallet","globalAssetBalance")
-                    
+        
+        if self.parent_frame._isReady:
+            try:
                 
-                except Exception as e:
-                    #print("updatePanel getData ERROR> " + str(e))
-                    self.parent_frame.Log("Unable to load wallet assets datas" , type="warning")
-            
-            else:
-                #pass    
-                print("Data retreive Skipped due to connexion error.")
-            
-            
-            
-            self.assetsViewListCtrl.DeleteAllItems()
-            for item in globalAssetBalance:
-                self.assetsViewListCtrl.AppendItem(item)   
-            
-        except Exception as e:
-            self.parent_frame.Log("Unable to display wallet assets" , type="error")
+                
+                globalAssetBalance = []
+                
+                
+                if self.parent_frame.isCurrentNetworkActive():
+                
+                    try:
+                        
+                        
+                        globalAssetBalance = self.parent_frame.GetPluginData("SimpleWallet","globalAssetBalance")
+                        
+                    
+                    except Exception as e:
+                        #print("updatePanel getData ERROR> " + str(e))
+                        self.parent_frame.Log("Unable to load wallet assets datas" , type="warning")
+                
+                else:
+                    #pass    
+                    print("Data retreive Skipped due to connexion error.")
+                
+                
+                
+                self.assetsViewListCtrl.DeleteAllItems()
+                for item in globalAssetBalance:
+                    self.assetsViewListCtrl.AppendItem(item)   
+                
+            except Exception as e:
+                self.parent_frame.Log("Unable to display wallet assets" , type="error")
 
 
 
@@ -356,25 +358,25 @@ class walletSendPane(wxRavenWalletSend):
         self.Layout()
 
     def reloadSenderList(self, con=""):
-        
-        try:
-            allAccountsDatas = []
+        if self.parent_frame._isReady:
+            try:
+                allAccountsDatas = []
+                
             
-        
-            allAddresses = self.parent_frame.GetPluginData("SimpleWallet","allAddresses")
-            
-            # refresh your items with .Clear, .Append(), etc
-            # I'm just adding new item every time user clicks on control     
-            self.sendFromTextbox.Clear()  
-            self.sendFromTextbox.Append("Any")    
-            for ad in allAddresses:
-                self.sendFromTextbox.Append(ad)
-            
-            self.lastaddresses = allAddresses
-            self.sendFromTextbox.SetSelection(0)
-            
-        except Exception as e:
-            self.parent_frame.Log("Unable to load sending address list" , type="warning")
+                allAddresses = self.parent_frame.GetPluginData("SimpleWallet","allAddresses")
+                
+                # refresh your items with .Clear, .Append(), etc
+                # I'm just adding new item every time user clicks on control     
+                self.sendFromTextbox.Clear()  
+                self.sendFromTextbox.Append("Any")    
+                for ad in allAddresses:
+                    self.sendFromTextbox.Append(ad)
+                
+                self.lastaddresses = allAddresses
+                self.sendFromTextbox.SetSelection(0)
+                
+            except Exception as e:
+                self.parent_frame.Log("Unable to load sending address list" , type="warning")
 
     def OnChoiceChanged(self, evt):
         newChoice=evt.GetString()

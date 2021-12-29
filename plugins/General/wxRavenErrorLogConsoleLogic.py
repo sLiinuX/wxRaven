@@ -191,6 +191,20 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
         self.allIcons['msg'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('help_view') )
         self.allIcons['warning'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('warning_obj') )
         
+        self.allIcons['dbsync_inprogress'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('repository-synchronize') )
+        self.allIcons['db'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('repository-blue') )
+        self.allIcons['dbsync_done'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('repository_sync_done') )
+        self.allIcons['db_warning'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('repository_warning') )
+        self.allIcons['db_check'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('repository_check') )
+        
+        
+        self.allIcons['process_run'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('process_run') )
+        self.allIcons['process_stop'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('process_stop') )
+        self.allIcons['process_pause'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('process_pause') )
+        self.allIcons['process_warning'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('process_pause') )
+        
+        
+        
         
         self.m_listCtrl1.SetImageList(self.il, wx.IMAGE_LIST_SMALL)
         

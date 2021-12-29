@@ -49,8 +49,8 @@ class MyTutorialSettingPanel ( wx.Panel ):
 		
 		bSizer3 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.booleanSetting = wx.CheckBox( self, wx.ID_ANY, u"booleanSetting", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer3.Add( self.booleanSetting, 0, wx.ALL, 5 )
+		self.booleansetting = wx.CheckBox( self, wx.ID_ANY, u"booleansetting", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer3.Add( self.booleansetting, 0, wx.ALL, 5 )
 		
 		
 		bSizer2.Add( bSizer3, 0, 0, 5 )

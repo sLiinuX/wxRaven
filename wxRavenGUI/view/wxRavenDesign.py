@@ -79,6 +79,7 @@ class wxRavenMainFrame ( wx.Frame ):
 		self.wxRavenMenuBar_Window_NewWin = wx.MenuItem( self.wxRavenMenuBar_Window, wx.ID_ANY, u"New Window...", wx.EmptyString, wx.ITEM_NORMAL )
 		self.wxRavenMenuBar_Window_NewWin.SetBitmap( wx.Bitmap( u"res/default_style/normal/frame_default.png", wx.BITMAP_TYPE_ANY ) )
 		self.wxRavenMenuBar_Window.AppendItem( self.wxRavenMenuBar_Window_NewWin )
+		self.wxRavenMenuBar_Window_NewWin.Enable( False )
 		
 		self.wxRavenMenuBar_Window.AppendSeparator()
 		
@@ -221,7 +222,7 @@ class wxRavenAbout ( wx.Dialog ):
 		self.m_staticText3.Wrap( -1 )
 		bSizer8.Add( self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
 		
-		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, u"Version: <Development Version>\nBuild id: <N/A>\n\n--\n\nwxRaven is an open-source IRE (Integrated Raven Environment) Framework for the Ravencoin community.\n\nIt provides usefull built-in functions to create and develop your own \"Use-case specific application\" as one or multiple plugin of this integrated environment itself such as :\n\n    - Built-in RPC connexion\n    - High Level RPC API Commands\n    - RPC Shell & Command list\n    - Highly Customizable End User Interface\n    - ... More to come !\n\t\t\t\t\t\t\t\t\tsLinuX\n\n--\n\nLicence Type : MIT \n(c) Copyright wxRaven contributors and others.  \nNo rights reserved.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n", wx.DefaultPosition, wx.DefaultSize, wx.TE_CENTRE|wx.TE_MULTILINE|wx.TE_READONLY )
+		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, u"Version: <VERSION>\nBuild id: <BUILD_ID>\nhttps://github.com/sLiinuX/wxRaven\n--\n\nwxRaven is an open-source IRE (Integrated Raven Environment) Framework for the Ravencoin community.\n\nIt provides usefull built-in functions to create and develop your own \"Use-case specific application\" as one or multiple plugin of this integrated environment itself such as :\n\n    - Built-in RPC connexion\n    - High Level RPC API Commands\n    - RPC Shell & Command list\n    - Highly Customizable End User Interface\n    - ... More to come !\n\t\t\t\t\t\t\t\t\tsLinuX\n\n--\n\nLicence Type : MIT \n(c) Copyright wxRaven contributors and others.  \nNo rights reserved.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n", wx.DefaultPosition, wx.DefaultSize, wx.TE_CENTRE|wx.TE_MULTILINE|wx.TE_READONLY )
 		bSizer8.Add( self.m_textCtrl2, 4, wx.ALL|wx.EXPAND, 5 )
 		
 		
@@ -315,7 +316,7 @@ class wxRavenAddView ( wx.Dialog ):
 class wxRavenSettingDialog ( wx.Dialog ):
 	
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Preferences", pos = wx.DefaultPosition, size = wx.Size( 712,520 ), style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Preferences", pos = wx.DefaultPosition, size = wx.Size( 712,614 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		

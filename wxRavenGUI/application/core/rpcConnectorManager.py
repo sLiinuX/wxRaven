@@ -43,7 +43,7 @@ class RvnRPC_ConnectorManager(object):
             
             
         self.net_icon = parentObjSynch.RessourcesProvider.GetImage('network')# wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY )    
-        self.safemode =  parentObjSynch.Settings.safeMode 
+        self.safemode =  parentObjSynch.Settings.safemode 
          
          
         try:

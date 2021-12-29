@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<richtext version="1.0.0.0" xmlns="http://www.wxwidgets.org">
+  <paragraphlayout textcolor="#000000" fontpointsize="9" fontfamily="70" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Segoe UI" alignment="1" parspacingafter="10" parspacingbefore="0" linespacing="10" margin-left="5,4098" margin-right="5,4098" margin-top="5,4098" margin-bottom="5,4098">
+    <paragraph fontweight="700" alignment="2" parspacingafter="20" parspacingbefore="0">
+      <text fontpointsize="14" fontweight="700">WxRaven Changelog</text>
+    </paragraph>
+    <paragraph alignment="2" parspacingafter="20" parspacingbefore="0">
+      <text fontstyle="93" fontweight="700">" 0.0.1#BUILD-7"</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman">
+      <text></text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman">
+      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">[0.1.1#Build-7] - 2021-12-28</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="100" leftsubindent="0">
+      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">Added</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
+      <text fontstyle="93">Asset Navigator</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
+      <text fontstyle="93">Welcome Page</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
+      <text fontstyle="93">Asset Preview</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
+      <text fontstyle="93">Settings Panel</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="100" leftsubindent="0">
+      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">Changed</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
+      <text fontstyle="93">Asset Search</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
+      <text fontstyle="93">wxRaven Core Window</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="100" leftsubindent="0">
+      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">Fixed</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
+      <text fontstyle="93">N/A</text>
+    </paragraph>
+    <paragraph>
+      <text></text>
+    </paragraph>
+  </paragraphlayout>
+</richtext>

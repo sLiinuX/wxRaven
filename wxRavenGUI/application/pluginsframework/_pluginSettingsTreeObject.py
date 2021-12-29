@@ -36,6 +36,8 @@ class PluginSettingsTreeObject(object):
         self._classPanel = classPanel
         self._icon = icon
         self._childs = _childs
+        if _childs == None:
+            self._childs = []
         
         
         

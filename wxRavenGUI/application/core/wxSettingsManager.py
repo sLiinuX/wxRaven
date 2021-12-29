@@ -33,10 +33,10 @@ class SettingsManager(object):
     
     
     
-    resumeViewOnStartup = False
-    forceInPrincipalAuiManager = False
-    resumePluginState = True
-    safeMode = True
+    resumeviewonstartup = False
+    forceinprincipalauimanager = False
+    resumepluginstate = True
+    safemode = True
     
     
     allconnexions = {}
@@ -103,15 +103,15 @@ class SettingsManager(object):
         
         #Config.exist
 
-        #resumeViewOnStartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
-        #print("Save resumeViewOnStartup = " +resumeViewOnStartup)
+        #resumeviewonstartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
+        #print("Save resumeviewonstartup = " +resumeviewonstartup)
         self._SaveGeneralSettings(Config)
         self._SaveConnexionSettings(Config)
         
         self._SaveAllPluginsSettings(Config)
         
 
-        #Config.set('General','connexionChangedCallbackInSafeMode',str(self.connexionChangedCallbackInSafeMode))
+        #Config.set('General','connexionChangedCallbackInsafemode',str(self.connexionChangedCallbackInsafemode))
 
         Config.write(cfgfile)
         cfgfile.close()
@@ -119,14 +119,14 @@ class SettingsManager(object):
     
     def _SaveGeneralSettings(self, configObj):
         
-        resumeViewOnStartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
-        #print("Save resumeViewOnStartup = " +resumeViewOnStartup)
+        resumeviewonstartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
+        #print("Save resumeviewonstartup = " +resumeviewonstartup)
         
         configObj.add_section('Application')
-        configObj.set('Application','resumeViewOnStartup',resumeViewOnStartup)
-        configObj.set('Application','forceInPrincipalAuiManager',str(self.forceInPrincipalAuiManager))
-        configObj.set('Application','resumePluginState',str(self.resumePluginState))
-        configObj.set('Application','safeMode',str(self.safeMode))
+        configObj.set('Application','resumeviewonstartup',resumeviewonstartup)
+        configObj.set('Application','forceinprincipalauimanager',str(self.forceinprincipalauimanager))
+        configObj.set('Application','resumepluginstate',str(self.resumepluginstate))
+        configObj.set('Application','safemode',str(self.safemode))
         
         
         return configObj
@@ -147,8 +147,10 @@ class SettingsManager(object):
         
         
         for key in _pInstance.PLUGIN_SETTINGS:
-            conf.set(pname,key,str(_pInstance.PLUGIN_SETTINGS[key]))
+            conf.set(pname,key.lower(),str(_pInstance.PLUGIN_SETTINGS[key]))
         
+            
+            #print(pname + " - " + key + " = " + str(_pInstance.PLUGIN_SETTINGS[key]))
         
         return  conf   
     
@@ -162,9 +164,10 @@ class SettingsManager(object):
             if _plugin_instance != None:
                 
                 try:
+                    #print(f"saving {_p} in config.ini")
                     configObj.add_section(_p)
                 except:
-                    pass
+                    print(f"error while saving {_p} in config.ini")
                 
                 
                 self._SavePluginSettings(_p , _plugin_instance, configObj)
@@ -193,16 +196,16 @@ class SettingsManager(object):
         #
         # View options
         #
-        self.resumeViewOnStartup = configObj.getboolean("Application", "resumeViewOnStartup", fallback = False)
-        self.parentframe.wxRavenMenuBar_Window_Perspectives.Check(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId(), self.resumeViewOnStartup )
+        self.resumeviewonstartup = configObj.getboolean("Application", "resumeviewonstartup", fallback = False)
+        self.parentframe.wxRavenMenuBar_Window_Perspectives.Check(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId(), self.resumeviewonstartup )
         
-        self.resumePluginState= configObj.getboolean("Application", "resumePluginState", fallback = True) 
+        self.resumepluginstate= configObj.getboolean("Application", "resumepluginstate", fallback = True) 
         
         #
         # Hidden configuration for dev purpose
         #
-        self.forceInPrincipalAuiManager = configObj.getboolean("Application", "forceInPrincipalAuiManager", fallback = False) 
-        self.resumePluginState= configObj.getboolean("Application", "safeMode", fallback = True) 
+        self.forceinprincipalauimanager = configObj.getboolean("Application", "forceinprincipalauimanager", fallback = False) 
+        self.resumepluginstate= configObj.getboolean("Application", "safemode", fallback = True) 
     
     
     def _LoadConnexionSettings(self, configObj):
@@ -343,7 +346,7 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             #print(_NewPanel._Panel)
             
             sizer = wx.BoxSizer(wx.VERTICAL)
-            sizer.Add(_NewPanel._Panel , 1, wx.EXPAND|wx.ALL, 5)
+            sizer.Add(_NewPanel._Panel , 1, wx.EXPAND|wx.ALL, 0)
             self.settingContentPlaceHolderPannel.SetSizer(sizer)
         
             self._currentPannel = _NewPanel
@@ -516,14 +519,20 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             #if True:
                 
                 try:
-                    print("save tree" )
+                    print("save tree : " +str(_pObj))
                     _pObj.SavePanelSettings()
+                    _pObj.safeClose()
                     _pObj._Panel.Destroy()
                 except Exception as e:
                     #_doClose = False
-                    self.parentFrame.Log("Unable to Save Setting in "+_pObj.PLUGIN_NAME + " : "+ str(e) , type="error")
+                    self.parentFrame.Log("Unable to Save Setting in "+str(_pObj) + " : "+ str(e) , type="error")
                     #print("exception tree" )
-        
+            else:
+                try:
+                    _pObj.safeClose()
+                    _pObj._Panel.Destroy()
+                except Exception as e:
+                    pass
         
                 
         if _doClose:

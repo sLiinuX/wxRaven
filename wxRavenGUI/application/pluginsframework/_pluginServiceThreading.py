@@ -3,7 +3,14 @@ Created on 22 déc. 2021
 
 @author: slinux
 '''
-
+#
+#
+#
+#    DO NOT USE !
+#
+#
+#
+#
 from threading import Thread, Event
 
 class KillableThread(Thread):

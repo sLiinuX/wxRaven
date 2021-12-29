@@ -180,6 +180,20 @@ class PluginObject(object):
     
     
     
+    def GetViewAttrDetails(self, viewId, attr="viewid"):
+        
+        result=None
+        
+        for row in self.VIEWS_INSTANCES:
+            vid = row[attr]
+            
+            if vid == viewId:
+                result = row
+    
+        return result
+    
+    
+    
     def GetViewAttrInstance(self, viewId, attr="viewid"):
         
         result=None
@@ -213,7 +227,7 @@ class PluginObject(object):
         df_class = view['class']
         df_name = view['name']
         df_icon = view['icon']
-        
+        newview = None
         
         isArea = False
         
@@ -297,6 +311,7 @@ class PluginObject(object):
             self.RaisePluginLog("nothing created.", "warning")
         
         
+        return newview
         
     
     def SearchPluginView(self, viewName, attr="viewid"):
@@ -329,7 +344,7 @@ class PluginObject(object):
         existingDatas = None
         
         
-        if self.parentFrame.Settings.resumePluginState:
+        if self.parentFrame.Settings.resumepluginstate:
             existingDatas = self.__LoadVar__(self.PLUGIN_NAME, None)
         
         

@@ -7,3 +7,4 @@ wxPython
 ipfshttpclient
 sqlalchemy
 python-socketio
+qrcode[pil]

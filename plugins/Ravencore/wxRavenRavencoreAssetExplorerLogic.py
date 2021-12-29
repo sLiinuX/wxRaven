@@ -4,10 +4,24 @@ Created on 20 déc. 2021
 @author: slinux
 '''
 
+
 from .wxRavenRavencoreDesign import *
 
 from wxRavenGUI.application.wxcustom.CustomLoading import *
 import webbrowser
+
+from .wxRavenRavencoreHTMLviewer import *
+from libs.RVNpyRPC import _asset as assetLib
+from libs.RVNpyRPC._asset import AssetType
+
+try:
+    import pyperclip
+except ImportError:
+    from libs import pyperclip
+    
+    
+    
+
 
 
 class RavencoreAssetExplorer(wxRavenAssetExplorer):
@@ -19,8 +33,8 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
     view_name = "Asset Search"
     parent_frame = None
     default_position = "main"
-    icon = 'ravencoin'#wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
-    
+    icon = 'search_ravencoin'#wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
+    #self.RessourcesProvider.GetImage('asset_navigation')
     
     
     
@@ -36,7 +50,7 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         #    Your constructor here
         #
         
-        self.view_base_name = "AssetExplorer"
+        self.view_base_name = "Asset Search"
         self.view_name = viewName
         self.parent_frame = parentFrame
         self.default_position = position
@@ -54,7 +68,7 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         
         self.popupIDS = {}
         self.popupMAP = {}
-        
+        self._pwin  = None
         
         self._datacache = {}
         
@@ -104,34 +118,87 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
     #
     #
     def LoadSearchOptions(self):
-        assetSearchLimit = self.parent_frame.GetPluginSetting("Ravencore","assetSearchLimit") 
-        strictName = self.parent_frame.GetPluginSetting("Ravencore","strictName") 
-        mainOnly = self.parent_frame.GetPluginSetting("Ravencore","onlyMainAsset") 
+        assetsearchlimit = self.parent_frame.GetPluginSetting("Ravencore","assetsearchlimit") 
+        strictname = self.parent_frame.GetPluginSetting("Ravencore","strictname") 
+        mainOnly = self.parent_frame.GetPluginSetting("Ravencore","filtertype") 
         
-        #print(assetSearchLimit)
-        #print(strictName)
+        #print(assetsearchlimit)
+        #print(strictname)
         #print(mainOnly)
         
         
         #print(self.parent_frame.GetPlugin("Ravencore") )
-        self.searchopt_strictmode.SetValue(strictName)
-        self.searchopt_maxresults.SetValue(assetSearchLimit)
+        self.searchopt_strictmode.SetValue(strictname)
+        self.searchopt_maxresults.SetValue(assetsearchlimit)
         self.searchopt_onlymain.SetValue(mainOnly)
+    
+    
+    
+    
+    
+    def filtertypeDialog(self, _plugin):
+        _assetTypeList = [ ]
         
+        for key in assetLib._ASSET_KEYCHAR_:
+            _assetTypeList.append(key)
+            
+            
         
+        dlg = wx.MultiChoiceDialog( self,
+                                   "Select Asset Type(s) :",
+                                   "Filter...", _assetTypeList)
+    
+        if (dlg.ShowModal() == wx.ID_OK):
+            _plugin.PLUGIN_SETTINGS['filtertype'] = True
+            
+            selections = dlg.GetSelections()
+            strings = [_assetTypeList[x] for x in selections]
+            
+            _plugin.PLUGIN_SETTINGS['filtertypelist'] = strings
+            
+            print("save:")
+            print(strings )
+            
+            
+        else:
+            _plugin.PLUGIN_SETTINGS['filtertype'] = False
+            
+        return strings   
+            
+    
+        
+    def SearchAssetTypeChanged(self):
+        #strictname = self.searchopt_strictmode.GetValue()
+        #assetsearchlimit = self.searchopt_maxresults.GetValue()
+        _p = self.parent_frame.GetPlugin("Ravencore")
+        mainOnly_OLD = _p.PLUGIN_SETTINGS['filtertype']        
+        mainOnly = self.searchopt_onlymain.GetValue()  
+        
+        if mainOnly != mainOnly_OLD:
+            if mainOnly:
+                self.filtertypeDialog(_p)
+            else:
+                _p.PLUGIN_SETTINGS['filtertype'] = False
+          
     
     def SearchOptionsChanged(self, evt):
-        strictName = self.searchopt_strictmode.GetValue()
-        assetSearchLimit = self.searchopt_maxresults.GetValue()
+        strictname = self.searchopt_strictmode.GetValue()
+        assetsearchlimit = self.searchopt_maxresults.GetValue()
         mainOnly = self.searchopt_onlymain.GetValue()
         
         print("options saved !")
         
         _p = self.parent_frame.GetPlugin("Ravencore")
         
-        _p.PLUGIN_SETTINGS['assetSearchLimit'] = assetSearchLimit
-        _p.PLUGIN_SETTINGS['strictName'] = strictName
-        _p.PLUGIN_SETTINGS['onlyMainAsset'] = mainOnly
+        _p.PLUGIN_SETTINGS['assetsearchlimit'] = assetsearchlimit
+        _p.PLUGIN_SETTINGS['strictname'] = strictname
+        
+        #
+        self.SearchAssetTypeChanged()
+        #
+        
+        
+        _p.PLUGIN_SETTINGS['filtertype'] = mainOnly
         
         
         self.infoMessage("Filter preferences saved !", wx.ICON_INFORMATION)
@@ -171,8 +238,11 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         self.ClearResults()
         self._datacache = {}
         
-        mainOnly = self.parent_frame.GetPluginSetting("Ravencore","onlyMainAsset") 
+        mainOnly = self.parent_frame.GetPluginSetting("Ravencore","filtertype") 
         result = self.parent_frame.GetPluginData("Ravencore","_AssetSearchResult") 
+        
+        _filteronTypes = self.parent_frame.GetPluginSetting("Ravencore","filtertypelist") 
+        #_plugin.PLUGIN_SETTINGS['filtertypeDetails'] = strings
 
 
         excludeChars = ['#', '/']
@@ -193,15 +263,31 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
                 
                 
                 if mainOnly:
-                    for _char in excludeChars:
-                        if _assetDatas['name'].__contains__(_char):
+                    
+                    _currentType = str(_assetDatas['type'].value)
+                    
+                    #print("Filtering type :" + str(_filteronTypes))
+                    if _filteronTypes != None:
+                    
+                        if _currentType not in _filteronTypes:
                             _skipAsset = True
                             continue
+                    
+                    #for _char in excludeChars:
+                    #    if _assetDatas['name'].__contains__(_char):
+                    #        _skipAsset = True
+                    #        continue
+                
+                
+                
+                
+                
+                
                 
                 #print(_assetDatas)
                 if not _skipAsset:
                     index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(),_assetDatas['name'], self.allIcons['asset'] )
-                    self.m_listCtrl1.SetItem(index,1, 'n/a')
+                    self.m_listCtrl1.SetItem(index,1, str(_assetDatas['type'].value))
                     self.m_listCtrl1.SetItem(index,2, str(_assetDatas['amount']))
                     
                     #self.m_listCtrl1.SetItem(index,3, str(_assetDatas['block_height']))
@@ -256,7 +342,7 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         self.m_listCtrl1.InsertColumn(0, info)
 
         info.Align = 0#wx.LIST_FORMAT_RIGHT
-        info.Text = "TX Volume"
+        info.Text = "Asset Type"
         self.m_listCtrl1.InsertColumn(1, info)
 
         info.Align = 0
@@ -327,31 +413,40 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         filterSearch = self.m_searchCtrl1.GetValue()
         
         
-        assetSearchLimit = self.parent_frame.GetPluginSetting("Ravencore","assetSearchLimit") 
+        assetsearchlimit = self.parent_frame.GetPluginSetting("Ravencore","assetsearchlimit") 
         
-        strictName = self.parent_frame.GetPluginSetting("Ravencore","strictName") 
+        strictname = self.parent_frame.GetPluginSetting("Ravencore","strictname") 
         
-        mainOnly = self.parent_frame.GetPluginSetting("Ravencore","onlyMainAsset") 
+        filtertypelist = self.parent_frame.GetPluginSetting("Ravencore","filtertypelist") 
+        filtertype = self.parent_frame.GetPluginSetting("Ravencore","filtertype") 
         
-        if strictName==False and not filterSearch.__contains__("*"):
+        mainOnly = False
+        
+        if filtertype:
+            if filtertypelist == ["MAINASSET"]:
+                mainOnly = True 
+            
+            
+        
+        if strictname==False and not filterSearch.__contains__("*"):
             
             filterSearch = filterSearch + "*"
 
-        #result = self.SearchAsset(filterSearch, assetSearchLimit)
+        #result = self.SearchAsset(filterSearch, assetsearchlimit)
         #self.m_listCtrl1.Freeze()
         
         #
         # Asynch Search
         #
         self.ClearResults()
-        self.parent_frame.GetPlugin("Ravencore").OnSearchRequested_T(filterSearch, assetSearchLimit,mainOnly )
+        self.parent_frame.GetPlugin("Ravencore").OnSearchRequested_T(filterSearch, assetsearchlimit,mainOnly )
         
         
         
         
         
         
-        if assetSearchLimit > 100:
+        if int(assetsearchlimit) > 100:
             self.infoMessage("Search in progress, it can be longer with current search limit.", wx.ICON_WARNING)
             
         
@@ -408,10 +503,32 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         self._currentItem = event.Index
         
         
+        itemData = self._datacache[self._currentItem]
+        self._currentItemData = itemData
+        _hasIpfs =  itemData['has_ipfs']
         
-        print(self._currentItem)
-        print(self.m_listCtrl1.GetItemText(self._currentItem))
-        print(self.getColumnText(self._currentItem, 1))
+        if _hasIpfs:
+            
+            
+            _ipfsgateway_default = self.parent_frame.GetPluginSetting("Ravencore","ipfsgateway_default")
+            _url = _ipfsgateway_default  +itemData['ipfs_hash']
+            
+            self._currentItemURl = _url   
+            self._currentItemHash = itemData['ipfs_hash']
+            
+            
+            if self._pwin != None:
+                #self._pwin.wv.LoadURL(self._currentItemURl)
+                #self._pwin.wv.LoadURL(self._currentItemURl)
+                #self._pwin.LoadAssetUrl(self._currentItemURl)
+                if self._pwin.IsShown() :
+                    self.previewIPFS(event)
+                
+        #print(self._currentItem)
+        #print(self.m_listCtrl1.GetItemText(self._currentItem))
+        #print(self.getColumnText(self._currentItem, 1))
+        
+        
         #print(self._currentItem)
         """
         self.log.WriteText("OnItemSelected: %s, %s, %s, %s\n" %
@@ -460,16 +577,55 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         menu = wx.Menu()
         
         
-        # add some items
+        
+        #Add Bkmrk
+        #
+        nid = wx.NewId()
+        _addBk = menu.Append(nid, "Add in Bookmarks" )
+        _addBk.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('addbkmrk_co'))
+        self.Bind(wx.EVT_MENU, self.addInBkmrk, id=nid)
+        
+        
+        
+        #Navigate
+        #
+        nid = wx.NewId()
+        _Navigate = menu.Append(nid, "Navigate" )
+        _Navigate.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('hierarchicalLayout'))
+        self.Bind(wx.EVT_MENU, self.navigateAsset, id=nid)
+        
+        # Preview
+        nid = wx.NewId()
+        _preview = menu.Append(nid, "Preview" )
+        _preview.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('ressource_picture'))
+        self.Bind(wx.EVT_MENU, self.previewIPFS, id=nid)
+        
+        
+        
+        # Copy Hash
+        nid = wx.NewId()
+        _copyHash = menu.Append(nid, "Copy Hash" )
+        _copyHash.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('copy_clipboard'))
+        self.Bind(wx.EVT_MENU, self.copyHash, id=nid)
+        
+        
+        
+        # Open items
         nid = wx.NewId()
         _opendefaultipfs = menu.Append(nid, "Open IPFS" )
         _opendefaultipfs.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('raven_ipfs'))
         self.Bind(wx.EVT_MENU, self.openDefaultIPFS, id=nid)
         
+        
+        
         #webresources16
         _ipfs_menu = wx.Menu()
         _ipfs_menu_item = menu.AppendSubMenu(_ipfs_menu, "Open IPFS with...")
         _ipfs_menu_item.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('webresources16'))
+        
+        
+        
+        
         
         pptext = "popupID" 
         ppcount = 1
@@ -485,6 +641,8 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         if not _hasIpfs:
             _ipfs_menu_item.Enable(False)
             _opendefaultipfs.Enable(False)
+            _copyHash.Enable(False)
+            _preview.Enable(False)
         #menu.Append(self.popupID2, "Iterate Selected")
         #menu.Append(self.popupID3, "ClearAll and repopulate")
         #menu.Append(self.popupID4, "DeleteAllItems")
@@ -497,20 +655,101 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         menu.Destroy()   
     
     
-    
-    def openDefaultIPFS(self, event):    
+    def addInBkmrk(self, event):
+        itemData = self._datacache[self._currentItem]
         
+        _navItem = itemData['name']
+        #print(itemData['type'])
+        
+        
+        
+        if itemData['type'] != AssetType.MAINASSET:
+            
+            dlg = wx.MessageDialog(self, 'The Asset you selected is not a main asset, add main asset in bookmark instead ?',
+                               'Confirmation',
+                               wx.YES_NO | wx.ICON_INFORMATION
+                               #wx.YES_NO | wx.NO_DEFAULT | wx.CANCEL | wx.ICON_INFORMATION
+                               )
+            res=dlg.ShowModal()
+            dlg.Destroy()
+            
+            if res==wx.ID_YES or res==wx.YES:
+            
+                _navItem = itemData['parent'] 
+            
+            
+        self.parent_frame.GetPlugin("Ravencore").AddAssetInBookmark(str(_navItem))
+        
+        
+        dlg = wx.MessageDialog(self, 'Asset added in the Bookmark with Success !',
+                               'Confirmation',
+                               wx.OK | wx.ICON_INFORMATION
+                               #wx.YES_NO | wx.NO_DEFAULT | wx.CANCEL | wx.ICON_INFORMATION
+                               )
+        dlg.ShowModal()
+        dlg.Destroy()
+        
+    
+    def navigateAsset(self, event):
+        itemData = self._datacache[self._currentItem]
+        
+        _navItem = itemData['name']
+        #print(itemData['type'])
+        if itemData['type'] != AssetType.MAINASSET:
+            _navItem = itemData['parent'] 
+            
+            
+        self.parent_frame.GetPlugin("Ravencore").NaviguateAsset(str(_navItem))
+    
+    
+    def previewIPFS(self, event):
+        #wx.Log.SetActiveTarget(wx.LogStderr())
+        self.parent_frame.GetPlugin("Ravencore").previewIPFS(self._currentItemURl)
+        """
+        if self._pwin == None:
+            self._pwin = RavencoreHTMLViewer(self.parent_frame, self._currentItemURl, 'mgr')
+        
+        
+        self._pwin.wv.LoadURL(self._currentItemURl)
+        self.parent_frame.m_mgr.GetPane("Asset Preview").Show()
+        self.parent_frame.Views.UpdateGUIManager()
+        """
+        
+        #self._pwin.LoadAssetUrl(self._currentItemURl)
+    
+    
+    def copyHash(self, event):
+        #print(self._currentItem)
+        #print(self.m_listCtrl1.GetItemText(self._currentItem))
+        #print(self.getColumnText(self._currentItem, 1))
+        _data= self._datacache[self._currentItem]
+        self.parent_frame.GetPlugin("Ravencore").CopyClip(_data)
+        """
+        itemData = self._datacache[self._currentItem]
+        print(itemData['ipfs_hash'])
+        pyperclip.copy(itemData['ipfs_hash'])
+        
+        self.infoMessage("IPFS Hash copied to the clipboard", wx.ICON_INFORMATION)
+        """    
+        
+    
+    def openDefaultIPFS(self, event): 
+        _data= self._datacache[self._currentItem]
+        if _data['has_ipfs']:
+            self.parent_frame.GetPlugin("Ravencore").OpenIPFSinWebBrowser(_data)
+           
+        """
         _ipfsgateway_default = self.parent_frame.GetPluginSetting("Ravencore","ipfsgateway_default")
         
         
         
-        _data= self._datacache[self._currentItem]
+        
         print(_data['has_ipfs'])
         
         if _data['has_ipfs']:
             _url = _ipfsgateway_default  +_data['ipfs_hash']
             webbrowser.open(_url)
-            
+        """    
             
             
     def OnPopupOne(self, event):
@@ -518,19 +757,11 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         #print("FindItem:", self.m_listCtrl1.FindItem(-1, "Roxette"))
         #print("FindItemData:", self.m_listCtrl1.FindItemData(-1, 11))
         
+        _data= self._datacache[self._currentItem]
+        if _data['has_ipfs']:
+            self.parent_frame.GetPlugin("Ravencore").OpenIPFSinWebBrowser(_data, str(self.popupMAP[event.GetId()]))
         
-        
-        #
-        #ipfsgateway_providers
-        #
-        #print(event)
-        #print(event.GetId())
-        #print(event.GetText())
-        #print()
-        #self.popupMAP[popupID] 
-        #index = animals.index('dog')
-        
-        
+        """
         _data= self._datacache[self._currentItem]
         print(_data['has_ipfs'])
         
@@ -540,4 +771,6 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
             #webbrowser.open('https://cloudflare-ipfs.com/ipfs/'+_data['ipfs_hash'])
             
         pass
+    
+        """
             

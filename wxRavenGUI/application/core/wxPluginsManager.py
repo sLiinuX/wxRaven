@@ -43,7 +43,7 @@ class pluginsManager(object):
         
         self.resumestate = resumestate
         
-        self.safemode = contextAppMainFrame.Settings.safeMode
+        self.safemode = contextAppMainFrame.Settings.safemode
         
         
         self.LoadPlugin("plugins.General.plugin.*")
@@ -53,8 +53,13 @@ class pluginsManager(object):
     
     
     
-    def Initialize(self):
+    def Initialize(self, loadDefaultViews=True):
         self.LoadFromPluginDirectory()
+        
+        if loadDefaultViews:
+            for p in self.plugins:
+                pinst = self.plugins[p]
+                pinst.LoadPluginFrames()
     
     
     def RaisePluginError(self, message):

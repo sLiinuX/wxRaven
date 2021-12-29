@@ -106,7 +106,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         #self.MenusAndTool.refreshViewsListMenu()
         
 
-        self.PerspectiveManager = perspectiveManager(self, CONFIG_PATH, loadLastView=self.Settings.resumeViewOnStartup)  
+        self.PerspectiveManager = perspectiveManager(self, CONFIG_PATH, loadLastView=self.Settings.resumeviewonstartup)  
         
         
         
@@ -124,6 +124,11 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         
         self._isReady = True
+        self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Plugins.plugins, "Plugins")
+        self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Views, "Views")
+        
+        
+        self.Views.OpenView("Welcome", pluginname='', createIfNull=True)
         #self.wxRavenToolBook3.SetArtProvider(wx.aui.AuiSimpleTabArt())
        
         #splash.Close()

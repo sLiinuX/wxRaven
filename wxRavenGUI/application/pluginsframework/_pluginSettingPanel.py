@@ -72,7 +72,12 @@ class PluginSettingsPanelObject(object):
         pass
     
     
-    
+    #
+    #
+    # method to be called at panel deletion so it can remove safely pending stuff
+    # 
+    def safeClose(self):
+        pass
     
     
 class wxRavenNotAvailableSettingPanel(PluginSettingsPanelObject):
