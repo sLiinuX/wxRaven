@@ -44,7 +44,7 @@ class wxRavenWalletMain ( wx.Panel ):
 class wxRavenWalletOverview ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 453,366 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 453,407 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer1 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -76,6 +76,10 @@ class wxRavenWalletOverview ( wx.Panel ):
 		self.showAddressCheckbox = wx.CheckBox( self, wx.ID_ANY, u"Show/Hide Account(s) Addresse(s)", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer1.Add( self.showAddressCheckbox, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
 		
+		self.showChangesAddress = wx.CheckBox( self, wx.ID_ANY, u"Show Changes Addresses", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.showChangesAddress.SetValue(True) 
+		bSizer1.Add( self.showChangesAddress, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
+		
 		self.addressViewListCtrl = wx.dataview.DataViewListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer1.Add( self.addressViewListCtrl, 1, wx.ALL|wx.EXPAND, 5 )
 		
@@ -85,6 +89,7 @@ class wxRavenWalletOverview ( wx.Panel ):
 		
 		# Connect Events
 		self.showAddressCheckbox.Bind( wx.EVT_CHECKBOX, self.OnRefreshButton )
+		self.showChangesAddress.Bind( wx.EVT_CHECKBOX, self.OnShowChangesAddresses )
 	
 	def __del__( self ):
 		pass
@@ -92,6 +97,9 @@ class wxRavenWalletOverview ( wx.Panel ):
 	
 	# Virtual event handlers, overide them in your derived class
 	def OnRefreshButton( self, event ):
+		event.Skip()
+	
+	def OnShowChangesAddresses( self, event ):
 		event.Skip()
 	
 

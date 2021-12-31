@@ -268,7 +268,7 @@
                 <event name="OnTimer">OnTimerTick</event>
             </object>
         </object>
-        <object class="Frame" expanded="1">
+        <object class="Frame" expanded="0">
             <property name="aui_managed">1</property>
             <property name="aui_manager_style">wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_DEFAULT</property>
             <property name="bg"></property>
@@ -330,7 +330,7 @@
             <event name="OnSetFocus"></event>
             <event name="OnSize"></event>
             <event name="OnUpdateUI"></event>
-            <object class="wxMenuBar" expanded="1">
+            <object class="wxMenuBar" expanded="0">
                 <property name="bg"></property>
                 <property name="context_help"></property>
                 <property name="context_menu">1</property>
@@ -385,14 +385,14 @@
                     <property name="name">wxRavenMenuBar_Edit</property>
                     <property name="permission">protected</property>
                 </object>
-                <object class="wxMenu" expanded="1">
+                <object class="wxMenu" expanded="0">
                     <property name="label">Window</property>
                     <property name="name">wxRavenMenuBar_Window</property>
                     <property name="permission">protected</property>
                     <object class="wxMenuItem" expanded="0">
                         <property name="bitmap">Load From File; res/default_style/normal/frame_default.png</property>
                         <property name="checked">0</property>
-                        <property name="enabled">1</property>
+                        <property name="enabled">0</property>
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
@@ -499,11 +499,11 @@
                             <event name="OnUpdateUI"></event>
                         </object>
                     </object>
-                    <object class="separator" expanded="1">
+                    <object class="separator" expanded="0">
                         <property name="name">m_separator41</property>
                         <property name="permission">none</property>
                     </object>
-                    <object class="wxMenuItem" expanded="1">
+                    <object class="wxMenuItem" expanded="0">
                         <property name="bitmap">Load From File; res/default_style/normal/wizard-prefs.png</property>
                         <property name="checked">0</property>
                         <property name="enabled">1</property>
@@ -519,7 +519,7 @@
                         <event name="OnUpdateUI"></event>
                     </object>
                 </object>
-                <object class="wxMenu" expanded="1">
+                <object class="wxMenu" expanded="0">
                     <property name="label">Help</property>
                     <property name="name">wxRavenMenuBar_Help</property>
                     <property name="permission">protected</property>
@@ -1348,7 +1348,7 @@
                         <property name="validator_style">wxFILTER_NONE</property>
                         <property name="validator_type">wxDefaultValidator</property>
                         <property name="validator_variable"></property>
-                        <property name="value">Version: &lt;Development Version&gt;&#x0A;Build id: &lt;N/A&gt;&#x0A;&#x0A;--&#x0A;&#x0A;wxRaven is an open-source IRE (Integrated Raven Environment) Framework for the Ravencoin community.&#x0A;&#x0A;It provides usefull built-in functions to create and develop your own &quot;Use-case specific application&quot; as one or multiple plugin of this integrated environment itself such as :&#x0A;&#x0A;    - Built-in RPC connexion&#x0A;    - High Level RPC API Commands&#x0A;    - RPC Shell &amp; Command list&#x0A;    - Highly Customizable End User Interface&#x0A;    - ... More to come !&#x0A;&#x09;&#x09;&#x09;&#x09;&#x09;&#x09;&#x09;&#x09;&#x09;sLinuX&#x0A;&#x0A;--&#x0A;&#x0A;Licence Type : MIT &#x0A;(c) Copyright wxRaven contributors and others.  &#x0A;No rights reserved.&#x0A;&#x0A;Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:&#x0A;&#x0A;The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.&#x0A;&#x0A;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&#x0A;&#x0A;</property>
+                        <property name="value">Version: &lt;VERSION&gt;&#x0A;Build id: &lt;BUILD_ID&gt;&#x0A;https://github.com/sLiinuX/wxRaven&#x0A;--&#x0A;&#x0A;wxRaven is an open-source IRE (Integrated Raven Environment) Framework for the Ravencoin community.&#x0A;&#x0A;It provides usefull built-in functions to create and develop your own &quot;Use-case specific application&quot; as one or multiple plugin of this integrated environment itself such as :&#x0A;&#x0A;    - Built-in RPC connexion&#x0A;    - High Level RPC API Commands&#x0A;    - RPC Shell &amp; Command list&#x0A;    - Highly Customizable End User Interface&#x0A;    - ... More to come !&#x0A;&#x09;&#x09;&#x09;&#x09;&#x09;&#x09;&#x09;&#x09;&#x09;sLinuX&#x0A;&#x0A;--&#x0A;&#x0A;Licence Type : MIT &#x0A;(c) Copyright wxRaven contributors and others.  &#x0A;No rights reserved.&#x0A;&#x0A;Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:&#x0A;&#x0A;The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.&#x0A;&#x0A;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&#x0A;&#x0A;</property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
                         <property name="window_style"></property>
@@ -2033,8 +2033,8 @@
             <property name="minimum_size"></property>
             <property name="name">wxRavenSettingDialog</property>
             <property name="pos"></property>
-            <property name="size">712,520</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE</property>
+            <property name="size">712,614</property>
+            <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass"></property>
             <property name="title">Preferences</property>
             <property name="tooltip"></property>

@@ -507,9 +507,9 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         self._currentItemData = itemData
         _hasIpfs =  itemData['has_ipfs']
         
+        
+        #asset_new_qrcode
         if _hasIpfs:
-            
-            
             _ipfsgateway_default = self.parent_frame.GetPluginSetting("Ravencore","ipfsgateway_default")
             _url = _ipfsgateway_default  +itemData['ipfs_hash']
             
@@ -517,12 +517,12 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
             self._currentItemHash = itemData['ipfs_hash']
             
             
-            if self._pwin != None:
+            #if self._pwin != None:
                 #self._pwin.wv.LoadURL(self._currentItemURl)
                 #self._pwin.wv.LoadURL(self._currentItemURl)
                 #self._pwin.LoadAssetUrl(self._currentItemURl)
-                if self._pwin.IsShown() :
-                    self.previewIPFS(event)
+            #    if self._pwin.IsShown() :
+            #        self.previewIPFS(event)
                 
         #print(self._currentItem)
         #print(self.m_listCtrl1.GetItemText(self._currentItem))

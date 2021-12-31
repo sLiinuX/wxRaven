@@ -48,9 +48,32 @@ _ASSET_REGEXP_ = {
     "RESTRICTEDASSET":'^$[.*]',
     }
 
+_ASSET_VERIFY_REGEXP_ = {
+    "MAINASSET":"^[A-Z0-9._]{3,}$",
+    "SUBASSET":"^[A-Z0-9._]+$",
+    "UNIQUEASSET":"^[-A-Za-z0-9@$%&*()[\\]{}_.?:]+$",
+    "MESSAGINGCHANNELASSET":"^[A-Za-z0-9_]+$",
+    "QUALIFIERASSET":"#[A-Z0-9._]{3,}$",
+    "SUBQUALIFIERASSET":"#[A-Z0-9._]+$",
+    "RESTRICTEDASSET":"\\$[A-Z0-9._]{3,}$",
+    }
+
+"""
+
+// min lengths are expressed by quantifiers
+static const std::regex ROOT_NAME_CHARACTERS("^[A-Z0-9._]{3,}$");
+static const std::regex SUB_NAME_CHARACTERS("^[A-Z0-9._]+$");
+static const std::regex UNIQUE_TAG_CHARACTERS("^[-A-Za-z0-9@$%&*()[\\]{}_.?:]+$");
+static const std::regex MSG_CHANNEL_TAG_CHARACTERS("^[A-Za-z0-9_]+$");
+static const std::regex VOTE_TAG_CHARACTERS("^[A-Z0-9._]+$");
+
+// Restricted assets
+static const std::regex QUALIFIER_NAME_CHARACTERS("#[A-Z0-9._]{3,}$");
+static const std::regex SUB_QUALIFIER_NAME_CHARACTERS("#[A-Z0-9._]+$");
+static const std::regex RESTRICTED_NAME_CHARACTERS("\\$[A-Z0-9._]{3,}$");
 
 
-
+"""
 
 
 
@@ -78,9 +101,31 @@ class RVNpyRPC_Asset():
     """
     
     
+    def __exist__(self, name):
+        _exist = False
+        _res = self.RPCconnexion.getassetdata(name)['result']
+        if _res != None:
+            _exist = True
+        return _exist
     
     
+    def __verifyName__(self, name, type):
+        _fullMatch = False
+        _typeRegex = ""
+        if type != "":
+            _typeRegex = _ASSET_VERIFY_REGEXP_[type]
+            r = re.fullmatch(_typeRegex, name)
+            if r != None:
+                _fullMatch = True
+        
+        return (_fullMatch, _typeRegex)
     
+    
+    def __isAdminAsset__(self, name):
+        _idAdmin = False
+        if name.__contains__('!'):
+            _idAdmin = True
+        return _idAdmin
     
     def __containsSpecialChar__(self, name):
         _hasKeyChar = False
@@ -118,6 +163,7 @@ class RVNpyRPC_Asset():
         if self.__containsSpecialChar__(name[-(count+1):-count]):
             count = count+1
         return name[-count:]
+    
     
     
     
@@ -305,7 +351,9 @@ class RVNpyRPC_Asset():
         
         else:
             res = self.SearchAsset(_assetPartialData['name'], 1, details=True, datetime=True)
-            _MyAssetData = res[0]
+            
+            if len(res) > 0:
+                _MyAssetData = res[0]
         
         if _MyAssetData != None:
             for attr in _MyAssetData:
@@ -386,6 +434,10 @@ class RVNpyRPC_Asset():
     
     
     
+    #
+    #
+    # Walletr Exploring
+    #
     
     
     
@@ -490,11 +542,27 @@ class RVNpyRPC_Asset():
         
     
     
+    #
+    #
+    #
+    #    Wallet Asset issue
+    #
+    #
+    #
     
-      
+    def GetAllAdminAssets(self, _includeNonNestable=True):
+        _AssetRawList = []
         
         
-
+        _res =  self.RPCconnexion.listmyassets("*",True)['result']
+        for key in _res:
+                
+            if self.__isAdminAsset__(key):
+                
+                _AssetRawList.append(key)
+        
+        
+        return _AssetRawList
 
 
 class AssetTreeObj(object):
@@ -509,6 +577,7 @@ class AssetTreeObj(object):
     childs = []
     
     _isVirtual = False
+    _isAdmin = False
     
     
     def __init__(self, assetname, shortname, path , type, datas=None):    
@@ -519,6 +588,11 @@ class AssetTreeObj(object):
         self.path = path
         self.type = type
         self.datas = datas
+        
+        if assetname.__contains__('!'):
+            self._isAdmin = True
+        else:
+            self._isAdmin = False
         
         self.childs = []
 

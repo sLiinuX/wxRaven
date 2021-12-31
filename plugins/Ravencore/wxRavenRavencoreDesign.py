@@ -245,6 +245,10 @@ class wxRavenAssetNavigator ( wx.Panel ):
 		
 		self.m_shareAssetButton = self.m_auiToolBar3.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/copy_clipboard.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Copy IPFS URL", wx.EmptyString, None ) 
 		
+		self.m_auiToolBar3.AddSeparator()
+		
+		self.m_CreateNewAssetButton = self.m_auiToolBar3.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/asset_new.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Create a new asset under this position", wx.EmptyString, None ) 
+		
 		self.m_auiToolBar3.Realize() 
 		
 		bSizer19.Add( self.m_auiToolBar3, 1, wx.ALL|wx.EXPAND, 5 )
@@ -285,6 +289,7 @@ class wxRavenAssetNavigator ( wx.Panel ):
 		self.Bind( wx.EVT_TOOL, self.OnResetTreeDisplay, id = self.m_TreeDisplayOption_ResetDisplay.GetId() )
 		self.Bind( wx.EVT_TOOL, self.OnOpenCurrentAssetIPFS, id = self.m_OpenAssetIpfsButton.GetId() )
 		self.Bind( wx.EVT_TOOL, self.OnShareCurrentAssetIPFS, id = self.m_shareAssetButton.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnCreateNewAsset, id = self.m_CreateNewAssetButton.GetId() )
 	
 	def __del__( self ):
 		pass
@@ -319,6 +324,223 @@ class wxRavenAssetNavigator ( wx.Panel ):
 	def OnShareCurrentAssetIPFS( self, event ):
 		event.Skip()
 	
+	def OnCreateNewAsset( self, event ):
+		event.Skip()
+	
+
+###########################################################################
+## Class wxRavenAssetIssuer
+###########################################################################
+
+class wxRavenAssetIssuer ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 461,336 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer96 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer97 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText43 = wx.StaticText( self, wx.ID_ANY, u"Asset Type :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText43.Wrap( -1 )
+		self.m_staticText43.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer97.Add( self.m_staticText43, 2, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_assetTypeChoiceChoices = []
+		self.m_assetTypeChoice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_assetTypeChoiceChoices, 0 )
+		self.m_assetTypeChoice.SetSelection( 0 )
+		bSizer97.Add( self.m_assetTypeChoice, 5, wx.ALL, 5 )
+		
+		
+		bSizer96.Add( bSizer97, 0, wx.EXPAND, 5 )
+		
+		bSizer971 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.mainAssetChoicePanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer109 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText431 = wx.StaticText( self.mainAssetChoicePanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText431.Wrap( -1 )
+		self.m_staticText431.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer109.Add( self.m_staticText431, 2, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_assetMainChoiceChoices = []
+		self.m_assetMainChoice = wx.Choice( self.mainAssetChoicePanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_assetMainChoiceChoices, 0 )
+		self.m_assetMainChoice.SetSelection( 0 )
+		bSizer109.Add( self.m_assetMainChoice, 5, wx.ALL, 5 )
+		
+		
+		self.mainAssetChoicePanel.SetSizer( bSizer109 )
+		self.mainAssetChoicePanel.Layout()
+		bSizer109.Fit( self.mainAssetChoicePanel )
+		bSizer971.Add( self.mainAssetChoicePanel, 1, 0, 1 )
+		
+		
+		bSizer96.Add( bSizer971, 0, wx.ALL|wx.EXPAND, 0 )
+		
+		bSizer98 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText44 = wx.StaticText( self, wx.ID_ANY, u"Name :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText44.Wrap( -1 )
+		self.m_staticText44.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer98.Add( self.m_staticText44, 2, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_AssetNameTxt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer98.Add( self.m_AssetNameTxt, 5, wx.ALL, 5 )
+		
+		
+		bSizer96.Add( bSizer98, 0, wx.EXPAND, 5 )
+		
+		bSizer981 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText441 = wx.StaticText( self, wx.ID_ANY, u"IPFS :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText441.Wrap( -1 )
+		self.m_staticText441.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer981.Add( self.m_staticText441, 2, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_IPFSlinkTxt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer981.Add( self.m_IPFSlinkTxt, 5, wx.ALL, 5 )
+		
+		
+		bSizer96.Add( bSizer981, 0, wx.EXPAND, 5 )
+		
+		self.m_staticline9 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer96.Add( self.m_staticline9, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		bSizer99 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.checkAssetNameLabel = wx.StaticText( self, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.checkAssetNameLabel.Wrap( -1 )
+		bSizer99.Add( self.checkAssetNameLabel, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer96.Add( bSizer99, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer991 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.checkAssetNameIcon1 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/error_tsk.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer991.Add( self.checkAssetNameIcon1, 0, wx.ALL, 5 )
+		
+		self.checkErrorLabel = wx.StaticText( self, wx.ID_ANY, u"You must enter a name for the asset", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.checkErrorLabel.Wrap( -1 )
+		self.checkErrorLabel.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
+		
+		bSizer991.Add( self.checkErrorLabel, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer96.Add( bSizer991, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		self.m_staticline10 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer96.Add( self.m_staticline10, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		bSizer100 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_reissuableOpt = wx.CheckBox( self, wx.ID_ANY, u"Reissuable", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer100.Add( self.m_reissuableOpt, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText49 = wx.StaticText( self, wx.ID_ANY, u"Quantity :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText49.Wrap( -1 )
+		bSizer100.Add( self.m_staticText49, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_quantityTxt = wx.TextCtrl( self, wx.ID_ANY, u"1", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer100.Add( self.m_quantityTxt, 0, wx.ALL, 5 )
+		
+		self.m_staticText50 = wx.StaticText( self, wx.ID_ANY, u"Units :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText50.Wrap( -1 )
+		bSizer100.Add( self.m_staticText50, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_unitsOpt = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 8, 0 )
+		bSizer100.Add( self.m_unitsOpt, 0, wx.ALL, 5 )
+		
+		
+		bSizer96.Add( bSizer100, 0, wx.EXPAND, 5 )
+		
+		self.m_staticline101 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer96.Add( self.m_staticline101, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		bSizer982 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText442 = wx.StaticText( self, wx.ID_ANY, u"Destination :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText442.Wrap( -1 )
+		self.m_staticText442.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer982.Add( self.m_staticText442, 2, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_Destination = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer982.Add( self.m_Destination, 5, wx.ALL, 5 )
+		
+		
+		bSizer96.Add( bSizer982, 0, wx.EXPAND, 5 )
+		
+		bSizer104 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_issueButton = wx.Button( self, wx.ID_ANY, u"Issue Asset !", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer104.Add( self.m_issueButton, 0, wx.ALL, 5 )
+		
+		
+		bSizer96.Add( bSizer104, 0, wx.ALIGN_RIGHT, 5 )
+		
+		
+		self.SetSizer( bSizer96 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_AssetNameTxt.Bind( wx.EVT_TEXT, self.OnAssetNameChanged )
+		self.m_reissuableOpt.Bind( wx.EVT_CHECKBOX, self.EvtOptionsChanged )
+		self.m_quantityTxt.Bind( wx.EVT_TEXT, self.EvtOptionsChanged )
+		self.m_unitsOpt.Bind( wx.EVT_SPINCTRL, self.EvtOptionsChanged )
+		self.m_unitsOpt.Bind( wx.EVT_TEXT, self.EvtOptionsChanged )
+		self.m_Destination.Bind( wx.EVT_TEXT, self.OnAssetNameChanged )
+		self.m_issueButton.Bind( wx.EVT_BUTTON, self.OnIssueAsset )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnAssetNameChanged( self, event ):
+		event.Skip()
+	
+	def EvtOptionsChanged( self, event ):
+		event.Skip()
+	
+	
+	
+	
+	
+	def OnIssueAsset( self, event ):
+		event.Skip()
+	
+
+###########################################################################
+## Class wxRavenAssetIssuerDialog
+###########################################################################
+
+class wxRavenAssetIssuerDialog ( wx.Dialog ):
+	
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 557,437 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER|wx.STAY_ON_TOP )
+		
+		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
+		
+		
+		self.Centre( wx.BOTH )
+		
+		# Connect Events
+		self.Bind( wx.EVT_CLOSE, self.OnClose )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnClose( self, event ):
+		event.Skip()
+	
 
 ###########################################################################
 ## Class wxRavenAssetDetails_OverviewPanel
@@ -327,7 +549,7 @@ class wxRavenAssetNavigator ( wx.Panel ):
 class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 683,441 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 677,477 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer76 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -390,10 +612,10 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		bSizer90.Add( self.m_staticText30111, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_assetSupplyTxt = wx.TextCtrl( self.m_panel10, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
-		bSizer90.Add( self.m_assetSupplyTxt, 1, wx.ALL|wx.EXPAND, 5 )
+		bSizer90.Add( self.m_assetSupplyTxt, 1, wx.ALL, 5 )
 		
 		
-		bSizer79111.Add( bSizer90, 1, wx.EXPAND, 5 )
+		bSizer79111.Add( bSizer90, 1, 0, 5 )
 		
 		bSizer91 = wx.BoxSizer( wx.HORIZONTAL )
 		
@@ -407,16 +629,16 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		bSizer91.Add( self.m_assetCreatedTxt, 1, wx.ALL, 5 )
 		
 		
-		bSizer79111.Add( bSizer91, 1, wx.EXPAND, 5 )
+		bSizer79111.Add( bSizer91, 1, 0, 5 )
 		
 		
-		bSizer78.Add( bSizer79111, 1, wx.EXPAND, 5 )
+		bSizer78.Add( bSizer79111, 0, wx.EXPAND, 5 )
 		
 		
 		self.m_panel10.SetSizer( bSizer78 )
 		self.m_panel10.Layout()
 		bSizer78.Fit( self.m_panel10 )
-		bSizer77.Add( self.m_panel10, 3, wx.EXPAND |wx.ALL, 5 )
+		bSizer77.Add( self.m_panel10, 5, wx.ALL|wx.EXPAND, 5 )
 		
 		self.m_panel11 = wx.Panel( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer92 = wx.BoxSizer( wx.VERTICAL )
@@ -440,14 +662,61 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		bSizer76.Add( self.m_staticline8, 0, wx.EXPAND |wx.ALL, 5 )
 		
 		self.m_panel9 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer93 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer94 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap13 = wx.StaticBitmap( self.m_panel9, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/group_users.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer94.Add( self.m_bitmap13, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText41 = wx.StaticText( self.m_panel9, wx.ID_ANY, u"Owner(s) :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText41.Wrap( -1 )
+		self.m_staticText41.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer94.Add( self.m_staticText41, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText42 = wx.StaticText( self.m_panel9, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText42.Wrap( -1 )
+		bSizer94.Add( self.m_staticText42, 3, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_ownerCount = wx.TextCtrl( self.m_panel9, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY|wx.TE_RIGHT )
+		bSizer94.Add( self.m_ownerCount, 1, wx.ALL, 5 )
+		
+		
+		bSizer93.Add( bSizer94, 0, wx.EXPAND, 5 )
+		
+		self.listCtrlContainer = wx.Panel( self.m_panel9, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer95 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_listCtrl1 = wxRavenListCtrl( self.listCtrlContainer, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT|wx.LC_EDIT_LABELS )
+		bSizer95.Add( self.m_listCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		self.listCtrlContainer.SetSizer( bSizer95 )
+		self.listCtrlContainer.Layout()
+		bSizer95.Fit( self.listCtrlContainer )
+		bSizer93.Add( self.listCtrlContainer, 1, wx.EXPAND |wx.ALL, 1 )
+		
+		
+		self.m_panel9.SetSizer( bSizer93 )
+		self.m_panel9.Layout()
+		bSizer93.Fit( self.m_panel9 )
 		bSizer76.Add( self.m_panel9, 4, wx.EXPAND |wx.ALL, 1 )
 		
 		
 		self.SetSizer( bSizer76 )
 		self.Layout()
+		
+		# Connect Events
+		self.m_bpButton27.Bind( wx.EVT_BUTTON, self.OnQrCodeClick )
 	
 	def __del__( self ):
 		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnQrCodeClick( self, event ):
+		event.Skip()
 	
 
 ###########################################################################
@@ -704,6 +973,28 @@ class DONOTUSE_TestPanel ( wx.Panel ):
 		
 		
 		self.SetSizer( bSizer7 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class DONOTUSE_TestPanel2
+###########################################################################
+
+class DONOTUSE_TestPanel2 ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer105 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_panel13 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer105.Add( self.m_panel13, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer105 )
 		self.Layout()
 	
 	def __del__( self ):

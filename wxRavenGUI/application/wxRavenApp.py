@@ -118,12 +118,15 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         
         self.Log("wxRaven is ready !" )
-        
-        self.ConnexionManager.setCurrentConnexion("mainnet_localhost")
+        last_network = self.GetPluginSetting("General", 'last_network')
+        self.ConnexionManager.setCurrentConnexion(last_network)
         self.initDialogOptions()
         
         
         self._isReady = True
+        #
+        # Environement Variable for the Shells
+        #
         self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Plugins.plugins, "Plugins")
         self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Views, "Views")
         
@@ -313,7 +316,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         busy = wx.BusyInfo("One moment please, saving datas...")
         
         
-        
+        self.ConnexionManager.SaveCurrentConnexion()
         self.Settings.SaveSettingsToFile()
         
         

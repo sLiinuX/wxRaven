@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//plugins/DatabaseManager/wxRavenDatabaseManagementDesign.py=utf-8
 encoding//plugins/General/wxRavenGeneralDesign.py=utf-8
 encoding//plugins/RavenRPC/plugin.py=utf-8
 encoding//plugins/RavenRPC/wxRavenShellDesign.py=utf-8

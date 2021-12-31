@@ -78,7 +78,8 @@ class wxRavenPlugin(PluginObject):
         
         self.PLUGIN_SETTINGS = {
                 'showerror' : ['error','message'],
-                'defaultviewarea':'main'
+                'defaultviewarea':'main',
+                'last_network':'mainnet_localhost',
             }
         
         

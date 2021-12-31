@@ -30,7 +30,9 @@ import json
 
 #used for long datas requests
 import threading
-from plugins.Ravencore.wxRavenRavencoreAssetNavigatorLogic import RavencoreAssetNavigator
+from .wxRavenRavencoreAssetNavigatorLogic import *
+
+from .wxRavenRavencoreAssetIssuerLogic import *
 
 
 try:
@@ -113,13 +115,46 @@ class wxRavenPlugin(PluginObject):
                      'class': RavencoreAssetNavigator ,
                      'default':False,
                      'multipleViewAllowed':True
+                     } ,
+                    
+                    
+                    
+                    
+                    {
+                     'viewid':'Asset Issuer', 
+                     'name':'Asset Issuer', 
+                     'title':'Asset Issuer', 
+                     'position':position, 
+                     'icon':self.RessourcesProvider.GetImage('asset_new'), 
+                     'class': RavencoreAssetIssuerDialog ,
+                     'default':False,
+                     'multipleViewAllowed':False
                      }
                     
         
                     
                 ]
         
-
+        """
+        
+        ,
+                    
+                    
+                    
+                    
+                    {
+                     'viewid':'Asset Issuer', 
+                     'name':'Asset Issuer', 
+                     'title':'Asset Issuer', 
+                     'position':position, 
+                     'icon':self.RessourcesProvider.GetImage('asset'), 
+                     'class': RavencoreAssetIssuerDialog ,
+                     'default':False,
+                     'multipleViewAllowed':False
+                     }
+        
+        
+        """
         
         #
         #    Setting Object declare all the 'default settings' 
@@ -307,7 +342,7 @@ class wxRavenPlugin(PluginObject):
         _AssetSearchResult = {}
         #try:
         try:
-            
+        #if True:    
             _lastSearch = self.getData("_LastSearch")
             
             if _lastSearch == keyword:
@@ -490,4 +525,15 @@ class wxRavenPlugin(PluginObject):
             pyperclip.copy(_data['ipfs_hash'])
         
         #self.infoMessage("IPFS Hash copied to the clipboard", wx.ICON_INFORMATION)
+    
+    
+    
+    def OpenAssetIssuer(self, rootAsset=""):
+        _newView = self.LoadView(self.SearchPluginView("Asset Issuer"), "main")
+        
+        if rootAsset !="":
+            print(">root setup requested")
+            _newView.setupRoot(rootAsset)
+        #_popupDialog = RavencoreAssetIssuerDialog(self.parentFrame)
+    
     

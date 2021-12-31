@@ -39,10 +39,14 @@ class RVNpyRPC_Utils():
     
     
     def blockHeightToDate(self, height):
-        blockHash = self.RPCconnexion.getblockhash(height)['result']
-        
-        blockDateTime = self.RPCconnexion.getblock(blockHash, 2 )['result']['time']
-        ts = datetime.datetime.fromtimestamp(blockDateTime).strftime('%Y-%m-%d %H:%M:%S')
-        
-        return ts
+        _defaultTime = "???????"
+        try:
+            blockHash = self.RPCconnexion.getblockhash(height)['result']
+            blockDateTime = self.RPCconnexion.getblock(blockHash, 2 )['result']['time']
+            ts = datetime.datetime.fromtimestamp(blockDateTime).strftime('%Y-%m-%d %H:%M:%S')
+            _defaultTime = ts
+        except Exception as e:
+            print("blockHeightToDate() error.")    
+            
+        return _defaultTime
         

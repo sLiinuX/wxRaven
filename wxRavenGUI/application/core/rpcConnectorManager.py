@@ -211,6 +211,15 @@ class RvnRPC_ConnectorManager(object):
         
         return isActive
     
+    
+    
+    def SaveCurrentConnexion(self):
+        
+        p = self.parentObjSynch.GetPlugin("General")
+        p.PLUGIN_SETTINGS['last_network'] = self.rpc_current
+        #self.ConnexionManager.setCurrentConnexion(last_network)
+    
+    
     """
     
     Connexion setters and getters

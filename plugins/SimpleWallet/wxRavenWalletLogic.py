@@ -98,6 +98,17 @@ class walletOverviewPane(wxRavenWalletOverview):
         #self.assetsViewListCtrl.AppendTextColumn('balance', width=25)
     
     
+    
+    def OnShowChangesAddresses(self, evt):
+        showChangesAddress = self.showChangesAddress.GetValue()
+        _p = self.parent_frame.GetPlugin("SimpleWallet")
+        _p.PLUGIN_SETTINGS['show_changes_addresses'] = showChangesAddress
+        
+        print(f"show_changes_addresses = {showChangesAddress}")
+        
+        _p.UpdateWallet()
+        
+    
     def OnRefreshButton(self, event):
         self.updatePanel()
     
@@ -155,6 +166,9 @@ class walletOverviewPane(wxRavenWalletOverview):
                 for bl in dataBal :
                     if bl['assetName'] == "RVN":
                         acBal = bl['balance']
+                    else:
+                        acBal = self.parent_frame.getRvnRPC().wallet.RVN_balance_friendly(acBal)
+                        #acBal = self.parent_frame.getRvnRPC().wallet.RVN_balance_friendly(acBal)
                         
                         if not showAdd:
                             dataAd = "*"
@@ -223,7 +237,7 @@ class walletOverviewPane(wxRavenWalletOverview):
                         
                         
                         acBal = bl['balance']
-                        
+                        acBal = self.parent_frame.getRvnRPC().wallet.RVN_balance_friendly(acBal)
                         #if showAdd:
                         #    acBal = self.RVN_balance_friendly(bl['balance'])
                 
@@ -232,6 +246,7 @@ class walletOverviewPane(wxRavenWalletOverview):
             
             
             #self.balanceStaticText.SetLabel(str(self.RVN_balance_friendly(globalBalance))) 
+            
             self.balanceStaticText.SetLabel(str(globalBalance)) 
             
             self.addressViewListCtrl.DeleteAllItems()
@@ -328,7 +343,12 @@ class walletAssetsOverview(wxRavenWalletAssetsOverview):
                 
                 self.assetsViewListCtrl.DeleteAllItems()
                 for item in globalAssetBalance:
-                    self.assetsViewListCtrl.AppendItem(item)   
+                    
+                    
+                    #print(item)
+                    itemBalanceClean = [item[0], str(self.parent_frame.getRvnRPC().wallet.RVN_balance_friendly(item[1]))]
+                    
+                    self.assetsViewListCtrl.AppendItem(itemBalanceClean)   
                 
             except Exception as e:
                 self.parent_frame.Log("Unable to display wallet assets" , type="error")
@@ -364,14 +384,15 @@ class walletSendPane(wxRavenWalletSend):
                 
             
                 allAddresses = self.parent_frame.GetPluginData("SimpleWallet","allAddresses")
-                
+                #print(f"==== {len(allAddresses)}")
                 # refresh your items with .Clear, .Append(), etc
                 # I'm just adding new item every time user clicks on control     
                 self.sendFromTextbox.Clear()  
                 self.sendFromTextbox.Append("Any")    
                 for ad in allAddresses:
-                    self.sendFromTextbox.Append(ad)
-                
+                    self.sendFromTextbox.Append(str(ad))
+                    #print(f"ad {ad}")
+                #print(f"==== {len(allAddresses)}")
                 self.lastaddresses = allAddresses
                 self.sendFromTextbox.SetSelection(0)
                 

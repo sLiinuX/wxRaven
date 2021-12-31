@@ -116,6 +116,9 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
             'wallet': parentFrame.RessourcesProvider.GetImage('wallet'),
             'asset': parentFrame.RessourcesProvider.GetImage('asset'),
             'asset_virtual': parentFrame.RessourcesProvider.GetImage('asset_virtual'),
+            'asset_admin': parentFrame.RessourcesProvider.GetImage('asset_admin'),
+            
+            
             #console_view.png
             }
         
@@ -167,12 +170,42 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
             
         self._tempDisplayPanel.DisplayAsset(self.wxTree._currentData)
             #wxRavenAssetOverviewPanel
-        
+        self.checkToolbars()
         self.Layout()
     
     
     
     
+    def checkToolbars(self):
+        
+        
+        #self.m_auiToolBar3.EnableTool(self.m_CreateNewAssetButton.GetId(), True) 
+        
+        
+        #
+        # Admin asset, allow creation
+        #
+        if self.wxTree._currentText == None:
+            self.m_auiToolBar3.EnableTool(self.m_CreateNewAssetButton.GetId(), False) 
+            
+        elif self.wxTree._currentText.__contains__('!') or self.wxTree._currentText== "Wallet":
+            #self.m_CreateNewAssetButton.Enable(True)
+            self.m_auiToolBar3.EnableTool(self.m_CreateNewAssetButton.GetId(), True) 
+        else:
+            #self.m_CreateNewAssetButton.Enable(False)
+            self.m_auiToolBar3.EnableTool(self.m_CreateNewAssetButton.GetId(), False) 
+    
+    
+        _cdata = self.wxTree._currentData
+        if _cdata!=None:
+            self.m_auiToolBar3.EnableTool(self.m_OpenAssetIpfsButton.GetId(), True) 
+            self.m_auiToolBar3.EnableTool(self.m_shareAssetButton.GetId(), True) 
+            
+        else:
+            self.m_auiToolBar3.EnableTool(self.m_OpenAssetIpfsButton.GetId(), False) 
+            self.m_auiToolBar3.EnableTool(self.m_shareAssetButton.GetId(), False)    
+             
+        self.Layout()    
     
     def OnSaveBookmarkList(self, evt):
         
@@ -294,11 +327,23 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
     
     def OnShareCurrentAssetIPFS(self, evt):
         _cdata = self.wxTree._currentData
-        
-        
+         
         if _cdata!=None:
             #self.parent_frame.GetPlugin("Ravencore").OpenIPFSinWebBrowser(_cdata)
             self.parent_frame.GetPlugin("Ravencore").CopyClip(_cdata)
+    
+    
+    
+    
+    
+    
+    def OnCreateNewAsset(self, evt):
+        
+        #OpenAssetIssuer
+        
+        _p = self.parent_frame.GetPlugin("Ravencore")
+        _p.OpenAssetIssuer(self.wxTree._currentText)
+    
     
     
     
@@ -419,8 +464,9 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
     def UpdateView(self):
         
         self.UpdateDataFromPluginDatas()
-        
+
         self.RefreshLibList()
+        self.checkToolbars()
         self.Layout()   
         
         
@@ -457,6 +503,9 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         _icon  = "asset"
         if libObj._isVirtual:
             _icon = "asset_virtual"
+            
+        if libObj._isAdmin:
+            _icon = "asset_admin"
         
         _newChild = self.wxTree.addItem(parentTreeObj, libObj.name, libObj.datas,_icon)
         
@@ -473,8 +522,9 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         
         _dummyData = {}
         _icon = "asset"
-        if libObj.name == "My Assets":
-            _icon = "wallet"
+        if libObj.name == "My Assets" or libObj.name == "Wallet":
+            #_icon = "wallet"
+            _icon = "asset_admin"
             
             
         _root = self.wxTree.addItem(None, libObj.name, libObj.datas, _icon)

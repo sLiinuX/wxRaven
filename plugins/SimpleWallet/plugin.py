@@ -38,7 +38,9 @@ class wxRavenPlugin(PluginObject):
 
 
         
-        
+        self.PLUGIN_SETTINGS = {
+                'show_changes_addresses' : True,
+                }
         
         
         
@@ -63,7 +65,8 @@ class wxRavenPlugin(PluginObject):
         
         
         
-        
+    def UpdateWallet(self):   
+        self.OnNetworkChanged_T()    
         
         
     def OnNetworkChanged_T(self, networkName=""):    
@@ -82,12 +85,13 @@ class wxRavenPlugin(PluginObject):
         #self.setData("_icon", wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY ))
         #self.setData("_dataTimeStamp", '')
         
+        _showChanges = self.PLUGIN_SETTINGS['show_changes_addresses']
         
-        
-        try:
-            
-            
+        #try:
+        if True:    
+            #print("globalbalance")
             _globalBalance = self.parentFrame.getNetwork().getbalance()['result']
+            #print("allacounts")
             _allAccountsDatas = self.parentFrame.getRvnRPC().wallet.getAllAccounts(displayAddress=True)
             
             allAddresses = []
@@ -96,12 +100,48 @@ class wxRavenPlugin(PluginObject):
 
             for ac in _allAccountsDatas:
                 dataAc = _allAccountsDatas[ac]
-                if dataAc['address'] != "?":
+                
+                #print(f" AC AD  {dataAc['address']}")
+                
+                if dataAc['address'] != []:
+                    #print(f"allAddresses BEFORE = {allAddresses}")
+                    #print(f"dataAc = {dataAc['address']}")
+                    
                     allAddresses = allAddresses+dataAc['address']
-                    
-                    
-            _globalAssetBalance = self.parentFrame.getRvnRPC().wallet.getAddressAssetsBalance(allAddresses)
+                    #print(f"allAddresses AFTER = {allAddresses}")
+                    if _showChanges:
+                        for _checkAd in dataAc['address']:
+                            #print(_checkAd)
+                            
+                            #print(f"_checkAd = {_checkAd}")
+                            _changes = self.parentFrame.getRvnRPC().wallet.checkaddresseUnspent(_checkAd)
+                            #print(f"_changes = {_changes}")
+                            if _changes != []:
+                                allAddresses = allAddresses+_changes
+        
+                                
+                                #print(f"_allAddresses + _changes = {allAddresses}")
+                            
+                            #if len(_changes) >0:
+                                #allAddresses = allAddresses+_changes
+                            #    allAddresses.append(_changes[0])
+                                
+            #allAddresses = list(dict.fromkeys(allAddresses)) 
             
+            
+            allAddressesClean = []
+            for a in allAddresses:
+                if not allAddressesClean.__contains__(str(a)):
+                    allAddressesClean.append(str(a))
+            allAddresses =  allAddressesClean   
+            
+            
+            #print(f"ALL ADDRESSES = {allAddresses}")
+            #print(f"ALL ADDRESSES = {len(allAddresses)}")
+               
+            #print("_globalAssetBalance")        
+            _globalAssetBalance = self.parentFrame.getRvnRPC().wallet.getAddressAssetsBalance(allAddresses)
+            #print(_globalAssetBalance)
 
             self.setData("globalBalance", _globalBalance)
             self.setData("allAccountsDatas", _allAccountsDatas)
@@ -116,8 +156,8 @@ class wxRavenPlugin(PluginObject):
 
 
 
-        except Exception as e:
-            print(self.PLUGIN_NAME + " > OnNetworkChanged " + str(e))
+        #except Exception as e:
+        #    print(self.PLUGIN_NAME + " > OnNetworkChanged " + str(e))
 
 
 

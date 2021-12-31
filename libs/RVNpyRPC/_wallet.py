@@ -89,7 +89,7 @@ class RVNpyRPC_Wallet():
             allAccountsClean[ac] = cleanRow
         
         
-        
+        #print(allAccountsClean)
         
         
         
@@ -104,14 +104,23 @@ class RVNpyRPC_Wallet():
     
     
     def getAddressAssetsBalance(self, walletAdress=[]):
+        
+        #print(f"getAddressAssetsBalance {walletAdress}")
+        
         allAssetsInAddress = self.getaddressbalance(walletAdress=walletAdress, showAsset=True)['result']
+        
+        #print(allAssetsInAddress)
         
         
         tableAssetData= []
         
         for asset in allAssetsInAddress:
             an = asset['assetName']
-            ab=   str(  self.RVN_balance_friendly(asset['balance']) )
+            ab=  str(  asset['balance'] )
+            #if asset['balance'] > 100000000:
+            #ab=   str(  self.RVN_balance_friendly(asset['balance']) )
+            
+            
             
             tableAssetData.append([an, ab])
             
@@ -191,8 +200,12 @@ class RVNpyRPC_Wallet():
     
     
     
-    def getaddressbalance(self,walletAdress="*", showAsset=True, _includeChangesAddresses=False):
+    def getaddressbalance(self,walletAdress="*", showAsset=True):
         
+        
+        
+        
+        #print(f" Wallet addres input ({str(type(walletAdress))})= {walletAdress}")
         
         #print(self.RPCconnexion)
         
@@ -204,15 +217,15 @@ class RVNpyRPC_Wallet():
         if walletAdress=="*" or walletAdress == None:
             searchAdressList.append('*')
         
-        
-        if walletAdress.__contains__(","):
-            for i in walletAdress.split(","): 
-                #print(i) 
-                searchAdressList.append(i)   
-        else:
-            if str(type(walletAdress)) == "<class 'str'>":
-                searchAdressList.append(walletAdress)
+        if str(type(walletAdress)) == "<class 'str'>":
+            if walletAdress.__contains__(","):
+                print(f"CHECK STRING {walletAdress}")
+                #for i in walletAdress.split(","): 
+                    #print(i) 
+                    #searchAdressList.append(i)  
             else:
+                searchAdressList.append(walletAdress) 
+        else:
                 searchAdressList = walletAdress
         searchAdressListJSON["addresses"] = searchAdressList    
         #print(searchAdressListJSON)
@@ -232,7 +245,7 @@ class RVNpyRPC_Wallet():
         searchAdressListJSON = {"addresses":[walletAdress],"assetName":specificAsset}
         response = self.RPCconnexion.getaddressdeltas(searchAdressListJSON)['result']
         
-        #print("All transactions :" + str(response))
+        #print("checkaddresseUnspent :" + str(walletAdress))
         
         _matchs = []
         
@@ -258,7 +271,9 @@ class RVNpyRPC_Wallet():
                                 
                                 for ad in _lastTxData:
                                     if _count > 1:
-                                        _matchs.append(ad)
+                                        
+                                        if not _matchs.__contains__(ad):
+                                            _matchs.append(ad)
                                         #print(f"add {ad} ")
                                     
                                     
