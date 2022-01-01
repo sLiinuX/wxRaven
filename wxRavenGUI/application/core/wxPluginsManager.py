@@ -141,7 +141,7 @@ class pluginsManager(object):
                 #print("Removed !")
                 #print( "Removed !" + str(toremove))
     
-    
+        wx.CallAfter(self.appmainframe.MenusAndTool.refreshViewsListMenu, ())
     #def LoadNewView(self, viewName, position):
     #    new_view_callbacks = []
     

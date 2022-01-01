@@ -11,6 +11,11 @@ import wx.richtext as rt
 
 import wx.lib.buttons as buts
 import os
+
+import wx.lib.scrolledpanel
+
+
+
 class wxRavenWelcomeTabLogic(wxRavenWelcomeTab):
     '''
     classdocs
@@ -45,7 +50,8 @@ class wxRavenWelcomeTabLogic(wxRavenWelcomeTab):
         
         self.AddRTCHandlers()
         
-        
+    
+        self.SetBackgroundColour(wx.Colour( 255, 255, 255 ))
         
         ROOT_PATH = os.getcwd() + "/CHANGES.xml"
         print(ROOT_PATH)
@@ -73,9 +79,28 @@ class wxRavenWelcomeTabLogic(wxRavenWelcomeTab):
 
         #self.Bind( wx.EVT_UPDATE_UI, self.UpdateUIButtons )
         #self.Bind(wx.EVT_SIZE, self.UpdateUIButtons) 
+        
+        self.manageScrollers()
+        
         self.SetAutoLayout(True)
         
         parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
+    
+    
+    
+    
+    
+    
+    
+    
+    def manageScrollers(self):
+        #panel2 = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(screenWidth,400), pos=(0,28), style=wx.SIMPLE_BORDER)
+        #panel2.SetupScrolling()
+        #self.m_panel9.SetupScrolling()
+        pass
+    
+    
+    
     
     
     def AddRTCHandlers(self):
@@ -118,7 +143,8 @@ class wxRavenWelcomeTabLogic(wxRavenWelcomeTab):
     
     
     
-    
+    def OnIssueAsset(self, evt):
+        self.parent_frame.Views.OpenView("Asset Issuer", pluginname='', createIfNull=True)
     
     
     

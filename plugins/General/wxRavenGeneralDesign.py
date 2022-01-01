@@ -94,7 +94,7 @@ class wxNotebookToolbar ( wx.Panel ):
 class wxRavenWelcomeTab ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 852,611 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 947,544 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer4 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -159,7 +159,7 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		bSizer24.Add( self.m_staticText14, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
-		bSizer11.Add( bSizer24, 0, wx.EXPAND, 5 )
+		bSizer11.Add( bSizer24, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		bSizer25 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -190,14 +190,15 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		bSizer241.Add( self.m_staticText141, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
-		bSizer111.Add( bSizer241, 0, wx.EXPAND, 5 )
+		bSizer111.Add( bSizer241, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		bSizer251 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.m_panel9 = wx.Panel( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_scrolledWindow1 = wx.ScrolledWindow( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.VSCROLL )
+		self.m_scrolledWindow1.SetScrollRate( 5, 5 )
 		bSizer34 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_panel12 = wx.Panel( self.m_panel9, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_panel12 = wx.Panel( self.m_scrolledWindow1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer40 = wx.BoxSizer( wx.VERTICAL )
 		
 		bSizer41 = wx.BoxSizer( wx.HORIZONTAL )
@@ -217,7 +218,7 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		self.m_staticText23.Wrap( -1 )
 		self.m_staticText23.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
 		
-		bSizer45.Add( self.m_staticText23, 0, wx.ALL, 0 )
+		bSizer45.Add( self.m_staticText23, 0, wx.ALL, 1 )
 		
 		
 		bSizer41.Add( bSizer45, 1, wx.EXPAND, 5 )
@@ -242,7 +243,7 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		self.m_staticText231.Wrap( -1 )
 		self.m_staticText231.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
 		
-		bSizer451.Add( self.m_staticText231, 0, wx.ALL, 0 )
+		bSizer451.Add( self.m_staticText231, 0, wx.ALL, 1 )
 		
 		
 		bSizer411.Add( bSizer451, 1, wx.EXPAND, 5 )
@@ -267,13 +268,38 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		self.m_staticText2311.Wrap( -1 )
 		self.m_staticText2311.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
 		
-		bSizer4511.Add( self.m_staticText2311, 0, wx.ALL, 0 )
+		bSizer4511.Add( self.m_staticText2311, 0, wx.ALL, 1 )
 		
 		
 		bSizer4111.Add( bSizer4511, 1, wx.EXPAND, 5 )
 		
 		
-		bSizer40.Add( bSizer4111, 1, wx.EXPAND, 5 )
+		bSizer40.Add( bSizer4111, 0, wx.EXPAND, 5 )
+		
+		bSizer41111 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bpButton13111 = wx.BitmapButton( self.m_panel12, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/issue_45.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer41111.Add( self.m_bpButton13111, 0, wx.ALL, 5 )
+		
+		bSizer45111 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_staticText20111 = wx.StaticText( self.m_panel12, wx.ID_ANY, u"Issue an Asset", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText20111.Wrap( -1 )
+		self.m_staticText20111.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer45111.Add( self.m_staticText20111, 0, wx.ALL, 5 )
+		
+		self.m_staticText23111 = wx.StaticText( self.m_panel12, wx.ID_ANY, u"     Already have an IPFS to submit ?!\n     Quick, Simple, Issue an Asset here !\n     ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText23111.Wrap( -1 )
+		self.m_staticText23111.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
+		
+		bSizer45111.Add( self.m_staticText23111, 0, wx.ALL|wx.EXPAND, 1 )
+		
+		
+		bSizer41111.Add( bSizer45111, 1, wx.EXPAND, 5 )
+		
+		
+		bSizer40.Add( bSizer41111, 1, wx.EXPAND, 5 )
 		
 		
 		self.m_panel12.SetSizer( bSizer40 )
@@ -282,10 +308,10 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		bSizer34.Add( self.m_panel12, 1, wx.EXPAND |wx.ALL, 15 )
 		
 		
-		self.m_panel9.SetSizer( bSizer34 )
-		self.m_panel9.Layout()
-		bSizer34.Fit( self.m_panel9 )
-		bSizer251.Add( self.m_panel9, 1, wx.EXPAND |wx.ALL, 5 )
+		self.m_scrolledWindow1.SetSizer( bSizer34 )
+		self.m_scrolledWindow1.Layout()
+		bSizer34.Fit( self.m_scrolledWindow1 )
+		bSizer251.Add( self.m_scrolledWindow1, 1, wx.EXPAND |wx.ALL, 5 )
 		
 		
 		bSizer111.Add( bSizer251, 1, wx.EXPAND, 1 )
@@ -309,6 +335,8 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		
 		self.m_staticText4 = wx.StaticText( self, wx.ID_ANY, u"Warning : This software is still in development and may contains un-finished features, non-working icons and bugs !", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText4.Wrap( -1 )
+		self.m_staticText4.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
 		bSizer8.Add( self.m_staticText4, 0, wx.ALL, 5 )
 		
 		
@@ -327,6 +355,7 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		self.m_bpButton13.Bind( wx.EVT_BUTTON, self.OnSearch )
 		self.m_bpButton131.Bind( wx.EVT_BUTTON, self.OnNavigate )
 		self.m_bpButton1311.Bind( wx.EVT_BUTTON, self.OnWallet )
+		self.m_bpButton13111.Bind( wx.EVT_BUTTON, self.OnIssueAsset )
 	
 	def __del__( self ):
 		pass
@@ -344,6 +373,9 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		event.Skip()
 	
 	def OnWallet( self, event ):
+		event.Skip()
+	
+	def OnIssueAsset( self, event ):
 		event.Skip()
 	
 

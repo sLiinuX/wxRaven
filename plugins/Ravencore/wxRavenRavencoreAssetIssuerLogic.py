@@ -46,7 +46,10 @@ class RavencoreAssetIssuerDialog(wxRavenAssetIssuerDialog):
         self.default_position = position
         self.allIcons = {}
         
-        self.SetIcon(parentFrame.RessourcesProvider.GetImage(self.icon))
+        
+        icon = wx.EmptyIcon()
+        icon.CopyFromBitmap(parentFrame.RessourcesProvider.GetImage(self.icon))
+        self.SetIcon(icon)
         self.SetTitle("Issue an asset...")
         
         bSizer105 = wx.BoxSizer( wx.VERTICAL )
@@ -73,6 +76,7 @@ class RavencoreAssetIssuerDialog(wxRavenAssetIssuerDialog):
         self.parent_frame.Plugins.DeleteViewInstance(self.view_name)
         #self.parent_frame.Views.
         #self.Close(force=False)
+        print("OnClose")
         self.Destroy()
 
     def setupRoot(self,rootname):
