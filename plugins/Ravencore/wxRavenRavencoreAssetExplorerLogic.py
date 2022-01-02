@@ -20,11 +20,11 @@ except ImportError:
     from libs import pyperclip
     
     
-    
+import wx.lib.mixins.listctrl as listmix 
 
 
 
-class RavencoreAssetExplorer(wxRavenAssetExplorer):
+class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
     '''
     classdocs
     '''
@@ -73,6 +73,7 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         self._datacache = {}
         
         #self.LoadSearchOptions()
+        parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
         
         
         #This is to add the view in the appropriate place using the mainapp to do so
@@ -101,7 +102,7 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
     
     # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
     def GetSortImages(self):
-        return (self.allIcons['sort_down'], self.allIcons['sort_up'])
+        return (self.allIcons['sort_down_2'], self.allIcons['sort_up_2'])
             
     #Override the UpdateView method to define what happen when plugin call UpdateViews()        
     def UpdateView(self):
@@ -246,7 +247,9 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
 
 
         excludeChars = ['#', '/']
-
+        
+        
+        self.itemDataMap = {}
 
         _cursor = 0
         if result != None:
@@ -304,18 +307,21 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
                         
                     self.m_listCtrl1.SetItemData(index, _cursor)
                     self._datacache[_cursor] = _assetDatas
+                    self.itemDataMap[_cursor] = (str(_assetDatas['name']), str(_assetDatas['type']), float(_assetDatas['amount']), str(_assetDatas['datetime']) ,str(_variousText))
+                    
+                    
                     _cursor= _cursor + 1
         
         #self.list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
         
-        self.m_listCtrl1.SetColumnWidth(0, 275)
-        self.m_listCtrl1.SetColumnWidth(1, 100)
-        self.m_listCtrl1.SetColumnWidth(2, 100)
-        self.m_listCtrl1.SetColumnWidth(3, 175)
-        self.m_listCtrl1.SetColumnWidth(4, 150)
+        self.m_listCtrl1.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+        self.m_listCtrl1.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+        self.m_listCtrl1.SetColumnWidth(2, 150)
+        self.m_listCtrl1.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+        self.m_listCtrl1.SetColumnWidth(4, wx.LIST_AUTOSIZE)
         
         #self.m_listCtrl1.itemDataMap = self._datacache
-        #listmix.ColumnSorterMixin.__init__(self.m_listCtrl1, 3)
+        listmix.ColumnSorterMixin.__init__(self, 5)
               
         self.HideLoading()
         
@@ -378,7 +384,11 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer):
         
         self.allIcons['sort_up'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('sort_up') )
         self.allIcons['sort_down'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('sort_down') )
+        self.allIcons['sort_up_2'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('sort_up_2') )
+        self.allIcons['sort_down_2'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('sort_down_2') )
         
+        self.allIcons['alphab_up'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('alphab_sort_up') )
+        self.allIcons['alphab_down'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('alphab_sort_co') )
         
         
         

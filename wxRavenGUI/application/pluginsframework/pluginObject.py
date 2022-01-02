@@ -222,7 +222,7 @@ class PluginObject(object):
     
     
     def LoadView(self, view, positionOverride=""):
-        
+        print("LoadView")
         
         df_class = view['class']
         df_name = view['name']
@@ -232,7 +232,7 @@ class PluginObject(object):
         isArea = False
         
         if view.__contains__('isArea'):
-            isArea = True
+            isArea = view['isArea']
         
         df_position = view['position']
         
@@ -289,6 +289,11 @@ class PluginObject(object):
             
             newview = df_class(self.parentFrame , position=df_position, viewName=df_name )
             
+            try:
+                self.parentFrame.RessourcesProvider.ApplyThemeOnPanel(newview)
+            except Exception as e:
+                print("Unable to themize view :" + str(e))
+                
             
             viewInstanceData = {'viewid': id_view, 
                                 'name': df_name,
@@ -298,6 +303,9 @@ class PluginObject(object):
                                  'position': df_position,
                                  'isArea': isArea}
             self.VIEWS_INSTANCES.append(viewInstanceData)
+            
+            
+            
             
             if isArea:
                 self.parentFrame.Views.AddArea(df_name, newview)

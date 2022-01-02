@@ -286,7 +286,7 @@
             <property name="minimum_size"></property>
             <property name="name">wxRavenMainFrame</property>
             <property name="pos"></property>
-            <property name="size">694,501</property>
+            <property name="size">724,501</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass">; </property>
             <property name="title">wxRaven</property>
@@ -806,7 +806,7 @@
                 <property name="RightDockable">1</property>
                 <property name="TopDockable">1</property>
                 <property name="aui_layer"></property>
-                <property name="aui_name">wxRavenToolBook1</property>
+                <property name="aui_name">Toolbox1</property>
                 <property name="aui_position"></property>
                 <property name="aui_row"></property>
                 <property name="best_size"></property>
@@ -892,7 +892,7 @@
                 <property name="RightDockable">1</property>
                 <property name="TopDockable">1</property>
                 <property name="aui_layer"></property>
-                <property name="aui_name">wxRavenToolBook2</property>
+                <property name="aui_name">Toolbox2</property>
                 <property name="aui_position"></property>
                 <property name="aui_row"></property>
                 <property name="best_size"></property>
@@ -978,7 +978,7 @@
                 <property name="RightDockable">1</property>
                 <property name="TopDockable">1</property>
                 <property name="aui_layer"></property>
-                <property name="aui_name">wxRavenToolBook3</property>
+                <property name="aui_name">Toolbox3</property>
                 <property name="aui_position"></property>
                 <property name="aui_row"></property>
                 <property name="best_size"></property>
@@ -2033,7 +2033,7 @@
             <property name="minimum_size"></property>
             <property name="name">wxRavenSettingDialog</property>
             <property name="pos"></property>
-            <property name="size">712,614</property>
+            <property name="size">867,669</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass"></property>
             <property name="title">Preferences</property>

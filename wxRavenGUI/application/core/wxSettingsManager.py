@@ -273,6 +273,9 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         icon.CopyFromBitmap( parentFrame.RessourcesProvider.GetImage('wizard-prefs') )
         self.SetIcon(icon)
         
+        
+        parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
+        
         self._currentPannel = None
         self._currentPannelText = ""
         
@@ -296,8 +299,18 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         self._pagesAndPluginsMapping = { }
         
         
+        self.panelsizer = wx.BoxSizer(wx.VERTICAL)
+        self.settingContentPlaceHolderPannel.SetSizer(self.panelsizer)
+        
         self.wxTree = wxRavenTreeView(self.settingsTreeCtrl, _icons, _fillTreeCallback=None, _onChangeCallback=self.onChangeTest)
         self.fillTree()
+        
+        self.wxTree._tree.ExpandAll()
+        
+        
+        
+        
+        #self.AutoLayout()
         
         
         #self.wxTree._tree.Bind(wx.EVT_TREE_SEL_CHANGED, self.onChangeTest, self.wxTree._tree)
@@ -335,6 +348,7 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             #self._currentPannel.Destroy()
             
             self._currentPannel.Hide()
+            self._currentPannel._Panel.Hide()
         
         
         
@@ -345,9 +359,10 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             
             #print(_NewPanel._Panel)
             
-            sizer = wx.BoxSizer(wx.VERTICAL)
-            sizer.Add(_NewPanel._Panel , 1, wx.EXPAND|wx.ALL, 0)
-            self.settingContentPlaceHolderPannel.SetSizer(sizer)
+            #sizer = wx.BoxSizer(wx.VERTICAL)
+            #self.panelsizer.Add(_NewPanel , 1, wx.EXPAND|wx.ALL, 0)
+            self.panelsizer.Add(_NewPanel._Panel , 1, wx.EXPAND|wx.ALL, 0)
+            
         
             self._currentPannel = _NewPanel
             self._currentPannelText = self.wxTree._currentText
@@ -375,30 +390,17 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         _dummyData = {}
         
         _root = self.wxTree.addItem(None, "root", _dummyData, "app")
-        _app = self.wxTree.addItem(_root, "Application", _dummyData, "app")
+        
         self._root = _root
         
-        self._addMapping("Application", "General")
+        #self._addMapping("Application", "General")
         
         #print(self.parentFrame)
-       
+        #_app = self.wxTree.addItem(_root, "Application", _dummyData, "app")
         #GeneralPlug = self.parentFrame.GetPlugin("General")
-        self.loadPluginSettingTree(_app, "General")
-       
-        """
-        _last = self.wxTree.addItem(_app, "General", _dummyData, "pref")
-        _last = self.wxTree.addItem(_app, "Views", _dummyData, "views")
-        _last = self.wxTree.addItem(_app, "Connexions", _dummyData, "network")
-        _last = self.wxTree.addItem(_app, "Account", _dummyData, "person")
+        _general = self.loadPluginSettingTree(_root, "General")
         
-        
-        
-        
-        
-        _last = self.wxTree.addItem(_root, "Wallet", _dummyData, "wallet")
-        _last = self.wxTree.addItem(_root, "Test 2 ", _dummyData, "console")
-        _last = self.wxTree.addItem(_root, "Test 3 ", _dummyData, "test")
-        """
+        self.wxTree._tree.SelectItem(_general)
     
     
     def loadChildsPlugins(self, _ParenttreeItem , _child, pluginname):
@@ -413,11 +415,12 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
      
     def loadPluginSettingTree(self, _treeParentItem, _pNme):
         
-        
+        _mainElem = None
         _plugin = self.parentFrame.GetPlugin( _pNme )
         for _item in _plugin.PLUGIN_SETTINGS_GUI  :
             self.wxTree.addImage( _item._name ,  _item._icon )
             _treeItem = self.wxTree.addItem(_treeParentItem, _item._name , _item._classPanel,  _item._name)
+            _mainElem = _treeItem
             self._addMapping(_item._name, _pNme)
             if _item._childs != None:
                 for c in _item._childs:
@@ -437,13 +440,14 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
                 
                 self.wxTree.addImage(_plugin.PLUGIN_NAME, _plugin.PLUGIN_ICON)
                 _treeItem = self.wxTree.addItem(_treeParentItem, _plugin.PLUGIN_NAME ,data= wxRavenNotAvailableSettingPanel, iconname_normal=_plugin.PLUGIN_NAME)
+                _mainElem = _treeItem
                 self._addMapping(_plugin.PLUGIN_NAME, _pNme)
             
             #self.PLUGIN_SETTINGS_GUI.append(_generalPannel)
             except Exception as e:
                 #print("exception tree" )
                 self.parentFrame.Log("Unable to load Setting panel in "+_pNme + " : "+ str(e) , type="error")
-            
+        return _treeItem    
         
     def setupPluginsSettings(self):
         

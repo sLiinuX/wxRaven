@@ -40,9 +40,7 @@ class ViewsManager(object):
         
         
         self.AddArea('main', self.parentframe.wxRavenMainBook)
-        self.AddArea('toolbox1', self.parentframe.wxRavenToolBook1)
-        self.AddArea('toolbox2', self.parentframe.wxRavenToolBook2)
-        self.AddArea('toolbox3', self.parentframe.wxRavenToolBook3)
+       
         self.AddArea('mgr', self.parentframe.m_mgr)
     
         
@@ -50,7 +48,29 @@ class ViewsManager(object):
         self.parentframe.wxRavenToolBook2.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnPageClose)
         self.parentframe.wxRavenToolBook3.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnPageClose)
         self.parentframe.wxRavenMainBook.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnPageClose)
-
+        
+        
+        self.parentframe.RessourcesProvider.ApplyThemeOnPanel(self.parentframe.wxRavenToolBook1)
+        self.parentframe.RessourcesProvider.ApplyThemeOnPanel(self.parentframe.wxRavenToolBook2)
+        self.parentframe.RessourcesProvider.ApplyThemeOnPanel(self.parentframe.wxRavenToolBook3)
+        self.parentframe.RessourcesProvider.ApplyThemeOnPanel(self.parentframe.wxRavenMainBook)
+        
+        
+        if not self.force_mgr:
+            self.AddArea('Toolbox1', self.parentframe.wxRavenToolBook1)
+            self.AddArea('Toolbox2', self.parentframe.wxRavenToolBook2)
+            self.AddArea('Toolbox3', self.parentframe.wxRavenToolBook3)
+        
+        else:
+            self.parentframe.m_mgr.GetPane("Toolbox1").DestroyOnClose(True)
+            self.parentframe.m_mgr.GetPane("Toolbox2").DestroyOnClose(True)
+            self.parentframe.m_mgr.GetPane("Toolbox3").DestroyOnClose(True)
+            #pa = self.parentframe.m_mgr.GetPane("Toolbox1")
+            #self.parentframe.m_mgr.ClosePane(pa)
+            self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("Toolbox1"))
+            self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("Toolbox2"))
+            self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("Toolbox3"))
+            self.UpdateGUIManager()
 
     def OnPageClose( self, event ):
         objNotebook = event.GetEventObject()
@@ -65,6 +85,7 @@ class ViewsManager(object):
         
     def AddArea(self, frameName, Obj):
         self.all_areas[frameName] = Obj
+        print(f"Add Area {frameName}")
         #self.AddView(frameName, Obj)
         
     def GetAllAreas(self):
@@ -80,12 +101,17 @@ class ViewsManager(object):
         return result
     
     def Add(self, obj, nameFrame, position="main", icon=None):
-        
+        print("Add")
         if self.all_areas.__contains__(position):
             targetPosition= self.all_areas[position]
             
             if self.force_mgr:
-                position = "mgr"
+                position = "main"
+                print("FORCE MAIN !")
+            else:
+                print(f"position received = {position}")
+                
+                
             
   
             if position == "main":

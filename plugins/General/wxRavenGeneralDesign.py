@@ -380,40 +380,125 @@ class wxRavenWelcomeTab ( wx.Panel ):
 	
 
 ###########################################################################
+## Class ApplicationSettingPanel
+###########################################################################
+
+class ApplicationSettingPanel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 574,550 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer3 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer6212 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText362 = wx.StaticText( self, wx.ID_ANY, u"Graphical Interface :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText362.Wrap( -1 )
+		self.m_staticText362.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer6212.Add( self.m_staticText362, 0, wx.ALL, 5 )
+		
+		
+		bSizer3.Add( bSizer6212, 0, wx.EXPAND, 5 )
+		
+		bSizer62121 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		m_radioBox1Choices = [ u"Simple View", u"Advanced View" ]
+		self.m_radioBox1 = wx.RadioBox( self, wx.ID_ANY, u"Choose a mode :", wx.DefaultPosition, wx.DefaultSize, m_radioBox1Choices, 1, wx.RA_SPECIFY_ROWS )
+		self.m_radioBox1.SetSelection( 0 )
+		bSizer62121.Add( self.m_radioBox1, 0, wx.ALL, 5 )
+		
+		
+		bSizer3.Add( bSizer62121, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer62122 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.modeIllustrationBmp = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/app_simple_mode.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer62122.Add( self.modeIllustrationBmp, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer3.Add( bSizer62122, 1, wx.EXPAND, 5 )
+		
+		bSizer62113 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.defaultAreaOptionPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer111 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText451 = wx.StaticText( self.defaultAreaOptionPanel, wx.ID_ANY, u"Select a default area :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText451.Wrap( -1 )
+		self.m_staticText451.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer111.Add( self.m_staticText451, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		defaultAreaChoiceListChoices = [ u"main", u"mgr", wx.EmptyString ]
+		self.defaultAreaChoiceList = wx.Choice( self.defaultAreaOptionPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, defaultAreaChoiceListChoices, 0 )
+		self.defaultAreaChoiceList.SetSelection( 0 )
+		bSizer111.Add( self.defaultAreaChoiceList, 1, wx.ALL, 5 )
+		
+		
+		self.defaultAreaOptionPanel.SetSizer( bSizer111 )
+		self.defaultAreaOptionPanel.Layout()
+		bSizer111.Fit( self.defaultAreaOptionPanel )
+		bSizer62113.Add( self.defaultAreaOptionPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		bSizer3.Add( bSizer62113, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer6211 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText45 = wx.StaticText( self, wx.ID_ANY, u"Description :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText45.Wrap( -1 )
+		self.m_staticText45.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer6211.Add( self.m_staticText45, 1, wx.ALL, 5 )
+		
+		
+		bSizer3.Add( bSizer6211, 0, wx.EXPAND, 5 )
+		
+		bSizer62112 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_scrolledWindow2 = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.VSCROLL )
+		self.m_scrolledWindow2.SetScrollRate( 5, 5 )
+		bSizer107 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.descriptionText = wx.StaticText( self.m_scrolledWindow2, wx.ID_ANY, u"The simple mode provide only one main areas where all views will be instanciated as a new tab in the notebook.\n\nThe main notebook allow simple placement of the different views, \nbut doesn't allow to create Floating panels.\n\nClosing a notebook page close completely the view.\nNotebook perspective is not saved yet between sessions.", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.descriptionText.Wrap( -1 )
+		bSizer107.Add( self.descriptionText, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		self.m_scrolledWindow2.SetSizer( bSizer107 )
+		self.m_scrolledWindow2.Layout()
+		bSizer107.Fit( self.m_scrolledWindow2 )
+		bSizer62112.Add( self.m_scrolledWindow2, 1, wx.EXPAND |wx.ALL, 1 )
+		
+		
+		bSizer3.Add( bSizer62112, 1, wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer3 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_radioBox1.Bind( wx.EVT_RADIOBOX, self.OnModeSelectionChange )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnModeSelectionChange( self, event ):
+		event.Skip()
+	
+
+###########################################################################
 ## Class GeneralSettingPanel
 ###########################################################################
 
 class GeneralSettingPanel ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 535,527 ), style = wx.TAB_TRAVERSAL )
 		
-		bSizer3 = wx.BoxSizer( wx.VERTICAL )
-		
-		self.m_button1 = wx.Button( self, wx.ID_ANY, u"MyButton", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer3.Add( self.m_button1, 0, wx.ALL, 5 )
-		
-		self.m_staticText1 = wx.StaticText( self, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText1.Wrap( -1 )
-		bSizer3.Add( self.m_staticText1, 0, wx.ALL, 5 )
-		
-		self.m_textCtrl1 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer3.Add( self.m_textCtrl1, 0, wx.ALL, 5 )
-		
-		self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText2.Wrap( -1 )
-		bSizer3.Add( self.m_staticText2, 0, wx.ALL, 5 )
-		
-		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer3.Add( self.m_textCtrl2, 0, wx.ALL, 5 )
-		
-		m_comboBox1Choices = []
-		self.m_comboBox1 = wx.ComboBox( self, wx.ID_ANY, u"Combo!", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, 0 )
-		bSizer3.Add( self.m_comboBox1, 0, wx.ALL, 5 )
-		
-		
-		self.SetSizer( bSizer3 )
-		self.Layout()
 	
 	def __del__( self ):
 		pass

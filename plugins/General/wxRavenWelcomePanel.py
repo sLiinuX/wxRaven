@@ -51,7 +51,9 @@ class wxRavenWelcomeTabLogic(wxRavenWelcomeTab):
         self.AddRTCHandlers()
         
     
-        self.SetBackgroundColour(wx.Colour( 255, 255, 255 ))
+        #self.SetBackgroundColour(parentFrame.RessourcesProvider.GetPanelBackground())
+        #parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
+        
         
         ROOT_PATH = os.getcwd() + "/CHANGES.xml"
         print(ROOT_PATH)

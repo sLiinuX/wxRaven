@@ -253,6 +253,14 @@ class wxRavenAssetNavigator ( wx.Panel ):
 		
 		bSizer19.Add( self.m_auiToolBar3, 1, wx.ALL|wx.EXPAND, 5 )
 		
+		self.m_auiToolBar5 = wx.aui.AuiToolBar( self.m_panel4, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT|wx.TRANSPARENT_WINDOW ) 
+		self.m_auiToolBar5.SetForegroundColour( wx.Colour( 255, 255, 255 ) )
+		self.m_auiToolBar5.SetBackgroundColour( wx.Colour( 255, 255, 255 ) )
+		
+		self.m_auiToolBar5.Realize() 
+		
+		bSizer19.Add( self.m_auiToolBar5, 0, wx.ALL|wx.EXPAND, 5 )
+		
 		
 		bSizer18.Add( bSizer19, 0, wx.EXPAND, 5 )
 		
@@ -335,7 +343,7 @@ class wxRavenAssetNavigator ( wx.Panel ):
 class wxRavenAssetIssuer ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 461,336 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 435,336 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer96 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -403,7 +411,7 @@ class wxRavenAssetIssuer ( wx.Panel ):
 		bSizer981.Add( self.m_staticText441, 2, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_IPFSlinkTxt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer981.Add( self.m_IPFSlinkTxt, 5, wx.ALL, 5 )
+		bSizer981.Add( self.m_IPFSlinkTxt, 5, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
 		bSizer96.Add( bSizer981, 0, wx.EXPAND, 5 )

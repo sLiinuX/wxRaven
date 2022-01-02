@@ -21,6 +21,10 @@ class RessourcesProvider(object):
     disable_list = {}
     
     
+    _THEME_PANEL_BACKGROUND_COLOR = wx.Colour( 255, 255, 255 )
+    
+    
+    
     def __init__(self, path="", theme="default_style" ):
         '''
         Constructor
@@ -38,10 +42,8 @@ class RessourcesProvider(object):
         self._resMainTheme = theme
         
         
-        
         #todo, check if theme exist and manage error case
         self._resFullPath = path +"/"+ self._resMainTheme + "/"
-        
         
         
         self.LoadRessources()
@@ -112,10 +114,15 @@ class RessourcesProvider(object):
             
         
         
+    def GetPanelBackground(self):
+        return self._THEME_PANEL_BACKGROUND_COLOR    
         
         
-        
-        
-        
+    def ApplyThemeOnPanel(self, panel):  
+        try:  
+            panel.SetBackgroundColour(self.GetPanelBackground())
+            #panel.SetForegroundColour(self.GetPanelBackground())
+        except Exception as e:
+            print("unable to themize :" + str(e))
         
         

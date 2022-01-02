@@ -58,6 +58,9 @@ class RavencoreAssetIssuerDialog(wxRavenAssetIssuerDialog):
         self.issuerPanel = RavencoreAssetIssuerPanel(self, parentFrame, isInternalPluginView=True)
         bSizer105.Add( self.issuerPanel, 1, wx.EXPAND |wx.ALL, 5 )
         
+        parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
+        parentFrame.RessourcesProvider.ApplyThemeOnPanel(self.issuerPanel)
+        
         
         self.SetSizer( bSizer105 )
         self.Layout()
@@ -126,7 +129,7 @@ class RavencoreAssetIssuerPanel(wxRavenAssetIssuer):
         self._implementedType = True
         
         
-        
+        self.m_issueButton.Enable(False)
         self._isValidInput = False
         
         self.setupPanel()

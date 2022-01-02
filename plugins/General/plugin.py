@@ -67,7 +67,7 @@ class wxRavenPlugin(PluginObject):
                      'class': wxRavenWelcomeTabLogic ,
                      'default':False,
                      'multipleViewAllowed':False,
-                     'isArea':True
+                     'isArea':False,
                      
                      },
                     
@@ -105,17 +105,32 @@ class wxRavenPlugin(PluginObject):
         _viewIcon = self.RessourcesProvider.GetImage('perspective_default')
         _conIcon = self.RessourcesProvider.GetImage('network')
         _appIcon = self.RessourcesProvider.GetImage('frame_default')
+        
+        
+
+        self.PLUGIN_SETTINGS_GUI.clear()
+        
+        
+        _applicationPannel = PluginSettingsTreeObject("Application", _appIcon, classPanel=wxRavenApplicationSettingPanel, _childs=None)
+        
 
         _generalPannel = PluginSettingsTreeObject("General", _prefIcon, classPanel=wxRavenGeneralSettingPanel, _childs=None)
         _viewPannel = PluginSettingsTreeObject("Views", _viewIcon, classPanel=None, _childs=None)
         _connexionPannel = PluginSettingsTreeObject("Connexions", _conIcon, classPanel=None, _childs=None)
         
         
-        self.PLUGIN_SETTINGS_GUI.clear()
         
-        self.PLUGIN_SETTINGS_GUI.append(_generalPannel)
-        self.PLUGIN_SETTINGS_GUI.append(_viewPannel)
-        self.PLUGIN_SETTINGS_GUI.append(_connexionPannel)
+        
+        _applicationPannel._childs.append(_generalPannel)
+        _applicationPannel._childs.append(_viewPannel)
+        _applicationPannel._childs.append(_connexionPannel)
+        
+        
+        self.PLUGIN_SETTINGS_GUI.append(_applicationPannel)
+        
+        #self.PLUGIN_SETTINGS_GUI.append(_generalPannel)
+        #self.PLUGIN_SETTINGS_GUI.append(_viewPannel)
+        #self.PLUGIN_SETTINGS_GUI.append(_connexionPannel)
         
         
         

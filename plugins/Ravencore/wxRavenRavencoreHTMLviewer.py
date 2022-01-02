@@ -52,14 +52,27 @@ class RavencoreHTMLViewer(wxRavenHTMLViewer):
         if not isInternalPluginView:
             parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
             
-    
+        is_windows = hasattr(sys, 'getwindowsversion')
+        if is_windows:  
+            self.WindowsSetup()
+            
+            
         self.parent_frame.Views.UpdateGUIManager()
         
         self.Bind(webview.EVT_WEBVIEW_LOADED, self.OnWebViewLoaded, self.wv)
         #self.wv.LoadURL(assetUrl)
         
         
+    def WindowsSetup(self):
         
+        self.wv = webview.WebView.New(self,backend=wx.html2.WebViewBackendEdge )
+        bSizer1 = wx.BoxSizer( wx.VERTICAL )
+        bSizer1.Add( self.wv, 1, wx.ALL|wx.EXPAND, 5 )
+        self.SetSizer( bSizer1 )
+        self.Layout()
+        
+        
+            
         
     def LoadAssetUrl(self,url):
         self.ShowLoading()
@@ -75,11 +88,11 @@ class RavencoreHTMLViewer(wxRavenHTMLViewer):
         self.HideLoading()
         
         
-        is_windows = hasattr(sys, 'getwindowsversion')
-        if is_windows:
-            self.wv.SetZoomType(wx.html2.WEBVIEW_ZOOM_TYPE_LAYOUT)
-            self.wv.SetZoom(wx.html2.WEBVIEW_ZOOM_SMALL)
-            self.wv.SetZoomFactor(0.5)
+        #is_windows = hasattr(sys, 'getwindowsversion')
+        #if is_windows:
+        #    self.wv.SetZoomType(wx.html2.WEBVIEW_ZOOM_TYPE_LAYOUT)
+        #    self.wv.SetZoom(wx.html2.WEBVIEW_ZOOM_SMALL)
+        #    self.wv.SetZoomFactor(0.5)
         
     def ShowLoading(self):
         

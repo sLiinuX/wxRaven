@@ -82,6 +82,12 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         self.navigatorToolboxPanel.Hide()
         self.treeExplorerToolboxPanel.Hide()
         
+        parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
+        parentFrame.RessourcesProvider.ApplyThemeOnPanel(self.m_auiToolBar2)
+        parentFrame.RessourcesProvider.ApplyThemeOnPanel(self.m_auiToolBar4)
+        parentFrame.RessourcesProvider.ApplyThemeOnPanel(self.m_auiToolBar3)
+        
+        
         self._toolbarsVisible= False
         
         
@@ -158,6 +164,18 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         toplabel = self.wxTree._currentText 
         self.m_staticText2.SetLabel(toplabel) 
         
+        
+        _cdata = self.wxTree._currentData
+        print(_cdata)
+        _url = ""
+        if _cdata != None:
+            _ipfsgateway_default = self.parent_frame.GetPluginSetting("Ravencore","ipfsgateway_default")
+            
+            
+            if _cdata.__contains__('has_ipfs'):
+                if _cdata['has_ipfs']:
+                    _url = _ipfsgateway_default  +_cdata['ipfs_hash']
+        
         if self._tempDisplayPanel == None:
             self._tempDisplayPanel = wxRavenAssetOverviewPanel(self.AssetDetailsContainerPanel, self.parent_frame)
             sizer = wx.BoxSizer(wx.VERTICAL)
@@ -168,7 +186,7 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
             
             
             
-        self._tempDisplayPanel.DisplayAsset(self.wxTree._currentData)
+        self._tempDisplayPanel.DisplayAsset(self.wxTree._currentData, _url)
             #wxRavenAssetOverviewPanel
         self.checkToolbars()
         self.Layout()
@@ -181,7 +199,7 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         
         #self.m_auiToolBar3.EnableTool(self.m_CreateNewAssetButton.GetId(), True) 
         
-        
+        print(self.wxTree._currentText)
         #
         # Admin asset, allow creation
         #

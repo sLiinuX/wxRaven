@@ -2,8 +2,9 @@ About
 -----
 
 wxRaven is a free and open source cross-platform Integrated Environment framework
-for the Ravencoin community who want to write advanced GUI applications connected to the Ravencoin blockchain. 
+for the Ravencoin community who want to write advanced GUI applications connected to the Ravencoin blockchain.
 
+It provide a Customizable environment direclty connected to a ravencorewallet.
 
     
 ![wxRaven Logo](res/splash-test.png)
@@ -15,11 +16,11 @@ It provides usefull built-in functions to create and develop your own "Use-case 
 - Built-in RPC connexion
 - High Level RPC API Commands
 - RPC Shell & Command list
-- Asset Search
+- Asset Search, Navigation and more.
 - Highly Customizable End User Interface / Components
 - ... More to come !
 	
-
+![Uses Cases](res/wxRaven_usecases_vision.png)
 
 
 Platforms
@@ -45,6 +46,8 @@ Installation
 
 wxRaven will require an available Ravencore Wallet with RPC server configured.
 For any non-local node, we strongly recommend the usage of SSH to tunnel and encrypt the connexion.
+
+Webview component for Windows (IPFS Preview and Webcontrols) : [here](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
 
 
 Further information

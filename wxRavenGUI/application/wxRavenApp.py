@@ -71,7 +71,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         #icon.CopyFromBitmap(wx.Bitmap( u"res/default_style/normal/ravencoin.png", wx.BITMAP_TYPE_ANY ))
         icon.CopyFromBitmap(self.RessourcesProvider.GetImage('ravencoin'))
         self.SetIcon(icon)
-        
+        self.RessourcesProvider.ApplyThemeOnPanel(self)
         
         
         
@@ -80,7 +80,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         
         # Managing views
-        self.Views = ViewsManager(self)
+        self.Views = ViewsManager(self, self.Settings.forceinprincipalauimanager)
         
         # Simple class to handle multiple RPC connexions
         self.ConnexionManager  =  RvnRPC_ConnectorManager(self)
@@ -280,7 +280,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     """
         
     def Add(self, obj, nameFrame, position="mgr", icon=None):
-        #print("Add()->"+position)
+        print("Add()->"+position)
         self.Views.Add(obj, nameFrame, position, icon)
      
     

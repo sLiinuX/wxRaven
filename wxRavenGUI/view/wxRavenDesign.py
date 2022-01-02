@@ -61,7 +61,7 @@ class wxRavenSplashScreen ( wx.Dialog ):
 class wxRavenMainFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"wxRaven", pos = wx.DefaultPosition, size = wx.Size( 694,501 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"wxRaven", pos = wx.DefaultPosition, size = wx.Size( 724,501 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		self.m_mgr = wx.aui.AuiManager()
@@ -151,15 +151,15 @@ class wxRavenMainFrame ( wx.Frame ):
 		
 		
 		self.wxRavenToolBook1 = wx.aui.AuiNotebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE|wx.HSCROLL )
-		self.m_mgr.AddPane( self.wxRavenToolBook1, wx.aui.AuiPaneInfo() .Name( u"wxRavenToolBook1" ).Left() .Caption( u"Toolbox1" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( 200,-1 ) ) )
+		self.m_mgr.AddPane( self.wxRavenToolBook1, wx.aui.AuiPaneInfo() .Name( u"Toolbox1" ).Left() .Caption( u"Toolbox1" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( 200,-1 ) ) )
 		
 		
 		self.wxRavenToolBook2 = wx.aui.AuiNotebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE )
-		self.m_mgr.AddPane( self.wxRavenToolBook2, wx.aui.AuiPaneInfo() .Name( u"wxRavenToolBook2" ).Right() .Caption( u"Toolbox2" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( 200,-1 ) ) )
+		self.m_mgr.AddPane( self.wxRavenToolBook2, wx.aui.AuiPaneInfo() .Name( u"Toolbox2" ).Right() .Caption( u"Toolbox2" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( 200,-1 ) ) )
 		
 		
 		self.wxRavenToolBook3 = wx.aui.AuiNotebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE )
-		self.m_mgr.AddPane( self.wxRavenToolBook3, wx.aui.AuiPaneInfo() .Name( u"wxRavenToolBook3" ).Bottom() .Caption( u"Toolbox3" ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( -1,100 ) ) )
+		self.m_mgr.AddPane( self.wxRavenToolBook3, wx.aui.AuiPaneInfo() .Name( u"Toolbox3" ).Bottom() .Caption( u"Toolbox3" ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( -1,100 ) ) )
 		
 		
 		
@@ -316,7 +316,7 @@ class wxRavenAddView ( wx.Dialog ):
 class wxRavenSettingDialog ( wx.Dialog ):
 	
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Preferences", pos = wx.DefaultPosition, size = wx.Size( 712,614 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Preferences", pos = wx.DefaultPosition, size = wx.Size( 867,669 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		

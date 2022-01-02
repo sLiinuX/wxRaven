@@ -120,6 +120,8 @@ class MenuAndToolBarManager(object):
     
     def setupToolBar(self):
         self.parentframe.Bind( wx.EVT_TOOL, self.OnContextMenu_ShowNetworkList, id = self.parentframe.rpcConnexions_dropdown_button.GetId() )
+        
+        self.parentframe.RessourcesProvider.ApplyThemeOnPanel(self.parentframe.m_auiToolBar2)
         self.parentframe.m_auiToolBar2.Realize()
     
     
