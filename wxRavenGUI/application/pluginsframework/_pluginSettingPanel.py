@@ -43,7 +43,9 @@ class PluginSettingsPanelObject(object):
         self._needReboot = False
         
         
-
+    def Layout(self):
+        self._Panel.Layout()
+        self.parentFrame.Layout()
 
     def Show(self):
         self._Panel.Show()

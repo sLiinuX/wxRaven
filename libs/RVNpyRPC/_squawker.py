@@ -7,7 +7,7 @@ import requests
 
 
 
-from .squawker import squawker_as_lib
+#from .squawker import squawker_as_lib
 
 class RVNpyRPC_Squawker():
     '''

@@ -22,8 +22,7 @@ class wxBackgroundWorkerAnimation ( wx.Panel ):
         #self.m_animCtrl1 = Animation(u"res/default_style/normal/default_style/normal/ravencoin_asking_chain.gif" )
         ani = Animation(u"res/default_style/normal/ravencoin_asking_chain.gif" )
         self.m_animCtrl1 = AnimationCtrl(self, -1, ani , style=wx.EXPAND, size = wx.Size( 150,150 ))
-        
-        
+          
         #self.m_animCtrl1.SetBackgroundColour(self.GetBackgroundColour())
         
         self.m_animCtrl1.Play()
@@ -31,11 +30,11 @@ class wxBackgroundWorkerAnimation ( wx.Panel ):
         
         bSizer1.Add( self.m_animCtrl1, 0, wx.ALL|wx.EXPAND, 5 )
         
-        
-        
-
         self.Layout()
     
     def __del__( self ):
         pass
+    
+    
+    
     

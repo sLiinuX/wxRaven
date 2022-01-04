@@ -5,6 +5,8 @@ Created on 13 déc. 2021
 '''
 from .wxRavenWalletDesign import *
 
+import threading
+import time 
 
 
 class walletMainPanel(wxRavenWalletMain):
@@ -29,11 +31,30 @@ class walletMainPanel(wxRavenWalletMain):
         self.parent_frame = parentFrame
         self.default_position = position
         parentFrame.Add(self, self.view_name ,position,  parentFrame.RessourcesProvider.GetImage(self.icon))
-        self.initAllPanels()
+        
+        
+        self.waitApplicationReady()
+        #self.initAllPanels()
+        
+        
+       
+        
+        
+    def waitApplicationReady(self):
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.initAllPanels,))
+        t.start()
+        
+        
+    def __waitLoop_T__(self,callback):
+        while not self.parent_frame._isReady:
+            time.sleep(2)
+            
+        wx.CallAfter(callback, ())    
         
         
         
-    def initAllPanels(self):
+        
+    def initAllPanels(self, evt=None):
         
         self.panelOverview = walletOverviewPane(self.parent_frame )
         # self.parent_frame.RessourcesProvider.GetImage(self.panelOverview.icon)
@@ -91,9 +112,26 @@ class walletOverviewPane(wxRavenWalletOverview):
     
     def setupDataViewTable(self):
         self.addressViewListCtrl.AppendTextColumn('account', width=150)
-        self.addressViewListCtrl.AppendTextColumn('addresses', width=150)
-        self.addressViewListCtrl.AppendTextColumn('balance', width=25)
+        self.addressViewListCtrl.AppendTextColumn('addresses', width=200)
+        self.addressViewListCtrl.AppendTextColumn('balance', width=50, align=wx.ALIGN_RIGHT)
         
+        
+        """
+        info = wx.ListItem()
+        info.Mask = wx.LIST_MASK_TEXT | wx.LIST_MASK_IMAGE | wx.LIST_MASK_FORMAT
+        info.Image = -1
+        info.Align = 0
+        info.Text = "Message"
+        self.m_listCtrl1.InsertColumn(0, info)
+
+        info.Align = 0#wx.LIST_FORMAT_RIGHT
+        info.Text = "Source"
+        self.srcCol = self.m_listCtrl1.InsertColumn(1, info)
+
+        info.Align = wx.LIST_FORMAT_RIGHT
+        info.Text = "Date"
+        self.m_listCtrl1.InsertColumn(2, info)
+        """
         #self.assetsViewListCtrl.AppendTextColumn('asset', width=200)
         #self.assetsViewListCtrl.AppendTextColumn('balance', width=25)
     
@@ -183,6 +221,13 @@ class walletOverviewPane(wxRavenWalletOverview):
             for item in tableData:
                 self.addressViewListCtrl.AppendItem(item)
             
+        
+        
+        
+        
+        
+        
+        
         except Exception as e:
             self.parent_frame.Log("Unable to display wallet datas" , type="error")
     

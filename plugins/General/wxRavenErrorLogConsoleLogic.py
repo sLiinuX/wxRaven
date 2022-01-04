@@ -17,10 +17,10 @@ import wx.lib.mixins.listctrl as listmix
 
 
 
+import wx.lib.mixins.listctrl as listmix 
 
 
-
-class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
+class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixin):
     '''
     classdocs
     '''
@@ -50,14 +50,19 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
         self.parent_frame = parentFrame
         self.default_position = position
         
+        self._display = [] 
+        #self._msg = True
+        #self._warning = True
+        #self._error = True
         
         
-        
+        self.itemDataMap = {}
         self.allIcons = { }
         
         self.InitConsoleLog()
+        self.InitToolbar()
         
-        
+        parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
         parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
         
         
@@ -81,7 +86,7 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
         
         
         _currentViewCursor = self._logCurrentCursor
-        
+        #self.itemDataMap = {}
         items = _allLogs.items()
         for key, data in items:
             #print(str(key) + " VS" + str(_currentViewCursor) )
@@ -90,6 +95,23 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
                 
                 
                 _icon = self.allIcons['info']
+                
+                
+                _type=data[0]
+                #print(_type)
+                #print(self._display)
+                
+                
+                _foundInFilter=False
+                
+                for _t in  self._display:
+                    if _type.__contains__(_t):
+                        _foundInFilter=True
+                
+                #if not _foundInFilter:
+                #    continue
+                    
+                
                 
                 if self.allIcons.__contains__(data[0].lower()):
                     _icon= self.allIcons[data[0].lower()]
@@ -104,13 +126,25 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
                 self.m_listCtrl1.SetItem(index,2, data[3])
                 #item1.SetColumn(1)
                 #self.m_listCtrl1.SetItem(item)
-                self.m_listCtrl1.SetItemData(index, key)
+                self.m_listCtrl1.SetItemData(index, _currentViewCursor)
+                
+                self.itemDataMap[_currentViewCursor] = (str(data[1]), str(data[2]), str(data[3]) )
+                    
                 
                 _currentViewCursor = _currentViewCursor +1
           
         self._logCurrentCursor = _currentViewCursor
-         
-    
+        
+        
+        self.m_listCtrl1.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+        self.m_listCtrl1.SetColumnWidth(1, 300)
+        self.m_listCtrl1.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+        listmix.ColumnSorterMixin.__init__(self, 3)
+        
+        listmix.ColumnSorterMixin.SortListItems(self, col=2, ascending=0)
+        
+        self.SetAutoLayout(True)
+        self.Layout()
     
     
     def dummyTest(self):
@@ -147,8 +181,68 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
             # self.list.SetItemData(index, key)
             
             
-            
+    # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
+    def GetListCtrl(self):
+        return self.m_listCtrl1
+    
+    # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
+    def GetSortImages(self):
+        return (self.allIcons['alphab_down'], self.allIcons['alphab_up'])        
         
+    
+    
+    
+    
+    def InitToolbar(self):
+        
+        myPlugin = self.parent_frame.GetPlugin("General")
+        
+        alloptions = myPlugin.PLUGIN_SETTINGS['showerror']
+        
+        
+        if alloptions.__contains__('info'):
+            self.m_auiToolBar1.ToggleTool(self.m_showInfos.GetId(), True)
+            
+        if alloptions.__contains__('message') or alloptions.__contains__('msg') :
+            self.m_auiToolBar1.ToggleTool(self.m_showMessages.GetId(), True)
+             
+        if alloptions.__contains__('warning'):
+            self.m_auiToolBar1.ToggleTool(self.m_showWarnings.GetId(), True)
+        
+        if alloptions.__contains__('error'):
+            self.m_auiToolBar1.ToggleTool(self.m_showErrors.GetId(), True)
+              
+        self._display = alloptions
+        
+        
+    def OnViewOptionsChanged(self, evt):
+        #GetToolToggled
+        myPlugin = self.parent_frame.GetPlugin("General")
+        alloptions = []
+        
+        if self.m_auiToolBar1.GetToolToggled(self.m_showInfos.GetId()):
+            alloptions.append('info')
+            
+            
+        if self.m_auiToolBar1.GetToolToggled(self.m_showMessages.GetId()):
+            alloptions.append('msg')
+           
+            
+        if self.m_auiToolBar1.GetToolToggled(self.m_showWarnings.GetId()):
+            alloptions.append('warning')
+           
+            
+        if self.m_auiToolBar1.GetToolToggled(self.m_showErrors.GetId()):
+            alloptions.append('error')
+           
+        
+        self._display = alloptions
+        
+        
+        
+        myPlugin.PLUGIN_SETTINGS['showerror'] = alloptions
+    
+    
     
     def InitConsoleLog(self):
         
@@ -163,7 +257,7 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
         info.Text = "Source"
         self.srcCol = self.m_listCtrl1.InsertColumn(1, info)
 
-        info.Align = 0
+        info.Align = wx.LIST_FORMAT_RIGHT
         info.Text = "Date"
         self.m_listCtrl1.InsertColumn(2, info)
         
@@ -203,6 +297,8 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel):
         self.allIcons['process_pause'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('process_pause') )
         self.allIcons['process_warning'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('process_pause') )
         
+        self.allIcons['alphab_up'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('alphab_sort_up') )
+        self.allIcons['alphab_down'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('alphab_sort_co') )
         
         
         

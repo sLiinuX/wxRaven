@@ -25,7 +25,9 @@ class wxRavenErrorLogConsolePanel ( wx.Panel ):
 		bSizer1 = wx.BoxSizer( wx.VERTICAL )
 		
 		self.m_auiToolBar1 = wx.aui.AuiToolBar( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT ) 
-		self.m_tool1 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/export_log.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		self.m_tool5 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/view_menu.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		
+		self.m_auiToolBar1.AddSeparator()
 		
 		self.m_tool2 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/import_log.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
 		self.m_auiToolBar1.SetToolDropDown( self.m_tool2.GetId(), True );
@@ -33,13 +35,25 @@ class wxRavenErrorLogConsolePanel ( wx.Panel ):
 		
 		self.m_auiToolBar1.AddSeparator()
 		
+		self.m_tool1 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/export_log.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		
+		self.m_auiToolBar1.AddSeparator()
+		
 		self.m_tool3 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/clear_co.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
 		
 		self.m_auiToolBar1.AddSeparator()
 		
-		self.m_tool4 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/restore_log.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		self.m_tool4 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/restore_log.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_RADIO, wx.EmptyString, wx.EmptyString, None ) 
 		
-		self.m_tool5 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/view_menu.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		self.m_auiToolBar1.AddSeparator()
+		
+		self.m_showInfos = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/info_obj.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, wx.EmptyString, wx.EmptyString, None ) 
+		
+		self.m_showMessages = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, wx.EmptyString, wx.EmptyString, None ) 
+		
+		self.m_showWarnings = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/warning_obj.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, wx.EmptyString, wx.EmptyString, None ) 
+		
+		self.m_showErrors = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/error_tsk.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, wx.EmptyString, wx.EmptyString, None ) 
 		
 		self.m_auiToolBar1.Realize() 
 		
@@ -51,9 +65,23 @@ class wxRavenErrorLogConsolePanel ( wx.Panel ):
 		
 		self.SetSizer( bSizer1 )
 		self.Layout()
+		
+		# Connect Events
+		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showInfos.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showMessages.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showWarnings.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showErrors.GetId() )
 	
 	def __del__( self ):
 		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnViewOptionsChanged( self, event ):
+		event.Skip()
+	
+	
+	
 	
 
 ###########################################################################
@@ -499,6 +527,80 @@ class GeneralSettingPanel ( wx.Panel ):
 	def __init__( self, parent ):
 		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 535,527 ), style = wx.TAB_TRAVERSAL )
 		
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class wxRavenConnexionSettings_SettingPanel
+###########################################################################
+
+class wxRavenConnexionSettings_SettingPanel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 505,374 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer113 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer118 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_staticText61 = wx.StaticText( self, wx.ID_ANY, u"Use the format :  connexion_name = user:password@ip:port\nExample : mainnet_localhost = mylogin:mypwd@127.0.0.1:8766", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE|wx.STATIC_BORDER )
+		self.m_staticText61.Wrap( -1 )
+		bSizer118.Add( self.m_staticText61, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer113.Add( bSizer118, 0, wx.EXPAND, 5 )
+		
+		bSizer114 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap4 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer114.Add( self.m_bitmap4, 0, wx.ALL, 5 )
+		
+		self.m_staticText12 = wx.StaticText( self, wx.ID_ANY, u"My Connexions :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText12.Wrap( -1 )
+		bSizer114.Add( self.m_staticText12, 0, wx.ALL, 5 )
+		
+		bSizer115 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.bookmark_text_area = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.bookmark_text_area.SetMaxLength( 0 ) 
+		bSizer115.Add( self.bookmark_text_area, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		bookmark_listChoices = []
+		self.bookmark_list = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, bookmark_listChoices, 0 )
+		bSizer115.Add( self.bookmark_list, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer114.Add( bSizer115, 1, wx.EXPAND, 5 )
+		
+		bSizer116 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.bookmark_addbt = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/add_plus.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer116.Add( self.bookmark_addbt, 0, wx.ALL, 5 )
+		
+		self.bookmark_rembt = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/remove_minus.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer116.Add( self.bookmark_rembt, 0, wx.ALL, 5 )
+		
+		self.ipfs_provider_upbt = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/prev_nav.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.ipfs_provider_upbt.Enable( False )
+		
+		bSizer116.Add( self.ipfs_provider_upbt, 0, wx.ALL, 5 )
+		
+		
+		bSizer114.Add( bSizer116, 0, wx.EXPAND, 5 )
+		
+		bSizer117 = wx.BoxSizer( wx.VERTICAL )
+		
+		
+		bSizer114.Add( bSizer117, 0, wx.EXPAND, 5 )
+		
+		
+		bSizer113.Add( bSizer114, 1, wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer113 )
+		self.Layout()
 	
 	def __del__( self ):
 		pass

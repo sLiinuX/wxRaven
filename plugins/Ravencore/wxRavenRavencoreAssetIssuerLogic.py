@@ -429,7 +429,7 @@ class RavencoreAssetIssuerPanel(wxRavenAssetIssuer):
             pass
             #reissuerestrictedasset
             #issuerestrictedasset "asset_name" qty "verifier" "to_address" "( change_address )" (units) ( reissuable ) ( has_ipfs ) "( ipfs_hash )"    
-            _res = network.issuequalifierasset(self._finalName, self._quantity, self._destination, self._change,  self._units, self._reissuable, self._hasIpfs, self._ipfs)
+            _res = network.issuerestrictedasset(self._finalName, self._quantity, self._destination, self._change,  self._units, self._reissuable, self._hasIpfs, self._ipfs)
         
             print(f"  {self._finalName} ")
         

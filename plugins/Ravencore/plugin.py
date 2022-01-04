@@ -217,7 +217,7 @@ class wxRavenPlugin(PluginObject):
         
         
         _Icon = self.RessourcesProvider.GetImage('raven_ipfs')
-        _ipfsPannel = PluginSettingsTreeObject("IPFS", _Icon, classPanel=wxRavencore_IPFSSettings_WithLogic, _childs=None)
+        _ipfsPannel = PluginSettingsTreeObject("IPFS Gateway", _Icon, classPanel=wxRavencore_IPFSSettings_WithLogic, _childs=None)
         
         #wxRavencore_IPFSSettings_WithLogic
         
@@ -343,6 +343,9 @@ class wxRavenPlugin(PluginObject):
         #try:
         try:
         #if True:    
+            keyword = keyword.upper()
+
+        
             _lastSearch = self.getData("_LastSearch")
             
             if _lastSearch == keyword:

@@ -9,7 +9,7 @@ import wx.aui
 from .wxRavenShellDesign import *
 import wx.py as py
 import threading
-
+import time
 
 class shellMainPanel(wxRavenShellPanel):
     '''
@@ -162,8 +162,8 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
         
         parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))        
         
-        self.defaultShell()
-        
+        #self.defaultShell()
+        self.waitApplicationReady()
         
         
         
@@ -173,7 +173,23 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
         
     
     
-    def defaultShell(self):
+    
+    def waitApplicationReady(self):
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.defaultShell,))
+        t.start()
+        
+        
+    def __waitLoop_T__(self,callback):
+        while not self.parent_frame._isReady:
+            time.sleep(2)
+            
+        wx.CallAfter(callback, ())
+    
+    
+    
+    
+    
+    def defaultShell(self, evt=None):
         
         
          

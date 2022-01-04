@@ -77,7 +77,7 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_SETTINGS = {
-                'showerror' : ['error','message'],
+                'showerror' : ['error','message', 'warning', 'infos'],
                 'defaultviewarea':'main',
                 'last_network':'mainnet_localhost',
             }
@@ -116,7 +116,7 @@ class wxRavenPlugin(PluginObject):
 
         _generalPannel = PluginSettingsTreeObject("General", _prefIcon, classPanel=wxRavenGeneralSettingPanel, _childs=None)
         _viewPannel = PluginSettingsTreeObject("Views", _viewIcon, classPanel=None, _childs=None)
-        _connexionPannel = PluginSettingsTreeObject("Connexions", _conIcon, classPanel=None, _childs=None)
+        _connexionPannel = PluginSettingsTreeObject("Connexions", _conIcon, classPanel=wxRavenConexionsSettingPanel, _childs=None)
         
         
         

@@ -42,6 +42,8 @@ class SettingsManager(object):
     allconnexions = {}
     
     
+    _settingDialog = None
+    
     #parentframe = None
     
     
@@ -79,7 +81,7 @@ class SettingsManager(object):
             print(e)
             self.RaiseSettingsLog("Unable to load settings from file : " + str(e), "warning") 
         
-    
+        self._settingDialog = None
     
     
     
@@ -248,8 +250,20 @@ class SettingsManager(object):
         
         
     def ShowSettingsDialog(self):
+        
+        
         settingsDialog = wxRavenSettingDialogLogic(self.parentframe)
         settingsDialog.Show()
+        
+        self._settingDialog = settingsDialog
+       
+        settingsDialog.Bind(wx.EVT_CLOSE, self.OnCloseSettings )
+        
+        
+    def OnCloseSettings(self, evt):
+        if self._settingDialog!= None:
+            self._settingDialog.Destroy()
+            
         
         
         

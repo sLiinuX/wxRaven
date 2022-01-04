@@ -6,7 +6,7 @@ Created on 20 déc. 2021
 
 
 
-from .wxRavenGeneralDesign import GeneralSettingPanel, ApplicationSettingPanel
+from .wxRavenGeneralDesign import GeneralSettingPanel, ApplicationSettingPanel, wxRavenConnexionSettings_SettingPanel
 
 from wxRavenGUI.application.pluginsframework import PluginSettingsPanelObject
 
@@ -159,11 +159,7 @@ class wxRavenGeneralSettingPanel(PluginSettingsPanelObject):
         
         _panel = GeneralSettingPanel(parent)
         PluginSettingsPanelObject.__init__(self,_panel, parentFrame, pluginName)
-    
-    
-    
-    
-    
+     
     
     #
     #
@@ -179,3 +175,128 @@ class wxRavenGeneralSettingPanel(PluginSettingsPanelObject):
     # 
     def LoadPanelSettings(self):
         pass    
+    
+    
+    
+    
+    
+    
+
+
+class wxRavenConexionsSettingPanel(PluginSettingsPanelObject):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self,parent, parentFrame, pluginName):
+        
+        _Panel = wxRavenConnexionSettings_SettingPanel(parent)
+        PluginSettingsPanelObject.__init__(self,_Panel, parentFrame, pluginName)
+    
+        _Panel.SetBackgroundColour( wx.Colour( 217, 228, 255 ) )
+        
+        #self._Panel
+        
+        
+        _Panel.Bind( wx.EVT_BUTTON, self.OnAddProvider,id = _Panel.bookmark_addbt.GetId()  )
+        _Panel.Bind( wx.EVT_BUTTON, self.OnRemoveProvider,id = _Panel.bookmark_rembt.GetId()  )
+     
+        self.Layout()
+    #
+    #
+    # method to be called on close and apply
+    #    
+    def SavePanelSettings(self):
+        allProviders = []
+        
+        
+        appSettings = self.parentFrame.Settings
+        
+        _newList = {}
+        
+        _errorsParsing = False
+        
+        for i in range(0, self._Panel.bookmark_list.Count):
+            
+            
+            _con = self._Panel.bookmark_list.GetString(i)
+            
+            
+            
+            try:
+                _conArr = _con.split('=')
+                _name = _conArr[0]
+                _val = _conArr[1]
+                
+                _newList[_name] = _val
+                
+                
+                
+                
+            except Exception as e:
+                _errorsParsing = True
+                print(f"erreur in the connexion '{_con}', data will not be saved")
+            
+        
+        if not _errorsParsing:    
+            appSettings.allconnexions = _newList   
+            
+        
+        
+        #default =    allProviders[0] 
+        #Settings
+        #myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        #myPlugin.PLUGIN_SETTINGS["ipfsgateway_default"]    = default
+        #myPlugin.PLUGIN_SETTINGS["bookmark_list"]  = allProviders
+    
+    
+    #
+    #
+    # method to be called at first panel creation
+    # 
+    def LoadPanelSettings(self):
+        allproviders = self.parentFrame.Settings.allconnexions 
+        
+        _dispArray = []
+        for key in allproviders:
+            _val=allproviders[key]
+            
+            strCon = str(key) + " = " + str(_val)
+            
+            _dispArray.append(strCon)
+        
+        self._Panel.bookmark_list.InsertItems(_dispArray, 0)
+        
+        #print("LoadPanelSettings")     
+        
+        
+        self._Panel.Layout()
+        
+    def OnAddProvider(self, evt):    
+        
+        newp  = self._Panel.bookmark_text_area.GetValue()
+        self._Panel.bookmark_list.InsertItems([newp], self._Panel.bookmark_list.Count)
+        self._settingsHasChanged = True
+        self._Panel.Layout()
+        
+        
+    def OnRemoveProvider(self, evt):    
+        x = self._Panel.bookmark_list.GetSelection()
+        self._Panel.bookmark_list.Delete(x)
+        self._settingsHasChanged = True
+        self._Panel.Layout()
+        
+        
+    def OnMoveProviderUp(self, evt): 
+        x = self._Panel.bookmark_list.GetSelection()
+        #self._Panel.ipfs_provider_list.SetFirstItem(x)
+        #print(x)
+        
+        _itemTopromote = self._Panel.bookmark_list.GetString(x)
+        self._Panel.bookmark_list.Delete(x)
+        
+        self._Panel.bookmark_list.InsertItems([_itemTopromote], 0)
+        
+        self._settingsHasChanged = True
+        self._Panel.Layout()

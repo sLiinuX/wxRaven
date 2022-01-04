@@ -24,6 +24,10 @@ import wx.lib.mixins.listctrl as listmix
 
 
 
+
+from .wxRavenRavencoreAssetRightClickPopupMenu import RavencoreAssetRightclickPopupMenu
+
+
 class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
     '''
     classdocs
@@ -563,8 +567,8 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
         _data= self._datacache[self._currentItem]
         _hasIpfs =  _data['has_ipfs']
         
-        
-        
+        menuAsset = RavencoreAssetRightclickPopupMenu(self, self.parent_frame, _data)
+        """
         # only do this part the first time so the events are only bound once
         if not self.popupIDS.__contains__("popupID1"):
             
@@ -662,7 +666,10 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
         # Popup the menu.  If an item is selected then its handler
         # will be called before PopupMenu returns.
         self.PopupMenu(menu)
-        menu.Destroy()   
+        menu.Destroy()  
+        
+        
+        """ 
     
     
     def addInBkmrk(self, event):

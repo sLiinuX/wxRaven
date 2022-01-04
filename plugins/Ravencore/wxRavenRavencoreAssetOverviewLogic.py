@@ -115,10 +115,10 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
                 self.m_bpButton27.SetBitmap(imgbmp, dir=wx.LEFT)
             elif isAdmin:
                 #asset_new_qrcode
-                self.m_bpButton27.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('ipfs_not_available_3'), dir=wx.LEFT)
+                self.m_bpButton27.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('ipfs_not_available_4'), dir=wx.LEFT)
                 
             else:
-                self.m_bpButton27.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('ipfs_not_available_3'), dir=wx.LEFT)
+                self.m_bpButton27.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('ipfs_not_available_4'), dir=wx.LEFT)
             
             
             self.RequestOwnerList_T()
@@ -133,7 +133,7 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
             self.m_assetCreatedTxt.SetValue("")
             
             
-            self.m_bpButton27.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('ipfs_not_available_3'), dir=wx.LEFT)
+            self.m_bpButton27.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('ipfs_not_available_4'), dir=wx.LEFT)
             
             
             

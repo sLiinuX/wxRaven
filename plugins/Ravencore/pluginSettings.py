@@ -37,7 +37,7 @@ class wxRavencore_GeneralSettings_WithLogic(PluginSettingsPanelObject):
         
         self._Panel.searchopt_onlymain.Bind( wx.EVT_CHECKBOX, self.toggleAssetTypeList )
     
-    
+        self.Layout()
     #
     #
     # method to be called on close and apply

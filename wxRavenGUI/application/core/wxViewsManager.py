@@ -33,6 +33,8 @@ class ViewsManager(object):
         self.parentframe = parentframe
         self.force_mgr = forceinprincipalauimanager
     
+        self.nViewDialog = None
+    
         self.InitViewManager()
     
     
@@ -503,12 +505,17 @@ class ViewsManager(object):
         nViewDialog = RavenAddViewDialog(self.parentframe, _defaultViewSett)
         nViewDialog.Show()    
         
+        nViewDialog.Bind(wx.EVT_CLOSE, self.OnAddViewClose )
+        
+        self.nViewDialog = nViewDialog
         
         
         
         
-        
-        
+    def OnAddViewClose(self, evt):
+        if self.nViewDialog  != None :
+            self.nViewDialog.Destroy()
+            self.nViewDialog=None
         
         
         

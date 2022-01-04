@@ -29,6 +29,10 @@ class MenuAndToolBarManager(object):
         self.setupMenuBar()
         self.setupToolBar()
         self.setupStatusBar()
+        
+        
+        
+        self._aboutDialog = None
     
     
     def RaiseMenuAndToolLog(self, message, type="error"):
@@ -298,20 +302,25 @@ class MenuAndToolBarManager(object):
     
     
     def OnAboutWxRaven(self, evt):
+        
+        
         aboutDial = wxRavenAbout(self.parentframe)
-        
-        
         from wxRavenGUI.version import __VERSION__, __BUILD_ID__
         
         versionDetails = aboutDial.m_textCtrl2.GetValue()
         versionDetails = versionDetails.replace("<VERSION>", __VERSION__)
         versionDetails = versionDetails.replace("<BUILD_ID>", __BUILD_ID__)
-        
         aboutDial.m_textCtrl2.SetValue(versionDetails)
-        
         aboutDial.Show(show=1)
         
+        aboutDial.Bind(wx.EVT_CLOSE, self.OnCloseAbout )
+        self._aboutDialog = aboutDial
     
+    
+    def OnCloseAbout(self, evt):
+        if self._aboutDialog !=None:
+            self._aboutDialog.Destroy()
+            self._aboutDialog = None
     
     
     def setupMenuBar(self):

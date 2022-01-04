@@ -24,7 +24,7 @@ from wxRavenGUI.application.wxcustom.CustomTreeView import wxRavenTreeView
 
 
 from .wxRavenRavencoreAssetOverviewLogic import wxRavenAssetOverviewPanel
-
+from .wxRavenRavencoreAssetRightClickPopupMenu import RavencoreAssetRightclickPopupMenu
 
 """
 
@@ -130,6 +130,10 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         
         self.wxTree = wxRavenTreeView(self.assetTreeView, _icons, _fillTreeCallback=None, _onChangeCallback=self.onChangeTest)
         
+        self.Bind(wx.EVT_TREE_ITEM_RIGHT_CLICK, self.OnRightClickTreeItem, self.wxTree._tree)
+        
+        
+        
     
     def __initPluginSettingsOptions__(self):
         _p = self.parent_frame.GetPlugin("Ravencore")
@@ -166,7 +170,7 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         
         
         _cdata = self.wxTree._currentData
-        print(_cdata)
+        #print(_cdata)
         _url = ""
         if _cdata != None:
             _ipfsgateway_default = self.parent_frame.GetPluginSetting("Ravencore","ipfsgateway_default")
@@ -192,6 +196,10 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         self.Layout()
     
     
+    
+    
+    def OnRightClickTreeItem(self, evt):
+        rclickmenu = RavencoreAssetRightclickPopupMenu(self, self.parent_frame,  self.wxTree._currentData)
     
     
     def checkToolbars(self):

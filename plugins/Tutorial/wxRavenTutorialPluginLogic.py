@@ -7,6 +7,11 @@ Created on 18 déc. 2021
 
 from .wxRavenTutorialPluginDesign import *
 
+import threading
+import time 
+
+
+
 class MyTutorialView_WithLogic(MyTutorialView):
     '''
     classdocs
@@ -54,6 +59,29 @@ class MyTutorialView_WithLogic(MyTutorialView):
         if not isInternalPluginView:
             parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
             
+    
+    
+    
+        #
+        # If your app need to load a bunch of data, it may want to wait the app is ready
+        # specially at startup + resume of plugins
+        # Use this thread method + callback to manage the 1sec/2sec init delay
+        #
+        #
+        self.waitApplicationReady()
+    
+    
+    def waitApplicationReady(self):
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.UpdateView,))
+        t.start()
+        
+        
+    def __waitLoop_T__(self,callback):
+        while not self.parent_frame._isReady:
+            time.sleep(2)
+            
+        wx.CallAfter(callback, ()) 
+    
             
     #Override the UpdateView method to define what happen when plugin call UpdateViews()        
     def UpdateView(self):
