@@ -42,7 +42,7 @@ class SettingsManager(object):
     allconnexions = {}
     
     
-    _settingDialog = None
+    #_settingDialog = None
     
     #parentframe = None
     
@@ -81,7 +81,7 @@ class SettingsManager(object):
             print(e)
             self.RaiseSettingsLog("Unable to load settings from file : " + str(e), "warning") 
         
-        self._settingDialog = None
+        #self._settingDialog = None
     
     
     
@@ -224,7 +224,8 @@ class SettingsManager(object):
         if self.ConfigFileInstance.__contains__(pluginName):
             for key in self.ConfigFileInstance[pluginName]:
                 _pluginsSettings[key] = self.ConfigFileInstance.get(pluginName, key)
-    
+                
+                
         return _pluginsSettings
     
     
@@ -255,14 +256,8 @@ class SettingsManager(object):
         settingsDialog = wxRavenSettingDialogLogic(self.parentframe)
         settingsDialog.Show()
         
-        self._settingDialog = settingsDialog
+        #self._settingDialog = settingsDialog
        
-        settingsDialog.Bind(wx.EVT_CLOSE, self.OnCloseSettings )
-        
-        
-    def OnCloseSettings(self, evt):
-        if self._settingDialog!= None:
-            self._settingDialog.Destroy()
             
         
         
@@ -294,6 +289,8 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         self._currentPannelText = ""
         
         self.OPEN_PANEL_CACHE = {}
+        
+        self._allSaved = False
         
         
         _icons = {
@@ -353,6 +350,10 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         
     
     
+    def ShowNotification(self, message, msgType=wx.ICON_INFORMATION):
+        #self.m_settingsDialogNotification.ShowMessage(message, msgType)
+        self.m_customNotification.ShowNotification(message, msgType)
+    
     
     
     
@@ -391,7 +392,16 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             self._currentPannel = self.OPEN_PANEL_CACHE[self.wxTree._currentText]
             self._currentPannelText = self.wxTree._currentText
             self._currentPannel.Show()
-            
+        
+        
+        
+        
+        
+        if self._currentPannel != None :
+            if self._currentPannel._needReboot :
+                
+                self.ShowNotification("Any modification here will require the application to reboot.", wx.ICON_WARNING)
+                   
         
         self.Layout()
         
@@ -521,6 +531,28 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         
         if _doClose:
             self.Close(force=True)
+    
+    
+    
+    
+    def OnCloseSettings(self, event):
+        print("OnCloseSettings")
+        
+        for _p in self.OPEN_PANEL_CACHE:
+            _pObj = self.OPEN_PANEL_CACHE[_p]
+            try:
+                _pObj.safeClose()
+                _pObj._Panel.Destroy()
+            except Exception as e:
+                pass
+            
+        
+        
+        self.m_customNotification._timer.Stop()
+        
+        self.Destroy()
+        #self.parentFrame.Settings.
+    
     
     def OnApplyCloseButton(self, event):
         #

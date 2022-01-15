@@ -87,8 +87,8 @@ class wxRavenPlugin(PluginObject):
         
         _showChanges = self.PLUGIN_SETTINGS['show_changes_addresses']
         
-        #try:
-        if True:    
+        try:
+        #if True:    
             #print("globalbalance")
             _globalBalance = self.parentFrame.getNetwork().getbalance()['result']
             #print("allacounts")
@@ -156,8 +156,8 @@ class wxRavenPlugin(PluginObject):
 
 
 
-        #except Exception as e:
-        #    print(self.PLUGIN_NAME + " > OnNetworkChanged " + str(e))
+        except Exception as e:
+            print(self.PLUGIN_NAME + " > OnNetworkChanged " + str(e))
 
 
 

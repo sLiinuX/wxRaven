@@ -48,7 +48,13 @@ class wxRavenPlugin(PluginObject):
         self.parentFrame.ConnexionManager.RegisterOnConnexionChanged(self.OnNetworkChanged_T)
         
         #self.LoadPluginFrames()
-
+        
+        
+        self.MESAGE_TYPES_SATOSHIS= {
+            'market':20000000,
+            'msg':100000000
+            }
+        
 
 
     def OnNetworkChanged_T(self, networkName=""):    
@@ -67,6 +73,8 @@ class wxRavenPlugin(PluginObject):
         #datas = squawker.find_latest_messages("asset", count=50)
         
             datas = self.find_latest_messages("POLITICOIN", 50)
+            #datas = self.find_latest_messages("WXRAVEN/P2P_MARKETPLACE/TEST", 50, 20000000)
+            
             self.setData("_lastMessage",datas)
             
             
@@ -87,7 +95,7 @@ class wxRavenPlugin(PluginObject):
             wx.CallAfter(self.UpdateActiveViews, ())
 
         except Exception as e:
-            self.RaisePluginLog("Unable to retreive Squawker datas" , type="warning")
+            self.RaisePluginLog("Unable to retreive Squawker datas :" + str(e) , type="warning")
 
 
 
@@ -109,7 +117,7 @@ class wxRavenPlugin(PluginObject):
     
     
     
-    def find_latest_messages(self, asset="ASSET", count=50):
+    def find_latest_messages(self, asset="ASSET", count=50, msgType = 100000000):
         
         latest = []
         messages = dict()
@@ -117,13 +125,15 @@ class wxRavenPlugin(PluginObject):
         messages["assetName"] = asset
         deltas = self.parentFrame.getNetwork().getaddressdeltas(messages)["result"]
         for tx in deltas:
-            if tx["satoshis"] == 100000000 and self.tx_to_self(tx):
+            if tx["satoshis"] == msgType and self.tx_to_self(tx):
                 transaction = self.parentFrame.getNetwork().decoderawtransaction(self.parentFrame.getNetwork().getrawtransaction(tx["txid"])["result"])["result"]
                 for vout in transaction["vout"]:
                     vout = vout["scriptPubKey"]
                     if vout["type"] == "transfer_asset" and vout["asset"]["name"] == asset and vout["asset"]["amount"] == 1.0:
                         kaw = {"address": vout["addresses"], "message": vout["asset"]["message"], "block": transaction["locktime"]}
                         latest.append(kaw)
+            else:
+                print(f"excluded {tx['satoshis']}")
         return sorted(latest[:count], key=lambda message: message["block"], reverse=True)
         #except Exception as e:
         #    print(self.PLUGIN_NAME + " > OnNetworkChanged " + str(e))    

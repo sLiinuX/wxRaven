@@ -44,11 +44,13 @@ Installation
 - Windows: pip install -r requirements.txt
 - Linux: python3.7 -m pip install -r requirements.txt
 
-wxRaven will require an available Ravencore Wallet with RPC server configured.
+wxRaven will require an available Ravencore Wallet with [RPC server configured](NODECONFIGURATION.md).
 For any non-local node, we strongly recommend the usage of SSH to tunnel and encrypt the connexion.
 
 Webview component for Windows (IPFS Preview and Webcontrols) : [here](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
 
+
+NOTE : windows users, check the [RELEASES PAGE](https://github.com/sLiinuX/wxRaven/releases) for a no-install version (py2exe).
 
 Further information
 -------------------

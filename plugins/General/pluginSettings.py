@@ -6,7 +6,7 @@ Created on 20 déc. 2021
 
 
 
-from .wxRavenGeneralDesign import GeneralSettingPanel, ApplicationSettingPanel, wxRavenConnexionSettings_SettingPanel
+from .wxRavenGeneralDesign import GeneralSettingPanel, ApplicationSettingPanel, wxRavenConnexionSettings_SettingPanel, wxRavenPluginsSettings_SettingPanel
 
 from wxRavenGUI.application.pluginsframework import PluginSettingsPanelObject
 
@@ -193,8 +193,9 @@ class wxRavenConexionsSettingPanel(PluginSettingsPanelObject):
         
         _Panel = wxRavenConnexionSettings_SettingPanel(parent)
         PluginSettingsPanelObject.__init__(self,_Panel, parentFrame, pluginName)
+        self._needReboot = True
     
-        _Panel.SetBackgroundColour( wx.Colour( 217, 228, 255 ) )
+        #_Panel.SetBackgroundColour( wx.Colour( 217, 228, 255 ) )
         
         #self._Panel
         
@@ -210,29 +211,21 @@ class wxRavenConexionsSettingPanel(PluginSettingsPanelObject):
     def SavePanelSettings(self):
         allProviders = []
         
-        
         appSettings = self.parentFrame.Settings
-        
         _newList = {}
-        
         _errorsParsing = False
-        
         for i in range(0, self._Panel.bookmark_list.Count):
             
             
             _con = self._Panel.bookmark_list.GetString(i)
-            
-            
-            
+             
             try:
                 _conArr = _con.split('=')
                 _name = _conArr[0]
                 _val = _conArr[1]
                 
                 _newList[_name] = _val
-                
-                
-                
+
                 
             except Exception as e:
                 _errorsParsing = True
@@ -300,3 +293,99 @@ class wxRavenConexionsSettingPanel(PluginSettingsPanelObject):
         
         self._settingsHasChanged = True
         self._Panel.Layout()
+        
+        
+        
+        
+        
+        
+        
+class wxRavenPluginsSettingPanel(PluginSettingsPanelObject):
+
+    def __init__(self,parent, parentFrame, pluginName):
+        
+        _Panel = wxRavenPluginsSettings_SettingPanel(parent)
+        PluginSettingsPanelObject.__init__(self,_Panel, parentFrame, pluginName)
+    
+        self._needReboot = True
+        
+        self._Panel.m_pluginCheckListbox.Bind( wx.EVT_CHECKLISTBOX, self.OnChanged )
+    
+    
+    
+    #
+    #
+    # method to be called on close and apply
+    #    
+    def SavePanelSettings(self):
+        #print("SavePanelSettings")
+        #_newValueForBoolSetting = self._Panel.booleansetting.IsChecked()
+        
+        #now its up to the dev to chose how to take this information
+        #in our demo lets do simple and just change the  booleansetting in PLUGIN_SETTINGS
+ 
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        _currentPluginList = self.parentFrame.Plugins.plugins
+        # _currentDisableValue = myPlugin.PLUGIN_SETTINGS['disable_plugins']
+        _currentDisableValueIndex = self._Panel.m_pluginCheckListbox.GetCheckedStrings()
+        
+        
+        print(_currentDisableValueIndex)
+        
+        
+        _toSaveArray = []
+        
+        for _val in _currentDisableValueIndex:
+            _toSaveArray.append(_val)
+        
+        myPlugin.PLUGIN_SETTINGS['disable_plugins'] = _toSaveArray
+        print("SavePanelSettings")
+        #myPlugin.PLUGIN_SETTINGS['booleansetting'] = _newValueForBoolSetting
+    
+        #print("SavePanelSettings" + str(_newValueForBoolSetting))
+    #
+    #
+    # method to be called at first panel creation
+    # 
+    def LoadPanelSettings(self):
+        
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        _currentDisableValue = myPlugin.PLUGIN_SETTINGS['disable_plugins']
+        
+        
+        _currentPluginList = self.parentFrame.Plugins._detected_plugin_list
+        _toArray = []
+        
+        for key in _currentPluginList:
+            _toArray.append(key)
+
+            
+            
+        self._Panel.m_pluginCheckListbox.InsertItems(_toArray, 0) 
+        
+        iList=[]
+        for disable in _currentDisableValue:
+            i = self._Panel.m_pluginCheckListbox.FindString(disable)
+            if i != -1:
+                iList.append(i)
+        
+        print(iList)
+        self._Panel.m_pluginCheckListbox.SetCheckedItems(iList)
+        
+        #self._Panel.booleansetting.SetValue(_currentValue)
+        
+        print("LoadPanelSettings" + str(_toArray))
+        
+        
+    #
+    #
+    # method called when closing in case of thread or anything
+    #     
+    def safeClose(self):
+        pass    
+        
+
+
+
+
+

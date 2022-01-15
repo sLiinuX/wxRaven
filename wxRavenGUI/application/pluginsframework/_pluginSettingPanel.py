@@ -43,6 +43,12 @@ class PluginSettingsPanelObject(object):
         self._needReboot = False
         
         
+        try:
+            parentFrame.RessourcesProvider.ApplyThemeOnSettingsPanel(self)
+        
+        except Exception as e:
+            pass
+        
     def Layout(self):
         self._Panel.Layout()
         self.parentFrame.Layout()

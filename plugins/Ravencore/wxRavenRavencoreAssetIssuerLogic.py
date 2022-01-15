@@ -181,6 +181,18 @@ class RavencoreAssetIssuerPanel(wxRavenAssetIssuer):
     
     
     
+    
+    
+    def OnIpfsButtonClick(self, evt):
+        ipfsPlugin = self.parent_frame.GetPlugin("IPFS")
+        
+        if ipfsPlugin != None:
+            self.parent_frame.Views.OpenView('IPFS File Uploader', 'IPFS', True)
+        
+        else:
+            self.parent_frame.Log("IPFS Plugin missing." ,  type="warning")
+            self.m_ipfsUploadButton.Enable(False)
+    
     def EvtOptionsChanged(self, event):
         
         self._reissuable = self.m_reissuableOpt.GetValue() 
@@ -301,7 +313,12 @@ class RavencoreAssetIssuerPanel(wxRavenAssetIssuer):
             self.checkAssetNameIcon1.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('error_tsk'))
             self._isValidInput = False
     
-    
+        if self._currentType == "":
+            self.checkErrorLabel.SetLabel(f"You must select an asset type !")
+            self.checkAssetNameIcon1.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('error_tsk'))
+            self._isValidInput = False
+            
+            
         if self._isValidInput:
             self.m_issueButton.Enable(enable=True)
             self.checkAssetNameIcon1.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('passed'))

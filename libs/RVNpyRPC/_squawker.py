@@ -45,7 +45,7 @@ class RVNpyRPC_Squawker():
     # Temporary Rewrite / Copypaste
     #
     
-    def find_latest_messages(self, asset="", count=50):
+    def find_latest_messages(self, asset="", count=50, msgType = 100000000):
         
         
         if asset == "":
@@ -59,7 +59,7 @@ class RVNpyRPC_Squawker():
         messages["assetName"] = asset
         deltas = rvn.getaddressdeltas(messages)["result"]
         for tx in deltas:
-            if tx["satoshis"] == 100000000 and self.tx_to_self(tx):
+            if tx["satoshis"] == msgType and self.tx_to_self(tx):
                 transaction = rvn.decoderawtransaction(rvn.getrawtransaction(tx["txid"])["result"])["result"]
                 for vout in transaction["vout"]:
                     vout = vout["scriptPubKey"]

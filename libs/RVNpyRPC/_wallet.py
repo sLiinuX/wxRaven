@@ -12,13 +12,13 @@ class RVNpyRPC_Wallet():
     '''
     RPCconnexion = None
     
-    def __init__(self,connexion):
+    def __init__(self,connexion, parent):
         '''
         Constructor
         '''
         #super().__init__(self,connexion)
         self.RPCconnexion = connexion
-    
+        self.RVNpyRPC = parent
     
     """
     
@@ -38,11 +38,55 @@ class RVNpyRPC_Wallet():
         return  ""
     
     
+    def __requires_unlock__(self):
+        #returns None if no password set
+        phrase_test = self.RPCconnexion.help("walletpassphrase")['result']
+        return phrase_test and phrase_test.startswith("walletpassphrase")
+    
+    def __check_unlock__(self, _passphrase , timeout = 10):
+        if self.requires_unlock():
+            self.RPCconnexion.walletpassphrase(passphrase=_passphrase, timeout=timeout)
+    
+    
+    def __UnlockAll__(self):
+        allTx = self.RPCconnexion.listlockunspent()['result']
+        
+        if allTx != None:
+            return self.RPCconnexion.lockunspent(False, allTx)
+                
+    
     def RVN_balance_friendly(self,balance):
         uRVNTORVN = 100000000
         balanceValue = float(balance)/uRVNTORVN
         balanceValue = balanceValue.__round__(4)
         return balanceValue    
+    
+    
+    
+    def getAllWalletAddresses(self, includeUnspent=False):
+        _allAccountsDatas = self.getAllAccounts(displayAddress=True)
+            
+        allAddresses = []
+        for ac in _allAccountsDatas:
+            dataAc = _allAccountsDatas[ac]
+            if dataAc['address'] != []:
+                allAddresses = allAddresses+dataAc['address']
+                
+                if includeUnspent:
+                    for _checkAd in dataAc['address']:
+                        _changes = self.parentFrame.getRvnRPC().wallet.checkaddresseUnspent(_checkAd)
+                        if _changes != []:
+                            allAddresses = allAddresses+_changes
+                            
+                            
+        allAddressesClean = []
+        for a in allAddresses:
+            if not allAddressesClean.__contains__(str(a)):
+                allAddressesClean.append(str(a))
+        allAddresses =  allAddressesClean   
+        
+        return allAddresses
+          
     
     
     def getAllAccounts(self,displayAddress=False, displayAssets=False):

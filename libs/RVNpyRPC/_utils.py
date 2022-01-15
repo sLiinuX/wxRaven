@@ -12,13 +12,13 @@ class RVNpyRPC_Utils():
     '''
     RPCconnexion = None
     
-    def __init__(self,connexion):
+    def __init__(self,connexion, parent):
         '''
         Constructor
         '''
         #super().__init__(self,connexion)
         self.RPCconnexion = connexion
-    
+        self.RVNpyRPC = parent
     
     """
     
@@ -36,6 +36,19 @@ class RVNpyRPC_Utils():
     
     def __str__(self): 
         return  ""
+    
+    #
+    #shortcut for outside the lib
+    #
+    
+    def RVN_balance_friendly(self,balance):
+        return self.RVNpyRPC.wallet.RVN_balance_friendly(balance)
+    
+    def RVN_hashrate_friendly(self,hashrate):
+        return self.RVNpyRPC.network.RVN_hashrate_friendly(hashrate)
+    
+    def RVN_difficulty_friendly(self,diff):
+        return self.RVNpyRPC.network.RVN_difficulty_friendly(diff)
     
     
     def blockHeightToDate(self, height):

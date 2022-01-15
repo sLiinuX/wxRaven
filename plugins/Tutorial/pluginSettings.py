@@ -56,8 +56,12 @@ class MyTutorialSettingPanel_WithLogic(PluginSettingsPanelObject):
         print("LoadPanelSettings" + str(_currentValue))
         
         
-        
-        
+    #
+    #
+    # method called when closing in case of thread or anything
+    #     
+    def safeClose(self):
+        pass    
         
         
         

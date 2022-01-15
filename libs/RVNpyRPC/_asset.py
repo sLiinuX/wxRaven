@@ -109,6 +109,15 @@ class RVNpyRPC_Asset():
         return _exist
     
     
+    def __asset_details__(self, asset_name):
+        admin = False
+        if(asset_name[-1:] == "!"):
+            admin = True
+            asset_name = asset_name[:-1]  # Take all except !
+        details = self.RPCconnexion.getassetdata(asset_name)['result']
+        return (admin, details)
+    
+    
     def __verifyName__(self, name, type):
         _fullMatch = False
         _typeRegex = ""
@@ -208,6 +217,15 @@ class RVNpyRPC_Asset():
         return _relationship_list  
     
     
+    def GetBalance(self, assetname):
+        _balance = 0.0
+        
+        _res =  self.RPCconnexion.listmyassets(assetname,True)['result'] 
+        
+        if _res != None:
+            if _res.__contains__(assetname):
+                _balance = _res[assetname]['balance']
+        return _balance
     
     
     
@@ -560,6 +578,22 @@ class RVNpyRPC_Asset():
             if self.__isAdminAsset__(key):
                 
                 _AssetRawList.append(key)
+        
+        
+        return _AssetRawList
+    
+    
+    
+    def GetAllMyAssets(self, _excludeAdmin=False):
+        _AssetRawList = []
+        
+        
+        _res =  self.RPCconnexion.listmyassets("*",True)['result']
+        for key in _res: 
+            if self.__isAdminAsset__(key) and _excludeAdmin:
+                continue
+                 
+            _AssetRawList.append(key)
         
         
         return _AssetRawList

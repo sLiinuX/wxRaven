@@ -3,7 +3,18 @@ Created on 10 déc. 2021
 
 @author: slinux
 '''
-from ravenrpc import Ravencoin
+
+#
+#
+#    Replace RPC original lib with an extended version of it
+#
+#
+
+#from ravenrpc import Ravencoin
+from libs.RVNpyRPC.RVNpyRPC import Ravencoin
+
+
+
 import wx
 import time
 from datetime import timedelta
@@ -194,6 +205,10 @@ class RvnRPC_ConnectorManager(object):
                 self.RaiseConnexionError("Network Change Callback exceed 2seconds, watch for threading it. : " + str(cb_duration) +"" + str(c), 'warning')
                 #print("Callback exceed 2seconds, watch for threading it. : " + str(cb_duration) +"" + str(c))
             
+    
+    
+    
+    
     
     
     def CheckConnexionStatus(self, networkName):

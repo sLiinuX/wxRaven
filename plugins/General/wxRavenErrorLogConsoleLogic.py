@@ -13,7 +13,7 @@ import wx.lib.mixins.listctrl as listmix
 
 
 
-
+import wx.aui
 
 
 
@@ -33,19 +33,21 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
     
     
     #icon = wx.Bitmap( u"res/default_style/normal/error_log.png", wx.BITMAP_TYPE_ANY )
-    icon = "error_log"
+    icon = "error_console"
     
     
     allIcons = {}
     
+    message_type_mapping = {}
+    
     
 
-    def __init__(self, parentFrame, position = "toolbox1", viewName= "ErrorLog"):
+    def __init__(self, parentFrame, position = "toolbox1", viewName= "Error Log Console"):
         '''
         Constructor
         '''
         super().__init__(parent=parentFrame)
-        self.view_base_name = "ErrorLog"
+        self.view_base_name = "Error Log Console"
         self.view_name = viewName
         self.parent_frame = parentFrame
         self.default_position = position
@@ -54,10 +56,13 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         #self._msg = True
         #self._warning = True
         #self._error = True
-        
+        self._DebugWindow = None
         
         self.itemDataMap = {}
         self.allIcons = { }
+        self.message_type_mapping = {}
+        self.InitBasicMapping()
+        self.InitPlugingAndVariousMapping()
         
         self.InitConsoleLog()
         self.InitToolbar()
@@ -65,7 +70,10 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
         parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
         
-        
+        #parentFrame.Bind( wx.aui.EVT_AUI_PANE_RESTORE, self.OnAuiPaneRestore )
+        #parentFrame.Bind( wx.aui.EVT_AUI_PANE_ACTIVATED, self.OnAuiPaneActivated )
+        #parentFrame.Bind( wx.aui.EVT_AUI_RENDER, self.OnAuiPaneRender )
+        #parentFrame.Bind( wx.aui.EVT_AUI_PANE_CLOSE, self.OnAuiPaneClose )
         
         self._logCurrentCursor = -1
         
@@ -74,8 +82,76 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         self.SetAutoLayout(True)
     
     
+        #self.m_auiToolBar1.ToggleTool(self.m_showWarnings.GetId(), True)
+        
+    """    
+    def OnAuiPaneClose(self, evt):
+        print("OnAuiPaneClose in console log")
+        
+    def OnAuiPaneRestore(self, evt):
+        print("OnAuiPaneRestore in console log")
+        
+    def OnAuiPaneRender(self, evt):
+        print("OnAuiPaneRender in console log")    
+        
+    def OnAuiPaneActivated(self, evt):
+        print("OnAuiPaneActivated in console log")    
+        
+    """
     
     
+    
+    def InitBasicMapping(self):
+        self.message_type_mapping['info'] = 'info'
+        
+        self.message_type_mapping['message'] = 'msg'
+        self.message_type_mapping['msg'] = 'msg'
+        
+        self.message_type_mapping['warning'] = 'warning'
+        
+        self.message_type_mapping['error'] = 'error'
+        
+        self.message_type_mapping['debug'] = 'debug'
+    
+    
+    
+    def InitPlugingAndVariousMapping(self):
+        self.message_type_mapping['dbsync_inprogress'] = 'info'
+        self.message_type_mapping['db'] = 'info'
+        self.message_type_mapping['dbsync_done'] = 'msg'
+        self.message_type_mapping['db_warning'] = 'warning'
+        self.message_type_mapping['db_check'] = 'info'
+        
+        
+        self.message_type_mapping['process_run'] = 'msg'
+        self.message_type_mapping['process_stop'] = 'msg'
+        self.message_type_mapping['process_pause'] = 'msg'
+        self.message_type_mapping['process_warning'] = 'warning'
+
+        
+    
+    
+    def __getMessageTypeFromMapping__(self, iconame):
+        retType = 'info'
+        
+        if self.message_type_mapping.__contains__(iconame):
+            retType = self.message_type_mapping[iconame]
+            #print("MAPPING FOUND !")
+        
+        
+        return retType
+    
+    
+    def ClearLogs(self):
+        self.m_listCtrl1.Freeze()
+        self.m_listCtrl1.DeleteAllItems()    
+        self.m_listCtrl1.Thaw()
+    
+    
+    def ResetCursorAndCache(self):
+        self._logCurrentCursor = 0
+        self.itemDataMap = {}
+         
     
     def UpdateView(self):
         
@@ -84,6 +160,7 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         
         _allLogs = self.parent_frame.GetPluginData("General","allLogs").copy()
         
+        self.m_listCtrl1.Freeze()
         
         _currentViewCursor = self._logCurrentCursor
         #self.itemDataMap = {}
@@ -97,19 +174,28 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
                 _icon = self.allIcons['info']
                 
                 
-                _type=data[0]
+                _type=self.__getMessageTypeFromMapping__(data[0])
+                #print(f"{data[0]} ==  {_type}")
                 #print(_type)
-                #print(self._display)
-                
+                #print(self._display)                
                 
                 _foundInFilter=False
                 
+                if _type in self._display:
+                    _foundInFilter = True
+                """
                 for _t in  self._display:
+                    print(f"cehck display {_t}")    
                     if _type.__contains__(_t):
+                        
                         _foundInFilter=True
+                """
+                
                 
                 #if not _foundInFilter:
-                #    continue
+                    #pass
+                    #print(f"not found")     
+                    #continue
                     
                 
                 
@@ -117,16 +203,19 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
                     _icon= self.allIcons[data[0].lower()]
                 
                 
-                index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(), data[1], _icon )
                 
-                #item = self.m_listCtrl1.GetItem(index)
-                #item.SetColumn(1)
-                #item.SetText('John')
-                self.m_listCtrl1.SetItem(index,1, data[2])
-                self.m_listCtrl1.SetItem(index,2, data[3])
-                #item1.SetColumn(1)
-                #self.m_listCtrl1.SetItem(item)
-                self.m_listCtrl1.SetItemData(index, _currentViewCursor)
+                if _foundInFilter:
+                
+                    index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(), data[1], _icon )
+                    
+                    #item = self.m_listCtrl1.GetItem(index)
+                    #item.SetColumn(1)
+                    #item.SetText('John')
+                    self.m_listCtrl1.SetItem(index,1, data[2])
+                    self.m_listCtrl1.SetItem(index,2, data[3])
+                    #item1.SetColumn(1)
+                    #self.m_listCtrl1.SetItem(item)
+                    self.m_listCtrl1.SetItemData(index, _currentViewCursor)
                 
                 self.itemDataMap[_currentViewCursor] = (str(data[1]), str(data[2]), str(data[3]) )
                     
@@ -143,8 +232,17 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         
         listmix.ColumnSorterMixin.SortListItems(self, col=2, ascending=0)
         
+        self.m_listCtrl1.Thaw()
+        
+        
+        self.RefreshToolbarState()
+        
+        
+        
         self.SetAutoLayout(True)
         self.Layout()
+        
+        
     
     
     def dummyTest(self):
@@ -199,7 +297,9 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         
         alloptions = myPlugin.PLUGIN_SETTINGS['showerror']
         
-        
+        if alloptions.__contains__('debug'):
+            self.m_auiToolBar1.ToggleTool(self.m_showDebug.GetId(), True)
+            
         if alloptions.__contains__('info'):
             self.m_auiToolBar1.ToggleTool(self.m_showInfos.GetId(), True)
             
@@ -213,12 +313,37 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
             self.m_auiToolBar1.ToggleTool(self.m_showErrors.GetId(), True)
               
         self._display = alloptions
+    
+    
+    
+    
+    def RefreshToolbarState(self):
+        #print(self._DebugWindow)
         
+        _iv = self.parent_frame.Views.isViewVisible("Debug")
+        #print(f"iv = {_iv}")
+        if not _iv:
+            self.m_auiToolBar1.ToggleTool(self.m_showDebug.GetId(), False)
+    
+    def ActivateDebugWindow(self):
+        print("debug console turned on !")
+        #if self._DebugWindow == None:
+        #    print("debug mode was not init yet!")
+        #self._DebugWindow = self.parent_frame.Views.OpenView("Debug", "General", True)['instance']
+        self.parent_frame.Views.OpenView("Debug", "General", True)
+        #Debug
+        #self._DebugWindow = wx.LogWindow(self.parent_frame, "Debug", show=False)
+        #self.parent_frame.Add(self._DebugWindow.GetFrame(), "Debug", icon=self.parent_frame.RessourcesProvider.GetImage('debug_exc'))
+        #self._DebugWindow.Show(show=True)
         
     def OnViewOptionsChanged(self, evt):
         #GetToolToggled
         myPlugin = self.parent_frame.GetPlugin("General")
         alloptions = []
+        
+        if self.m_auiToolBar1.GetToolToggled(self.m_showDebug.GetId()):
+            alloptions.append('debug')
+            self.ActivateDebugWindow()
         
         if self.m_auiToolBar1.GetToolToggled(self.m_showInfos.GetId()):
             alloptions.append('info')
@@ -238,7 +363,9 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         
         self._display = alloptions
         
-        
+        self.ResetCursorAndCache()
+        self.ClearLogs()
+        self.UpdateView()
         
         myPlugin.PLUGIN_SETTINGS['showerror'] = alloptions
     
@@ -279,7 +406,7 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         self.allIcons['warning'] = self.il.Add(wx.Bitmap( u"res/default_style/normal/warning_obj.png", wx.BITMAP_TYPE_ANY ))
         """
         
-        
+        self.allIcons['debug'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('debug_exc') )
         self.allIcons['error'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('error_tsk') )
         self.allIcons['info'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('info_obj') )
         self.allIcons['msg'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('help_view') )
@@ -310,4 +437,22 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         
         #self.setResizeColumn(0)
         #self.bSizer1.Add(self.list, 1, wx.EXPAND)
+        
+        
+    def AddImageInConsole(self, imgname,iconname,logtype="info" ):   
+        self.allIcons[iconname] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage(imgname) )
+        self.message_type_mapping['iconname'] = logtype
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
         

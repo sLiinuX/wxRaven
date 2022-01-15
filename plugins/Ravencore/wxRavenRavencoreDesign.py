@@ -14,6 +14,114 @@ import wx.html2 as webview
 import wx.aui
 
 ###########################################################################
+## Class wxRavenNetInfos
+###########################################################################
+
+class wxRavenNetInfos ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 395,157 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer116 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer117 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap28 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/connexion_speed_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer117.Add( self.m_bitmap28, 0, wx.ALL, 5 )
+		
+		self.m_staticText57 = wx.StaticText( self, wx.ID_ANY, u"Network Infos :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText57.Wrap( -1 )
+		self.m_staticText57.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer117.Add( self.m_staticText57, 0, wx.ALL, 5 )
+		
+		
+		bSizer116.Add( bSizer117, 0, wx.ALIGN_CENTER, 5 )
+		
+		self.m_staticline14 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer116.Add( self.m_staticline14, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_infoPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer118 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer119 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap29 = wx.StaticBitmap( self.m_infoPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/mining_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer119.Add( self.m_bitmap29, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText58 = wx.StaticText( self.m_infoPanel, wx.ID_ANY, u"Current Block :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText58.Wrap( -1 )
+		self.m_staticText58.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer119.Add( self.m_staticText58, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticTextSPACER = wx.StaticText( self.m_infoPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticTextSPACER.Wrap( -1 )
+		bSizer119.Add( self.m_staticTextSPACER, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_textCtrl30 = wx.TextCtrl( self.m_infoPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer119.Add( self.m_textCtrl30, 1, wx.ALL, 5 )
+		
+		
+		bSizer118.Add( bSizer119, 0, wx.EXPAND, 5 )
+		
+		bSizer1191 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap291 = wx.StaticBitmap( self.m_infoPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/connexion_speed.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1191.Add( self.m_bitmap291, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText581 = wx.StaticText( self.m_infoPanel, wx.ID_ANY, u"Network Hashrate :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText581.Wrap( -1 )
+		self.m_staticText581.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer1191.Add( self.m_staticText581, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticTextSPACER1 = wx.StaticText( self.m_infoPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticTextSPACER1.Wrap( -1 )
+		bSizer1191.Add( self.m_staticTextSPACER1, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_textCtrl301 = wx.TextCtrl( self.m_infoPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer1191.Add( self.m_textCtrl301, 1, wx.ALL, 5 )
+		
+		
+		bSizer118.Add( bSizer1191, 0, wx.EXPAND, 5 )
+		
+		bSizer11911 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap2911 = wx.StaticBitmap( self.m_infoPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/traffic_light.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer11911.Add( self.m_bitmap2911, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText5811 = wx.StaticText( self.m_infoPanel, wx.ID_ANY, u"Network Diff :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText5811.Wrap( -1 )
+		self.m_staticText5811.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer11911.Add( self.m_staticText5811, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticTextSPACER11 = wx.StaticText( self.m_infoPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticTextSPACER11.Wrap( -1 )
+		bSizer11911.Add( self.m_staticTextSPACER11, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_textCtrl3011 = wx.TextCtrl( self.m_infoPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer11911.Add( self.m_textCtrl3011, 1, wx.ALL, 5 )
+		
+		
+		bSizer118.Add( bSizer11911, 0, wx.EXPAND, 5 )
+		
+		
+		self.m_infoPanel.SetSizer( bSizer118 )
+		self.m_infoPanel.Layout()
+		bSizer118.Fit( self.m_infoPanel )
+		bSizer116.Add( self.m_infoPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer116 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
 ## Class wxRavenAssetExplorer
 ###########################################################################
 
@@ -343,11 +451,31 @@ class wxRavenAssetNavigator ( wx.Panel ):
 class wxRavenAssetIssuer ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 435,336 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 503,336 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer96 = wx.BoxSizer( wx.VERTICAL )
 		
+		bSizer98 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap23 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/reflog.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer98.Add( self.m_bitmap23, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText44 = wx.StaticText( self, wx.ID_ANY, u"Name :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText44.Wrap( -1 )
+		self.m_staticText44.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer98.Add( self.m_staticText44, 2, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_AssetNameTxt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer98.Add( self.m_AssetNameTxt, 5, wx.ALL, 5 )
+		
+		
+		bSizer96.Add( bSizer98, 0, wx.EXPAND, 5 )
+		
 		bSizer97 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap22 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset_admin.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer97.Add( self.m_bitmap22, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_staticText43 = wx.StaticText( self, wx.ID_ANY, u"Asset Type :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText43.Wrap( -1 )
@@ -386,23 +514,12 @@ class wxRavenAssetIssuer ( wx.Panel ):
 		bSizer971.Add( self.mainAssetChoicePanel, 1, 0, 1 )
 		
 		
-		bSizer96.Add( bSizer971, 0, wx.ALL|wx.EXPAND, 0 )
-		
-		bSizer98 = wx.BoxSizer( wx.HORIZONTAL )
-		
-		self.m_staticText44 = wx.StaticText( self, wx.ID_ANY, u"Name :", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText44.Wrap( -1 )
-		self.m_staticText44.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
-		
-		bSizer98.Add( self.m_staticText44, 2, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-		
-		self.m_AssetNameTxt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer98.Add( self.m_AssetNameTxt, 5, wx.ALL, 5 )
-		
-		
-		bSizer96.Add( bSizer98, 0, wx.EXPAND, 5 )
+		bSizer96.Add( bSizer971, 0, wx.ALL|wx.EXPAND, 1 )
 		
 		bSizer981 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap24 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/raven_ipfs.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer981.Add( self.m_bitmap24, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_staticText441 = wx.StaticText( self, wx.ID_ANY, u"IPFS :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText441.Wrap( -1 )
@@ -413,6 +530,9 @@ class wxRavenAssetIssuer ( wx.Panel ):
 		self.m_IPFSlinkTxt = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer981.Add( self.m_IPFSlinkTxt, 5, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
+		self.m_ipfsUploadButton = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/ipfs_add.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer981.Add( self.m_ipfsUploadButton, 0, wx.ALL, 5 )
+		
 		
 		bSizer96.Add( bSizer981, 0, wx.EXPAND, 5 )
 		
@@ -421,7 +541,7 @@ class wxRavenAssetIssuer ( wx.Panel ):
 		
 		bSizer99 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.checkAssetNameLabel = wx.StaticText( self, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.checkAssetNameLabel = wx.StaticText( self, wx.ID_ANY, u"_", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.checkAssetNameLabel.Wrap( -1 )
 		bSizer99.Add( self.checkAssetNameLabel, 1, wx.ALL|wx.EXPAND, 5 )
 		
@@ -447,8 +567,14 @@ class wxRavenAssetIssuer ( wx.Panel ):
 		
 		bSizer100 = wx.BoxSizer( wx.HORIZONTAL )
 		
+		self.m_bitmap26 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/refresh.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer100.Add( self.m_bitmap26, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
 		self.m_reissuableOpt = wx.CheckBox( self, wx.ID_ANY, u"Reissuable", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer100.Add( self.m_reissuableOpt, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap25 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/supply_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer100.Add( self.m_bitmap25, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_staticText49 = wx.StaticText( self, wx.ID_ANY, u"Quantity :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText49.Wrap( -1 )
@@ -471,6 +597,9 @@ class wxRavenAssetIssuer ( wx.Panel ):
 		bSizer96.Add( self.m_staticline101, 0, wx.EXPAND |wx.ALL, 5 )
 		
 		bSizer982 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap27 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/send_from_wallet.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer982.Add( self.m_bitmap27, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_staticText442 = wx.StaticText( self, wx.ID_ANY, u"Destination :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText442.Wrap( -1 )
@@ -498,6 +627,7 @@ class wxRavenAssetIssuer ( wx.Panel ):
 		
 		# Connect Events
 		self.m_AssetNameTxt.Bind( wx.EVT_TEXT, self.OnAssetNameChanged )
+		self.m_ipfsUploadButton.Bind( wx.EVT_BUTTON, self.OnIpfsButtonClick )
 		self.m_reissuableOpt.Bind( wx.EVT_CHECKBOX, self.EvtOptionsChanged )
 		self.m_quantityTxt.Bind( wx.EVT_TEXT, self.EvtOptionsChanged )
 		self.m_unitsOpt.Bind( wx.EVT_SPINCTRL, self.EvtOptionsChanged )
@@ -511,6 +641,9 @@ class wxRavenAssetIssuer ( wx.Panel ):
 	
 	# Virtual event handlers, overide them in your derived class
 	def OnAssetNameChanged( self, event ):
+		event.Skip()
+	
+	def OnIpfsButtonClick( self, event ):
 		event.Skip()
 	
 	def EvtOptionsChanged( self, event ):
@@ -531,7 +664,7 @@ class wxRavenAssetIssuer ( wx.Panel ):
 class wxRavenAssetIssuerDialog ( wx.Dialog ):
 	
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 557,437 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER|wx.STAY_ON_TOP )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 557,437 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
@@ -569,6 +702,9 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		
 		bSizer79 = wx.BoxSizer( wx.HORIZONTAL )
 		
+		self.m_bitmap17 = wx.StaticBitmap( self.m_panel10, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/reflog.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer79.Add( self.m_bitmap17, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
 		self.m_staticText30 = wx.StaticText( self.m_panel10, wx.ID_ANY, u"Asset Name :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText30.Wrap( -1 )
 		self.m_staticText30.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
@@ -583,6 +719,9 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		
 		bSizer791 = wx.BoxSizer( wx.HORIZONTAL )
 		
+		self.m_bitmap18 = wx.StaticBitmap( self.m_panel10, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/raven_ipfs.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer791.Add( self.m_bitmap18, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
 		self.m_staticText301 = wx.StaticText( self.m_panel10, wx.ID_ANY, u"IPFS  :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText301.Wrap( -1 )
 		self.m_staticText301.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
@@ -596,6 +735,9 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		bSizer78.Add( bSizer791, 0, wx.EXPAND, 5 )
 		
 		bSizer7911 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap19 = wx.StaticBitmap( self.m_panel10, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset_admin.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7911.Add( self.m_bitmap19, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_staticText3011 = wx.StaticText( self.m_panel10, wx.ID_ANY, u"Type  :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText3011.Wrap( -1 )
@@ -613,6 +755,9 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		
 		bSizer90 = wx.BoxSizer( wx.HORIZONTAL )
 		
+		self.m_bitmap21 = wx.StaticBitmap( self.m_panel10, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/supply_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer90.Add( self.m_bitmap21, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
 		self.m_staticText30111 = wx.StaticText( self.m_panel10, wx.ID_ANY, u"Supply  :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText30111.Wrap( -1 )
 		self.m_staticText30111.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
@@ -626,6 +771,9 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		bSizer79111.Add( bSizer90, 1, 0, 5 )
 		
 		bSizer91 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap20 = wx.StaticBitmap( self.m_panel10, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/perspective-planning.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer91.Add( self.m_bitmap20, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_staticText301111 = wx.StaticText( self.m_panel10, wx.ID_ANY, u"Created  :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText301111.Wrap( -1 )

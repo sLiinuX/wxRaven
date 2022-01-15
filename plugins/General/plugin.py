@@ -10,7 +10,7 @@ from datetime import datetime
 import inspect
 
 
-
+from .wxRavenDebugConsoleLogic import *
 from .wxRavenErrorLogConsoleLogic import *
 from .wxNotebookToolbox import *
 from .pluginSettings import *
@@ -36,10 +36,21 @@ class wxRavenPlugin(PluginObject):
                      'name':'Error Log Console', 
                      'title':'Error Log Console', 
                      'position':'mgr', 
-                     'icon':  self.RessourcesProvider.GetImage('error_log'), 
+                     'icon':  self.RessourcesProvider.GetImage('error_console'), 
                      'class': RavenErrorLogConsole ,
                      'default':True,
-                     'multipleViewAllowed':True
+                     'multipleViewAllowed':False
+                     },
+                    
+                    {
+                     'viewid':'Debug', 
+                     'name':'Debug', 
+                     'title':'Debug', 
+                     'position':'mgr', 
+                     'icon':  self.RessourcesProvider.GetImage('debug_exc'), 
+                     'class': wxRavenDebugConsole ,
+                     'default':False,
+                     'multipleViewAllowed':False
                      },
                     
                     
@@ -80,6 +91,8 @@ class wxRavenPlugin(PluginObject):
                 'showerror' : ['error','message', 'warning', 'infos'],
                 'defaultviewarea':'main',
                 'last_network':'mainnet_localhost',
+                'disable_plugins' :[],
+                'quick_links' :[]
             }
         
         
@@ -105,6 +118,8 @@ class wxRavenPlugin(PluginObject):
         _viewIcon = self.RessourcesProvider.GetImage('perspective_default')
         _conIcon = self.RessourcesProvider.GetImage('network')
         _appIcon = self.RessourcesProvider.GetImage('frame_default')
+        _pluginsIcon = self.RessourcesProvider.GetImage('install-handler')
+        
         
         
 
@@ -118,12 +133,15 @@ class wxRavenPlugin(PluginObject):
         _viewPannel = PluginSettingsTreeObject("Views", _viewIcon, classPanel=None, _childs=None)
         _connexionPannel = PluginSettingsTreeObject("Connexions", _conIcon, classPanel=wxRavenConexionsSettingPanel, _childs=None)
         
+        _pluginsPannel = PluginSettingsTreeObject("Plugins", _pluginsIcon, classPanel=wxRavenPluginsSettingPanel, _childs=None)
+        
         
         
         
         _applicationPannel._childs.append(_generalPannel)
         _applicationPannel._childs.append(_viewPannel)
         _applicationPannel._childs.append(_connexionPannel)
+        _applicationPannel._childs.append(_pluginsPannel)
         
         
         self.PLUGIN_SETTINGS_GUI.append(_applicationPannel)

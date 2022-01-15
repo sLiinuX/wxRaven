@@ -9,28 +9,20 @@
 
 import wx
 import wx.xrc
-from wx.adv import Animation, AnimationCtrl
 
 ###########################################################################
-## Class wxBackgroundWorkerAnimation
+## Class wxRavenDialogbox
 ###########################################################################
 
-class wxBackgroundWorkerAnimationAAA ( wx.Panel ):
+class wxRavenDialogbox ( wx.Dialog ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 300,300 ), style = wx.TAB_TRAVERSAL )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 470,215 ), style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 		
-		bSizer1 = wx.BoxSizer( wx.VERTICAL )
-		
-		self.m_animCtrl1 = wx.animate.AnimationCtrl( self, wx.ID_ANY, wx.animate.NullAnimation, wx.DefaultPosition, wx.DefaultSize, wx.animate.AC_DEFAULT_STYLE )
-		self.m_animCtrl1.LoadFile( u"res/default_style/normal/default_style/normal/ravencoin_asking_chain.gif" )
-		
-		self.m_animCtrl1.Play()
-		bSizer1.Add( self.m_animCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
+		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
 		
-		self.SetSizer( bSizer1 )
-		self.Layout()
+		self.Centre( wx.BOTH )
 	
 	def __del__( self ):
 		pass

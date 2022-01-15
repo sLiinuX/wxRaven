@@ -19,7 +19,7 @@ from wxRavenGUI.application.pluginsframework import *
 from .wxRavenRavencoreAssetExplorerLogic import *
 #import the logic of your plugin (inherit design class with logic)
 from .wxRavenRavencoreDesign import *
-
+from .wxRavenRavencore_NetworkInfosLogic import *
 from .pluginSettings import *
 
 
@@ -93,7 +93,19 @@ class wxRavenPlugin(PluginObject):
         
         self.PLUGINS_VIEWS= [ 
                     
-                    
+                     {
+                     'viewid':"Network Infos", 
+                     'name':"Network Infos", 
+                     'title':"Network Infos", 
+                     'position':position, 
+                     'icon':self.RessourcesProvider.GetImage('connexion_speed_2'), 
+                     'class': wxRavenRavencore_NetInfosLogic ,
+                     'default':False,
+                     'multipleViewAllowed':False, 
+                     'toolbar_shortcut': False
+                     },
+                     
+                     
                     {
                      'viewid':'Asset Search', 
                      'name':'Asset Search', 
@@ -124,12 +136,15 @@ class wxRavenPlugin(PluginObject):
                      'viewid':'Asset Issuer', 
                      'name':'Asset Issuer', 
                      'title':'Asset Issuer', 
-                     'position':position, 
+                     'position':'position', 
                      'icon':self.RessourcesProvider.GetImage('asset_new'), 
                      'class': RavencoreAssetIssuerDialog ,
                      'default':False,
                      'multipleViewAllowed':False
-                     }
+                     }, 
+                    
+                    
+                    
                     
         
                     
@@ -332,7 +347,8 @@ class wxRavenPlugin(PluginObject):
     def OnNetworkChanged_T(self, networkName=""):    
         #t=threading.Thread(target=self.OnUpdatePluginDatas)
         #t.start()
-        pass
+        wx.CallAfter(self.UpdateActiveViews, ())
+        #pass
         
         
     def OnUpdatePluginDatas_SEARCH(self, keyword="", limit=50, onlyMain=False):
@@ -499,7 +515,8 @@ class wxRavenPlugin(PluginObject):
     
         #self.parent_frame.m_mgr.GetPane("Asset Preview").Show()
         #self.parent_frame.Views.UpdateGUIManager()    
-        
+    def OpeninWebBrowser(self, _url):
+        webbrowser.open(_url)    
     
     def OpenIPFSinWebBrowser(self, _data, provider=""):
         
@@ -516,7 +533,7 @@ class wxRavenPlugin(PluginObject):
         
         if _data['has_ipfs']:
             _url = _gateway  +_data['ipfs_hash']
-            webbrowser.open(_url)
+            self.OpeninWebBrowser(_url)
             
             
             

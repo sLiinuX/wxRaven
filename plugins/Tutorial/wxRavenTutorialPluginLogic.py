@@ -84,7 +84,7 @@ class MyTutorialView_WithLogic(MyTutorialView):
     
             
     #Override the UpdateView method to define what happen when plugin call UpdateViews()        
-    def UpdateView(self):
+    def UpdateView(self, evt=None):
         
         self.UpdateDataFromPluginDatas()
         self.Layout()

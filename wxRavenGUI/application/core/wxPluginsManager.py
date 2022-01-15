@@ -30,8 +30,13 @@ class pluginsManager(object):
     safemode = True
     
     
+    _exclude_list =[]
+    
+    _detected_plugin_list=[]
+    
+    
 
-    def __init__(self, pluginRootDir, contextAppMainFrame,resumestate=True , loadPath=True):
+    def __init__(self, pluginRootDir, contextAppMainFrame,resumestate=True , loadPath=True, _exclude=[]):
         '''
         Constructor
         '''
@@ -46,7 +51,18 @@ class pluginsManager(object):
         self.safemode = contextAppMainFrame.Settings.safemode
         
         
+        self._exclude_list = _exclude
+        
+        
+        #self.LoadPlugin("plugins.General.plugin.*")
+        
+        #self.LoadGeneralPlugins()
+        
         self.LoadPlugin("plugins.General.plugin.*")
+        
+        
+        
+        
         if loadPath:
             #self.LoadPlugin("plugins.General.plugin.*")
             self.LoadFromPluginDirectory()
@@ -80,7 +96,42 @@ class pluginsManager(object):
                     
     
     
+    def getAvailablePluginsViews(self, pluginname):
+        viewlist = []
+        
+        if self.plugins.__contains__(pluginname):
+        
+            pinst = self.plugins[pluginname]
+            pviews = pinst.PLUGINS_VIEWS
+            
+            for p in pviews:
+                viewlist.append(p)
+        
+        
+        
+        return viewlist
     
+    
+    
+    def getAllAvailablePlugins(self):
+        viewlist = []
+        for p in self.plugins:
+            viewlist.append(p)
+        return viewlist
+    
+    
+    def getAllAvailableViews(self):
+        viewlist = []
+        
+         
+        for p in self.plugins:
+            pinst = self.plugins[p]
+            pviews = pinst.PLUGINS_VIEWS
+            
+            viewlist = viewlist + pviews
+    
+    
+        return viewlist
                     
     
     def getAllActiveViews(self):
@@ -181,16 +232,22 @@ class pluginsManager(object):
         for s in subfolders:
             
             
-            if s == "General":
+            if s == "General" or s == "__pycache__":
                 continue
             
+            self._detected_plugin_list.append(s)
             
             
             
-            
+            if s in self._exclude_list:
+                self.ReportPluginInfo(f"The plugin {s} has not been initialized (DISABLED in preferences). ")
+                continue
             
             fname = 'plugins/'+s+"/plugin/<ALLCLASSES>"
             pname = fname.replace("/",".")
+            
+            
+            
             
             if s != "__pycache__":
                 
@@ -251,7 +308,22 @@ class pluginsManager(object):
     
     
     """
-    
+    """
+    def LoadGeneralPlugins(self):
+        self.LoadPlugin("plugins.General.plugin.*")
+        
+        _gp = self.appmainframe.GetPlugin("General")
+        if _gp != None:
+            self._exclude_list = _gp.PLUGIN_SETTINGS['disable_plugins']
+    """        
+   
+   
+    def SetExclusionList(self):
+        _gp = self.appmainframe.GetPlugin("General")
+        if _gp != None:
+            self._exclude_list = _gp.PLUGIN_SETTINGS['disable_plugins']
+            print(f"Plugin exclusion list detected ! {self._exclude_list}")
+            
     
     def LoadPlugin(self, pname):
         

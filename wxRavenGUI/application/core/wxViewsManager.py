@@ -8,6 +8,8 @@ Created on 13 déc. 2021
 import inspect
 from wxRavenGUI.view import wxRavenAddView
 
+from wxRavenGUI.application.wxcustom.CustomDialog import wxRavenCustomDialog
+
 import wx
 import wx.aui
 
@@ -17,7 +19,7 @@ class ViewsManager(object):
     '''
     parentframe = None
     
-    
+    dialogs = {}
     all_areas = {}
     #all_views = {}
     #viewsChangeCallbacks=[]
@@ -34,8 +36,110 @@ class ViewsManager(object):
         self.force_mgr = forceinprincipalauimanager
     
         self.nViewDialog = None
+        
+        self.dialogs = {}
     
         self.InitViewManager()
+        
+        
+        parentframe.Bind( wx.aui.EVT_AUI_PANE_ACTIVATED, self.OnAuiPaneActivated )
+        parentframe.Bind( wx.aui.EVT_AUI_PANE_CLOSE, self.OnAuiPaneClose )
+        #parentframe.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnAuiNotebookPageClose )
+        
+    
+    
+    
+    #
+    #
+    #    Event management (for GUI refresh)
+    #
+    #
+    #    
+        
+    def OnAuiNotebookPageClose(self, evt):
+        print("OnAuiPaneClose in view man ")
+        self.OnPageClose(evt)
+        
+        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
+        #wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())
+    
+    
+       
+    def OnAuiPaneClose(self, evt):
+        print("OnAuiPaneClose in view man ")
+        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
+        wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())
+        
+        
+        
+    def OnAuiPaneActivated(self, evt):
+        print("OnAuiPaneActivated in view man") 
+        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())    
+        wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())      
+        
+    
+    
+    
+    
+    
+        
+        
+    def OnPageClose( self, event ):
+        print("OnPageClose")
+        objNotebook = event.GetEventObject()
+        index = event.GetSelection()
+        page = objNotebook.GetPage(index)
+        label = objNotebook.GetPageText(index)
+        print("view instance to delete !")
+        
+        
+        _v = self.parentframe.Plugins.GetViewNameInstance(label)
+        
+        
+        
+        
+        if _v != None:
+            print('instance found, close it')
+            self.parentframe.Plugins.DeleteViewInstance(label)
+            
+            _closed=False
+            try:
+                _v['instance'].Close()
+                #_closed=True
+            except Exception as e:
+                print("_v['instance'].Close() " + str(e)) 
+            if not _closed:
+                try:
+                    _v['instance'].OnClose(None)
+                    #_closed=True
+                except Exception as e:
+                    print("_v['instance'].OnClose() " + str(e)) 
+                
+            if not _closed:
+                try:
+                    _v['instance'].safeClose(None)
+                    #_closed=True
+                except Exception as e:
+                    #pass
+                    print("_v['instance'].SafeClose() " + str(e))
+        
+        
+        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
+        event.Skip()       
+        
+        
+    #SearchViewPanelInManager   
+        
+        
+        
+        
+    #
+    #
+    #    Init and creation of the view manager
+    #
+    #
+    #
+        
     
     
     def InitViewManager(self):
@@ -59,30 +163,32 @@ class ViewsManager(object):
         
         
         if not self.force_mgr:
-            self.AddArea('Toolbox1', self.parentframe.wxRavenToolBook1)
-            self.AddArea('Toolbox2', self.parentframe.wxRavenToolBook2)
-            self.AddArea('Toolbox3', self.parentframe.wxRavenToolBook3)
+            self.AddArea('toolbox1', self.parentframe.wxRavenToolBook1)
+            self.AddArea('toolbox2', self.parentframe.wxRavenToolBook2)
+            self.AddArea('toolbox3', self.parentframe.wxRavenToolBook3)
         
         else:
-            self.parentframe.m_mgr.GetPane("Toolbox1").DestroyOnClose(True)
-            self.parentframe.m_mgr.GetPane("Toolbox2").DestroyOnClose(True)
-            self.parentframe.m_mgr.GetPane("Toolbox3").DestroyOnClose(True)
+            self.parentframe.m_mgr.GetPane("toolbox1").DestroyOnClose(True)
+            self.parentframe.m_mgr.GetPane("toolbox2").DestroyOnClose(True)
+            self.parentframe.m_mgr.GetPane("toolbox3").DestroyOnClose(True)
             #pa = self.parentframe.m_mgr.GetPane("Toolbox1")
             #self.parentframe.m_mgr.ClosePane(pa)
-            self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("Toolbox1"))
-            self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("Toolbox2"))
-            self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("Toolbox3"))
+            self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("toolbox1"))
+            self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("toolbox2"))
+            self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("toolbox3"))
             self.UpdateGUIManager()
 
-    def OnPageClose( self, event ):
-        objNotebook = event.GetEventObject()
-        index = event.GetSelection()
-        page = objNotebook.GetPage(index)
-        label = objNotebook.GetPageText(index)
-        #print("view instance to delete !")
-        self.parentframe.Plugins.DeleteViewInstance(label)
-        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
-        event.Skip()   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
    
         
     def AddArea(self, frameName, Obj):
@@ -102,8 +208,14 @@ class ViewsManager(object):
             
         return result
     
+    
     def Add(self, obj, nameFrame, position="main", icon=None):
         print("Add")
+        
+        if position=="dialog":
+            print("FORCE Dialog !")
+            self.AddDialog(obj, nameFrame, position, icon)
+        
         if self.all_areas.__contains__(position):
             targetPosition= self.all_areas[position]
             
@@ -134,7 +246,46 @@ class ViewsManager(object):
         else:
             self.RaiseViewLog("["+nameFrame+"] : Invalid position '"+position+"'", "error")  
             
+    
+    
+    
+    def SearchDialog(self, dname):
+        _d=None
+        
+        for d in self.dialogs:
+            if d == dname:
+                _d = self.dialogs[d]
+                break
             
+        return _d
+            
+    
+    def __registerDialog__(self, dname, dinst):
+        self.dialogs[dname] = dinst
+    
+    def __unregisterDialog__(self, dname):
+        self.dialogs[dname] = None
+            
+    
+    def AddDialog(self,_view, nameFrame="", position="dialog", icon=None):
+        
+        print(_view)
+        if nameFrame == "":
+            nameFrame = _view[0]['name']
+            
+        if icon == None:
+            icon = _view[0]['icon']
+
+       
+        
+        _newDialog = wxRavenCustomDialog(self.parentframe, _view[0], title=nameFrame, icon=icon)
+        self.__registerDialog__(nameFrame, _newDialog)
+        _newDialog.Show()
+        #_newDialog.ShowModal()
+        
+        #self.__unregisterDialog__(nameFrame, _newDialog)
+    
+    
             
     
     def ShowAllActiveViews(self):
@@ -178,7 +329,7 @@ class ViewsManager(object):
                 if not all_panes[ii].IsShown():
                     capt = all_panes[ii].caption
                     na = all_panes[ii].name
-                    #print(capt)
+                    print(f"Hidden dialog found : {capt} - {na}")
                     #print(na)
                     
                     
@@ -189,6 +340,7 @@ class ViewsManager(object):
         
         
         for td in todelete:
+            print(f"removing {td}")
             self.parentframe.m_mgr.ClosePane(td)
             self.RaiseViewLog("["+str(td)+"] has been destroyed.", "info")  
                       
@@ -252,7 +404,18 @@ class ViewsManager(object):
     
     
     
-    
+    def HideParentInManager(self, instanceParent):
+        
+        all_panes = self.parentframe.m_mgr.GetAllPanes()
+        for ii in range(len(all_panes)):
+            if not all_panes[ii].IsToolbar():
+                #print(all_panes[ii].name)
+                #print(all_panes[ii].caption)
+                
+                if all_panes[ii].window == instanceParent:
+                    all_panes[ii].Hide()
+                
+        self.UpdateGUIManager()
     
     
     
@@ -261,8 +424,8 @@ class ViewsManager(object):
         all_panes = self.parentframe.m_mgr.GetAllPanes()
         for ii in range(len(all_panes)):
             if not all_panes[ii].IsToolbar():
-                print(all_panes[ii].name)
-                print(all_panes[ii].caption)
+                #print(all_panes[ii].name)
+                #print(all_panes[ii].caption)
                 
                 if all_panes[ii].window == instanceParent:
                     all_panes[ii].Show(True)
@@ -272,7 +435,126 @@ class ViewsManager(object):
     
     
     
+    def SearchViewInstance(self, viewname):
+        _v = None 
+        
+        for _p in self.parentframe.Plugins.plugins:
+            #print(f"scanning {_p}")
+            _plugin = self.parentframe.GetPlugin(_p)
+            _v = _plugin.GetViewAttrDetails(viewname, attr="name")
+            
+            if _v == None:
+                _v = _plugin.GetViewAttrDetails(viewname, attr="viewid")
+            
+            if _v != None:
+                #print("found!")
+                break
+        
+        return _v
     
+    
+    
+    def SearchViewPanelInManager(self, viewname):
+        _panel = None 
+        
+        all_panes = self.parentframe.m_mgr.GetAllPanes()
+        for ii in range(len(all_panes)):
+            
+            n = all_panes[ii].name
+            c = all_panes[ii].caption
+                      
+            if viewname == c or viewname == n:
+                _panel = all_panes[ii]
+                break
+            
+        return _panel
+    
+    
+    
+    def UpdateView(self, viewname):
+        
+        _panelFound = self.SearchViewInstance(viewname)
+        _visible = False
+        
+        if _panelFound !=None:
+            _panelFound['instance'].UpdateView()
+            
+    
+    
+    
+    def isViewVisible(self, viewname):
+        #print(f"isViewVisible {viewname}")
+        _panelFound = self.SearchViewPanelInManager(viewname)
+        
+        if _panelFound == None:
+            _panelIns = self.SearchViewInstance(viewname)
+            if _panelIns != None :
+                _panelFound = _panelIns['instance']
+        
+        _visible = False
+        
+        #print(_panelFound)
+        
+        if _panelFound !=None:
+            
+            try:
+                if _panelFound.window.IsShownOnScreen():
+                    _visible = True
+                #print(f"IsShownOnScreen {_visible}")
+            except Exception as e:
+                pass
+            
+            try:
+                if _panelFound.IsShownOnScreen():
+                    _visible = True
+                #print(f"IsShownOnScreen {_visible}")
+            except Exception as e:
+                pass
+            
+            try:
+                if _panelFound.IsShown():
+                    _visible = True
+                #print(f"IsShown {_visible}")
+            except Exception as e:
+                pass
+            
+        return _visible   
+    
+    
+    def HideView(self, viewName, pluginname=""):
+        _v = None 
+        _v = self.SearchViewInstance(viewName)
+        
+        if _v != None:
+            
+            
+            if _v['position'] == 'mgr':
+                self.parentframe.m_mgr.GetPane(_v['name']).Hide()
+            
+            
+            elif _v['position'] == 'main':
+                #RemovePage
+                pass
+            
+            elif _v['position'] == 'toolbox1':
+                self.parentframe.m_mgr.GetPane(_v['name']).Hide()
+                _parent = self.GetArea(_v['position'])
+                self.HideParentInManager(_parent)
+                
+                
+            else:
+                self.parentframe.m_mgr.GetPane(_v['name']).Hide()
+                _parent = self.GetArea(_v['position'])
+                self.HideParentInManager(_parent)
+                
+                _parentArea = self.GetArea(_v['position'])
+                if _parentArea != None :
+                    self.HideParentInManager(_parentArea)
+                
+                
+                
+        self.UpdateGUIManager()
+        
     
     def OpenView(self, viewName, pluginname="", createIfNull=False):
         
@@ -280,10 +562,12 @@ class ViewsManager(object):
         _defaultArea = self.parentframe.GetPluginSetting("General", 'defaultviewarea')
         
         _v = None 
-        
+        _isDialog = False
         
         if pluginname == "":
             
+            _v = self.SearchViewInstance(viewName)
+            """
             for _p in self.parentframe.Plugins.plugins:
                 #print(f"scanning {_p}")
                 _plugin = self.parentframe.GetPlugin(_p)
@@ -291,42 +575,57 @@ class ViewsManager(object):
                 if _v != None:
                     #print("found!")
                     break
-        
+            """
         
         else:
-            _plugin = self.parentframe.GetPlugin(_p)
+            _plugin = self.parentframe.GetPlugin(pluginname)
             _v = _plugin.GetViewAttrDetails(viewName, attr="name")
+            
+            if _v == None:
+                _v = _plugin.GetViewAttrDetails(viewName, attr="viewid")
+        
+        
+            if _v== None:
+                _v = self.SearchDialog(viewName)
+        
+                _isDialog = True
         
         
         
-        if _v != None:
+        
+        if _v != None :
             #print(_v)
             
-            if _v['position'] == 'mgr':
-                #print(f"{_v['position']} will be managed dynamically with Manager")
-                self.parentframe.m_mgr.GetPane(_v['name']).Show(True)
-                self.UpdateGUIManager()
             
-            elif _v['position'] == 'main':
-                #print(f"{_v['position']} will be managed dynamically with MainNotebook")
-                self.SetCurrentView_Notebook(viewName, self.parentframe.wxRavenMainBook)
-            
-            elif _v['position'] == 'toolbox1':
-                #print(f"{_v['position']} will be managed dynamically with Toolbox")
+            if  not _isDialog :
+                if _v['position'] == 'mgr':
+                    print(f"{_v['position']} will be managed dynamically with Manager")
+                    self.parentframe.m_mgr.GetPane(_v['name']).Show(True)
+                    self.UpdateGUIManager()
                 
-                _parent = self.GetArea(_v['position'])
-                #self.parentframe.m_mgr.GetPane("Toolbox1").Show(True)
-                self.SetCurrentView_Notebook(viewName, _parent)
+                elif _v['position'] == 'main':
+                    print(f"{_v['position']} will be managed dynamically with MainNotebook")
+                    self.SetCurrentView_Notebook(viewName, self.parentframe.wxRavenMainBook)
                 
-                self.ShowParentInManager(_parent)
-                
-            
-            else:
-                #print(f"{_v['position']} will be managed dynamically with getParent")
-                
-                self.SetCurrentView_Notebook(viewName, _v['instance'].GetParent())
+                elif _v['position'] == 'toolbox1':
+                    print(f"{_v['position']} will be managed dynamically with Toolbox")
                     
-                self.ShowParentInManager(_v['instance'].GetParent())
+                    _parent = self.GetArea(_v['position'])
+                    #self.parentframe.m_mgr.GetPane("Toolbox1").Show(True)
+                    self.SetCurrentView_Notebook(viewName, _parent)
+                    
+                    self.ShowParentInManager(_parent)
+                    
+                
+                else:
+                    print(f"{_v['position']} will be managed dynamically with getParent")
+                    
+                    self.SetCurrentView_Notebook(viewName, _v['instance'].GetParent())   
+                    self.ShowParentInManager(_v['instance'].GetParent())
+                    
+                    _parentArea = self.GetArea(_v['position'])
+                    if _parentArea != None :
+                        self.ShowParentInManager(_parentArea)
                 
                 
                 
@@ -349,16 +648,20 @@ class ViewsManager(object):
                             break
                 
                 else:
-                    _plugin = self.parentframe.GetPlugin(_p)
+                    _plugin = self.parentframe.GetPlugin(pluginname)
                     _viewObj = _plugin.SearchPluginView(viewName)
                     
                     
                 if _viewObj != None:
-                    _plugin = self.parentframe.GetPlugin(_p)
-                    _plugin.LoadView(_viewObj, _defaultArea)
+                    
+                    if _viewObj['position'] == 'dialog':
+                        self.AddDialog((_viewObj,))
+                    else:    
+                        _plugin = self.parentframe.GetPlugin(pluginname)
+                        _plugin.LoadView(_viewObj, _defaultArea)
                 
                 
-                
+                _v = _viewObj
                 
                 
                 
@@ -709,7 +1012,18 @@ class RavenAddViewDialog(wxRavenAddView):
         #print("OnOpen")
    
         if self._selected_plugin != "" and self._selected_view != None:
-            self.parentframe.GetPlugin(self._selected_plugin).LoadView(self._selected_view, self._target)
+            
+            if self._selected_view['position']=='dialog':
+                self._target = 'dialog'
+                
+                df_class = self._selected_view['class']
+                df_name = self._selected_view['name']
+                df_icon = self._selected_view['icon']
+                print(self._selected_view)
+                #self.parentframe.Views.AddDialog(self._selected_view, df_name, position="dialog", icon=df_icon)
+                wx.CallAfter(self.parentframe.Views.AddDialog, (self._selected_view,))
+            else:
+                self.parentframe.GetPlugin(self._selected_plugin).LoadView(self._selected_view, self._target)
             wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
             self.Close(force=True)
         

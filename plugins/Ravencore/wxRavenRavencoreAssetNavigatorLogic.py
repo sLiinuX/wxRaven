@@ -142,13 +142,16 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         tree_display_virtual_sort = _p.PLUGIN_SETTINGS['tree_display_virtual_sort'] 
         
         if _useCache:
-            self.m_useCacheButton.SetState(32)
+            #self.m_useCacheButton.SetState(32)
+            self.m_auiToolBar4.ToggleTool(self.m_useCacheButton.GetId(), True)
             
         if tree_display_regroupby_main:
-            self.m_TreeDisplayOption_OrganizeByMainAsset.SetState(32)
+            #self.m_TreeDisplayOption_OrganizeByMainAsset.SetState(32)
+            self.m_auiToolBar4.ToggleTool(self.m_TreeDisplayOption_OrganizeByMainAsset.GetId(), True)
             
         if tree_display_virtual_sort:
-            self.m_TreeDisplayOption_ReorganizeSubCat.SetState(32)
+            #self.m_TreeDisplayOption_ReorganizeSubCat.SetState(32)
+            self.m_auiToolBar4.ToggleTool(self.m_TreeDisplayOption_ReorganizeSubCat.GetId(), True)
     
     
     
@@ -322,17 +325,23 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
     
     
     def OnTreeDisplayOptionsChanged(self, evt):
-        _organizeByMainAssetButtonState =self.m_TreeDisplayOption_OrganizeByMainAsset.GetState()
-        _virtualReorganizationButtonState =self.m_TreeDisplayOption_ReorganizeSubCat.GetState()
+        #_organizeByMainAssetButtonState =self.m_TreeDisplayOption_OrganizeByMainAsset.GetState()
+        #_virtualReorganizationButtonState =self.m_TreeDisplayOption_ReorganizeSubCat.GetState()
+    
+        _organizeByMainAssetButtonState = self.m_auiToolBar4.GetToolToggled(self.m_TreeDisplayOption_OrganizeByMainAsset.GetId())
+        _virtualReorganizationButtonState= self.m_auiToolBar4.GetToolToggled(self.m_TreeDisplayOption_ReorganizeSubCat.GetId())
+    
     
         _p = self.parent_frame.GetPlugin("Ravencore")
         
-        if _organizeByMainAssetButtonState in [32 ,34 ]:
+        #if _organizeByMainAssetButtonState in [32 ,34 ]:
+        if _organizeByMainAssetButtonState:
             _p.PLUGIN_SETTINGS['tree_display_regroupby_main'] = True
         else:
             _p.PLUGIN_SETTINGS['tree_display_regroupby_main'] = False
     
-        if _virtualReorganizationButtonState in [32 ,34 ]:
+        #if _virtualReorganizationButtonState in [32 ,34 ]:
+        if _virtualReorganizationButtonState:
             _p.PLUGIN_SETTINGS['tree_display_virtual_sort'] = True
         else:
             _p.PLUGIN_SETTINGS['tree_display_virtual_sort'] = False

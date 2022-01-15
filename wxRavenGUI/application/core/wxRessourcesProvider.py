@@ -22,6 +22,7 @@ class RessourcesProvider(object):
     
     
     _THEME_PANEL_BACKGROUND_COLOR = wx.Colour( 255, 255, 255 )
+    _THEME_PANEL_SETTINGS_BACKGROUND_COLOR = wx.Colour( 217, 228, 255 )
     
     
     
@@ -116,6 +117,9 @@ class RessourcesProvider(object):
         
     def GetPanelBackground(self):
         return self._THEME_PANEL_BACKGROUND_COLOR    
+    
+    def GetSettingsBackground(self):
+        return self._THEME_PANEL_SETTINGS_BACKGROUND_COLOR   
         
         
     def ApplyThemeOnPanel(self, panel):  
@@ -124,5 +128,13 @@ class RessourcesProvider(object):
             #panel.SetForegroundColour(self.GetPanelBackground())
         except Exception as e:
             print("unable to themize :" + str(e))
-        
+            
+    
+    def ApplyThemeOnSettingsPanel(self, panel):  
+        try:  
+            #panel.SetBackgroundColour(self.GetSettingsBackground())
+            panel._Panel.SetBackgroundColour(self.GetSettingsBackground())
+            #panel.SetForegroundColour(self.GetPanelBackground())
+        except Exception as e:
+            print("unable to themize :" + str(e))    
         

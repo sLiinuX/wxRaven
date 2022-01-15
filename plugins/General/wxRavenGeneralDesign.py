@@ -25,35 +25,21 @@ class wxRavenErrorLogConsolePanel ( wx.Panel ):
 		bSizer1 = wx.BoxSizer( wx.VERTICAL )
 		
 		self.m_auiToolBar1 = wx.aui.AuiToolBar( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT ) 
+		self.m_bitmap17 = wx.StaticBitmap( self.m_auiToolBar1, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/filter_ps.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_auiToolBar1.AddControl( self.m_bitmap17 )
+		self.m_showInfos = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/logtype_info.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show 'Informations' Logs", wx.EmptyString, None ) 
+		
+		self.m_showMessages = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/logtype_msg.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show 'Messages' Logs", wx.EmptyString, None ) 
+		
+		self.m_showWarnings = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/logtype_warning.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show 'Warnings' Logs", wx.EmptyString, None ) 
+		
+		self.m_showErrors = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/logtype_error.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show 'Errors' Logs", wx.EmptyString, None ) 
+		
+		self.m_auiToolBar1.AddSeparator()
+		
+		self.m_showDebug = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/debug_exc.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, wx.EmptyString, wx.EmptyString, None ) 
+		
 		self.m_tool5 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/view_menu.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_auiToolBar1.AddSeparator()
-		
-		self.m_tool2 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/import_log.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
-		self.m_auiToolBar1.SetToolDropDown( self.m_tool2.GetId(), True );
-		
-		
-		self.m_auiToolBar1.AddSeparator()
-		
-		self.m_tool1 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/export_log.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_auiToolBar1.AddSeparator()
-		
-		self.m_tool3 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/clear_co.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_auiToolBar1.AddSeparator()
-		
-		self.m_tool4 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/restore_log.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_RADIO, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_auiToolBar1.AddSeparator()
-		
-		self.m_showInfos = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/info_obj.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_showMessages = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_showWarnings = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/warning_obj.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_showErrors = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/error_tsk.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, wx.EmptyString, wx.EmptyString, None ) 
 		
 		self.m_auiToolBar1.Realize() 
 		
@@ -67,21 +53,57 @@ class wxRavenErrorLogConsolePanel ( wx.Panel ):
 		self.Layout()
 		
 		# Connect Events
+		self.Bind( wx.aui.EVT_AUI_PANE_CLOSE, self.OnAuiPaneClose )
+		self.Bind( wx.aui.EVT_AUI_PANE_RESTORE, self.OnAuiPaneRestore )
+		self.Bind( wx.aui.EVT_AUI_RENDER, self.OnAuiPaneRender )
 		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showInfos.GetId() )
 		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showMessages.GetId() )
 		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showWarnings.GetId() )
 		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showErrors.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showDebug.GetId() )
 	
 	def __del__( self ):
 		pass
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def OnAuiPaneClose( self, event ):
+		event.Skip()
+	
+	def OnAuiPaneRestore( self, event ):
+		event.Skip()
+	
+	def OnAuiPaneRender( self, event ):
+		event.Skip()
+	
 	def OnViewOptionsChanged( self, event ):
 		event.Skip()
 	
 	
 	
+	
+	
+
+###########################################################################
+## Class wxRavenDebugConsolePanel
+###########################################################################
+
+class wxRavenDebugConsolePanel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 575,332 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer131 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_debugLog = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
+		bSizer131.Add( self.m_debugLog, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer131 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
 	
 
 ###########################################################################
@@ -589,6 +611,60 @@ class wxRavenConnexionSettings_SettingPanel ( wx.Panel ):
 		
 		
 		bSizer114.Add( bSizer116, 0, wx.EXPAND, 5 )
+		
+		bSizer117 = wx.BoxSizer( wx.VERTICAL )
+		
+		
+		bSizer114.Add( bSizer117, 0, wx.EXPAND, 5 )
+		
+		
+		bSizer113.Add( bSizer114, 1, wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer113 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class wxRavenPluginsSettings_SettingPanel
+###########################################################################
+
+class wxRavenPluginsSettings_SettingPanel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 505,374 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer113 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer118 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_staticText61 = wx.StaticText( self, wx.ID_ANY, u"Check in the list below the plugin you want to DISABLE.", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE|wx.STATIC_BORDER )
+		self.m_staticText61.Wrap( -1 )
+		bSizer118.Add( self.m_staticText61, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer113.Add( bSizer118, 0, wx.EXPAND, 5 )
+		
+		bSizer114 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap4 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/install-handler.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer114.Add( self.m_bitmap4, 0, wx.ALL, 5 )
+		
+		self.m_staticText12 = wx.StaticText( self, wx.ID_ANY, u"All Plugins :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText12.Wrap( -1 )
+		bSizer114.Add( self.m_staticText12, 0, wx.ALL, 5 )
+		
+		bSizer115 = wx.BoxSizer( wx.VERTICAL )
+		
+		m_pluginCheckListboxChoices = []
+		self.m_pluginCheckListbox = wx.CheckListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_pluginCheckListboxChoices, 0 )
+		bSizer115.Add( self.m_pluginCheckListbox, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer114.Add( bSizer115, 1, wx.EXPAND, 5 )
 		
 		bSizer117 = wx.BoxSizer( wx.VERTICAL )
 		

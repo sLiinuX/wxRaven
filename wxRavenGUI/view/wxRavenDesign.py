@@ -10,6 +10,7 @@
 import wx
 import wx.xrc
 import wx.aui
+from wxRavenGUI.application.wxcustom.CustomNotificationBar import *
 
 ###########################################################################
 ## Class wxRavenSplashScreen
@@ -61,7 +62,7 @@ class wxRavenSplashScreen ( wx.Dialog ):
 class wxRavenMainFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"wxRaven", pos = wx.DefaultPosition, size = wx.Size( 724,501 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"wxRaven", pos = wx.DefaultPosition, size = wx.Size( 736,501 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		self.m_mgr = wx.aui.AuiManager()
@@ -135,12 +136,45 @@ class wxRavenMainFrame ( wx.Frame ):
 		self.SetMenuBar( self.wxRavenMenuBar )
 		
 		self.m_auiToolBar2 = wx.aui.AuiToolBar( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT|wx.FULL_REPAINT_ON_RESIZE ) 
-		self.rpcConnexions_dropdown_button = self.m_auiToolBar2.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
+		self.rpcConnexions_dropdown_button = self.m_auiToolBar2.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Change connexion", wx.EmptyString, None )
 		self.m_auiToolBar2.SetToolDropDown( self.rpcConnexions_dropdown_button.GetId(), True );
 		
 		
+		self.m_auiToolBar2.AddSeparator()
+		
+		self.m_ShowOpenViewList = self.m_auiToolBar2.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Active Views", wx.EmptyString, None )
+		self.m_auiToolBar2.SetToolDropDown( self.m_ShowOpenViewList.GetId(), True );
+		
+		
+		self.m_showNewViewDialog = self.m_auiToolBar2.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/new_view.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"New View...", wx.EmptyString, None ) 
+		
+		self.m_auiToolBar2.AddSeparator()
+		
+		self.m_showViewShortcutToolbar = self.m_auiToolBar2.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/view_shortcuts.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show/Hide View Shortcut Toolbar", wx.EmptyString, None ) 
+		
+		self.m_showToolbarListToolbt = self.m_auiToolBar2.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/tools.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		
+		self.m_auiToolBar2.AddSeparator()
+		
+		self.m_showConsoleLog = self.m_auiToolBar2.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/error_console.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show/Hide Error Log Console", wx.EmptyString, None ) 
+		
 		self.m_auiToolBar2.Realize()
-		self.m_mgr.AddPane( self.m_auiToolBar2, wx.aui.AuiPaneInfo().Name( u"wxRavenToolBar" ).Top().CloseButton( False ).PaneBorder( False ).Movable( False ).Dock().Resizable().FloatingSize( wx.DefaultSize ).Layer( 10 ).ToolbarPane() )
+		self.m_mgr.AddPane( self.m_auiToolBar2, wx.aui.AuiPaneInfo().Name( u"wxRavenToolBar" ).Top().CaptionVisible( False ).CloseButton( False ).PaneBorder( False ).Movable( False ).Dock().Resizable().FloatingSize( wx.DefaultSize ).Row( 0 ).Layer( 10 ).ToolbarPane() )
+		
+		self.m_auiViewsShortcutToolbar = wx.aui.AuiToolBar( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT ) 
+		self.m_staticText5 = wx.StaticText( self.m_auiViewsShortcutToolbar, wx.ID_ANY, u"wxRaven ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText5.Wrap( -1 )
+		self.m_staticText5.SetBackgroundColour( wx.Colour( 255, 255, 255 ) )
+		
+		self.m_auiViewsShortcutToolbar.AddControl( self.m_staticText5 )
+		self.m_showAboutDialogToolbt = self.m_auiViewsShortcutToolbar.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"About wxRaven", wx.EmptyString, None ) 
+		
+		self.m_showSettingsDialogToolbt = self.m_auiViewsShortcutToolbar.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/wizard-prefs.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"wxRaven Settings", wx.EmptyString, None ) 
+		
+		self.m_auiViewsShortcutToolbar.AddSeparator()
+		
+		self.m_auiViewsShortcutToolbar.Realize()
+		self.m_mgr.AddPane( self.m_auiViewsShortcutToolbar, wx.aui.AuiPaneInfo().Name( u"ViewsShortcutToolbar" ).Top().Caption( u"ViewsShortcutToolbar" ).PinButton( True ).Dock().Resizable().FloatingSize( wx.DefaultSize ).Layer( 10 ).ToolbarPane() )
 		
 		self.rpcConnexions_dropdown_menu = wx.Menu()
 		self.Bind( wx.EVT_RIGHT_DOWN, self.wxRavenMainFrameOnContextMenu ) 
@@ -151,15 +185,15 @@ class wxRavenMainFrame ( wx.Frame ):
 		
 		
 		self.wxRavenToolBook1 = wx.aui.AuiNotebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE|wx.HSCROLL )
-		self.m_mgr.AddPane( self.wxRavenToolBook1, wx.aui.AuiPaneInfo() .Name( u"Toolbox1" ).Left() .Caption( u"Toolbox1" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( 200,-1 ) ) )
+		self.m_mgr.AddPane( self.wxRavenToolBook1, wx.aui.AuiPaneInfo() .Name( u"toolbox1" ).Left() .Caption( u"Toolbox1" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( 200,-1 ) ) )
 		
 		
 		self.wxRavenToolBook2 = wx.aui.AuiNotebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE )
-		self.m_mgr.AddPane( self.wxRavenToolBook2, wx.aui.AuiPaneInfo() .Name( u"Toolbox2" ).Right() .Caption( u"Toolbox2" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( 200,-1 ) ) )
+		self.m_mgr.AddPane( self.wxRavenToolBook2, wx.aui.AuiPaneInfo() .Name( u"toolbox2" ).Right() .Caption( u"Toolbox2" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( 200,-1 ) ) )
 		
 		
 		self.wxRavenToolBook3 = wx.aui.AuiNotebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE )
-		self.m_mgr.AddPane( self.wxRavenToolBook3, wx.aui.AuiPaneInfo() .Name( u"Toolbox3" ).Bottom() .Caption( u"Toolbox3" ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( -1,100 ) ) )
+		self.m_mgr.AddPane( self.wxRavenToolBook3, wx.aui.AuiPaneInfo() .Name( u"toolbox3" ).Bottom() .Caption( u"Toolbox3" ).PinButton( True ).Hide().Dock().Resizable().FloatingSize( wx.DefaultSize ).MinSize( wx.Size( -1,100 ) ) )
 		
 		
 		
@@ -172,7 +206,10 @@ class wxRavenMainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.OnLoadLastPerspectiveClick, id = self.wxRavenMenuBar_Window_Perspectives_LoadLast.GetId() )
 		self.Bind( wx.EVT_MENU, self.OnDeleteLastPerspectiveClick, id = self.wxRavenMenuBar_Window_Perspectives_DeleteLast.GetId() )
 		self.Bind( wx.EVT_MENU, self.OnPreferenceDialog, id = self.wxRavenMenuBar_Window_Preferences.GetId() )
+		self.m_auiToolBar2.Bind( wx.EVT_RIGHT_DOWN, self.OnRDown )
 		self.Bind( wx.EVT_TOOL, self.OnContextMenu_ShowNetworkList, id = self.rpcConnexions_dropdown_button.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnShowCurrentOpenViews, id = self.m_ShowOpenViewList.GetId() )
+		self.wxRavenMainBook.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnAuiNotebookPageClose )
 	
 	def __del__( self ):
 		self.m_mgr.UnInit()
@@ -195,7 +232,16 @@ class wxRavenMainFrame ( wx.Frame ):
 	def OnPreferenceDialog( self, event ):
 		event.Skip()
 	
+	def OnRDown( self, event ):
+		event.Skip()
+	
 	def OnContextMenu_ShowNetworkList( self, event ):
+		event.Skip()
+	
+	def OnShowCurrentOpenViews( self, event ):
+		event.Skip()
+	
+	def OnAuiNotebookPageClose( self, event ):
 		event.Skip()
 	
 	def wxRavenMainFrameOnContextMenu( self, event ):
@@ -222,7 +268,7 @@ class wxRavenAbout ( wx.Dialog ):
 		self.m_staticText3.Wrap( -1 )
 		bSizer8.Add( self.m_staticText3, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
 		
-		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, u"Version: <VERSION>\nBuild id: <BUILD_ID>\nhttps://github.com/sLiinuX/wxRaven\n--\n\nwxRaven is an open-source IRE (Integrated Raven Environment) Framework for the Ravencoin community.\n\nIt provides usefull built-in functions to create and develop your own \"Use-case specific application\" as one or multiple plugin of this integrated environment itself such as :\n\n    - Built-in RPC connexion\n    - High Level RPC API Commands\n    - RPC Shell & Command list\n    - Highly Customizable End User Interface\n    - ... More to come !\n\t\t\t\t\t\t\t\t\tsLinuX\n\n--\n\nLicence Type : MIT \n(c) Copyright wxRaven contributors and others.  \nNo rights reserved.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n", wx.DefaultPosition, wx.DefaultSize, wx.TE_CENTRE|wx.TE_MULTILINE|wx.TE_READONLY )
+		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, u"Version: <VERSION>\nBuild id: <BUILD_ID>\nhttps://github.com/sLiinuX/wxRaven\n--\n\nwxRaven is an open-source IRE (Integrated Raven Environment) Framework for the Ravencoin community.\n\nIt provides usefull built-in functions to create and develop your own \"Use-case specific application\" as one or multiple plugin of this integrated environment itself such as :\n\n    - Built-in RPC connexion\n    - High Level RPC API Commands\n    - RPC Shell & Command list\n    - Highly Customizable End User Interface\n    - ... More to come !\n\t\t\t\t\t\t\t\t\tsLinuX\n\n\t\t\t\tDonnation address : RDyF4itWbfryV2nM4w2L99oJ4MvNptt82F\n--\n\nLicence Type : MIT \n(c) Copyright wxRaven contributors and others.  \nNo rights reserved.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n", wx.DefaultPosition, wx.DefaultSize, wx.TE_CENTRE|wx.TE_MULTILINE|wx.TE_READONLY )
 		bSizer8.Add( self.m_textCtrl2, 4, wx.ALL|wx.EXPAND, 5 )
 		
 		
@@ -230,9 +276,17 @@ class wxRavenAbout ( wx.Dialog ):
 		self.Layout()
 		
 		self.Centre( wx.BOTH )
+		
+		# Connect Events
+		self.Bind( wx.EVT_CLOSE, self.OnCloseAbout )
 	
 	def __del__( self ):
 		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnCloseAbout( self, event ):
+		event.Skip()
 	
 
 ###########################################################################
@@ -294,6 +348,7 @@ class wxRavenAddView ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 		
 		# Connect Events
+		self.Bind( wx.EVT_CLOSE, self.OnAddViewClose )
 		self.cancelButton.Bind( wx.EVT_BUTTON, self.OnCancel )
 		self.openButton.Bind( wx.EVT_BUTTON, self.OnOpen )
 	
@@ -302,6 +357,9 @@ class wxRavenAddView ( wx.Dialog ):
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def OnAddViewClose( self, event ):
+		event.Skip()
+	
 	def OnCancel( self, event ):
 		event.Skip()
 	
@@ -361,6 +419,9 @@ class wxRavenSettingDialog ( wx.Dialog ):
 		self.m_staticline1 = wx.StaticLine( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		bSizer10.Add( self.m_staticline1, 0, wx.EXPAND |wx.ALL, 5 )
 		
+		self.m_customNotification = wxNotificationBar(self.m_panel1)
+		bSizer10.Add( self.m_customNotification, 1, wx.ALL|wx.EXPAND, 5 )
+		
 		self.settingContentPlaceHolderPannel = wx.Panel( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.NO_BORDER )
 		self.settingContentPlaceHolderPannel.SetBackgroundColour( wx.Colour( 160, 160, 160 ) )
 		
@@ -402,6 +463,8 @@ class wxRavenSettingDialog ( wx.Dialog ):
 		self.Centre( wx.BOTH )
 		
 		# Connect Events
+		self.Bind( wx.aui.EVT_AUI_PANE_CLOSE, self.OnCloseSettings )
+		self.Bind( wx.EVT_CLOSE, self.OnCloseSettings )
 		self.CancelButton.Bind( wx.EVT_BUTTON, self.OnCancel )
 		self.applyCloseButton.Bind( wx.EVT_BUTTON, self.OnApplyCloseButton )
 		self.applyCloseButton.Bind( wx.EVT_ENTER_WINDOW, self.OnHover )
@@ -412,6 +475,10 @@ class wxRavenSettingDialog ( wx.Dialog ):
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def OnCloseSettings( self, event ):
+		event.Skip()
+	
+	
 	def OnCancel( self, event ):
 		event.Skip()
 	

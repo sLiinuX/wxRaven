@@ -46,7 +46,7 @@ class wxRavenPlugin(PluginObject):
                      'name':'RavenRPC Advanced Shell', 
                      'title':'RavenRPC Advanced Shell', 
                      'position':position, 
-                     'icon':self.PLUGIN_ICON, 
+                     'icon':wx.Bitmap( u"res/default_style/normal/shell_adv.png", wx.BITMAP_TYPE_ANY ), 
                      'class': shellAdvancedPanel ,
                      'default':True,
                      'multipleViewAllowed':True

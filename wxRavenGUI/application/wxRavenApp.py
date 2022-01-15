@@ -95,7 +95,9 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
 
         
         # Plugins management
-        self.Plugins = pluginsManager(PLUGIN_PATH, self, loadPath=False)   
+        self.Plugins = pluginsManager(PLUGIN_PATH, self, loadPath=False)
+        self.Plugins.SetExclusionList()
+           
         self.Plugins.Initialize()
         
         
@@ -195,12 +197,20 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         #print("LOG :" + message)
         #self.GetPlugin("General").Log(message , source, timestamp, type)
-        
         try:
             self.GetPlugin("General").Log(message , source, timestamp, type)
         except Exception as e:
             print("Log (wxRavenApp) :" + str(e))
-        
+    
+    """    
+    def Debug(self ,message ):
+        try:
+            self.GetPlugin("General").Log(message , "", None, "debug")
+        except Exception as e:
+            print("Log (wxRavenApp) :" + str(e))
+    
+    """
+    
     
     
     #Get the highlevel queries

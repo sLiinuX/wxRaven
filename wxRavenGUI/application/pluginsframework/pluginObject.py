@@ -416,6 +416,8 @@ class PluginObject(object):
     """
     
     def _LoadPluginSettings(self):
+        
+        print(f"loading {self.PLUGIN_NAME}  settings ")
         _recordedSettings = self.parentFrame.Settings._GetPluginSettings(self.PLUGIN_NAME)
         
         

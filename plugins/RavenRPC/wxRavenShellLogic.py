@@ -126,7 +126,7 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
     default_position = "toolbox1"
     
     
-    icon = 'shell' # wx.Bitmap( u"res/default_style/normal/shell.png", wx.BITMAP_TYPE_ANY )
+    icon = 'shell_adv' # wx.Bitmap( u"res/default_style/normal/shell.png", wx.BITMAP_TYPE_ANY )
     
     
     
@@ -360,7 +360,8 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
         
     def getAutoSwitchStateIsChecked(self):
         res=False
-        if self.rpcConnexions_autoswitch.GetState() in [32 ,34 ] :
+        if self.m_auiToolBar1.GetToolToggled(self.rpcConnexions_autoswitch.GetId()):
+        #if self.rpcConnexions_autoswitch.GetState() in [32 ,34 ] :
             res=True
         return res
     
