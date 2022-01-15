@@ -1572,6 +1572,27 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 		
 		bSizer74.Add( bSizer78111, 0, wx.EXPAND, 5 )
 		
+		bSizer781111 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText91111 = wx.StaticText( self, wx.ID_ANY, u"Required if address or channel changed :", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+		self.m_staticText91111.Wrap( -1 )
+		self.m_staticText91111.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
+		
+		bSizer781111.Add( self.m_staticText91111, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText16511 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16511.Wrap( -1 )
+		bSizer781111.Add( self.m_staticText16511, 0, wx.ALL, 5 )
+		
+		self.m_accountstatusBitmap = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/help_contents.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer781111.Add( self.m_accountstatusBitmap, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_initMyMarketPlace = wx.Button( self, wx.ID_ANY, u"Initialize", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer781111.Add( self.m_initMyMarketPlace, 0, wx.ALL, 5 )
+		
+		
+		bSizer74.Add( bSizer781111, 0, wx.EXPAND, 5 )
+		
 		
 		self.SetSizer( bSizer74 )
 		self.Layout()
@@ -1579,6 +1600,7 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 		# Connect Events
 		self.m_wipeButton.Bind( wx.EVT_BUTTON, self.OnDoWipeTradeSessions )
 		self.m_unlockAll.Bind( wx.EVT_BUTTON, self.OnDoUnlockAll )
+		self.m_initMyMarketPlace.Bind( wx.EVT_BUTTON, self.OnDoInitMyMarketPlace )
 	
 	def __del__( self ):
 		pass
@@ -1589,6 +1611,9 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 		event.Skip()
 	
 	def OnDoUnlockAll( self, event ):
+		event.Skip()
+	
+	def OnDoInitMyMarketPlace( self, event ):
 		event.Skip()
 	
 

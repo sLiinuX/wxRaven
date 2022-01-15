@@ -52,8 +52,14 @@ class wxRavenDebugConsole(wxRavenDebugConsolePanel):
         
         wx.LogTextCtrl(self.m_debugLog)
         
-        self._oldOut = sys.stdout
-        sys.stdout=self.m_debugLog
+        #self._oldOut = sys.stdout
+        #self._oldErr = sys.stderr
+        
+        
+        #if parentFrame.GetPluginSetting("General",'debug_out') == 'stderr':
+        #    sys.stderr=self.m_debugLog
+        #else:
+        #sys.stdout=self.m_debugLog
         
         
         #This is to add the view in the appropriate place using the mainapp to do so
@@ -79,7 +85,8 @@ class wxRavenDebugConsole(wxRavenDebugConsolePanel):
     
     def OnClose(self, evt):
         print("OnDebugClose!")
-        sys.stdout=self._oldOut
+        #sys.stdout=self._oldOut
+        #sys.stderr=self._oldErr
     
     
     

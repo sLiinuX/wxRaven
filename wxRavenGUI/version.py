@@ -13,8 +13,8 @@ __MAJOR__ = 0
 __REVISION__ = 1
 __MINOR__ = 2
 
-__BUILD__ = 1
-__BUILD_ID__ = "P2PMarketPlace-TR1"
+__BUILD__ = 2
+__BUILD_ID__ = "P2PMarketPlace-TR2"
 
 
 

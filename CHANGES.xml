@@ -5,31 +5,19 @@
       <text fontpointsize="14" fontweight="700">wxRaven Changelog</text>
     </paragraph>
     <paragraph alignment="2" parspacingafter="20" parspacingbefore="0">
-      <text fontstyle="93" fontweight="700">" 0.1.2#BUILD-1"</text>
+      <text fontstyle="93" fontweight="700">" 0.1.2#BUILD-2"</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman">
       <text></text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman">
-      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">[0.1.2#Build-1] - 2022-01-13</text>
+      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">[0.1.2#Build-2] - 2022-01-15</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="100" leftsubindent="0">
       <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">Added</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">Settings Notifications , Reboot required</text>
-    </paragraph>
-    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">Shortcut toolbar</text>
-    </paragraph>
-    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">Plugin supports Dialog box type</text>
-    </paragraph>
-    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">AtomicSwap - BETA</text>
-    </paragraph>
-    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">P2PMarket - BETA</text>
+      <text fontstyle="93">P2PMarket - Settings : Announcer Account Setup</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
       <text fontstyle="93">...</text>
@@ -41,16 +29,13 @@
       <text fontstyle="93">"Error Log Console "</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">Views Management Improved</text>
-    </paragraph>
-    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">Enhanced UI and wxRaven</text>
+      <text fontstyle="93">...</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="100" leftsubindent="0">
       <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">Fixed</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">WaitApplicationReady introduced to avoid startup query failures.</text>
+      <text fontstyle="93">No balance check</text>
     </paragraph>
     <paragraph>
       <text></text>

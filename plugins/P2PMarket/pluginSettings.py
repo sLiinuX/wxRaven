@@ -10,7 +10,7 @@ import wx
 import os
 from .wxRavenP2PMarketDesign import *
 
-from wxRavenGUI.application.wxcustom import UserError,UserInfo, UserQuestion
+from wxRavenGUI.application.wxcustom import UserError,UserInfo, UserQuestion,RequestUserWalletPassword
 
 class wxP2PMarket_GeneralSettings_WithLogic(PluginSettingsPanelObject):
     '''
@@ -583,7 +583,7 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
         p2p_channel_asset_target_address = self._Panel.m_AddressChoice.GetString(self._Panel.m_AddressChoice.GetCurrentSelection()) 
         p2p_market_change_address =  self._Panel.m_changeAddressChoiceOpt.GetString(self._Panel.m_changeAddressChoiceOpt.GetCurrentSelection())
         
-        if self.m_sameAddressChangeOpt.GetValue()== True:
+        if self._Panel.m_sameAddressChangeOpt.GetValue()== True:
             market_change_address =  p2p_channel_asset_target_address
         
          
@@ -694,6 +694,33 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
     
     
     
+    
+    
+    def OnDoInitMyMarketPlace(self, evt):
+        
+        pwd = RequestUserWalletPassword(self._Panel)
+        
+        self.__checkAddressSetup__(True, pwd)
+        
+        
+        """
+        p2p_channel_asset_target_address = self._Panel.m_AddressChoice.GetString(self._Panel.m_AddressChoice.GetCurrentSelection()) 
+        p2p_channel_asset_default =  self._Panel.m_NetworkChoice.GetString(self._Panel.m_NetworkChoice.GetCurrentSelection())
+        
+        
+        ravencoin = self.parentFrame.getRvnRPC()
+        _setupResult = ravencoin.p2pmarket.CheckP2PAnnouncerAccount(p2p_channel_asset_target_address, p2p_channel_asset_default, setupIfNotReady=True , password=pwd)
+        
+        
+        if _setupResult:
+            UserInfo(self._Panel, "Announcer Account Ready !")
+        else:
+            UserError(self._Panel, "Error : Announcer Account Not Ready !")
+            
+        """    
+    
+    
+    
     def OnDoUnlockAll(self, evt):
         if UserQuestion(self._Panel, "Do you confirm the trade session wipe ?"):
             ravencoin = self.parentFrame.getRvnRPC()
@@ -710,6 +737,40 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
                 UserInfo(self._Panel, "Trade session wiped !")
             except Exception as e:
                 UserError(self._Panel, "Unable to wipe trade file")    
+
+
+
+    
+    
+    def __checkAddressSetup__(self, doSetup=False, pwd=''):
+        p2p_channel_asset_target_address = self._Panel.m_AddressChoice.GetString(self._Panel.m_AddressChoice.GetCurrentSelection()) 
+        p2p_channel_asset_default =  self._Panel.m_NetworkChoice.GetString(self._Panel.m_NetworkChoice.GetCurrentSelection())
+        
+        
+        
+        _res = False
+        try:
+            ravencoin = self.parentFrame.getRvnRPC()
+            _res = ravencoin.p2pmarket.CheckP2PAnnouncerAccount(p2p_channel_asset_target_address, p2p_channel_asset_default, setupIfNotReady=doSetup , password=pwd)
+        except Exception as e:
+            _res = False
+       
+
+        if _res:
+            self._Panel.m_accountstatusBitmap.SetBitmap(self.parentFrame.RessourcesProvider.GetImage('passed'))
+        else:
+            
+            self._Panel.m_accountstatusBitmap.SetBitmap(self.parentFrame.RessourcesProvider.GetImage('warning_2'))
+            
+            
+        if doSetup:
+            if _res:
+                UserInfo(self._Panel, "Announcer Account Ready !")
+            else:
+                UserError(self._Panel, "Error : Announcer Account Not Ready !")
+
+
+
 
     def OnChanged(self, evt=None):
         self._settingsHasChanged = True
@@ -734,7 +795,7 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
 
 
 
-
+        self.__checkAddressSetup__(False)
 
 
 

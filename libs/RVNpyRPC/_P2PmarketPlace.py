@@ -169,6 +169,7 @@ class RVNpyRPC_P2P_Marketplace():
     '''
     RPCconnexion = None
     
+    ANNOUNCER_MARKET_LISTING_MIN_AMMOUNT = 5
     SQUAWKER_PROTOCOLE_MARKET_LISTING_AMMOUNT = 0.2
     SQUAWKER_PROTOCOLE_MARKET_LISTING_SATOSHIS = 20000000
     
@@ -182,8 +183,53 @@ class RVNpyRPC_P2P_Marketplace():
         
     
     
+    
+    
+    
+    def CheckP2PAnnouncerAccount(self, AnnouncerAddress, AnnouncerChannel, setupIfNotReady=False , password=""):
+        addressBalance = self.RVNpyRPC.wallet.getaddressbalance(walletAdress=AnnouncerAddress, showAsset=True)['result']
+        
+        _assetChannelPresent = False 
+        _suffisiantFund = False 
+        
+        _valid=False
         
         
+        for _itemBal in addressBalance:
+            if _itemBal['assetName'] == AnnouncerChannel:
+                if _itemBal['balance'] > self.SQUAWKER_PROTOCOLE_MARKET_LISTING_SATOSHIS:
+                    _assetChannelPresent = True
+                    
+                
+        
+            if _itemBal['assetName'] == "RVN":
+                if _itemBal['balance'] > self.ANNOUNCER_MARKET_LISTING_MIN_AMMOUNT:
+                    _suffisiantFund = True
+        
+        
+        if not _suffisiantFund or not _assetChannelPresent:
+            _valid = False
+        else:
+            _valid = True
+        
+        print(f"_suffisiantFund = {_suffisiantFund}")
+        print(f"_assetChannelPresent = {_assetChannelPresent}")
+            
+            
+        if not _valid and setupIfNotReady:
+            print("Account not completely setup for p2pmarket, trying now.")
+            if not _suffisiantFund:
+                self.RVNpyRPC.wallet.sendRVN( AnnouncerAddress, 5, fromAd="", pwd=password)
+                
+                
+            if not _assetChannelPresent:
+                self.RVNpyRPC.wallet.sendAsset(AnnouncerChannel, AnnouncerAddress, 1, password)
+            
+            
+            _valid = True
+            
+        return _valid
+            
         
     def PublishNewP2PAd(self, ChannelAsset, Destination, P2PAdFileHash, ChangeAddress, expiration=200000000 ):
         #transfer "asset_name" qty "to_address" "message" expire_time "change_address" "asset_change_address"

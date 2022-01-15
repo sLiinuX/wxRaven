@@ -399,10 +399,12 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         try:
             myPlugin = self.parent_frame.GetPlugin('P2PMarket')
             ravencoin = myPlugin.__getNetwork__()
-            balanceChanel = ravencoin.asset.GetBalance(self._newAdObject._adP2PChannelAsset)
+            #balanceChanel = ravencoin.asset.GetBalance(self._newAdObject._adP2PChannelAsset)
             
-            if balanceChanel > 0.2:
-                self._validChanel = True
+            self._validChanel = ravencoin.p2pmarket.CheckP2PAnnouncerAccount(self._newAdObject._adAddress, self._newAdObject._adP2PChannelAsset, setupIfNotReady=False , password="")
+            
+            #if balanceChanel > 0.2:
+            #    self._validChanel = True
             
         except Exception as e:
             self.parent_frame.Log("Unable to load Chanel '{self._newAdObject._adP2PChannelAsset}' balance" , type="warning")
@@ -414,10 +416,12 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         else:
             
             
-            self.m_bitmap16.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('error_tsk'))    
-            
+            self.m_bitmap16.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('warning_2'))    
+        
+        
+        self.Layout()    
         return self._validChanel
-    
+        
     
     
     
@@ -487,6 +491,8 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         #print(_allAdmins)
         defaultChannel = myPlugin.PLUGIN_SETTINGS['p2p_channel_asset_default']
         
+        AnnouncerAddress = myPlugin.PLUGIN_SETTINGS['p2p_channel_asset_target_address']
+        self._newAdObject._adAddress = AnnouncerAddress
         '''
         for key in _allAdmins:
             

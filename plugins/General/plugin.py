@@ -92,7 +92,8 @@ class wxRavenPlugin(PluginObject):
                 'defaultviewarea':'main',
                 'last_network':'mainnet_localhost',
                 'disable_plugins' :[],
-                'quick_links' :[]
+                'quick_links' :[],
+                'debug_out' :'stderr'
             }
         
         

@@ -219,6 +219,44 @@ class RVNpyRPC_Wallet():
         return sent
     
     
+    def sendAsset(self, AssetName, toAd, amount, pwd=""):
+        
+        
+        
+        sent=False
+        validDest = self.validateaddress(toAd)
+        
+        print("Valide="+str(validDest))
+        
+        if validDest['isvalid']:
+            
+            
+            if pwd !="":
+                response = self.RPCconnexion.walletpassphrase(pwd)
+            
+            
+            
+
+            response = self.RPCconnexion.transfer(AssetName, amount, toAd,"QmRL252afAwiaGwGgs7g3iYZJJFius66gVSbSd5UV1N1aK", 200000000)
+                #response = self.RPCconnexion.sendfromaddress(fromAd,toAd , amount)
+                #sendfromaddress "from_address" "to_address" amount
+            sent=response['result']
+            print("sendfromaddress="+str(response))
+            
+            
+            
+            if  sent == None:
+                sent=response['error']['message']
+                  
+    
+    
+        return sent
+    
+    
+    
+    
+    
+    
     
     """
     

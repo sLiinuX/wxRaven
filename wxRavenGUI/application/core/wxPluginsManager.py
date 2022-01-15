@@ -80,8 +80,10 @@ class pluginsManager(object):
     
     def RaisePluginError(self, message):
         try:
-            _source = str(inspect.stack()[1][0])
+            _source = str(inspect.stack()[0][0])
             self.appmainframe.Log( message, source=str(_source), type="error")
+            _caller = str(inspect.stack()[1][0])
+            self.appmainframe.Log( message, source=str(_caller), type="error")
         except Exception as e:
             print("RaisePluginError() " + str(e))
                     
@@ -251,6 +253,7 @@ class pluginsManager(object):
             
             if s != "__pycache__":
                 
+                #self.LoadPlugin(pname)
                 
                 if not self.safemode:
                 
@@ -262,7 +265,7 @@ class pluginsManager(object):
                     except Exception as e:
                         
                         self.RaisePluginError( "Error occurs while loading Plugin '"+s+"' :" + str(e))
-
+                
                 
             #self.classes.append(c)
         
