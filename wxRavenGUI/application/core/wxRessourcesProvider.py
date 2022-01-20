@@ -6,6 +6,7 @@ Created on 19 déc. 2021
 import os 
 import wx
 from pathlib import Path
+import logging
 
 class RessourcesProvider(object):
     '''
@@ -46,7 +47,7 @@ class RessourcesProvider(object):
         #todo, check if theme exist and manage error case
         self._resFullPath = path +"/"+ self._resMainTheme + "/"
         
-        
+        self.logger = logging.getLogger('wxRaven')
         self.LoadRessources()
     
     
@@ -65,7 +66,7 @@ class RessourcesProvider(object):
     def LoadRessources(self):
         _normalRessourcePath = self._resFullPath  + "normal/"
         
-        print("Load ressources in : " + _normalRessourcePath)
+        self.logger.info("Load ressources in : " + _normalRessourcePath)
         
         self.LoadPNGRessourcesFromPath(_normalRessourcePath)
 
@@ -75,7 +76,7 @@ class RessourcesProvider(object):
 
         for filename in os.listdir(directory):
             if filename.endswith(".png"):
-                #print(os.path.join(directory, filename))
+                #self.logger.info(os.path.join(directory, filename))
                 self.LoadPNGRessourceFile(os.path.join(directory, filename))
             else:
                 continue
@@ -87,7 +88,7 @@ class RessourcesProvider(object):
             _key = Path(_filefullname).stem
             self.enable_list[_key] = _newRes
         except Exception as e:
-            print("ressource error :" + str(e))
+            self.logger.error("ressource error :" + str(e))
             
             
             
@@ -127,7 +128,7 @@ class RessourcesProvider(object):
             panel.SetBackgroundColour(self.GetPanelBackground())
             #panel.SetForegroundColour(self.GetPanelBackground())
         except Exception as e:
-            print("unable to themize :" + str(e))
+            self.logger.error("unable to themize :" + str(e))
             
     
     def ApplyThemeOnSettingsPanel(self, panel):  
@@ -136,5 +137,5 @@ class RessourcesProvider(object):
             panel._Panel.SetBackgroundColour(self.GetSettingsBackground())
             #panel.SetForegroundColour(self.GetPanelBackground())
         except Exception as e:
-            print("unable to themize :" + str(e))    
+            self.logger.error("unable to themize :" + str(e))    
         

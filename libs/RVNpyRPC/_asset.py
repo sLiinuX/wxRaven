@@ -76,7 +76,7 @@ static const std::regex RESTRICTED_NAME_CHARACTERS("\\$[A-Z0-9._]{3,}$");
 """
 
 
-
+import logging
 
 
 class RVNpyRPC_Asset():
@@ -93,7 +93,7 @@ class RVNpyRPC_Asset():
         self.RPCconnexion = connexion
         self.RVNpyRPC = parent
         self.__search__cache__ = {}
-    
+        self.logger = logging.getLogger('wxRaven')
     """
     
     End user and sys, return direct usable datas most of the time
@@ -167,7 +167,7 @@ class RVNpyRPC_Asset():
             
             if count > len(name):
                 break
-            #print(name[-count:])
+            #self.logger.info(name[-count:])
         #special case to look if the special char is not "double"    
         if self.__containsSpecialChar__(name[-(count+1):-count]):
             count = count+1
@@ -195,8 +195,8 @@ class RVNpyRPC_Asset():
  
         _childPrefix = childname.replace(_childShortName, '')
         
-        #print("P=" + _childPrefix)
-        #print("F=" + fathername)
+        #self.logger.info("P=" + _childPrefix)
+        #self.logger.info("F=" + fathername)
         if _childPrefix == fathername:
             _isChild =  True
     
@@ -215,6 +215,120 @@ class RVNpyRPC_Asset():
                     _relationship_list[_elem] = _otherElem
             
         return _relationship_list  
+    
+    
+    
+    
+    def GetAssetUnspentList(self, assetname):
+        
+        _res =[]
+        
+        _allmatch= self.RPCconnexion.listmyassets(assetname, True)['result']
+        #self.logger.info("_allmatch")
+        #self.logger.info(_allmatch)
+        #_res = _allmatch[assetname]
+        if _allmatch.__contains__(assetname):
+            _res = _allmatch[assetname]
+            #self.logger.info(f"OK {_res}")
+            #self.logger.info(f"A {_allmatch[assetname]}")
+        return _res
+
+    
+    
+    def GetAssetUnspentTx(self, assetname, _amount,_takeBiggest=True, _OneTx=False):
+        _list =self.GetAssetUnspentList(assetname)
+        
+        #self.logger.info(f'B {_list}')
+        
+        
+        _txId = []
+        _filled = False
+        
+        
+        delta = 0
+        _feasible = True
+        if _list['balance'] < _amount:
+            _feasible = False
+            self.logger.info(' UNFFEASIBLE')
+        else:
+            self.logger.info(' FEASIBLE')
+        
+        if _feasible:
+        
+            _max=0.0
+            _maxId = ''
+            _maxVout = 1
+            
+            for _i in _list['outpoints']:
+                #self.logger.info(_i['amount'])
+                
+                _iVal = _i['amount']
+                _iVout =  _i['vout']
+                _itxid = _i['txid']
+                
+                
+                if _iVal > _max:
+                    self.logger.info(f' NEW MAX : {_iVal}')
+                    _max = _i['amount']
+                    _maxId = _i['txid']
+                    _maxVout = _i['vout']
+                    
+                self.logger.info(f' Ammout {_iVal}')
+                self.logger.info(f' txid {_itxid}')
+                self.logger.info(f' vout {_iVout}')
+                    
+        
+            self.logger.info(f'_max {_max}')
+        
+        
+            if _OneTx and _max <_amount:
+                _feasible = False
+                self.logger.info(' UNFFEASIBLE 2 ')
+            
+            
+            if _feasible:
+                #_txId.append(_maxId)
+                _txId.append({'txid':_maxId, 'vout':_maxVout})
+                delta = _amount-_max
+                
+                self.logger.info(f"DElta - = {delta.__abs__()}")
+                _filled=False
+            
+            if _max >= _amount:
+                _filled = True
+        
+            
+            
+            
+            
+            if not _OneTx and _feasible and not _filled:
+                
+                #delta = _amount-_max
+                self.logger.info(f"DElta = {delta.__abs__()}")
+                while delta > 0:
+                    for _i in _list['outpoints']:
+                        if _i['txid'] != _maxId:
+                            _add = _i['amount']
+                            _txId.append({'txid':_i['txid'], 'vout':_i['vout']})
+                            
+                            
+                            self.logger.info(f"DElta - = {_add}")
+                            self.logger.info(f"DElta - = {delta}")
+                            delta = delta - _add
+                            
+                            if delta < 0:
+                                break
+                            
+                            
+        else:
+            self.logger.info(' UNFFEASIBLE')                    
+        
+        self.logger.info(_txId)
+        delta = delta.__abs__()
+        
+        return _feasible,_txId, delta
+            
+    
     
     
     def GetBalance(self, assetname):
@@ -409,7 +523,7 @@ class RVNpyRPC_Asset():
         _objTree.childs = []
         
         _queryChilds = self.GetAssetChilds(_objTree.name , allLevels=False, _limit=_limit)
-        #print(len(_queryChilds))
+        #self.logger.info(len(_queryChilds))
         
         if _queryChilds != None:
             for c in _queryChilds:
@@ -429,7 +543,7 @@ class RVNpyRPC_Asset():
         _assetMatchList = self.SearchAsset(assetname+"*", limit=_limit, start=0, details=True, datetime=False, skipChars=_skipchars)   
         
         
-        #print(len(_assetMatchList))
+        #self.logger.info(len(_assetMatchList))
         _allChilds = []
         for result in _assetMatchList:
             
@@ -442,7 +556,7 @@ class RVNpyRPC_Asset():
                 
                 isDirectCh = self.__isDirectChildOf__(assetname, asset['name']) 
                 if not isDirectCh:
-                    #print(asset['name'] + " is not direct child of " + assetname)
+                    #self.logger.info(asset['name'] + " is not direct child of " + assetname)
                     continue 
                 
             _allChilds.append(asset['name'])
@@ -674,11 +788,11 @@ class AssetTreeObj(object):
             _serie = ""
             if len(_isMatch) > 0:
                 
-                #print(_isMatch)
+                #self.logger.info(_isMatch)
                 
                 _serie = _isMatch[0]
                 
-                #print(_serie)
+                #self.logger.info(_serie)
                 
             if _serie != "":
             
@@ -690,7 +804,7 @@ class AssetTreeObj(object):
                     _dictCount[_serie] = 1
                 
                 
-        #print(_dictCount)
+        #self.logger.info(_dictCount)
         
         
         for _sKey in _dictCount:

@@ -39,6 +39,8 @@ class TransactionUtils():
         self.RVNpyRPC = AtomicSwapMgr.RVNpyRPC
         
         
+        self.logger = logging.getLogger('AtomicSwap-Library')
+        
         self._walletPassphrase = walletPassphrase
         
         
@@ -111,7 +113,7 @@ class TransactionUtils():
                 if ("txid" in tx_vin and "vout" in tx_vin) and \
                         (tx_vin["txid"] == txid and tx_vin["vout"] == vout):
                     return tx
-        logging.info("Unable to find transaction for completed swap")
+        self.logger.info("Unable to find transaction for completed swap")
         return None  # If we don't find it 10 blocks back, who KNOWS what happened to it    
     
     
@@ -126,10 +128,10 @@ class TransactionUtils():
             # TODO: Better way of handling full decode
             tx_url = "https://rvnt.cryptoscope.io/api/getrawtransaction/?txid={}&decode=1" if isTestNet\
                 else "https://rvn.cryptoscope.io/api/getrawtransaction/?txid={}&decode=1"
-            logging.info("Query Full: {}".format(tx_url.format(txid)))
+            self.logger.info("Query Full: {}".format(tx_url.format(txid)))
             resp = get(tx_url.format(txid))
             if resp.status_code != 200:
-                logging.info("Error fetching raw transaction")
+                self.logger.info("Error fetching raw transaction")
             result = json.loads(resp.text)
         return result
     
@@ -156,7 +158,7 @@ class TransactionUtils():
     def check_unlock(self, timeout=10):
         #rpc = AppInstance.settings.rpc_details()
         if self.requires_unlock():
-            logging.info("Unlocking Wallet for {}s".format(timeout))
+            self.logger.info("Unlocking Wallet for {}s".format(timeout))
             self.RVNpyRPC.do_rpc("walletpassphrase", passphrase=self._walletPassphrase, timeout=timeout)
 
 
@@ -184,6 +186,8 @@ class SwapTransaction():
         self.WalletMgr = AtomicSwapMgr.WalletMgr
         
         
+        self.logger = logging.getLogger('AtomicSwap-Library')
+        
 
     #def __repr__(self):
     #    return str(self.raw)
@@ -204,6 +208,11 @@ class SwapTransaction():
         #        '__class__': self.__class__.__name__,
         #        '__module__': self.__module__
         #       }
+        
+        #self.logger.info("Export")
+        
+        
+        
         data={}
         data.update(self.__dict__)
         try:
@@ -212,8 +221,13 @@ class SwapTransaction():
             data.pop('AtomicSwapMgr')
             data.pop('txUtils')
             data.pop('WalletMgr')
+            data.pop('logger')
         except :
-            pass    
+            pass   
+        
+        #self.logger.info(f"{data}")
+        
+         
         return data
 
     def total_price(self):
@@ -283,8 +297,11 @@ class SwapTransaction():
         # TODO: Better user interaction here
         signed_raw = self.RVNpyRPC.do_rpc("signrawtransaction", hexstring=raw_tx,
                             prevtxs=None, privkeys=None, sighashtype="SINGLE|ANYONECANPAY")
-
-        self.raw = signed_raw["hex"]
+        self.logger.info(signed_raw)
+        if signed_raw.__contains__('hex'):
+            self.raw = signed_raw["hex"]
+        else:
+            self.logger.error(f"Issues parsing {signed_raw}")
         return self.raw
 
     # This is run by Bob when he wants to complete an order
@@ -303,7 +320,7 @@ class SwapTransaction():
         # NOTE: self.destination is where our raven is going, not our destination for assets
         target_addr = self.WalletMgr.addresses.get_single_address(
             "order_destination")
-        logging.info("Output is being sent to {}".format(target_addr))
+        self.logger.info("Output is being sent to {}".format(target_addr))
 
         # Unlock for signing during fee calc + sending
         self.txUtils.check_unlock(10)
@@ -312,7 +329,7 @@ class SwapTransaction():
         # Complete sell Orders (we are buying an asset with rvn)
         ##
         if self.type == "sell":
-            logging.info("You are purchasing {} x [{}] for {} RVN".format(
+            self.logger.info("You are purchasing {} x [{}] for {} RVN".format(
                 self.in_quantity, self.asset(), self.total_price()))
 
             # Send output assets to target_addr
@@ -326,7 +343,7 @@ class SwapTransaction():
         ##
         elif self.type == "buy":
             # Buy order means WE are selling, We need to provide assets
-            logging.info("You are selling {} x [{}] for {} RVN"
+            self.logger.info("You are selling {} x [{}] for {} RVN"
                          .format(self.out_quantity, self.asset(), self.total_price()))
 
             # Add needed asset inputs
@@ -340,7 +357,7 @@ class SwapTransaction():
         ##
         elif self.type == "trade":
             # Trade order means WE are providing and reciving assets
-            logging.info("You are trading {}x of YOUR [{}] for {}x of THEIR [{}]"
+            self.logger.info("You are trading {}x of YOUR [{}] for {}x of THEIR [{}]"
                          .format(self.out_quantity, self.out_type, self.in_quantity, self.in_type))
 
             # Send output assets to target_addr
@@ -378,23 +395,23 @@ class SwapTransaction():
         mem_accept = self.RVNpyRPC.do_rpc("testmempoolaccept", rawtxs=[signed_hex])
 
         if(mem_accept and mem_accept[0]["allowed"]):
-            logging.info("Accepted to mempool!")
+            self.logger.info("Accepted to mempool!")
             tx_allowed = True
             tx_final = signed_hex
         elif(mem_accept and mem_accept[0]["reject-reason"] == "66: min relay fee not met"):
-            logging.info("Min fee not met")
+            self.logger.info("Min fee not met")
             #raise Exception("Fee Error")
             tx_allowed = True
             tx_final = signed_hex
         else:
-            logging.info(mem_accept)
-            logging.info("Final Raw")
-            logging.info(final_raw)
+            self.logger.info(mem_accept)
+            self.logger.info("Final Raw")
+            self.logger.info(final_raw)
             if final_raw:
-                logging.info("Decoded")
-                logging.info(
+                self.logger.info("Decoded")
+                self.logger.info(
                     self.RVNpyRPC.do_rpc("decoderawtransaction", hexstring=final_raw))
-            logging.info("!!Error!!")
+            self.logger.info("!!Error!!")
             print('error in TX, retry')
             raise Exception("Error Building TX")
 
@@ -412,7 +429,7 @@ class SwapTransaction():
                 total_inputs[swap.in_type] if swap.in_type in total_inputs else 0) + swap.in_quantity
             total_outputs[swap.out_type] = (
                 total_outputs[swap.out_type] if swap.out_type in total_outputs else 0) + swap.out_quantity
-        logging.info(
+        self.logger.info(
             "Sub-Total: In {} - Out {}".format(total_inputs, total_outputs))
         # These assets need to be supplied by us (outputs) but were also supplied (inputs)
         for dup_asset in [asset for asset in total_outputs.keys() if asset in total_inputs]:
@@ -421,16 +438,16 @@ class SwapTransaction():
                 total_inputs[dup_asset] -= total_outputs[dup_asset]
                 canceled_assets[dup_asset] = total_outputs[dup_asset]
                 del total_outputs[dup_asset]
-                logging.info("Net Credit {}x [{}]".format(
+                self.logger.info("Net Credit {}x [{}]".format(
                     total_inputs[dup_asset], dup_asset))
             elif total_inputs[dup_asset] < total_outputs[dup_asset]:
                 # More was requested than supplied in inputs, net debit
                 total_outputs[dup_asset] -= total_inputs[dup_asset]
                 canceled_assets[dup_asset] = total_inputs[dup_asset]
                 del total_inputs[dup_asset]
-                logging.info("Net Debit {}x [{}]".format(
+                self.logger.info("Net Debit {}x [{}]".format(
                     total_outputs[dup_asset], dup_asset))
-        logging.info("Total: In {} - Out {} (Cancelled: {})".format(total_inputs,
+        self.logger.info("Total: In {} - Out {} (Cancelled: {})".format(total_inputs,
                      total_outputs, canceled_assets))
 
         mega_tx_vins = []
@@ -440,12 +457,12 @@ class SwapTransaction():
             swap_decoded = self.RVNpyRPC.do_rpc("decoderawtransaction",
                                   log_error=False, hexstring=swap.raw)
             if "SINGLE|ANYONECANPAY" not in swap_decoded["vin"][0]["scriptSig"]["asm"]:
-                logging.info("Transaction not signed with SINGLE|ANYONECANPAY")
+                self.logger.info("Transaction not signed with SINGLE|ANYONECANPAY")
                 return None
             self.txUtils.dup_transaction(swap_decoded, mega_tx_vins, mega_tx_vouts)
 
-        logging.info("Un-Funded Inputs: {}".format(mega_tx_vins))
-        logging.info("Un-Funded Outputs: {}".format(mega_tx_vouts))
+        self.logger.info("Un-Funded Inputs: {}".format(mega_tx_vins))
+        self.logger.info("Un-Funded Outputs: {}".format(mega_tx_vouts))
 
         send_rvn = 0
         recv_rvn = 0
@@ -467,8 +484,8 @@ class SwapTransaction():
                 mega_tx_vouts[asset_addr] = self.txUtils.make_transfer(
                     recieve_asset, total_inputs[recieve_asset])
 
-        logging.info("Asset-Funded Inputs: {}".format(mega_tx_vins))
-        logging.info("Asset-Funded Outputs: {}".format(mega_tx_vouts))
+        self.logger.info("Asset-Funded Inputs: {}".format(mega_tx_vins))
+        self.logger.info("Asset-Funded Outputs: {}".format(mega_tx_vouts))
 
         original_hexs = [swap.raw for swap in swaps]
 
@@ -486,10 +503,10 @@ class SwapTransaction():
         # Merge the signed tx from the original order
         combined_raw = final_raw
         for hex in original_hexs:
-            logging.info(hex)
+            self.logger.info(hex)
             combined_raw = self.RVNpyRPC.do_rpc("combinerawtransaction",
                                   txs=[combined_raw, hex])
-            logging.info(combined_raw)
+            self.logger.info(combined_raw)
         # Sign our inputs/outputs
         signed_res = self.RVNpyRPC.do_rpc("signrawtransaction", hexstring=combined_raw)
         signed_hex = signed_res["hex"]
@@ -497,24 +514,24 @@ class SwapTransaction():
         mem_accept = self.RVNpyRPC.do_rpc("testmempoolaccept", rawtxs=[signed_hex])
 
         if(mem_accept and mem_accept[0]["allowed"]):
-            logging.info("Accepted to mempool!")
+            self.logger.info("Accepted to mempool!")
             tx_allowed = True
             tx_final = signed_hex
         elif(mem_accept and mem_accept[0]["reject-reason"] == "66: min relay fee not met"):
-            logging.info("Min fee not met")
+            self.logger.info("Min fee not met")
             #raise Exception("Fee Error")
             tx_allowed = True
             tx_final = signed_hex
         else:
-            logging.info(mem_accept)
-            logging.info("Final Raw")
-            logging.info(combined_raw)
-            logging.info("Signed Raw")
-            logging.info(signed_res)
+            self.logger.info(mem_accept)
+            self.logger.info("Final Raw")
+            self.logger.info(combined_raw)
+            self.logger.info("Signed Raw")
+            self.logger.info(signed_res)
             # if combined_raw:
-            #  logging.info("Decoded")
-            #  logging.info(self.RavenpyRPC.do_rpc("decoderawtransaction", hexstring=combined_raw))
-            logging.info("!!Error!!")
+            #  self.logger.info("Decoded")
+            #  self.logger.info(self.RavenpyRPC.do_rpc("decoderawtransaction", hexstring=combined_raw))
+            self.logger.info("!!Error!!")
             raise Exception("Error Building TX")
 
 
@@ -633,9 +650,11 @@ class SwapTransaction():
 
 class SwapTrade():
     def __init__(self, dict, AtomicSwapMgr ):
-        if dict != None:
+        #if dict != None:
+        try:
             vars(self).update(dict)
-        
+        except :
+            self.logger.error("Error update dict")
         self.AtomicSwapMgr = AtomicSwapMgr
         
         self.RPCconnexion = AtomicSwapMgr.RPCconnexion
@@ -643,13 +662,18 @@ class SwapTrade():
         self.txUtils = AtomicSwapMgr.txUtils
         self.WalletMgr = AtomicSwapMgr.WalletMgr
         
+        self.logger = logging.getLogger('AtomicSwap-Library')
+        
+        
         # Recreate types if we load simply from json
-        if self.transactions:
-            self.transactions = [SwapTransaction(
-                tx, AtomicSwapMgr) for tx in self.transactions]
-
+        try:
+            if self.transactions:
+                self.transactions = [SwapTransaction(
+                    tx, AtomicSwapMgr) for tx in self.transactions]
+        except :
+            self.logger.error("Error loading transactions")
     def __repr__(self):
-        return str(self.transactions.__repr__())
+        return str(self.__repr__())
     """
     def toJSON(self):
         txall = []
@@ -671,6 +695,8 @@ class SwapTrade():
         #        '__class__': self.__class__.__name__,
         #        '__module__': self.__module__
         #       }
+        #self.logger.info("Export")
+        #self.logger.info("self.__dict__")
         data={}
         data.update(self.__dict__)
         try:
@@ -679,14 +705,18 @@ class SwapTrade():
             data.pop('AtomicSwapMgr')
             data.pop('txUtils')
             data.pop('WalletMgr')
+            data.pop('logger')
         except :
             pass  
         
         
         data['transactions'] = []
-        for _t in self.transactions:
-            data['transactions'].append(_t.Export())
-        
+        try:
+            for _t in self.transactions:
+                data['transactions'].append(_t.Export())
+        except :
+            pass 
+        #self.logger.info(f"Saving Trade datas : {data}")
         return data        
     
 
@@ -802,7 +832,7 @@ class SwapTrade():
         if max_add:
             num_create = min(max_add, num_create)
         quantity_required = self.in_quantity * num_create
-        logging.info("Setting up trade for {} missing. Max add: {}. Required Qty: {}".format(
+        self.logger.info("Setting up trade for {} missing. Max add: {}. Required Qty: {}".format(
             num_create, max_add, quantity_required))
 
         # Get a distinct list of addresses to use for deposits
@@ -998,13 +1028,15 @@ class SwapTradeManager():
         
         self._LastTrade = None
         
+        self.logger = logging.getLogger('AtomicSwap-Library')
         
-    def create_trade(self, trade_type, in_type, in_quantity, out_type, out_quantity, order_count=1,  destination=None):
+        
+    def create_trade(self, trade_type, in_type, in_quantity, out_type, out_quantity, order_count=1,  destination=None, _NoLock=False):
         
         
-        logging.info(f"Creating a {trade_type} order ")
-        logging.info(f"IN {in_type}  qt: {in_quantity} ")
-        logging.info(f"OUT {out_type}  qt: {out_quantity} ")
+        self.logger.info(f"Creating a {trade_type} order ")
+        self.logger.info(f"IN {in_type}  qt: {in_quantity} ")
+        self.logger.info(f"OUT {out_type}  qt: {out_quantity} ")
         
         _tradeRaw = {}
         #
@@ -1027,31 +1059,31 @@ class SwapTradeManager():
         
         
         
-        logging.info(f"ORDER CREATED, PROCESSING order ")
+        self.logger.info(f"ORDER CREATED, PROCESSING order ")
         #
         # Do process the trades
         #
-        setup_max = 1
+        setup_max = order_count
         self.txUtils.check_unlock()
         pool_filled = self._LastTrade.attempt_fill_trade_pool(max_add=setup_max)
-        logging.info(f"pool_filled = {pool_filled}")
+        self.logger.info(f"pool_filled = {pool_filled}")
         
         if not pool_filled:
             
-            logging.info(f"pool was not filled, setup a trade")
+            self.logger.info(f"pool was not filled, setup a trade")
             (setup_success, setup_result) = self._LastTrade.setup_trade(max_add=setup_max)
             
             
-            logging.info(f"setup_success = {setup_success}")
-            logging.info(f"setup_result = {setup_result}")
-            #logging.info(f"self._LastTrade = {self._LastTrade}")
+            self.logger.info(f"setup_success = {setup_success}")
+            self.logger.info(f"setup_result = {setup_result}")
+            #self.logger.info(f"self._LastTrade = {self._LastTrade}")
             if setup_result != None:
                 _tradeRaw[0]=str(setup_result)
             
-            logging.info(f"wait 5 sec and attempt fill trade...")
+            self.logger.info(f"wait 5 sec and attempt fill trade...")
             time.sleep(5)
             self._LastTrade.attempt_fill_trade_pool(max_add=setup_max)
-            logging.info(f"done...")
+            self.logger.info(f"done...")
             
             
             """
@@ -1083,29 +1115,47 @@ class SwapTradeManager():
             pass
             #swap = self._LastTrade.transactions[0]
             #swap_hex = swap.complete_order()
-            #logging.info(swap_hex)
+            #self.logger.info(swap_hex)
             
         
         
         
-        logging.info(f"SWAP TX Size = {len(self._LastTrade.transactions)}")    
+        self.logger.info(f"SWAP TX Size = {len(self._LastTrade.transactions)}")    
         available_trades = [tx for tx in self._LastTrade.transactions if tx.state == "new"]
         if len(available_trades) > 0:
-            logging.info(available_trades[0].raw)
+            
+            self.logger.info(available_trades[0].raw)
             _tradeRaw[0]=available_trades[0].raw
             
             
+            if order_count > 1:
+                try:
+                    for i in range(0, order_count):
+                        _tradeRaw[i]=available_trades[i].raw
+                except Exception as e:
+                    self.logger.error(f"Unable to create multiple orders : {e}") 
+        
+        if not _NoLock:
             
-        self.AtomicSwapMgr.WalletMgr.add_swap(self._LastTrade)
-        self.AtomicSwapMgr.WalletMgr.save_data()
-        self.AtomicSwapMgr.WalletMgr.update_wallet()    
+            try:    
+                self.AtomicSwapMgr.WalletMgr.add_swap(self._LastTrade)
+            except Exception as e:
+                self.logger.error(f"Unable to add swap : {e}") 
+                
+                
+            try:    
+                self.AtomicSwapMgr.WalletMgr.save_data()
+                self.AtomicSwapMgr.WalletMgr.update_wallet() 
+            except Exception as e:
+                self.logger.error(f"Unable to save trade session : {e}")    
+           
         #print(f"SWAP TX = {len(self._LastTrade.transactions)}")    
         #swap = self._LastTrade.transactions[0]
         #swap_hex = swap.complete_order()
         #good_swap = SwapTransaction.decode_swap(swap.raw)
         #swap_hex = good_swap.complete_order()
-        #logging.info(swap.raw)
-        #logging.info(swap_hex)
+        #self.logger.info(swap.raw)
+        #self.logger.info(swap_hex)
         return _tradeRaw
     
     '''

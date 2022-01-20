@@ -11,7 +11,7 @@ import sys
 import xmlrpc.client
 import os
 
-
+import logging
 
 
 class IPFS_RPC_Client(object):
@@ -26,9 +26,10 @@ class IPFS_RPC_Client(object):
     def __init__(self, ip="127.0.0.1", port=9000):
         self._ip = ip
         self._port = port
+        self.logger = logging.getLogger('wxRaven')
         self.url = 'http://{}:{}'.format(ip, port)
         self._client = xmlrpc.client.ServerProxy(self.url)
-
+        
 
 
     
@@ -38,10 +39,10 @@ class IPFS_RPC_Client(object):
         #fpn = curDir + '/' + filename
         fpn = filename
         localadd, remotefnae = os.path.split(filename)
-        print(' filename -> ({})'.format(filename))
-        print(' fpn -> ({})'.format(remotefnae))
+        self.logger.info(' filename -> ({})'.format(filename))
+        self.logger.info(' fpn -> ({})'.format(remotefnae))
         if not os.path.exists(fpn):
-            print('Missing file -> ({})'.format(fpn))
+            self.logger.info('Missing file -> ({})'.format(fpn))
             #sys.exit(1)
         _resultUpload = None
         with open(fpn, "rb") as handle:
@@ -51,16 +52,16 @@ class IPFS_RPC_Client(object):
 
         
         
-        print(f'_resultUpload = {_resultUpload}')
+        self.logger.info(f'_resultUpload = {_resultUpload}')
         return _resultUpload
 
 
 
 
     def sendJSON(self, JSON):
-        print(f'JSON = {JSON}')
+        self.logger.info(f'JSON = {JSON}')
         _resultUpload = self._client.server_receive_json(JSON)
-        #print(f'_resultUpload = {_resultUpload}')
+        #self.logger.info(f'_resultUpload = {_resultUpload}')
         return _resultUpload
         #.add_json(self.compile_message(message))
 

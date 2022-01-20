@@ -7,7 +7,7 @@ import os
 import wx
 import pickle
 import inspect 
-
+import logging
 
 class perspectiveManager(object):
     '''
@@ -31,6 +31,8 @@ class perspectiveManager(object):
         self.parentframe = parentframe
         self.configpath = configpath
         
+        self.logger = logging.getLogger('wxRaven')
+        
         self.lastperspectivefilename = self.configpath+"perspective.last"
         self.lastsizefilename = self.configpath+"window.last"
         
@@ -46,7 +48,7 @@ class perspectiveManager(object):
             _source = str(inspect.stack()[1][0])
             self.parentframe.Log( message, source=str(_source), type=type)
         except Exception as e:
-            print("RaisePerspectiveLog() " + str(e))  
+            self.logger.error("RaisePerspectiveLog() " + str(e))  
     
     
     def saveWindowsSize(self):
@@ -122,13 +124,13 @@ class perspectiveManager(object):
             for ii in range(len(all_panes)):
                 
                 if not all_panes[ii].IsToolbar():
-                    #print(all_panes[ii])
+                    #self.logger.info(all_panes[ii])
                     capt = all_panes[ii].caption
                     na = all_panes[ii].name
                     
-                    #print(capt)
-                    #print(na)
-                    #print(ic)
+                    #self.logger.info(capt)
+                    #self.logger.info(na)
+                    #self.logger.info(ic)
                     #icon = wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY )
                     
                     icon = self.parentframe.Plugins.GetViewNameInstance(na)
@@ -157,7 +159,7 @@ class perspectiveManager(object):
             
             
         else:
-            #print("file not found!")    
+            #self.logger.info("file not found!")    
             self.RaisePerspectiveLog("No last perspective found.", "info")  
             
         self.parentframe.m_mgr.Update()
@@ -179,17 +181,17 @@ class perspectiveManager(object):
     
     def __saveVar__(self, varName, varData):
         try:
-            print(""+varName+" : "+str(varData))
+            self.logger.info(""+varName+" : "+str(varData))
             pickle.dump( varData, open(varName+".p", "wb" ) )
         except Exception as e:
-            print(e) 
+            self.logger.error(e) 
     
     def __LoadVar__(self, varName, defaultTeturn=None):
         result = defaultTeturn
         try:
             result = pickle.load( open(varName+".p", "rb" ) )
         except Exception as e:
-            print(e) 
+            self.logger.error(e) 
         
         return result    
         

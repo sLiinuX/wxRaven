@@ -253,29 +253,7 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
         info.Align = wx.LIST_FORMAT_RIGHT
         info.Text = "Quantity"
         self.m_listCtrl1.InsertColumn(1, info)
-        """
-        info.Align = 0
-        info.Text = "Supply"
-        self.m_listCtrl1.InsertColumn(2, info)
         
-        info.Align = 0
-        info.Text = "Created"
-        self.m_listCtrl1.InsertColumn(3, info)
-        
-        info.Align = 0
-        info.Text = "Various"
-        self.m_listCtrl1.InsertColumn(4, info)
-        """
-        
-        
-        """
-        
-        self.m_listCtrl1.SetColumnWidth(0, 350)
-        self.m_listCtrl1.SetColumnWidth(1, 100)
-        self.m_listCtrl1.SetColumnWidth(2, 100)
-        self.m_listCtrl1.SetColumnWidth(3, 100)
-        self.m_listCtrl1.SetColumnWidth(4, 100)
-        """
         
         self.il = wx.ImageList(16, 16)
         

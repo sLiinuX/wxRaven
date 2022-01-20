@@ -20,12 +20,13 @@ class RVNpyRPC_Network():
     '''
     RPCconnexion = None
     
-    def __init__(self,connexion):
+    def __init__(self,connexion, parent):
         '''
         Constructor
         '''
         #super().__init__(self,connexion)
         self.RPCconnexion = connexion
+        self.RVNpyRPC = parent
         
         
     def GetNetworkInfos(self):
@@ -33,7 +34,13 @@ class RVNpyRPC_Network():
         #{'blocks': 2102974, 'currentblockweight': 0, 'currentblocktx': 0, 'difficulty': 83255.50545680113, 
         # 'networkhashps': 5722312398548.8, 'hashespersec': 0, 'pooledtx': 6, 'chain': 'main', 'warnings': ''}
         
+        
+        
         _netInfos = self.RPCconnexion.getmininginfo()['result']
+        
+        
+        #_netInfos = self.RVNpyRPC.secure_call(self.RPCconnexion.getmininginfo)['result']
+        
         
         _hashrate = _netInfos['networkhashps']
         _hashrate = self.RVN_hashrate_friendly(_hashrate)
@@ -47,6 +54,18 @@ class RVNpyRPC_Network():
         
         return _netInfos
         
+    
+    
+    def UnstuckNode(self, rewindCount=1000):
+
+        _stuckPosition=  self.RPCconnexion.getblockchaininfo()['result']['headers']
+        _rewindPosition = _stuckPosition - rewindCount
+        blockHash = self.RPCconnexion.getblockhash(_rewindPosition)['result']
+        _response = self.RPCconnexion.invalidateblock(blockHash)['result']
+        _response = self.RPCconnexion.reconsiderblock(blockHash)['result']
+        return _response
+    
+    
         
         
     def RVN_hashrate_friendly(self,hashrate):

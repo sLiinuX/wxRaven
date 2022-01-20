@@ -23,6 +23,9 @@ import os
 import time
 from datetime import datetime
 
+import logging
+
+
 class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
     '''
     classdocs
@@ -62,7 +65,7 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         self.default_position = position
         self.parent = parent
         
-        
+        self.logger = logging.getLogger('wxRaven')
         
         self.m_toggleAssistant.SetBitmap(parentFrame.RessourcesProvider.GetImage('wizard_ico'))
         self.m_toggleRawTxDatas.SetBitmap(parentFrame.RessourcesProvider.GetImage('raw_datas'))
@@ -85,11 +88,12 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         self._newAdObject = RavencoinP2PMarketPlaceAd()
         self._newAdObject._adType=0
         self._newAdObject._adTxType=0
+        self._newAdObject._adOrders=1
         self._newAdObject._adAssetQt=1
         self._newAdObject.m_AdAssetPrice='rvn'
         self._newAdObject._adPrice=200
         
-        
+        self._forceManual = False
         self.savepath = os.getcwd() + "/userdata/"
         #
         #
@@ -120,8 +124,10 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         #if not isInternalPluginView:
         #    parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
             
-    
-    
+        self.Layout()
+        self.SetSizerAndFit(self.GetSizer(), deleteOld=False)
+        
+        self.parent.ResizeDialog()
     
         #
         # If your app need to load a bunch of data, it may want to wait the app is ready
@@ -200,11 +206,12 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         self.OnP2PChannelChanged(None)
         self.OnKeywordChanged(None)
         
-        
+        myPlugin = self.parent_frame.GetPlugin('P2PMarket')
         ravencoin = self.parent_frame.getRvnRPC()
         
-        
-        
+        _hasvalidTx = False
+        _hasTx = False
+        print(self._newAdObject)
         if self._newAdObject.isEmptyTxData():
             _doCreateSwap = False
             
@@ -213,15 +220,17 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
             
             if _doCreateSwap :
                 self._newAdObject = ravencoin.p2pmarket.CreateAtomicSwapTransaction(self._newAdObject)
-                print(f"CreateAtomicSwapTransaction DONE = {self._newAdObject._adTxDatas}")
+                self.logger.info(f"CreateAtomicSwapTransaction DONE = {self._newAdObject._adTxDatas}")
         
         
         
         
         
         if self._newAdObject.isEmptyTxData():
-            self.m_P2PmethodErrorText.SetLabel("Error : No Atomicswap datas tx generated !")    
+            self.m_P2PmethodErrorText.SetLabel("Error : No Atomicswap datas tx generated !")   
+            
             self.m_bitmap38.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('error_tsk'))
+            
             #self.m_atomicTransactionUserFeedback.SetLabel("Error : No Atomicswap datas tx generated")
         else:
             self.m_P2PmethodErrorText.SetLabel("P2P Method : Atomicswap datas found !") 
@@ -229,52 +238,85 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
             self.LockAllMethodPanel(True)
             self.SetManualPanelValue(self._newAdObject._adTxDatas)
             
+            self.logger.info(f"P2P Method : Atomicswap datas found , verifying TX")
+            
+            _hasTx=True
+            try:
+                _valid, _data = myPlugin.DecodeTx(self._newAdObject._adTxDatas[0])
+                if _valid:
+                    _hasvalidTx = True
+            except Exception as e:
+                self.logger.error(f"P2P Method : error in TX")
+                _hasvalidTx = False
+        
+        
+        self.Layout()
+        self.m_assistantPanel.Layout()
+        
+        
+        
+        _hash = None
+        
+        if _hasTx and _hasvalidTx:
+            pass
+        
+        
+        
+        
+            _filtetosave = self.savepath + 'p2p_market_order' + str(self._timestamp) + '.json'   
+            f = open(_filtetosave, "w")
+            f.write(str(self._newAdObject.JSON()))
+            f.close()     
         
             #
             #ALL GOOD
             #self.m_atomicTransactionUserFeedback.SetLabel(self._newAdObject._adTxDatas)
         
-        
-        ipfsPlugins = self.parent_frame.GetPlugin('IPFS')
-        
-        _hash = None
-        
-        if ipfsPlugins != None:
             
-            try:
-                _hash = ipfsPlugins.UploadJSONToIPFS_RPC(str(self._newAdObject.JSON()))
-            except Exception as e:
-                self.parent_frame.Log("Unable to load upload p2p Market json datas to IPFS." , type="error")
+            ipfsPlugins = self.parent_frame.GetPlugin('IPFS')
             
-            if _hash!=None:
-                self.m_AdFileIPFSHash.SetValue(str(_hash))
-        
-        
-        _filtetosave = self.savepath + 'p2p_market_order' + str(self._timestamp) + '.json'   
-        f = open(_filtetosave, "w")
-        f.write(str(self._newAdObject.JSON()))
-        f.close()     
+            _hash = None
             
-        if _hash == None:
+            if ipfsPlugins != None:
+                
+                try:
+                    _hash = ipfsPlugins.UploadJSONToIPFS_RPC(str(self._newAdObject.JSON()))
+                except Exception as e:
+                    self.parent_frame.Log("Unable to load upload p2p Market json datas to IPFS." , type="error")
+                
+                if _hash!=None:
+                    self.m_AdFileIPFSHash.SetValue(str(_hash))
             
             
-            UserInfo(self, f"No IPFS Plugin or an error occured, filed has been saved in {_filtetosave} for manual upload.")
-        
-        
-        
-        
-        
-        
+            
+                
+            if _hash == None:
+                
+                
+                UserInfo(self, f"No IPFS Plugin or an error occured, filed has been saved in {_filtetosave} for manual upload.")
             
             
-        print(self._newAdObject.JSON())
-        #self._newAdObject._adAsset = 
+            
+            
+        else:
+            UserError(self, f"An error occured while creating the atomic swap, please retry.")
+            self.m_toggleRawTxDatas.SetValue(True)
+            self.SwitchMethodPanel(manual=True)
+        
         
         
         if _hash != None :
-            self.m_GeneraeteAdBt.Enable(True)
+                self.m_GeneraeteAdBt.Enable(True)
+                UserInfo(self, f"Ad created, ready for upload.") 
+        #else:
+        #    self.parent_frame.Log("Unable to load upload p2p Market json datas to IPFS." , type="error")        
+                   
             
-            UserInfo(self, f"Ad created, ready for upload.")
+        self.logger.info(self._newAdObject.JSON())
+        #self._newAdObject._adAsset = 
+        
+        
+        
         
         
     
@@ -296,16 +338,18 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
     def OnToggleRawTxData(self, evt):
         self.OnTxMethodChanged(evt)
     
-    
+    def OnCreateUTXODialogClicked(self, evt):
+        myPlugin = self.parent_frame.GetPlugin('P2PMarket')
+        myPlugin.CreateNewUTXO()
     
     
     def OnTxMethodChanged(self, evt):
         _str = self.m_txMethod.GetString(self.m_txMethod.GetCurrentSelection())
-        print(_str)
+        self.logger.info(_str)
         self._newAdObject._adTxType = _P2PMARKET_ID_[_str]
         
         _forceManual = self.m_toggleRawTxDatas.GetValue()
-        
+        self._forceManual = _forceManual
         self.SwitchMethodPanel(manual=_forceManual)
         
     
@@ -313,9 +357,9 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         for panKey in self._MethodsPanelList:
             
             pan = self._MethodsPanelList[panKey]
-            print(f'found {panKey} {pan}')
+            self.logger.info(f'found {panKey} {pan}')
             if pan != None:
-                print(f'locking {panKey}')
+                self.logger.info(f'locking {panKey}')
                 try:
                     pan.LockPanel(locking)
                 except Exception as e:
@@ -331,7 +375,7 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
     
     
     def SwitchMethodPanel(self,manual=False):
-        print(f"SwitchMethodPanel {manual}")
+        self.logger.info(f"SwitchMethodPanel {manual}")
         
         _type = self._newAdObject._adTxType
         _adtype = self._newAdObject._adType
@@ -346,17 +390,17 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         for panKey in self._MethodsPanelList:
             
             pan = self._MethodsPanelList[panKey]
-            print(f'found {panKey} {pan}')
+            self.logger.info(f'found {panKey} {pan}')
             if pan != None:
-                print(f'hiding {panKey}')
+                self.logger.info(f'hiding {panKey}')
                 pan.Hide()
         
-        print(_type)
+        self.logger.info(_type)
         _toShow = self._MethodsPanelList[_type]
         
         if _toShow != None:
             _toShow.Show()
-            print(f"onswapchangedforce = {_adtype}")
+            self.logger.info(f"onswapchangedforce = {_adtype}")
             _toShow.OnSwapTypeChanged(evt=None ,forceId=_adtype)
             
             
@@ -488,7 +532,7 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         _allNotAdmins= ravencoin.asset.GetAllMyAssets(_excludeAdmin=True)
         
         
-        #print(_allAdmins)
+        #self.logger.info(_allAdmins)
         defaultChannel = myPlugin.PLUGIN_SETTINGS['p2p_channel_asset_default']
         
         AnnouncerAddress = myPlugin.PLUGIN_SETTINGS['p2p_channel_asset_target_address']

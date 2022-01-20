@@ -45,6 +45,7 @@ def RequestUserTextInput(parent, question, title="Userinput"):
                 title, '')
 
     dlg.SetValue("")
+    dlg.ShowModal()
     _res = dlg.GetValue()
     dlg.Destroy()
     
@@ -56,6 +57,7 @@ def RequestUserWalletPassword(parent):
                 'protected wallet??', '')
 
     dlg.SetValue("")
+    dlg.ShowModal()
     _res = dlg.GetValue()
     dlg.Destroy()
     

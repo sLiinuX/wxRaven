@@ -77,6 +77,9 @@ class MarketPlaceAdRightclickPopupMenu(object):
                     self.popupMAP[popupID] = p
                     self.parentBinding.Bind(wx.EVT_MENU, self.OnOpenOrder, id=popupID)
                     ppcount= ppcount+1
+                    
+                    if ppcount > 10: 
+                        break
                 
                 
                 
@@ -158,6 +161,9 @@ class MarketPlaceAdRightclickPopupMenu(object):
                 _i.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('raw_datas'))
                 ppcount= ppcount+1
                 
+                if ppcount > 10: 
+                        break
+                
         else:
             _tx_menu_item.Enable(False)
         
@@ -235,7 +241,21 @@ class MarketPlaceAdRightclickPopupMenu(object):
         print(str(self.popupMAP[event.GetId()]))
         myPlugin = self.parent_frame.GetPlugin('P2PMarket')
         
-        myPlugin.ShowTxInfos(self._data._adTxDatas[self.popupMAP[event.GetId()]], openIfnotExist=True)
+        
+        
+        
+        #
+        # CHANGED
+        #
+        
+        #myPlugin.ShowTxInfos(self._data._adTxDatas[self.popupMAP[event.GetId()]], openIfnotExist=True)
+        
+        myPlugin.ShowAdInfos(_data, self.popupMAP[event.GetId()] , openIfnotExist=True)
+        
+        
+        
+        
+        
         #if self._hasTx:
         #    self.parent_frame.GetPlugin("Ravencore").OpenIPFSinWebBrowser(_data, str(self.popupMAP[event.GetId()]))
         
@@ -299,7 +319,11 @@ class MarketPlaceAdRightclickPopupMenu(object):
         
         print('addPeerInTrusted')
         if not myPlugin.isTrusted(self._data._adAddress):
+            
+            
             _alias = RequestUserTextInput(self.parentBinding, "Enter an alias for this address", "Enter an alias")
+            
+            
             if _alias != "":
                 myPlugin.AddAddressInTrusted(self._data._adAddress,_alias )
             

@@ -7,6 +7,7 @@ import importlib
 import os
 from wxRavenGUI.application.pluginsframework import *
 import inspect
+import logging
 
 class pluginsManager(object):
     '''
@@ -50,7 +51,7 @@ class pluginsManager(object):
         
         self.safemode = contextAppMainFrame.Settings.safemode
         
-        
+        self.logger = logging.getLogger('wxRaven')
         self._exclude_list = _exclude
         
         
@@ -85,7 +86,7 @@ class pluginsManager(object):
             _caller = str(inspect.stack()[1][0])
             self.appmainframe.Log( message, source=str(_caller), type="error")
         except Exception as e:
-            print("RaisePluginError() " + str(e))
+            self.logger.error("RaisePluginError() " + str(e))
                     
                     
     def ReportPluginInfo(self, message):
@@ -93,7 +94,7 @@ class pluginsManager(object):
             _source = str(inspect.stack()[1][0])
             self.appmainframe.Log( message, source=str(_source), type="info")
         except Exception as e:
-            print("ReportPluginInfo() " + str(e))                
+            self.logger.error("ReportPluginInfo() " + str(e))                
                     
                     
     
@@ -186,13 +187,13 @@ class pluginsManager(object):
                 
                 if df_name == viewname:
                     toremove = view
-                    #print( "Removed !" + str(toremove))
+                    #self.logger.info( "Removed !" + str(toremove))
     
             
             if toremove != {}:
                 pinst.VIEWS_INSTANCES.remove(toremove)
-                #print("Removed !")
-                #print( "Removed !" + str(toremove))
+                #self.logger.info("Removed !")
+                #self.logger.info( "Removed !" + str(toremove))
     
         wx.CallAfter(self.appmainframe.MenusAndTool.refreshViewsListMenu, ())
     #def LoadNewView(self, viewName, position):
@@ -214,7 +215,7 @@ class pluginsManager(object):
     def SaveAllPluginState(self):
         
         for p in self.plugins:
-            #print("saving plugin state : " + p) 
+            #self.logger.info("saving plugin state : " + p) 
             self.ReportPluginInfo("Saving plugins state..." )
             
             pinst = self.plugins[p]
@@ -223,13 +224,13 @@ class pluginsManager(object):
     
     def LoadFromPluginDirectory(self):
         
-        #print(self.pluginDirectory)
+        #self.logger.info(self.pluginDirectory)
         subfolders = [ f.name for f in os.scandir(self.pluginDirectory ) if f.is_dir() ]
         
         self.ReportPluginInfo("Initialize plugin list from " + self.pluginDirectory )
         
         
-        print(subfolders)
+        self.logger.info(subfolders)
         
         for s in subfolders:
             
@@ -325,7 +326,7 @@ class pluginsManager(object):
         _gp = self.appmainframe.GetPlugin("General")
         if _gp != None:
             self._exclude_list = _gp.PLUGIN_SETTINGS['disable_plugins']
-            print(f"Plugin exclusion list detected ! {self._exclude_list}")
+            self.logger.info(f"Plugin exclusion list detected ! {self._exclude_list}")
             
     
     def LoadPlugin(self, pname):
@@ -348,8 +349,8 @@ class pluginsManager(object):
             #plugin_instance = self._LoadPluginSettings(pname,plugin_instance )
             plugin_instance._LoadPluginSettings()
             
-            #print("Loading Plugin : " + plugin_name)
-            #print("    - Class : " + str(plugin_init_classe) )
+            #self.logger.info("Loading Plugin : " + plugin_name)
+            #self.logger.info("    - Class : " + str(plugin_init_classe) )
             self.plugins[plugin_name] = plugin_instance
         
         return plugin_instance
@@ -378,8 +379,8 @@ class pluginsManager(object):
         module_path = ".".join(class_data[:-1])
         class_str = class_data[-1]
         
-        #print('loading module in :' + module_path)
-        #print('loading class :' + class_str)
+        #self.logger.info('loading module in :' + module_path)
+        #self.logger.info('loading class :' + class_str)
         module = importlib.import_module(module_path)
         # Finally, we retrieve the Class
         #return getattr(module, class_str)  

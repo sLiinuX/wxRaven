@@ -36,7 +36,7 @@ class wxRavenP2PMarket_NewAtomiSwapWithLogic(wxRavenAtomicSwapPanel):
     view_name = "New Atomic Swap"
     parent_frame = None
     default_position = "dialog"
-    icon = 'p2p_icon_new'#wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
+    icon = 'atomic_swap_new'#wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
     
     
     
@@ -71,6 +71,7 @@ class wxRavenP2PMarket_NewAtomiSwapWithLogic(wxRavenAtomicSwapPanel):
         self._newAdObject._adTxType=0
         self._newAdObject._adAssetQt=1
         self._newAdObject._adPrice=200
+        self._newAdObject._adOrders=1
         
         
         self.SizerObj= None

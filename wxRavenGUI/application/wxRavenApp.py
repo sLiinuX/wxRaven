@@ -51,6 +51,8 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     
     def __init__(self):
         
+        self.logger = logging.getLogger('wxRaven')
+        
         
         wxRavenMainFrame.__init__(self,None)
         self._isReady = False
@@ -195,19 +197,24 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     
     def Log(self ,message , source="", timestamp=None, type="msg"):
         
-        #print("LOG :" + message)
+        
+        
+        self.logger.info("APPLICATION BUILT-IN LOG :" + message)
+        
+        
+        
         #self.GetPlugin("General").Log(message , source, timestamp, type)
         try:
             self.GetPlugin("General").Log(message , source, timestamp, type)
         except Exception as e:
-            print("Log (wxRavenApp) :" + str(e))
+            self.logger.error("APPLICATION BUILT-IN LOG : Log (wxRavenApp) :" + str(e))
     
     """    
     def Debug(self ,message ):
         try:
             self.GetPlugin("General").Log(message , "", None, "debug")
         except Exception as e:
-            print("Log (wxRavenApp) :" + str(e))
+            self.logger.info("Log (wxRavenApp) :" + str(e))
     
     """
     
@@ -290,7 +297,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     """
         
     def Add(self, obj, nameFrame, position="mgr", icon=None):
-        print("Add()->"+position)
+        self.logger.info("Add()->"+position)
         self.Views.Add(obj, nameFrame, position, icon)
      
     
@@ -330,12 +337,12 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         self.Settings.SaveSettingsToFile()
         
         
-        #print( str(self.wxRavenMenuBar_Window_Perspectives.IsChecked(self.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId())) )
+        #self.logger.info( str(self.wxRavenMenuBar_Window_Perspectives.IsChecked(self.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId())) )
         if self.wxRavenMenuBar_Window_Perspectives.IsChecked(self.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId()):
             
             self.PerspectiveManager.SaveLastPerspective()
             self.Plugins.SaveAllPluginState()
-            #print( str(self.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.IsCheck()) )
+            #self.logger.info( str(self.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.IsCheck()) )
             
         
         

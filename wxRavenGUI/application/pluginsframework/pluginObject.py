@@ -11,7 +11,7 @@ import inspect
 import json
 
 from ._pluginSettingsTreeObject import *
-
+import logging
 #
 #
 # Plugin object to create as basic for your plugin
@@ -64,7 +64,7 @@ class PluginObject(object):
         self.PLUGIN_NAME = "defaultName"
         self.PLUGIN_ICON = None
         self.PLUGIN_BACKGROUNDS_THREADS =[]
-        
+        self.logger = logging.getLogger('wxRaven')
         self._stop = False
         
         self.RessourcesProvider = parentFrame.RessourcesProvider
@@ -99,7 +99,7 @@ class PluginObject(object):
             _source = str(inspect.stack()[1][0])
             self.parentFrame.Log( message, source=str(_source), type=type)
         except Exception as e:
-            print("RaisePluginLog() " + str(e))  
+            self.logger.info("RaisePluginLog() " + str(e))  
     
     """
     
@@ -136,7 +136,7 @@ class PluginObject(object):
             try:
                 rView.UpdateView()
             except Exception as e:
-                print(self.PLUGIN_NAME + " > "+vName+" UpdateView() method failed :" + str(e))
+                self.logger.info(self.PLUGIN_NAME + " > "+vName+" UpdateView() method failed :" + str(e))
             """
     
     def getDefaultFrames(self):
@@ -222,7 +222,7 @@ class PluginObject(object):
     
     
     def LoadView(self, view, positionOverride=""):
-        print("LoadView")
+        self.logger.info("LoadView")
         
         df_class = view['class']
         df_name = view['name']
@@ -237,7 +237,7 @@ class PluginObject(object):
         df_position = view['position']
         
         if positionOverride != "":
-            #print("override pos to " + positionOverride)
+            #self.logger.info("override pos to " + positionOverride)
             df_position = positionOverride
         
         
@@ -256,7 +256,7 @@ class PluginObject(object):
         
         if exist == None:     
             
-            #print("no existing instance found !")
+            #self.logger.info("no existing instance found !")
             
                
             
@@ -269,7 +269,7 @@ class PluginObject(object):
             multi_allowed = view['multipleViewAllowed'] 
             
             
-            #print("existing instance found ! MultiAllow["+str(multi_allowed)+"]")
+            #self.logger.info("existing instance found ! MultiAllow["+str(multi_allowed)+"]")
             
             
             createNew = multi_allowed
@@ -292,7 +292,7 @@ class PluginObject(object):
             try:
                 self.parentFrame.RessourcesProvider.ApplyThemeOnPanel(newview)
             except Exception as e:
-                print("Unable to themize view :" + str(e))
+                self.logger.info("Unable to themize view :" + str(e))
                 
             
             viewInstanceData = {'viewid': id_view, 
@@ -310,7 +310,7 @@ class PluginObject(object):
             if isArea:
                 self.parentFrame.Views.AddArea(df_name, newview)
             
-            #print(self.PLUGIN_NAME+" load+1  " + str(self.VIEWS_INSTANCES) )
+            #self.logger.info(self.PLUGIN_NAME+" load+1  " + str(self.VIEWS_INSTANCES) )
             
             wx.CallAfter(self.parentFrame.MenusAndTool.refreshViewsListMenu, ())
         
@@ -327,7 +327,7 @@ class PluginObject(object):
         for row in self.PLUGINS_VIEWS:
             vname = row[attr]
             
-            #print(vname + " vs " + viewName)
+            #self.logger.info(vname + " vs " + viewName)
             
             if viewName == vname:
                 result = row
@@ -360,7 +360,7 @@ class PluginObject(object):
         
         if existingDatas != None:
             
-            #print("PREVIOUS PLUGIN STATE FOUND  : " + str(existingDatas))
+            #self.logger.info("PREVIOUS PLUGIN STATE FOUND  : " + str(existingDatas))
             for oldView in existingDatas:
                 
                 
@@ -417,7 +417,7 @@ class PluginObject(object):
     
     def _LoadPluginSettings(self):
         
-        print(f"loading {self.PLUGIN_NAME}  settings ")
+        self.logger.info(f"loading {self.PLUGIN_NAME}  settings ")
         _recordedSettings = self.parentFrame.Settings._GetPluginSettings(self.PLUGIN_NAME)
         
         
@@ -430,7 +430,7 @@ class PluginObject(object):
                 self.PLUGIN_SETTINGS[key] = convertedData
                 
             except Exception as e:
-                #print("NOT json data :" + str(e))
+                #self.logger.info("NOT json data :" + str(e))
                 pass
             
             if _str == "True":
@@ -449,16 +449,16 @@ class PluginObject(object):
     
     def __saveVar__(self, varName, varData):
         try:
-            print(""+varName+" : "+str(varData))
+            self.logger.info(""+varName+" : "+str(varData))
             pickle.dump( varData, open(self.CONFIG_PATH+"/" +varName+".p", "wb" ) )
         except Exception as e:
-            print(e) 
+            self.logger.info(e) 
     
     def __LoadVar__(self, varName, defaultTeturn=None):
         result = defaultTeturn
         try:
             result = pickle.load( open( self.CONFIG_PATH+"/" +varName+".p", "rb" ) )
         except Exception as e:
-            print(e) 
+            self.logger.info(e) 
         
         return result

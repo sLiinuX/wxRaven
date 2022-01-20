@@ -38,7 +38,7 @@ def call_if_set(fn_call, *args):
 
 class AtomicSwapCacheStorage:
 
-    def __init__(self, AtomicSwapMgr, _timeStampIt=False):
+    def __init__(self, AtomicSwapMgr, _timeStampIt=False, _lockingMode=True):
         super()
         self.swaps = []
         self.locks = []
@@ -56,12 +56,13 @@ class AtomicSwapCacheStorage:
                "data_path": self.get_path(),
               "fee_rate": 0.0125,
               "default_destination": "",
-              "locking_mode": True,
+              "locking_mode": _lockingMode,
               "active_rpc": 0,
               "update_interval": 5000,
               "server_url": "https://raventrader.net",
               "preview_timeout": 3,
-              "protocol_handler_enabled": False
+              "protocol_handler_enabled": False,
+              "testnet":True
             }
         
         
@@ -90,7 +91,7 @@ class AtomicSwapCacheStorage:
 
     def load_json(self, path, hook, title, default=[]):
         if not os.path.isfile(path):
-            #logging.info("No {} records.".format(title))
+            #self.logger.info("No {} records.".format(title))
             return default
         fSwap = open(path, mode="r")
         swapJson = fSwap.read()
@@ -102,7 +103,7 @@ class AtomicSwapCacheStorage:
     
     def save_json(self, path, data):
         #dataJson = json.dumps(data)#, default=lambda o: o.__dict__, indent=2)
-        dataJson = json.dumps(data, default=lambda o: o.__dict__, indent=2)
+        dataJson = json.dumps(data)#, default=lambda o: o.__dict__, indent=2)
         fSwap = open(path, mode="w")
         fSwap.truncate()
         fSwap.write(dataJson)
@@ -119,15 +120,32 @@ class AtomicSwapCacheStorage:
 # File I/O
 #
     def load_data(self):
-        loaded_data = self.load_json(self.get_path(), dict, "Storage")
-        self.swaps = self.init_list_cast(
-            loaded_data["trades"],         SwapTrade) if "trades" in loaded_data else []
-        self.locks = self.init_list(
-            loaded_data["locks"],               dict) if "locks" in loaded_data else []
-        self.history = self.init_list_cast(
-            loaded_data["history"],  SwapTransaction) if "history" in loaded_data else []
-        self.addresses = self.init_list(loaded_data["addresses"],           dict) if "addresses" in loaded_data else [
-            {"name": "default", "addresses": []}]
+        #self.AtomicSwapMgr.logger.info("Loading Cache datas.")
+        loaded_data = None
+        try:
+            loaded_data = self.load_json(self.get_path(), dict, "Storage")
+        except Exception as e:
+            self.AtomicSwapMgr.logger.error("Error in cache file.")
+        
+        if   loaded_data != None:  
+            self.swaps = self.init_list_cast(
+                    loaded_data["trades"],         SwapTrade) if "trades" in loaded_data else []
+            
+            self.locks = self.init_list(
+                    loaded_data["locks"],               dict) if "locks" in loaded_data else []
+            
+            self.history = self.init_list_cast(
+                    loaded_data["history"],  SwapTransaction) if "history" in loaded_data else []
+            
+            self.addresses = self.init_list(loaded_data["addresses"],           dict) if "addresses" in loaded_data else [
+                    {"name": "default", "addresses": []}]
+        else:
+            self.swaps = []
+            self.locks = []
+            self.history = []
+            self.addresses = []
+            
+            
 
     def save_data(self):
         
@@ -168,7 +186,8 @@ class AtomicSwapCacheStorage:
         return self.settings["fee_rate"]
 
 
-
+    def rpc_mainnet(self):
+        return self.settings["testnet"] == False
 
 
 
@@ -194,6 +213,9 @@ class WalletAddresses:
         
         super()
         self.address_pools = addresses
+        
+        
+        self.logger =logging.getLogger('AtomicSwap-Library')
         
             
     
@@ -223,7 +245,7 @@ class WalletAddresses:
         if address in pool["addresses"]:
             return
         pool["addresses"].append(address)
-        logging.info("Adding new address {} to pool [{}]".format(
+        self.logger.info("Adding new address {} to pool [{}]".format(
             address, pool_name))
 
     def get_single_address(self, pool_name="default", avoid=[]):
@@ -252,18 +274,22 @@ class WalletManager:
     RVNpyRPC = None 
     
     
-    def __init__(self, AtomicSwapMgr):
+    
+    _use_unlock_all = False
+    
+    
+    def __init__(self, AtomicSwapMgr, _use_unlock_all=False):
         '''
         Constructor
         '''
         #super().__init__(self,connexion)
+        self._use_unlock_all = _use_unlock_all
         
         self.AtomicSwapMgr = AtomicSwapMgr
-        
         self.RPCconnexion = AtomicSwapMgr.RPCconnexion
         self.RVNpyRPC = AtomicSwapMgr.RVNpyRPC
         
-        
+        self.logger = logging.getLogger('AtomicSwap-Library')
         
         self.txUtils = AtomicSwapMgr.txUtils#TransactionUtils(connexion, parent)
         
@@ -277,14 +303,17 @@ class WalletManager:
         self.on_completed_confirmed = None
 
     def on_load(self):
-        logging.info("Loading Virtual Wallet Datas")
+        self.logger.info("Loading Virtual Wallet Datas")
         self.load_data()
         self.update_wallet()
-        self.wallet_unlock_all()
-        self.refresh_locks()
+        
+        if self.AtomicSwapMgr.CacheStorage.lock_mode():
+            self.logger.info("LOCK MODE ENABLE.")
+            self.wallet_unlock_all()
+            self.refresh_locks()
 
     def on_close(self):
-        logging.info("Closing Virtual Wallet, saving...")
+        self.logger.info("Closing Virtual Wallet, saving...")
         self.save_data()
 
 #
@@ -298,7 +327,7 @@ class WalletManager:
         self.addresses.on_load(self.AtomicSwapMgr.CacheStorage)
         # TODO: Better way to handle post-wallet-load events
         self.check_missed_history()
-        logging.info("Wallet data loaded !")
+        self.logger.info("Wallet data loaded !")
 
     def save_data(self):
         # Needed?
@@ -306,7 +335,7 @@ class WalletManager:
         self.AtomicSwapMgr.CacheStorage.locks = self.locks
         self.AtomicSwapMgr.CacheStorage.history = self.history
         self.addresses.on_close(self.AtomicSwapMgr.CacheStorage)
-        logging.info("Wallet data saved !")
+        self.logger.info("Wallet data saved !")
         
         
 
@@ -316,7 +345,7 @@ class WalletManager:
 
     def add_swap(self, swap_trade):
         self.swaps.append(swap_trade)
-        logging.info("swap data added in virtual wallet !")
+        self.logger.info("swap data added in virtual wallet !")
 
     def remove_swap(self, swap_trade):
         self.swaps.remove(swap_trade)
@@ -325,9 +354,9 @@ class WalletManager:
 
     def add_completed(self, swap_transaction):
         if swap_transaction in self.history:
-            logging.info("Duplicate order add")
+            self.logger.info("Duplicate order add")
             return
-        logging.info("Adding to history...")
+        self.logger.info("Adding to history...")
         self.history.append(swap_transaction)
         if swap_transaction.own:
             self.remove_lock(utxo=swap_transaction.utxo)
@@ -340,36 +369,45 @@ class WalletManager:
 #
 
     def calculate_balance(self):
+        
         bal_total = [0, 0, 0]  # RVN, Unique Assets, Asset Total
-        for utxo in self.utxos:
-            bal_total[0] += utxo["amount"]
-        # Take the distinct set of names
-        lock_asset_names = [lock["asset"]
-                            for lock in self.locks if "asset" in lock]
-        self.my_asset_names = [name for name in set(
-            [*self.assets.keys()] + lock_asset_names)]
-        for asset in self.my_asset_names:
-            bal_total[1] += 1
-            asset_total = 0
-            for outpoint in self.assets[asset]["outpoints"]:
-                asset_total += outpoint["amount"]
-            self.assets[asset]["balance"] = self.assets[asset]["available_balance"] = asset_total
-            bal_total[2] += asset_total
-        bal_avail = bal_total[:]
+        
+        try:
+            for utxo in self.utxos:
+                bal_total[0] += utxo["amount"]
+            # Take the distinct set of names
+            lock_asset_names = [lock["asset"]
+                                for lock in self.locks if "asset" in lock]
+            self.my_asset_names = [name for name in set(
+                [*self.assets.keys()] + lock_asset_names)]
+            for asset in self.my_asset_names:
+                bal_total[1] += 1
+                asset_total = 0
+                for outpoint in self.assets[asset]["outpoints"]:
+                    asset_total += outpoint["amount"]
+                self.assets[asset]["balance"] = self.assets[asset]["available_balance"] = asset_total
+                bal_total[2] += asset_total
+            bal_avail = bal_total[:]
+    
+            for my_lock in self.locks:
+                if my_lock["type"] == "rvn":
+                    bal_avail[0] -= my_lock["amount"]
+                elif my_lock["type"] == "asset":
+                    asset_name = my_lock["asset"]
+                    asset_amt = my_lock["amount"]
+                    bal_avail[2] -= asset_amt
+                    if asset_name not in self.assets:
+                        # This is almost certainly a stale order, just ignore it
+                        continue
+                    self.assets[asset_name]["available_balance"] -= asset_amt
+                    
+                    
+            self.available_balance = tuple(bal_avail)
+            
 
-        for my_lock in self.locks:
-            if my_lock["type"] == "rvn":
-                bal_avail[0] -= my_lock["amount"]
-            elif my_lock["type"] == "asset":
-                asset_name = my_lock["asset"]
-                asset_amt = my_lock["amount"]
-                bal_avail[2] -= asset_amt
-                if asset_name not in self.assets:
-                    # This is almost certainly a stale order, just ignore it
-                    continue
-                self.assets[asset_name]["available_balance"] -= asset_amt
+        except Exception as e:
+            pass
 
-        self.available_balance = tuple(bal_avail)
         self.total_balance = tuple(bal_total)
 
     def rvn_balance(self):
@@ -410,18 +448,18 @@ class WalletManager:
 #
 
     def wallet_prepare_transaction(self):
-        logging.info("Preparing for a transaction")
+        self.logger.info("Preparing for a transaction")
         if self.AtomicSwapMgr.CacheStorage.lock_mode():
-            logging.info("Locking")
+            self.logger.info("Locking")
         else:
-            logging.info("Non-Locking")
+            self.logger.info("Non-Locking")
 
     def wallet_completed_transaction(self):
-        logging.info("Completed a transaction")
+        self.logger.info("Completed a transaction")
         if self.AtomicSwapMgr.CacheStorage.lock_mode():
-            logging.info("Locking")
+            self.logger.info("Locking")
         else:
-            logging.info("Non-Locking")
+            self.logger.info("Non-Locking")
 
     def swap_executed(self, swap, txid):
         self.add_waiting(txid, self.__on_completed_mempool,
@@ -431,7 +469,7 @@ class WalletManager:
         return len(self.waiting)
 
     def add_waiting(self, txid, fnOnSeen=None, fnOnConfirm=None, callback_data=None):
-        logging.info("Waiting on txid: {}".format(txid))
+        self.logger.info("Waiting on txid: {}".format(txid))
         self.waiting.append((txid, fnOnSeen, fnOnConfirm, callback_data))
 
     def clear_waiting(self):
@@ -447,17 +485,17 @@ class WalletManager:
             tx_confirmed = "confirmations" in tx_data and tx_data["confirmations"] >= 1
 
             if not tx_confirmed and txid not in self.trigger_cache:
-                logging.info(
+                self.logger.info(
                     "Waiting txid {} confirmed in mempool.".format(txid))
                 self.trigger_cache.append(txid)
                 call_if_set(seen, tx_data, callback_data)
             elif tx_confirmed and txid in self.trigger_cache:
-                logging.info("Waiting txid {} fully confirmed.".format(txid))
+                self.logger.info("Waiting txid {} fully confirmed.".format(txid))
                 self.trigger_cache.remove(txid)
                 self.waiting.remove(waiting)
                 call_if_set(confirm, tx_data, callback_data)
             elif tx_confirmed and txid not in self.trigger_cache:
-                logging.info(
+                self.logger.info(
                     "Missed memcache for txid {}, direct to confirm.".format(txid))
                 self.waiting.remove(waiting)
                 call_if_set(seen, tx_data, callback_data)
@@ -471,7 +509,7 @@ class WalletManager:
         for swap in self.swaps:
             for utxo in swap.order_utxos:
                 locked_utxos.append(utxo)
-        logging.info("Locking {} UTXO's from orders".format(len(locked_utxos)))
+        self.logger.info("Locking {} UTXO's from orders".format(len(locked_utxos)))
         self.wallet_lock_utxos(locked_utxos)
 
     def wallet_lock_utxos(self, utxos=[], lock=True):
@@ -507,12 +545,15 @@ class WalletManager:
                         self.assets[asset_name]["outpoints"].append(utxo)
                 else:
                     # If we don't get a txout from a lock, it's no longer valid (wallet keeps them around for some reason.....)
-                    logging.info(
+                    self.logger.info(
                         "Removing Stale Wallet lock: {}".format(utxo_str))
                     self.wallet_lock_single(utxo=utxo_str, lock=False)
 
     def wallet_unlock_all(self):
-        self.RVNpyRPC.do_rpc("lockunspent", unlock=True)
+        if self._use_unlock_all:
+            self.RVNpyRPC.do_rpc("lockunspent", unlock=True)
+        else:
+            self.logger.info("wallet_unlock_all SKIPPED !")
 
     def invalidate_all(self):
         self.utxos = []
@@ -542,11 +583,11 @@ class WalletManager:
             transaction = self.txUtils.search_swap_tx(utxo)
             if transaction:
                 txid = transaction["txid"]
-                logging.info("Order Completed: TXID {}".format(txid))
+                self.logger.info("Order Completed: TXID {}".format(txid))
                 self.add_waiting(txid, self.__on_swap_mempool,
                                  self.__on_swap_confirmed, callback_data=finished_order)
             else:
-                logging.info("Order executed on unknown transaction")
+                self.logger.info("Order executed on unknown transaction")
 
         # Remove any locks we can't find with the gettxout command
         self.clear_stale_locks()
@@ -556,11 +597,13 @@ class WalletManager:
 
         # Cheat a bit and embed the asset name in it's metadata. This simplified things later
         for name in self.my_asset_names:
-            self.assets[name]["name"] = name
-
-#
-# Lock Management
-#
+            try:
+                self.assets[name]["name"] = name
+            except Exception as e:
+                pass
+    #
+    # Lock Management
+    #
 
     def add_lock(self, txid=None, vout=None, utxo=None):
         if utxo != None and txid == None and vout == None:
@@ -568,7 +611,7 @@ class WalletManager:
         for lock in self.locks:
             if txid == lock["txid"] and vout == lock["vout"]:
                 return  # Already added
-        logging.info("Locking UTXO {}-{}".format(txid, vout))
+        self.logger.info("Locking UTXO {}-{}".format(txid, vout))
         # True means this will be None when spent in mempool
         txout = self.RVNpyRPC.do_rpc("gettxout", txid=txid, n=vout, include_mempool=True)
         if txout:
@@ -587,7 +630,7 @@ class WalletManager:
                 found = True
         if not found:
             return
-        logging.info("Unlocking UTXO {}-{}".format(txid, vout))
+        self.logger.info("Unlocking UTXO {}-{}".format(txid, vout))
         # in wallet-lock mode we need to return these to the wallet
         if self.AtomicSwapMgr.CacheStorage.lock_mode():
             self.wallet_lock_single(txid, vout, lock=False)
@@ -621,7 +664,7 @@ class WalletManager:
                         self.add_waiting(
                             swap_tx["txid"], self.__on_completed_mempool, self.__on_completed_confirmed, pending_order)
                 else:
-                    logging.info("Failed to find transaction for presumably completed UTXO {}".format(
+                    self.logger.info("Failed to find transaction for presumably completed UTXO {}".format(
                         pending_order.utxo))
 
     def search_completed(self, include_mempool=True):
@@ -635,7 +678,7 @@ class WalletManager:
     def clear_stale_locks(self):
         for lock in self.locks:
             if not self.RVNpyRPC.do_rpc("gettxout", txid=lock["txid"], n=lock["vout"], include_mempool=True):
-                logging.info("Removing Stale Lock: {}".format(lock))
+                self.logger.info("Removing Stale Lock: {}".format(lock))
                 self.remove_lock(utxo=self.txUtils.make_utxo(lock))
 
 #
@@ -643,7 +686,7 @@ class WalletManager:
 #
 
     def find_utxo(self, type, quantity, name=None, exact=True, include_locked=False, skip_rounded=True, sort_utxo=False):
-        logging.info("Find {} UTXO: {} Exact: {} Include Locks: {}".format(
+        self.logger.info("Find {} UTXO: {} Exact: {} Include Locks: {}".format(
             type, quantity, exact, include_locked))
         available = self.get_utxos(type, name, include_locked=include_locked)
         for utxo in available:
@@ -652,7 +695,7 @@ class WalletManager:
         return None
 
     def find_utxo_multiple_exact(self, type, quantity, name=None, include_locked=False):
-        logging.info("Find UTXO Multiple Exact: {} {} {} Include Locks: {}".format(
+        self.logger.info("Find UTXO Multiple Exact: {} {} {} Include Locks: {}".format(
             quantity, type, name, include_locked))
         return [utxo for utxo in self.get_utxos(type, name=name, include_locked=include_locked) if utxo["amount"] == quantity]
 
@@ -714,11 +757,11 @@ class WalletManager:
                 found_set.append(removed)
 
         if float(total) >= float(quantity):
-            logging.info("{} UTXOs: {} Requested: {:.8g} Total: {:.8g} Change: {:.8g}".format(
+            self.logger.info("{} UTXOs: {} Requested: {:.8g} Total: {:.8g} Change: {:.8g}".format(
                 type, len(found_set), quantity, total, total - quantity))
             return (total, found_set)
         else:
-            logging.info("Not enough {} funds found. Requested: {:.8g} Total: {:.8g} Missing: {:.8g}".format(
+            self.logger.info("Not enough {} funds found. Requested: {:.8g} Total: {:.8g} Missing: {:.8g}".format(
                 type, quantity, total, total-quantity))
             return (None, None)
 
@@ -781,7 +824,7 @@ class WalletManager:
         # Add asset change if needed
         if(asset_utxo_total > quantity):
             # TODO: Send change to address the asset UTXO was originally sent to
-            logging.info("Asset change being sent to {}".format(asset_change_addr))
+            self.logger.info("Asset change being sent to {}".format(asset_change_addr))
             vouts[asset_change_addr] = self.txUtils.make_transfer(
                 asset_name, asset_utxo_total - quantity)
     
@@ -806,7 +849,7 @@ class WalletManager:
         send_rvn=float(send_rvn)
         send_rvn += float(fee_guess ) # add it to the amount required in the UTXO set
     
-        logging.info("Funding Raw Transaction. Send: {:.8g} RVN. Get: {:.8g} RVN".format(
+        self.logger.info("Funding Raw Transaction. Send: {:.8g} RVN. Get: {:.8g} RVN".format(
             send_rvn, recv_rvn))
     
         if send_rvn > 0:
@@ -830,7 +873,7 @@ class WalletManager:
         out_rvn = (float(send_rvn) + float(recv_rvn)) - float(cost) - float(fee_rvn)
         vouts[target_addr] = round(out_rvn, 8)
     
-        logging.info("Funding result: Send: {:.8g} Recv: {:.8g} Fee: {:.8g} Change: {:.8g}".format(
+        self.logger.info("Funding result: Send: {:.8g} Recv: {:.8g} Fee: {:.8g} Change: {:.8g}".format(
             send_rvn, recv_rvn, fee_rvn, out_rvn))
     
         return True

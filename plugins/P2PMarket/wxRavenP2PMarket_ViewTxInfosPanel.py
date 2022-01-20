@@ -15,7 +15,7 @@ from libs.RVNpyRPC._P2PmarketPlace import RavencoinP2PMarketPlaceAd, _P2PMARKET_
 
 
 
-
+import logging
 import os
 import time
 from datetime import datetime
@@ -36,7 +36,7 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
     view_name = "View TX Infos"
     parent_frame = None
     default_position = "dialog"
-    icon = 'raw_datas'#wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
+    icon = 'inspect_swap'#wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
     
     
     
@@ -46,12 +46,15 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
         '''
         Constructor
         '''
+        
         super().__init__(parent=parent)
         
         
         #
         #    Your constructor here
         #
+        
+        self.logger = logging.getLogger('wxRaven')
         
         self.view_base_name = "View TX Infos"
         self.view_name = viewName
@@ -65,12 +68,17 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
         
         #self.m_assetTradePanel.Hide()
         self._newAdObject = RavencoinP2PMarketPlaceAd()
-        self._newAdObject._adType=0
-        self._newAdObject._adTxType=0
-        self._newAdObject._adAssetQt=1
-        self._newAdObject._adPrice=200
+        self._loading = False
+        self.m_buttonPrevious.Enable(False)
+        self.m_buttonNext.Enable(False)
+        #self._newAdObject._adOrders=1
+        #self._newAdObject._adType=0
+        #self._newAdObject._adTxType=0
+        #self._newAdObject._adAssetQt=1
+        #self._newAdObject._adPrice=200
+        #self._newAdObject._adTxDatas = {}
         
-        
+        self._orderCursor=0
         
         
         self.SizerObj= None
@@ -85,16 +93,18 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
             #self.Sizer .Add( self._Panel, 1, wx.ALL|wx.EXPAND, 5 )
         #if not isInternalPluginView:
         #    parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
-            
+        
         self.setupPanel()
         self.m_TXDetailsPanel.Hide()
         self.Layout()
+        self.parent.ResizeDialog()    
+        
         
     def OnCloseParent(self, evt=None):
         self.parent.Close()    
         
     def OnClose(self, evt=None):    
-        print("ViewTxPanel OnClose()")
+        self.logger.info("ViewTxPanel OnClose()")
         self.parent_frame.Views.__unregisterDialog__(self.view_name)
         #
         self.Destroy()
@@ -103,11 +113,98 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
     def setupPanel(self):
         #ravencoin = self.parent_frame.getRvnRPC()
         pass
+    
+    
+    def __checkOrdersCount__(self):
         
-    def SetRaw(self, raw):
-        self.m_SignedPartialText.SetValue(raw)   
+        print(f"c= {self._orderCursor}, max= {len(self._newAdObject._adTxDatas)}")
+        
+        print(type(self._newAdObject._adTxDatas))
+        print(self._newAdObject._adTxDatas)
+        if len(self._newAdObject._adTxDatas) >1:
+            
+            
+            if self._orderCursor > 0:
+                self.m_buttonPrevious.Enable(True)
+            else:
+                self.m_buttonPrevious.Enable(False)
+            
+            
+            if self._orderCursor >= len(self._newAdObject._adTxDatas)-1:
+                self.m_buttonNext.Enable(False)
+            else:
+                self.m_buttonNext.Enable(True)
+            
+            self.m_staticText186.SetLabel(f"ORDER : {self._orderCursor +1}/{len(self._newAdObject._adTxDatas)}")
+            
+            
+        else:
+            self.m_buttonPrevious.Enable(False)
+            self.m_buttonNext.Enable(False)
+            self.m_staticText186.SetLabel("ORDER : 1/1")
+    
+        if str(type(self._newAdObject._adTxDatas))!= "<class 'dict'>":
+            self.m_buttonNext.Enable(False)
+            self.m_buttonPrevious.Enable(False)
+    
+    
+        
+    def SetRaw(self, raw, cursor=0):
+        self.m_SignedPartialText.SetValue(raw)  
+        self._orderCursor=cursor 
         self.OnRawDataChanged(None)
+        self.m_staticText186.SetLabel("ORDER : 1/?")
         
+        
+        self.__checkOrdersCount__()
+        
+        
+        self.Layout()
+    
+    
+    
+    def SetAd(self, ad:RavencoinP2PMarketPlaceAd, cursor=0):
+        #self.m_SignedPartialText.SetValue(raw)  
+        self._loading = True
+        self._newAdObject.Load_JSON(ad.JSON())
+        
+        self._orderCursor= cursor
+        
+        
+        print(f'Received AD : {ad._adTxDatas}')
+        print(f'Received AD : {type(ad._adTxDatas)}')
+        
+        print(f'_newAdObject AD : {self._newAdObject._adTxDatas}')
+        print(f'_newAdObject AD : {type(self._newAdObject._adTxDatas)}')
+        
+        if self._newAdObject != None:
+            self.SetRaw(self._newAdObject._adTxDatas[cursor], cursor)
+        else:
+            self.SetRaw('')
+        #self.OnRawDataChanged(None)
+        #self.m_staticText186.SetValue("ORDER : 1/?")
+        #self.__checkOrdersCount__()
+        #self.Layout()
+        self._loading = False
+    
+    def OnPreviousOrder(self, evt):
+        self._loading = True
+        self._orderCursor = self._orderCursor-1
+        self.m_SignedPartialText.SetValue(self._newAdObject._adTxDatas[self._orderCursor]) 
+        self.OnRawDataChanged(None) 
+        self.__checkOrdersCount__()
+        self.Layout()
+        self._loading = False
+    
+    def OnNextOrder(self, evt):
+        self._loading = True
+        self._orderCursor = self._orderCursor+1
+        self.m_SignedPartialText.SetValue(self._newAdObject._adTxDatas[self._orderCursor]) 
+        self.OnRawDataChanged(None) 
+        self.__checkOrdersCount__()
+        self.Layout()
+        self._loading = False
+    
         
     def OnCompleteTx(self, evt):
         
@@ -119,22 +216,39 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
             _result = None
             
             try:
-                _result= ravencoin.atomicswap.CompleteSwap(self._newAdObject._adTxDatas)
+                swaptocomplete=self.m_SignedPartialText.GetValue()
+                _result= ravencoin.atomicswap.CompleteSwap(swaptocomplete)
+                
             except Exception as e:
-                self.parent_frame.Log("Unable to complete tx" , type="warning")
+                self.parent_frame.Log("Unable to complete tx :" + str(e) , type="warning")
             
             if _result != None:
                 UserInfo(self, str(_result))
                 self.m_completeButton.Enable(False)
             else:
-                UserError(self, "Error : Unable to complete the transaction.")
+                UserError(self, "Error : Unable to complete the transaction : "+ str(_result))
      
+    
+    
+    
+    def OnRawDataInputChanged(self, evt=None):
+        if self._loading:
+            return None
+        
+        print("OnRawDataInputChanged")
+        self._newAdObject = RavencoinP2PMarketPlaceAd()
+        self._newAdObject._adTxDatas[0] = self.m_SignedPartialText.GetValue() 
+        self._orderCursor=0  
+        self.OnRawDataChanged(None)
+        self.__checkOrdersCount__()
+        self.Layout()
         
         
     def OnRawDataChanged(self, evt=None):
-        self._newAdObject._adTxDatas = self.m_SignedPartialText.GetValue()   
+        #self._newAdObject._adTxDatas = self.m_SignedPartialText.GetValue()   
         
-        print(f"OnRawDataChanged  {self._newAdObject._adTxDatas}")
+        self.logger.info(f"OnRawDataChanged  {self._newAdObject._adTxDatas}")
+        self.logger.info(f"self._orderCursor  {self._orderCursor}")
         
         
         myPlugin = self.parent_frame.GetPlugin('P2PMarket')
@@ -156,7 +270,16 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
             self.m_TXDetailsPanel.Hide()
             self.m_ErrorDetails.SetLabel("Empty TX")
         else:
-            _valid, _data = myPlugin.DecodeTx(self._newAdObject._adTxDatas)
+            _valid=False
+            _data =None
+            if str(type(self._newAdObject._adTxDatas))== "<class 'dict'>":
+                _valid, _data = myPlugin.DecodeTx(self._newAdObject._adTxDatas[self._orderCursor])
+            
+            else:
+                _valid, _data = myPlugin.DecodeTx(self._newAdObject._adTxDatas)
+            
+            
+            
             if not _valid:
                 self.m_ErrorMsgPanel.Show()
                 self.m_TXDetailsPanel.Hide()
@@ -165,7 +288,7 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
                 
                 self.m_completeButton.Enable(True)
                 self.m_completeButton.Show(True)
-                print("Valid !!")
+                self.logger.info("Valid !!")
                 
                 self.m_ErrorMsgPanel.Hide()
                 self.m_TXDetailsPanel.Show()
@@ -178,7 +301,7 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
                 self.m_bitmapStatus.SetBitmap(_validTxIcon)
                 
                 self._data = _data
-                print(f"Data =  {_data}")
+                self.logger.info(f"Data =  {_data}")
                 
                 self.m_mineText.SetValue(_data.destination)
                 
@@ -225,7 +348,7 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
         try:
             _res = myPlugin.DecodeTx(self._newAdObject._adTxDatas)
             
-            print(_res)
+            self.logger.info(_res)
             
         except Exception as e:
             self.parent_frame.Log("Unable to load tx datas" , type="warning")
@@ -263,7 +386,7 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
             #       
             
             
-            #textToPrint = " booleansetting = " + str(myPluginSetting)
+            #textToself.logger.info = " booleansetting = " + str(myPluginSetting)
             #textToPrint = textToPrint + "\n\n myPluginData2 = " + str(myPluginData)
              
             #self.m_staticText2.SetLabel(str(textToPrint)) 

@@ -18,6 +18,7 @@ from .wxRavenP2PMarketDesign import *
 from .wxRavenP2PMarketPlaceLogic import *
 from .wxRavenP2PMarketNewAdDialogLogic import *
 from .wxRavenCreateAtomicSwapLogic import *
+from .wxRavenP2PMarket_CreateUTXOLogic import *
 #used for long datas requests
 import threading
 
@@ -59,7 +60,10 @@ class wxRavenPlugin(PluginObject):
         self.PLUGIN_NAME = "P2PMarket"
         self.PLUGIN_ICON = self.RessourcesProvider.GetImage('p2p_icon') #wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
         _p2pIconNew =self.RessourcesProvider.GetImage('p2p_icon_new') 
-        _atomicIconNew =self.RessourcesProvider.GetImage('atomic_swap') 
+        _atomicIconNew =self.RessourcesProvider.GetImage('atomic_swap_new') 
+        _utxoIconNew =self.RessourcesProvider.GetImage('new_utxo') 
+        _inspectSwap =self.RessourcesProvider.GetImage('inspect_swap') 
+        
         _rawDataIcon =  self.RessourcesProvider.GetImage('raw_datas') 
         
         
@@ -120,14 +124,27 @@ class wxRavenPlugin(PluginObject):
                      'name':'View TX Infos', 
                      'title':'View TX Infos', 
                      'position':'dialog', 
-                     'icon':_rawDataIcon, 
+                     'icon':_inspectSwap, 
                      'class': wxRavenP2PMarket_ViewTexInfosDialog,
                      'default':False,
                      'multipleViewAllowed':False
                      }
                      
                      
-                    
+                    ,
+                     
+                     {
+                     'viewid':'Create UTXO', 
+                     'name':'Create UTXO', 
+                     'title':'Create UTXO', 
+                     'position':'dialog', 
+                     'icon':_utxoIconNew, 
+                     'class': wxRavenP2PMarket_CreateUTXOWithLogic,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'toolbar_shortcut': False
+                     }
+                     
         
                     
                 ]
@@ -162,6 +179,7 @@ class wxRavenPlugin(PluginObject):
                
                'p2p_channel_asset_target_address' : 'munRj4MDDka4nv9FnxUrSq6KF55DPpdCCi',
                'p2p_market_change_address' : "munRj4MDDka4nv9FnxUrSq6KF55DPpdCCi",
+               'p2p_market_swap_address' : "",
                'search_limit' : 500,
                'search_fields' : ['title', 'asset', 'price_asset' , 'desc', 'keywords'],
                
@@ -317,6 +335,7 @@ class wxRavenPlugin(PluginObject):
     
     def isTrusted(self, add):
         p2p_trusted_addresses = self.PLUGIN_SETTINGS['p2p_trusted_addresses']
+        #print(p2p_trusted_addresses.__contains__(add))
         return p2p_trusted_addresses.__contains__(add)
     
     
@@ -375,7 +394,9 @@ class wxRavenPlugin(PluginObject):
     
     
     
-    
+    def CreateNewUTXO(self, assetname='RVN'):
+        _newView = self.parentFrame.Views.OpenView("Create UTXO", "P2PMarket", True)
+        
     
       
     def DecodeTx(self,txdata):
@@ -389,9 +410,23 @@ class wxRavenPlugin(PluginObject):
         #if txdatas !="":
         if True:
             _v=self.parentFrame.Views.SearchDialog("View TX Infos")
-            print(">txdatas setup requested")
+            print(f">txdatas setup requested {txdatas}")
             if _v!=None:
                 _v._Panel.SetRaw(txdatas)
+    
+    
+    
+    def ShowAdInfos(self, ad, cursor=0, openIfnotExist=True):
+        
+        _newView = self.parentFrame.Views.OpenView("View TX Infos", "P2PMarket", openIfnotExist)
+        
+        #if txdatas !="":
+        if True:
+            _v=self.parentFrame.Views.SearchDialog("View TX Infos")
+            print(f">txad setup requested {ad}")
+            if _v!=None:
+                _v._Panel.SetAd(ad, cursor)
+    
       
       
     def GetCurrentMarketChannel(self):
@@ -617,8 +652,8 @@ class wxRavenPlugin(PluginObject):
         #
         
         
-        try:
-        #if True:  
+        #try:
+        if True:  
             ravencoin = self.__getNetwork__()
             
             
@@ -647,7 +682,7 @@ class wxRavenPlugin(PluginObject):
                 print(f"loading {market_chanel}")
                 _chanelsDatas[market_chanel] = []
                 #_chanelListing = ravencoin.p2pmarket.GetP2PMarketAdsIPFSListingDatas(asset=market_chanel, count=search_limit, ipfs_gateway="specialip", includeNoneTxDatas=include_none_tx) 
-                _chanelListing = ravencoin.p2pmarket.GetP2PMarketAdsIPFSListingDatas(asset=market_chanel, count=search_limit, includeNoneTxDatas=include_none_tx, verifyTx=verify_tx, whitelist=_whiteList) 
+                _chanelListing = ravencoin.p2pmarket.GetP2PMarketAdsIPFSListingDatas(asset=market_chanel, count=search_limit, ipfs_gateway=_ipfsDefault, includeNoneTxDatas=include_none_tx, verifyTx=verify_tx, whitelist=_whiteList) 
                 
                 print(f"LOADED ! market_chanel : {market_chanel} = {_chanelListing}")
                 
@@ -663,8 +698,8 @@ class wxRavenPlugin(PluginObject):
             #When datas are loaded, add a call after to trigger plugins view update
             wx.CallAfter(self.RequestMarketSearch_T, ())
             
-        except Exception as e:
-            self.RaisePluginLog( "Unable to retreive p2p market informations :"+ str(e), type="error")
+        #except Exception as e:
+        #    self.RaisePluginLog( "Unable to retreive p2p market informations :"+ str(e), type="error")
         
         
         self.setData("thread_running", False)    

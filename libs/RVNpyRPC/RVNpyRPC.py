@@ -14,6 +14,9 @@ from libs import RVNpyRPC
 from libs.jsonrpcclient.requests import Request
 from jsonrpcclient import parse, request
 
+import logging
+
+
 class Ravencoin:
     def __init__(self, username, password, host='localhost', port=8766):
         self.username = username
@@ -82,18 +85,16 @@ class RavenpyRPC(object):
         '''
         Constructor
         '''
+        self.logger = logging.getLogger('wxRaven')
+        
         self.RPCconnexion = connexion
         self.wallet = RVNpyRPC_Wallet(connexion, self) 
         self.squawker = RVNpyRPC_Squawker(connexion)
         self.asset = RVNpyRPC_Asset(connexion, self)
-        
         self.utils = RVNpyRPC_Utils(connexion, self)
-        
         self.p2pmarket = RVNpyRPC_P2P_Marketplace(connexion, self)
         self.atomicswap = RVNpyRPC_AtomicSwap(connexion, self)
-        
-        
-        self.network = RVNpyRPC_Network(connexion)
+        self.network = RVNpyRPC_Network(connexion, self)
         
     
     
@@ -104,7 +105,7 @@ class RavenpyRPC(object):
         chain_info = self.do_rpc("getblockchaininfo", log_error=False)
         # If the headers and blocks are not within 5 of each other,
         # then the chain is likely still syncing
-        print(f"chain_info  = {chain_info}")
+        self.logger.info(f"chain_info  = {chain_info}")
         chain_updated = False if not chain_info else\
             (chain_info["headers"] - chain_info["blocks"]) < 5
         
@@ -120,8 +121,8 @@ class RavenpyRPC(object):
             url = self.RPCconnexion.rpc_url()
             resp = requests.post(url, json=req, timeout=10)
             if resp.status_code != 200 and log_error:
-                logging.error("RPC ==> {}".format(req))
-                logging.error("RPC <== {}".format(resp.text))
+                self.logger.error("RPC ==> {}".format(req))
+                self.logger.error("RPC <== {}".format(resp.text))
             if resp.status_code != 200:
                 try:  # Attempt parse response when failed
                     return json.loads(resp.text)
@@ -131,7 +132,7 @@ class RavenpyRPC(object):
         except TimeoutError:
             if log_error:
                 # Any RPC timeout errors are totally fatal
-                #logging.error("RPC Timeout")
+                self.logger.error("RPC Timeout")
                 #AppInstance.on_exit()
                 #show_error("RPC Timeout", "Timeout contacting RPC")
                 #exit(-1)
@@ -139,8 +140,17 @@ class RavenpyRPC(object):
             else:
                 return None
         except Exception as ex:
-            logging.error(ex)
+            self.logger.error(ex)
             return None
     
     
+    
+    def secure_call(self, method, **kwargs):
+        try: 
+            self.logger.info(f"RVN RPC Secure call for {method.__name__}") 
+            return method(**kwargs)
+        except Exception as ex:
+            print(ex)
+            self.logger.error(f"RVN RPC Method {method.__name__} call error :{ex}")
+            return None
         

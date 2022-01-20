@@ -12,7 +12,7 @@ Created on 10 déc. 2021
 
 #from ravenrpc import Ravencoin
 from libs.RVNpyRPC.RVNpyRPC import Ravencoin
-
+import logging
 
 
 import wx
@@ -52,6 +52,7 @@ class RvnRPC_ConnectorManager(object):
             self.parentObjSynch = parentObjSynch
             
             
+        self.logger = logging.getLogger('wxRaven')
             
         self.net_icon = parentObjSynch.RessourcesProvider.GetImage('network')# wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY )    
         self.safemode =  parentObjSynch.Settings.safemode 
@@ -60,7 +61,7 @@ class RvnRPC_ConnectorManager(object):
         try:
             self.LoadConnexionFromSettings()
         except Exception as e:
-            print(e)
+            self.logger.error(e)
             self.RaiseConnexionError("Unable to load connexions settings" , "error")     
         
         
@@ -78,21 +79,21 @@ class RvnRPC_ConnectorManager(object):
         isFirst=True
         
         
-        #print("sadasd " )
+        #self.logger.info("sadasd " )
         
         if self.parentObjSynch != None: 
             allCons = self.parentObjSynch.Settings.allconnexions
             
-            #print(allCons )
+            #self.logger.info(allCons )
             
             for conName in allCons:
                 #pass
                 data = allCons[conName]
-                #print(conName + " -- > "+ data )
+                #self.logger.info(conName + " -- > "+ data )
                 
                 
                 if isFirst:
-                    #print("set current " + conName)
+                    #self.logger.info("set current " + conName)
                     defaultCurrent = conName
                     isFirst = False
                 
@@ -107,7 +108,7 @@ class RvnRPC_ConnectorManager(object):
                 
         
         
-        #print("defau"  + defaultCurrent)
+        #self.logger.info("defau"  + defaultCurrent)
         self.rpc_connectors = defaultConnectors
         self.rpc_current = defaultCurrent
             
@@ -145,7 +146,7 @@ class RvnRPC_ConnectorManager(object):
             _source = str(inspect.stack()[1][0])
             self.parentObjSynch.Log( message, source=str(_source), type=type)
         except Exception as e:
-            print("RaiseConnexionError() " + str(e))  
+            self.logger.error("RaiseConnexionError() " + str(e))  
     
     
     """
@@ -190,7 +191,7 @@ class RvnRPC_ConnectorManager(object):
                     wx.GetApp().Yield()
                     
                 except Exception as e:
-                    print(str(e) + " in " + str(c))
+                    self.logger.error(str(e) + " in " + str(c))
                     self.RaiseConnexionError(""+ str(e))
                     
             else:
@@ -200,10 +201,10 @@ class RvnRPC_ConnectorManager(object):
             
             end = time.time()
             cb_duration = end-start
-            #print("cb="+str(cb_duration))
+            #self.logger.info("cb="+str(cb_duration))
             if cb_duration > 2:
                 self.RaiseConnexionError("Network Change Callback exceed 2seconds, watch for threading it. : " + str(cb_duration) +"" + str(c), 'warning')
-                #print("Callback exceed 2seconds, watch for threading it. : " + str(cb_duration) +"" + str(c))
+                #self.logger.info("Callback exceed 2seconds, watch for threading it. : " + str(cb_duration) +"" + str(c))
             
     
     
@@ -219,10 +220,10 @@ class RvnRPC_ConnectorManager(object):
             resultTest = network.help()['result']
             if resultTest != None:
                 isActive = True
-                #print("CheckConnexionStatus OK> " +resultTest)
+                #self.logger.info("CheckConnexionStatus OK> " +resultTest)
         except Exception as e:
             self.RaiseConnexionError("RPC Connexion Failed : "+ str(e))
-            #print("CheckConnexionStatus ERROR> " + str(e))
+            #self.logger.info("CheckConnexionStatus ERROR> " + str(e))
         
         return isActive
     

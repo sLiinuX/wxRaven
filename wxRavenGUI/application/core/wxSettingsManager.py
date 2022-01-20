@@ -13,7 +13,7 @@ from wxRavenGUI.view import  wxRavenSettingDialog
 from wxRavenGUI.application.wxcustom.CustomTreeView import wxRavenTreeView
 from wxRavenGUI.application.pluginsframework import *
 
-
+import logging
 import wx 
 from wxRavenGUI.application.wxcustom import CustomTreeView    
 
@@ -70,7 +70,7 @@ class SettingsManager(object):
             self.PLUGIN_PATH = os.getcwd() + "/plugins/"
         
         self.application_config_file = cfgfile
-        
+        self.logger = logging.getLogger('wxRaven')
         
         self.allconnexions = {}
         self.ConfigFileInstance = ConfigParser()
@@ -78,7 +78,7 @@ class SettingsManager(object):
         try:
             self.LoadSettingsFromFile()
         except Exception as e:
-            print(e)
+            self.logger.error(e)
             self.RaiseSettingsLog("Unable to load settings from file : " + str(e), "warning") 
         
         #self._settingDialog = None
@@ -90,7 +90,7 @@ class SettingsManager(object):
             _source = str(inspect.stack()[1][0])
             self.parentframe.Log( message, source=str(_source), type=type)
         except Exception as e:
-            print("RaiseSettingsLog() " + str(e))  
+            self.logger.error("RaiseSettingsLog() " + str(e))  
             
             
             
@@ -106,7 +106,7 @@ class SettingsManager(object):
         #Config.exist
 
         #resumeviewonstartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
-        #print("Save resumeviewonstartup = " +resumeviewonstartup)
+        #self.logger.info("Save resumeviewonstartup = " +resumeviewonstartup)
         self._SaveGeneralSettings(Config)
         self._SaveConnexionSettings(Config)
         
@@ -122,7 +122,7 @@ class SettingsManager(object):
     def _SaveGeneralSettings(self, configObj):
         
         resumeviewonstartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
-        #print("Save resumeviewonstartup = " +resumeviewonstartup)
+        #self.logger.info("Save resumeviewonstartup = " +resumeviewonstartup)
         
         configObj.add_section('Application')
         configObj.set('Application','resumeviewonstartup',resumeviewonstartup)
@@ -152,7 +152,7 @@ class SettingsManager(object):
             conf.set(pname,key.lower(),str(_pInstance.PLUGIN_SETTINGS[key]))
         
             
-            #print(pname + " - " + key + " = " + str(_pInstance.PLUGIN_SETTINGS[key]))
+            #self.logger.info(pname + " - " + key + " = " + str(_pInstance.PLUGIN_SETTINGS[key]))
         
         return  conf   
     
@@ -166,10 +166,10 @@ class SettingsManager(object):
             if _plugin_instance != None:
                 
                 try:
-                    #print(f"saving {_p} in config.ini")
+                    #self.logger.info(f"saving {_p} in config.ini")
                     configObj.add_section(_p)
                 except:
-                    print(f"error while saving {_p} in config.ini")
+                    self.logger.error(f"error while saving {_p} in config.ini")
                 
                 
                 self._SavePluginSettings(_p , _plugin_instance, configObj)
@@ -238,10 +238,10 @@ class SettingsManager(object):
             try:
                 dict1[option] = config.get(section, option)
                 if dict1[option] == -1:
-                    #DebugPrint("skip: %s" % option)
+                    #Debugself.logger.info("skip: %s" % option)
                     pass
             except:
-                print("exception on %s!" % option)
+                self.logger.info("exception on %s!" % option)
                 
                 dict1[option] = None
         return dict1    
@@ -273,7 +273,7 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
     
     def __init__(self, parentFrame):
         
-        
+        self.logger = logging.getLogger('wxRaven')
         wxRavenSettingDialog.__init__(self, parentFrame)
         
         self.parentFrame=parentFrame
@@ -372,7 +372,7 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             
             _NewPanel = _pannel(self.settingContentPlaceHolderPannel,self.parentFrame , self._pagesAndPluginsMapping[self.wxTree._currentText])
             
-            #print(_NewPanel._Panel)
+            #self.logger.info(_NewPanel._Panel)
             
             #sizer = wx.BoxSizer(wx.VERTICAL)
             #self.panelsizer.Add(_NewPanel , 1, wx.EXPAND|wx.ALL, 0)
@@ -419,7 +419,7 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
         
         #self._addMapping("Application", "General")
         
-        #print(self.parentFrame)
+        #self.logger.info(self.parentFrame)
         #_app = self.wxTree.addItem(_root, "Application", _dummyData, "app")
         #GeneralPlug = self.parentFrame.GetPlugin("General")
         _general = self.loadPluginSettingTree(_root, "General")
@@ -459,8 +459,8 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             try:
                 
                 
-                #print(_plugin.PLUGIN_NAME)
-                #print(_plugin.PLUGIN_ICON)
+                #self.logger.info(_plugin.PLUGIN_NAME)
+                #self.logger.info(_plugin.PLUGIN_ICON)
                 
                 self.wxTree.addImage(_plugin.PLUGIN_NAME, _plugin.PLUGIN_ICON)
                 _treeItem = self.wxTree.addItem(_treeParentItem, _plugin.PLUGIN_NAME ,data= wxRavenNotAvailableSettingPanel, iconname_normal=_plugin.PLUGIN_NAME)
@@ -469,7 +469,7 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             
             #self.PLUGIN_SETTINGS_GUI.append(_generalPannel)
             except Exception as e:
-                #print("exception tree" )
+                #self.logger.info("exception tree" )
                 self.parentFrame.Log("Unable to load Setting panel in "+_pNme + " : "+ str(e) , type="error")
         return _treeItem    
         
@@ -536,7 +536,7 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
     
     
     def OnCloseSettings(self, event):
-        print("OnCloseSettings")
+        self.logger.info("OnCloseSettings")
         
         for _p in self.OPEN_PANEL_CACHE:
             _pObj = self.OPEN_PANEL_CACHE[_p]
@@ -569,14 +569,14 @@ class wxRavenSettingDialogLogic(wxRavenSettingDialog):
             #if True:
                 
                 try:
-                    print("save tree : " +str(_pObj))
+                    self.logger.info("save tree : " +str(_pObj))
                     _pObj.SavePanelSettings()
                     _pObj.safeClose()
                     _pObj._Panel.Destroy()
                 except Exception as e:
                     #_doClose = False
                     self.parentFrame.Log("Unable to Save Setting in "+str(_pObj) + " : "+ str(e) , type="error")
-                    #print("exception tree" )
+                    self.logger.error("exception tree" )
             else:
                 try:
                     _pObj.safeClose()

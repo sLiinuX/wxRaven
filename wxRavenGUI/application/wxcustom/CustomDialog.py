@@ -43,22 +43,30 @@ class wxRavenCustomDialog(wxRavenDialogbox):
         parentframe.RessourcesProvider.ApplyThemeOnPanel(self._Panel)
         #self.SetSizerAndFit(self.Sizer)
         
-        
+        self.Bind( wx.EVT_SIZE , self.OnSize )
         self.Bind( wx.EVT_CLOSE, self.OnClose )
         
-        
+        self.SetAutoLayout(True)
         
         self.ResizeDialog()
         
+        
+    def OnSize(self, evt):
+        if self.GetAutoLayout():
+            self.Layout()
     
     def ResizeDialog(self, evt=None):
         
         
         #self._Panel.Layout()
-        self._Panel.SetSizerAndFit(self._Panel.GetSizer())
-        self.SetSizerAndFit(self.Sizer)
+        #self.SetSizerAndFit(self.GetSizer())
+        #self.SetSizerAndFit(self.Sizer)
         
+        
+        self.SetSizerAndFit(self.GetSizer(), deleteOld=False)
         self.Layout()
+        
+        
         
     def UpdateView(self, evt=None):
         print('wxRavenCustomDialog UpdateView')

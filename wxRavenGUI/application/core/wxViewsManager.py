@@ -13,6 +13,8 @@ from wxRavenGUI.application.wxcustom.CustomDialog import wxRavenCustomDialog
 import wx
 import wx.aui
 
+import logging
+
 class ViewsManager(object):
     '''
     classdocs
@@ -38,7 +40,7 @@ class ViewsManager(object):
         self.nViewDialog = None
         
         self.dialogs = {}
-    
+        self.logger = logging.getLogger('wxRaven')
         self.InitViewManager()
         
         
@@ -57,7 +59,7 @@ class ViewsManager(object):
     #    
         
     def OnAuiNotebookPageClose(self, evt):
-        print("OnAuiPaneClose in view man ")
+        self.logger.info("OnAuiPaneClose in view man ")
         self.OnPageClose(evt)
         
         wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
@@ -66,14 +68,14 @@ class ViewsManager(object):
     
        
     def OnAuiPaneClose(self, evt):
-        print("OnAuiPaneClose in view man ")
+        self.logger.info("OnAuiPaneClose in view man ")
         wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
         wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())
         
         
         
     def OnAuiPaneActivated(self, evt):
-        print("OnAuiPaneActivated in view man") 
+        self.logger.info("OnAuiPaneActivated in view man") 
         wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())    
         wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())      
         
@@ -85,12 +87,12 @@ class ViewsManager(object):
         
         
     def OnPageClose( self, event ):
-        print("OnPageClose")
+        self.logger.info("OnPageClose")
         objNotebook = event.GetEventObject()
         index = event.GetSelection()
         page = objNotebook.GetPage(index)
         label = objNotebook.GetPageText(index)
-        print("view instance to delete !")
+        self.logger.info("view instance to delete !")
         
         
         _v = self.parentframe.Plugins.GetViewNameInstance(label)
@@ -99,7 +101,7 @@ class ViewsManager(object):
         
         
         if _v != None:
-            print('instance found, close it')
+            self.logger.info('instance found, close it')
             self.parentframe.Plugins.DeleteViewInstance(label)
             
             _closed=False
@@ -107,13 +109,13 @@ class ViewsManager(object):
                 _v['instance'].Close()
                 #_closed=True
             except Exception as e:
-                print("_v['instance'].Close() " + str(e)) 
+                self.logger.error("_v['instance'].Close() " + str(e)) 
             if not _closed:
                 try:
                     _v['instance'].OnClose(None)
                     #_closed=True
                 except Exception as e:
-                    print("_v['instance'].OnClose() " + str(e)) 
+                    self.logger.error("_v['instance'].OnClose() " + str(e)) 
                 
             if not _closed:
                 try:
@@ -121,7 +123,7 @@ class ViewsManager(object):
                     #_closed=True
                 except Exception as e:
                     #pass
-                    print("_v['instance'].SafeClose() " + str(e))
+                    self.logger.error("_v['instance'].SafeClose() " + str(e))
         
         
         wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
@@ -193,7 +195,7 @@ class ViewsManager(object):
         
     def AddArea(self, frameName, Obj):
         self.all_areas[frameName] = Obj
-        print(f"Add Area {frameName}")
+        self.logger.info(f"Add Area {frameName}")
         #self.AddView(frameName, Obj)
         
     def GetAllAreas(self):
@@ -210,10 +212,10 @@ class ViewsManager(object):
     
     
     def Add(self, obj, nameFrame, position="main", icon=None):
-        print("Add")
+        self.logger.info("Add")
         
         if position=="dialog":
-            print("FORCE Dialog !")
+            self.logger.info("FORCE Dialog !")
             self.AddDialog(obj, nameFrame, position, icon)
         
         if self.all_areas.__contains__(position):
@@ -221,9 +223,9 @@ class ViewsManager(object):
             
             if self.force_mgr:
                 position = "main"
-                print("FORCE MAIN !")
+                self.logger.info("FORCE MAIN !")
             else:
-                print(f"position received = {position}")
+                self.logger.info(f"position received = {position}")
                 
                 
             
@@ -236,7 +238,7 @@ class ViewsManager(object):
              
                 
             if position.__contains__("toolbox") or position.__contains__("Notebook Toolbox") :
-                #print("Position !!!")
+                #self.logger.info("Position !!!")
                 self.AddInNotebook(obj, nameFrame, targetPosition, icon=icon)
             
             
@@ -269,7 +271,7 @@ class ViewsManager(object):
     
     def AddDialog(self,_view, nameFrame="", position="dialog", icon=None):
         
-        print(_view)
+        self.logger.info(_view)
         if nameFrame == "":
             nameFrame = _view[0]['name']
             
@@ -294,12 +296,12 @@ class ViewsManager(object):
         all_panes = self.parentframe.m_mgr.GetAllPanes()
         for ii in range(len(all_panes)):
             if not all_panes[ii].IsToolbar():
-                #print(all_panes[ii])
+                #self.logger.info(all_panes[ii])
                 capt = all_panes[ii].caption
                 na = all_panes[ii].name
                 all_panes[ii].Show()    
-                #print(capt)
-                #print(na)
+                #self.logger.info(capt)
+                #self.logger.info(na)
                 
                 
     
@@ -320,17 +322,17 @@ class ViewsManager(object):
         
         for ii in range(len(all_panes)):
             if not all_panes[ii].IsToolbar():
-                #print(all_panes[ii])
+                #self.logger.info(all_panes[ii])
                 #capt = all_panes[ii].caption
                 #na = all_panes[ii].name
                 #all_panes[ii].Show()    
-                #print(capt)
-                #print(na)
+                #self.logger.info(capt)
+                #self.logger.info(na)
                 if not all_panes[ii].IsShown():
                     capt = all_panes[ii].caption
                     na = all_panes[ii].name
-                    print(f"Hidden dialog found : {capt} - {na}")
-                    #print(na)
+                    self.logger.info(f"Hidden dialog found : {capt} - {na}")
+                    #self.logger.info(na)
                     
                     
                     self.parentframe.Plugins.DeleteViewInstance(na)
@@ -340,7 +342,7 @@ class ViewsManager(object):
         
         
         for td in todelete:
-            print(f"removing {td}")
+            self.logger.info(f"removing {td}")
             self.parentframe.m_mgr.ClosePane(td)
             self.RaiseViewLog("["+str(td)+"] has been destroyed.", "info")  
                       
@@ -384,7 +386,7 @@ class ViewsManager(object):
             try:
                 c(connexionName)
             except Exception as e:
-                #print(e)
+                #self.logger.info(e)
                 self.RaiseViewError()
                 
           
@@ -398,7 +400,7 @@ class ViewsManager(object):
             _source = str(inspect.stack()[1][0])
             self.parentframe.Log( message, source=str(_source), type=type)
         except Exception as e:
-            print("RaiseViewError() " + str(e))  
+            self.logger.error("RaiseViewError() " + str(e))  
     
     
     
@@ -409,8 +411,8 @@ class ViewsManager(object):
         all_panes = self.parentframe.m_mgr.GetAllPanes()
         for ii in range(len(all_panes)):
             if not all_panes[ii].IsToolbar():
-                #print(all_panes[ii].name)
-                #print(all_panes[ii].caption)
+                #self.logger.info(all_panes[ii].name)
+                #self.logger.info(all_panes[ii].caption)
                 
                 if all_panes[ii].window == instanceParent:
                     all_panes[ii].Hide()
@@ -424,8 +426,8 @@ class ViewsManager(object):
         all_panes = self.parentframe.m_mgr.GetAllPanes()
         for ii in range(len(all_panes)):
             if not all_panes[ii].IsToolbar():
-                #print(all_panes[ii].name)
-                #print(all_panes[ii].caption)
+                #self.logger.info(all_panes[ii].name)
+                #self.logger.info(all_panes[ii].caption)
                 
                 if all_panes[ii].window == instanceParent:
                     all_panes[ii].Show(True)
@@ -439,7 +441,7 @@ class ViewsManager(object):
         _v = None 
         
         for _p in self.parentframe.Plugins.plugins:
-            #print(f"scanning {_p}")
+            #self.logger.info(f"scanning {_p}")
             _plugin = self.parentframe.GetPlugin(_p)
             _v = _plugin.GetViewAttrDetails(viewname, attr="name")
             
@@ -447,7 +449,7 @@ class ViewsManager(object):
                 _v = _plugin.GetViewAttrDetails(viewname, attr="viewid")
             
             if _v != None:
-                #print("found!")
+                #self.logger.info("found!")
                 break
         
         return _v
@@ -483,7 +485,7 @@ class ViewsManager(object):
     
     
     def isViewVisible(self, viewname):
-        #print(f"isViewVisible {viewname}")
+        #self.logger.info(f"isViewVisible {viewname}")
         _panelFound = self.SearchViewPanelInManager(viewname)
         
         if _panelFound == None:
@@ -493,28 +495,28 @@ class ViewsManager(object):
         
         _visible = False
         
-        #print(_panelFound)
+        #self.logger.info(_panelFound)
         
         if _panelFound !=None:
             
             try:
                 if _panelFound.window.IsShownOnScreen():
                     _visible = True
-                #print(f"IsShownOnScreen {_visible}")
+                #self.logger.info(f"IsShownOnScreen {_visible}")
             except Exception as e:
                 pass
             
             try:
                 if _panelFound.IsShownOnScreen():
                     _visible = True
-                #print(f"IsShownOnScreen {_visible}")
+                #self.logger.info(f"IsShownOnScreen {_visible}")
             except Exception as e:
                 pass
             
             try:
                 if _panelFound.IsShown():
                     _visible = True
-                #print(f"IsShown {_visible}")
+                #self.logger.info(f"IsShown {_visible}")
             except Exception as e:
                 pass
             
@@ -569,11 +571,11 @@ class ViewsManager(object):
             _v = self.SearchViewInstance(viewName)
             """
             for _p in self.parentframe.Plugins.plugins:
-                #print(f"scanning {_p}")
+                #self.logger.info(f"scanning {_p}")
                 _plugin = self.parentframe.GetPlugin(_p)
                 _v = _plugin.GetViewAttrDetails(viewName, attr="name")
                 if _v != None:
-                    #print("found!")
+                    #self.logger.info("found!")
                     break
             """
         
@@ -594,21 +596,21 @@ class ViewsManager(object):
         
         
         if _v != None :
-            #print(_v)
+            #self.logger.info(_v)
             
             
             if  not _isDialog :
                 if _v['position'] == 'mgr':
-                    print(f"{_v['position']} will be managed dynamically with Manager")
+                    self.logger.info(f"{_v['position']} will be managed dynamically with Manager")
                     self.parentframe.m_mgr.GetPane(_v['name']).Show(True)
                     self.UpdateGUIManager()
                 
                 elif _v['position'] == 'main':
-                    print(f"{_v['position']} will be managed dynamically with MainNotebook")
+                    self.logger.info(f"{_v['position']} will be managed dynamically with MainNotebook")
                     self.SetCurrentView_Notebook(viewName, self.parentframe.wxRavenMainBook)
                 
                 elif _v['position'] == 'toolbox1':
-                    print(f"{_v['position']} will be managed dynamically with Toolbox")
+                    self.logger.info(f"{_v['position']} will be managed dynamically with Toolbox")
                     
                     _parent = self.GetArea(_v['position'])
                     #self.parentframe.m_mgr.GetPane("Toolbox1").Show(True)
@@ -618,7 +620,7 @@ class ViewsManager(object):
                     
                 
                 else:
-                    print(f"{_v['position']} will be managed dynamically with getParent")
+                    self.logger.info(f"{_v['position']} will be managed dynamically with getParent")
                     
                     self.SetCurrentView_Notebook(viewName, _v['instance'].GetParent())   
                     self.ShowParentInManager(_v['instance'].GetParent())
@@ -639,11 +641,11 @@ class ViewsManager(object):
                 if pluginname == "":
                     
                     for _p in self.parentframe.Plugins.plugins:
-                        #print(f"scanning {_p}")
+                        #self.logger.info(f"scanning {_p}")
                         _plugin = self.parentframe.GetPlugin(_p)
                         _viewObj = _plugin.SearchPluginView(viewName)
                         if _viewObj != None:
-                        #print("found!")
+                        #self.logger.info("found!")
                             pluginname = _p
                             break
                 
@@ -671,16 +673,16 @@ class ViewsManager(object):
                 cp = self.parentframe.wxRavenMainBook.GetCurrentPage()
                 cpi = self.parentframe.wxRavenMainBook.GetPageIndex(cp)
                 cpText = self.parentframe.wxRavenMainBook.GetPageText( cpi)
-                print(f"current mainbook page {cp}   {cpText}")
+                self.logger.info(f"current mainbook page {cp}   {cpText}")
                 
                 
                 for _x in range(0, self.parentframe.wxRavenMainBook.GetPageCount()-1):
                     _xname = self.parentframe.wxRavenMainBook.GetPageText(_x)
-                    print(f"current mainbook page {_x}   {_xname}")
+                    self.logger.info(f"current mainbook page {_x}   {_xname}")
                     
                     if _xname == viewName:
                         self.parentframe.wxRavenMainBook.SetSelection(_x)
-                        print(f"selecting {_x}")
+                        self.logger.info(f"selecting {_x}")
                         
                 """
             
@@ -699,16 +701,16 @@ class ViewsManager(object):
         cp = notebook.GetCurrentPage()
         cpi = notebook.GetPageIndex(cp)
         cpText = notebook.GetPageText( cpi)
-        #print(f"current mainbook page {cp}   {cpText}")
+        #self.logger.info(f"current mainbook page {cp}   {cpText}")
                 
                 
         for _x in range(0, self.parentframe.wxRavenMainBook.GetPageCount()):
             _xname = notebook.GetPageText(_x)
-            #print(f"current mainbook page {_x}   {_xname}")
+            #self.logger.info(f"current mainbook page {_x}   {_xname}")
                     
             if _xname == viewname:
                 notebook.SetSelection(_x)
-                #print(f"selecting {_x}")
+                #self.logger.info(f"selecting {_x}")
     
     
               
@@ -729,7 +731,7 @@ class ViewsManager(object):
             view_base_name = obj.view_base_name
         except Exception as e:
             pass
-            #print(e)    
+            #self.logger.info(e)    
         #view_base_name = getattr(obj, "view_base_name")  
         
         if view_base_name == None:
@@ -747,7 +749,7 @@ class ViewsManager(object):
         if icon==None:
             #icon = wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY )
             icon = self.parentframe.RessourcesProvider.GetImage('view_default_frame')
-        #print("Add Frame :" + nameFrame)
+        #self.logger.info("Add Frame :" + nameFrame)
         #self.parentframe.m_mgr.AddPane( obj, wx.aui.AuiPaneInfo() .Bottom() .Icon(icon) .Name( nameFrame ) .Caption( u"> "+title+"" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Dock().Resizable().FloatingSize( wx.DefaultSize ) )
         self.parentframe.m_mgr.AddPane( obj, wx.aui.AuiPaneInfo() .Bottom() .Icon(icon)  .Name( nameFrame ) .Caption( u"> "+title+"" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Dock().Resizable().FloatingSize( wx.DefaultSize ) )
         self.parentframe.m_mgr.GetPane(nameFrame).Icon(icon)
@@ -769,19 +771,19 @@ class ViewsManager(object):
         t, n = self.getFrameTitleAndName(obj, nameFrame)
         title = ""+t+" ("+ n +")"
         
-        #print(title)
+        #self.logger.info(title)
         if icon==None:
             #icon = wx.Bitmap( u"res/default_style/normal/mainnet-mini.png", wx.BITMAP_TYPE_ANY )
             icon = self.parentframe.RessourcesProvider.GetImage('ravencoin')
         
         
-        #print(str(type(notebook)))
+        #self.logger.info(str(type(notebook)))
         if str(type(notebook)).__contains__("wx._aui.AuiNotebook"):
             notebook.AddPage(obj, t, bitmap = icon)
-            #print("notebook.AddPage()")
+            self.logger.info("notebook.AddPage()")
         elif str(type(notebook)).__contains__("RavenNotebookToolbox"):
             notebook.AddPage(obj, t, icon)
-            #print("notebook.AddPage()")
+            self.logger.info("notebook.AddPage()")
         
         elif str(type(notebook)).__contains__("wx._core.Notebook"): 
             self.RaiseViewLog("Unable to addview '"+ nameFrame+"' not supported type target : " + str(type(notebook)) , "warning")  
@@ -802,7 +804,7 @@ class ViewsManager(object):
     def ShowAddViewDialog(self):
         
         _defaultViewSett = self.parentframe.GetPluginSetting("General", 'defaultviewarea')#main
-        #print(_defaultViewSett)
+        #self.logger.info(_defaultViewSett)
         
         
         nViewDialog = RavenAddViewDialog(self.parentframe, _defaultViewSett)
@@ -842,7 +844,7 @@ class RavenAddViewDialog(wxRavenAddView):
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap( parentFrame.RessourcesProvider.GetImage('new_view') )
         self.SetIcon(icon)
-        
+        self.logger = logging.getLogger('wxRaven')
         self._selected_plugin = ""
         self._selected_view = {}
         
@@ -857,7 +859,7 @@ class RavenAddViewDialog(wxRavenAddView):
         self.FillAreaList()
         self.FillTree()
     
-    
+        
     
     
     
@@ -912,12 +914,12 @@ class RavenAddViewDialog(wxRavenAddView):
         
         
         #_defaultViewSett = self.parentframe.GetPluginSetting("General", 'defaultviewarea')#main
-        #print(_defaultViewSett)
+        #self.logger.info(_defaultViewSett)
         #if _defaultViewSett == None:
         #    _defaultViewSett = "main"
         
         
-        #print(_defaultViewSett)
+        #self.logger.info(_defaultViewSett)
         
         default = self.m_choice1.FindString(self._target)
         self.m_choice1.SetSelection(default)
@@ -976,7 +978,7 @@ class RavenAddViewDialog(wxRavenAddView):
         
        
         
-        #print(self.item)
+        #self.logger.info(self.item)
         self.openButton.Enable(False)
         if self.item:
             
@@ -994,11 +996,11 @@ class RavenAddViewDialog(wxRavenAddView):
                 self._selected_plugin = pluginName
                 self._selected_view = _itemData
                 
-                #print(itemtext)
-                #print(_itemData)
+                #self.logger.info(itemtext)
+                #self.logger.info(_itemData)
                 
             #items = self.tree.GetSelections()
-            #print(map(self.tree.GetItemText, items))
+            #self.logger.info(map(self.tree.GetItemText, items))
         event.Skip()
         
         
@@ -1009,7 +1011,7 @@ class RavenAddViewDialog(wxRavenAddView):
         
         
     def OnOpen(self, event):   
-        #print("OnOpen")
+        #self.logger.info("OnOpen")
    
         if self._selected_plugin != "" and self._selected_view != None:
             
@@ -1019,7 +1021,7 @@ class RavenAddViewDialog(wxRavenAddView):
                 df_class = self._selected_view['class']
                 df_name = self._selected_view['name']
                 df_icon = self._selected_view['icon']
-                print(self._selected_view)
+                self.logger.info(self._selected_view)
                 #self.parentframe.Views.AddDialog(self._selected_view, df_name, position="dialog", icon=df_icon)
                 wx.CallAfter(self.parentframe.Views.AddDialog, (self._selected_view,))
             else:

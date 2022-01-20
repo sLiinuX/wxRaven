@@ -3,7 +3,7 @@ Created on 11 déc. 2021
 
 @author: slinux
 '''
-
+import logging
 import requests
 
 class RVNpyRPC_Wallet():
@@ -19,7 +19,7 @@ class RVNpyRPC_Wallet():
         #super().__init__(self,connexion)
         self.RPCconnexion = connexion
         self.RVNpyRPC = parent
-    
+        self.logger = logging.getLogger('wxRaven')
     """
     
     End user and sys, return direct usable datas most of the time
@@ -53,6 +53,8 @@ class RVNpyRPC_Wallet():
         
         if allTx != None:
             return self.RPCconnexion.lockunspent(False, allTx)
+    
+    
                 
     
     def RVN_balance_friendly(self,balance):
@@ -61,6 +63,11 @@ class RVNpyRPC_Wallet():
         balanceValue = balanceValue.__round__(4)
         return balanceValue    
     
+    
+    
+    
+    def GetBalance(self):
+        return self.RPCconnexion.getbalance()['result'] 
     
     
     def getAllWalletAddresses(self, includeUnspent=False):
@@ -121,7 +128,7 @@ class RVNpyRPC_Wallet():
             if displayAssets:
                 rba = self.getaddressbalance(adAccount)
                 cleanRowBalance = rba["result"]
-                #print(cleanRowBalance)
+                #self.logger.info(cleanRowBalance)
             else:
                 cleanRowBalance = [{'assetName': 'RVN', 'balance': acBalance, 'received': -1}]
         
@@ -133,7 +140,7 @@ class RVNpyRPC_Wallet():
             allAccountsClean[ac] = cleanRow
         
         
-        #print(allAccountsClean)
+        #self.logger.info(allAccountsClean)
         
         
         
@@ -149,11 +156,11 @@ class RVNpyRPC_Wallet():
     
     def getAddressAssetsBalance(self, walletAdress=[]):
         
-        #print(f"getAddressAssetsBalance {walletAdress}")
+        #self.logger.info(f"getAddressAssetsBalance {walletAdress}")
         
         allAssetsInAddress = self.getaddressbalance(walletAdress=walletAdress, showAsset=True)['result']
         
-        #print(allAssetsInAddress)
+        #self.logger.info(allAssetsInAddress)
         
         
         tableAssetData= []
@@ -175,19 +182,37 @@ class RVNpyRPC_Wallet():
     def validateaddress(self, adrress: str=""):
         response = self.RPCconnexion.validateaddress(adrress)
         
-        print("adrress="+str(adrress))
+        self.logger.info("adrress="+str(adrress))
         
         return response['result']
+    
+    
+    
+    
+    
+    
+    
+    #
+    #
+    #
+    #
+    #
+    #   TX part
+    #
+    #
+    #
+    
+    
+    
     
     
     def sendRVN(self,  toAd, amount, fromAd="", pwd=""):
         
         
-        
         sent=False
         validDest = self.validateaddress(toAd)
         
-        print("Valide="+str(validDest))
+        self.logger.info("Valide="+str(validDest))
         
         if validDest['isvalid']:
             
@@ -202,13 +227,13 @@ class RVNpyRPC_Wallet():
                 response = self.RPCconnexion.sendfromaddress(fromAd,toAd , amount)
                 #sendfromaddress "from_address" "to_address" amount
                 sent=response['result']
-                print("sendfromaddress="+str(response))
+                self.logger.info("sendfromaddress="+str(response))
             else:
                 
                 response = self.RPCconnexion.sendtoaddress(toAd , amount)
                 sent=response['result']
                 
-                print("sendto="+str(response))
+                self.logger.info("sendto="+str(response))
             
             
             if  sent == None:
@@ -219,43 +244,450 @@ class RVNpyRPC_Wallet():
         return sent
     
     
+    
+    
+    
+    
+    
+    
     def sendAsset(self, AssetName, toAd, amount, pwd=""):
-        
-        
         
         sent=False
         validDest = self.validateaddress(toAd)
         
-        print("Valide="+str(validDest))
+        self.logger.info("Valide="+str(validDest))
         
         if validDest['isvalid']:
-            
-            
+               
             if pwd !="":
                 response = self.RPCconnexion.walletpassphrase(pwd)
-            
-            
-            
 
             response = self.RPCconnexion.transfer(AssetName, amount, toAd,"QmRL252afAwiaGwGgs7g3iYZJJFius66gVSbSd5UV1N1aK", 200000000)
                 #response = self.RPCconnexion.sendfromaddress(fromAd,toAd , amount)
                 #sendfromaddress "from_address" "to_address" amount
             sent=response['result']
-            print("sendfromaddress="+str(response))
-            
-            
+            self.logger.info("sendfromaddress="+str(response))
             
             if  sent == None:
                 sent=response['error']['message']
-                  
-    
-    
+
         return sent
     
     
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    def GetUnspentList(self, _OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[] ):
+        
+        _res =[]
+        
+        _allmatch= self.RPCconnexion.listunspent ()['result']
+        
+        for _i in _allmatch:
+            if _i['spendable'] == False and _OnlySpendable:
+                continue
+            
+            
+            if _ExlcudeAddresses.__contains__(_i['address']) :
+                continue
+            
+            if len(_IncludeOnlyAddresses) > 0:
+                if not _IncludeOnlyAddresses.__contains__(_i['address']) :
+                    continue
+            
+            
+            _res.append({'txid':_i['txid'], 'vout':_i['vout'],'amount':_i['amount'],})
+        
+        
+        #print("_allmatch")
+        #print(_allmatch)
+        #_res = _allmatch[assetname]
+        
+            #print(f"OK {_res}")
+            #print(f"A {_allmatch[assetname]}")
+        return _res
+        #listunspent 
+    
+    def GetRavenUnspentTx(self, _amount,_takeBiggest=True, _OneTx=False, _OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[]):
+        _list =self.GetUnspentList(_OnlySpendable,_ExlcudeAddresses,_IncludeOnlyAddresses  )
+    
+        
+        _feasible = True
+        _txId = []
+        _filled = False
+        
+        delta=0
+        _max=0
+        _feasible = True
+        for _i in _list:
+            _max = _max + float(_i['amount'])
+        
+        
+        
+        if _max< _amount:
+            _feasible = False
+            print(' UNFFEASIBLE')
+        else:
+            print(' FEASIBLE')
+        
+        if _feasible:
+        
+            _max=0.0
+            _maxId = ''
+            _maxVout = 1
+            
+            for _i in _list:
+                #print(_i['amount'])
+                if _i['amount'] > _max:
+                    _max = _i['amount']
+                    _maxId = _i['txid']
+                    _maxVout = _i['vout']
+            
+            self.logger.info(f'_max {_max}')        
+        
+            if _OneTx and _max <_amount:
+                _feasible = False
+                print(' UNFFEASIBLE 2 ')
+            
+            
+            if _feasible:
+                #_txId.append(_maxId)
+                _txId.append({'txid':_maxId, 'vout':_maxVout})
+                delta = _amount-_max
+                _filled=False
+                
+                print(f"delta {delta}")
+            
+            if _max >= _amount:
+                _filled = True
+        
+
+            
+            if not _OneTx and _feasible and not _filled:
+                
+                
+                print(f"DElta = {delta}")
+                while delta > 0:
+                    for _i in _list['outpoints']:
+                        if _i['txid'] != _maxId:
+                            _add = _i['amount']
+                            _txId.append({'txid':_i['txid'], 'vout':_i['vout']})
+                            
+                            
+                            print(f"DElta - = {_add}")
+                            print(f"DElta - = {delta}")
+                            delta = delta - _add
+                            
+                            if delta < 0:
+                                break
+                            
+                            
+        else:
+            print(' UNFFEASIBLE')                    
+        
+        print(_txId)
+        
+        
+        return _feasible,_txId, delta
+    
+
+    
+    
+    
+    def CombineTransaction(self, txs , _fund=True, _sign=True, _execute=True):
+        _combined=None
+        
+        try:
+            res = self.RPCconnexion.combinerawtransaction (txs)
+            
+            if res['result'] != None:
+                _combined = res['result']
+                
+                
+                
+                if _fund:
+                    res = self.RPCconnexion.fundrawtransaction (_combined)
+                    if res['result'] != None:
+                        _combined = res['result']['hex']
+                        
+                
+                if _sign:
+                    res = self.RPCconnexion.signrawtransaction (_combined)
+                    if res['result'] != None:
+                        _combined = res['result']['hex']
+                        
+                        
+                if _execute:
+                    res = self.RPCconnexion.sendrawtransaction (_combined)
+                    if res['result'] != None:
+                        _combined = res['result']
+                    
+            
+            
+        except Exception as e:
+            self.logger.error(f"Unable to create Transaction : {e}")
+            
+            
+        return _combined
+    
+    
+    
+    
+    def GenerateAdress(self, count=1):
+        _adGenerated= []
+        self.logger.info(f"GenerateAdress : {count}")  
+        
+        for i in range(0,count):
+            _nAddress= self.RPCconnexion.getnewaddress()['result']
+            _adGenerated.append(_nAddress)
+        
+        self.logger.info(f"Generated Adress len : {len(_adGenerated)}")  
+        return _adGenerated
+        
+    
+    def CreateTransaction(self, _input, _outputs, _changeAddress='',_fund=True, _sign=True):
+        return self.DoTransaction( _input, _outputs, _changeAddress='',_fund=_fund, _sign=_sign, _execute=False)
+    
+    
+    def DoTransaction(self, _input, _outputs, _changeAddress='', _fund=True, _sign=True, _execute=True):
+        
+        self.logger.info(f"DoTransaction :_sign={_sign}  _execute={_execute}")  
+        self.logger.info(f"_input : {_input}")  
+        self.logger.info(f"_outputs : {_outputs}")  
+        
+        
+        txResult = None
+        
+        if True:    
+            
+            try:
+                
+                
+                #res = self.RPCconnexion.createrawtransaction(_input,_outputs)
+                
+                self.logger.info(f" > createrawtransaction")  
+                res= self.RVNpyRPC.do_rpc("createrawtransaction", inputs=_input,outputs= _outputs)
+                self.logger.info(f" > createrawtransaction result : {res}")  
+                txResult=res
+                
+                
+                
+                if res!= None and _fund:
+                    
+                    
+                    if _changeAddress == '':
+                        _changeAddress= self.RPCconnexion.getrawchangeaddress()['result']
+                    
+                    
+                    
+                    try:
+                        self.logger.info(f"> fundrawtransaction")  
+                        res= self.RVNpyRPC.do_rpc("fundrawtransaction",hexstring=res, options={"changeAddress"  :_changeAddress,"changePosition" :0})
+                        self.logger.info(f" > fundrawtransaction result : {res}")    
+                        txResult=res['hex']
+                        res = res['hex']
+                        
+                    except Exception as e:
+                        self.logger.error(f"Unable to fund transaction: {e}")  
+                        res=None
+                
+                
+                
+                
+                    
+                if res!= None and _sign:
+                    
+                    try:
+                        self.logger.info(f"> signrawtransaction") 
+                        res = self.RPCconnexion.signrawtransaction(res) 
+                        self.logger.info(f" > signrawtransaction result : {res}")
+                        txResult=res['result'] 
+                        res = res['result']['hex']
+                    except Exception as e:
+                        self.logger.error(f"Unable to sign transaction: {e}") 
+                
+                
+  
+                if res!= None and _execute:
+                    
+                    try:
+                        self.logger.info(f"> sendrawtransaction") 
+                        res = self.RPCconnexion.sendrawtransaction(res) 
+                        self.logger.info(f" > sendrawtransaction result : {res}")
+                        txResult=res['result']
+                    except Exception as e:
+                        self.logger.error(f"Unable to send transaction: {e}")
+                
+ 
+                
+                
+            except Exception as e:
+                self.logger.error(f"Unable to create Transaction : {e}")    
+    
+    
+    
+    
+    
+        return txResult
+    
+    
+    
+    
+    
+    
+    def sendRVN_Many(self, amounts={}, pwd='', _changeAddress='', _takeBiggest=True, _OneTx=False, _OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[], _fund=True, _sign=True, _execute=True):
+    
+    
+        print("sendRVN_Many")
+        sent=False
+        
+        totalRvn=0.0
+        for ad in amounts:
+            qt = amounts[ad]
+            totalRvn = totalRvn + float(qt)
+             
+            
+        print("sendRVN_Many ="+str(amounts))
+        print("totalRvn ="+str(totalRvn))
+        
+        
+        _input = []
+        _outputs = {}
+           
+            
+        if pwd !="":
+            response = self.RPCconnexion.walletpassphrase(pwd)
+            
+        
+        
+        _done = False
+        _feasible, _ids, _delta = self.RVNpyRPC.wallet.GetRavenUnspentTx(totalRvn,_takeBiggest, _OneTx, _OnlySpendable, _ExlcudeAddresses,_IncludeOnlyAddresses)
+        
+        print(f"_feasible {_feasible}")
+        print(f"_ids {_ids}")
+        print(f"_delta {_delta.__abs__()}")
+        
+        if _feasible:
+            _input = []
+            _input =  _ids
+            
+            
+            _outputs[_changeAddress]= ( _delta.__abs__())
+            for ad in amounts:
+                _outputs[ad] = float(amounts[ad]).__round__(8) 
+                
+            return self.DoTransaction(_input, _outputs, _changeAddress, _fund, _sign, _execute)
+            
+    
+        return sent
+    
+    
+    def sendSameRVN_Many(self, amount, adresses=[], pwd='', _changeAddress='', _fund=True, _sign=True, _execute=True):
+        
+        _amounts = {}
+        for ad in adresses:
+            _amounts[ad] = amount
+            
+        return self.sendRVN_Many(_amounts, pwd, _changeAddress, _fund, _sign, _execute)
+    
+    
+    
+    def sendAsset_Many(self, assetname, amounts={}, pwd='', _changeAddress='', _fund=True, _sign=True, _execute=True):
+        totalRaven = 0.5
+        print("sendAsset_Many ="+str(amounts))
+        _feasible, _rvnids, _delta = self.RVNpyRPC.wallet.GetRavenUnspentTx(totalRaven,_takeBiggest=True, _OneTx=True, _OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[])
+        
+    
+        print(f'_feasible RVN {_feasible} - {_rvnids} ')
+        print(f'Detlat RVN {_delta} ')
+
+        totalQt=0.0
+        for ad in amounts:
+            qt = amounts[ad]
+            totalQt = totalQt + float(qt)
+        
+        
+        _done = False
+        _feasible, _ids, delta = self.RVNpyRPC.asset.GetAssetUnspentTx(assetname,totalQt )
+        if _feasible:
+            _input = _ids
+            _outputs = {}
+            _outputs[_changeAddress] =  float(0.0002).__round__(8)
+            _outputs[_changeAddress] = {"transfer": {f"{assetname}": float(delta).__round__(8)  }}
+            
+            for ad in amounts:
+                _outputs[ad] = {"transfer": {f"{assetname}": float(amounts[ad]).__round__(8)  }}
+                
+            return self.DoTransaction(_input, _outputs,_changeAddress, _fund, _sign, _execute)
+        
+        return None
+    
+    def sendSameAsset_Many(self, assetname, amount, adresses=[], pwd='', _changeAddress='', _fund=True, _sign=True, _execute=True):
+        
+        _amounts = {}
+        for ad in adresses:
+            _amounts[ad] = amount
+            
+        return self.sendAsset_Many(assetname, _amounts, pwd, _changeAddress, _fund, _sign, _execute)
+    
+    
+    
+    
+    
+    
+    def TEST_SendMultiRaven(self):
+        _res = self.sendSameRVN_Many(10.00, ['moKtQws16N6jZRhzHpW1VuP8bJZUqPaKwp','n4e3opUm6sRsbwmkQrHBy82U73o19Dq4hL'], '', 'munRj4MDDka4nv9FnxUrSq6KF55DPpdCCi')
+        self.logger.info(f"TEST_SendMultiRaven result : {_res}")
+        return _res
+    
+    
+    def TEST_SendMultiAssets(self):
+        _res = self.sendSameAsset_Many("WXRAVEN/P2P_MARKETPLACE/TEST", 10.00,  ['moKtQws16N6jZRhzHpW1VuP8bJZUqPaKwp','n4e3opUm6sRsbwmkQrHBy82U73o19Dq4hL'], '', 'munRj4MDDka4nv9FnxUrSq6KF55DPpdCCi')
+        self.logger.info(f"TEST_SendMultiRaven result : {_res}")
+        return _res
+    
+    
+    
+    #
+    # Do not use
+    #
+    def TEST_SendMultiAssetsCombine(self):
+        _resOne = self.sendSameAsset_Many("WXRAVEN/P2P_MARKETPLACE/TEST", 10.00,  ['moKtQws16N6jZRhzHpW1VuP8bJZUqPaKwp','n4e3opUm6sRsbwmkQrHBy82U73o19Dq4hL', 'mvdHRpBif1hAFiNX8fbeQFLEWwjiNbXyn6', 'mvhFhxfUmYTHY3hVL1wZzh4sJTQJoMRFWo'], '', 'munRj4MDDka4nv9FnxUrSq6KF55DPpdCCi', _fund=False, _sign=True, _execute=False)
+        _resTwo = self.sendSameAsset_Many("WXRAVEN/P2P_MARKETPLACE/TEST", 10.00,  ['moKtQws16N6jZRhzHpW1VuP8bJZUqPaKwp','n4e3opUm6sRsbwmkQrHBy82U73o19Dq4hL', 'mvdHRpBif1hAFiNX8fbeQFLEWwjiNbXyn6', 'mvhFhxfUmYTHY3hVL1wZzh4sJTQJoMRFWo'], '', 'munRj4MDDka4nv9FnxUrSq6KF55DPpdCCi', _fund=False, _sign=True, _execute=False)
+        
+        self.logger.info(f"R1 : {_resOne}")
+        self.logger.info(f"R2 : {_resTwo}")
+        _res=None
+        if _resOne != None and _resTwo != None:
+            _res= self.CombineTransaction([_resOne['hex'], _resTwo['hex']],_fund=True, _sign=True, _execute=True)
+            
+        self.logger.info(f"TEST_SendMultiRaven result : {_res}")
+        return _res
+    #
+    #
+    #
+    #
+    #
+    #   offline and various
+    #
+    #
+    #
     
     
     """
@@ -271,7 +703,7 @@ class RVNpyRPC_Wallet():
         try:
                 resp = requests.get(url=url)
         except:
-                print("ERROR : getBalanceOffline() - Unable to parse endpoint")
+                self.logger.error("ERROR : getBalanceOffline() - Unable to parse endpoint")
                 
         jsonData = resp.json()
         
@@ -287,30 +719,30 @@ class RVNpyRPC_Wallet():
         
         
         
-        #print(f" Wallet addres input ({str(type(walletAdress))})= {walletAdress}")
+        #self.logger.info(f" Wallet addres input ({str(type(walletAdress))})= {walletAdress}")
         
-        #print(self.RPCconnexion)
+        #self.logger.info(self.RPCconnexion)
         
         searchAdressListJSON = {"addresses":[]}
         searchAdressList = []
         
-        #dPrint("getaddressbalance " + walletAdress)
+        #dself.logger.info("getaddressbalance " + walletAdress)
 
         if walletAdress=="*" or walletAdress == None:
             searchAdressList.append('*')
         
         if str(type(walletAdress)) == "<class 'str'>":
             if walletAdress.__contains__(","):
-                print(f"CHECK STRING {walletAdress}")
+                self.logger.info(f"CHECK STRING {walletAdress}")
                 #for i in walletAdress.split(","): 
-                    #print(i) 
+                    #self.logger.info(i) 
                     #searchAdressList.append(i)  
             else:
                 searchAdressList.append(walletAdress) 
         else:
                 searchAdressList = walletAdress
         searchAdressListJSON["addresses"] = searchAdressList    
-        #print(searchAdressListJSON)
+        #self.logger.info(searchAdressListJSON)
         #response = self.__runRPCmethod__("getaddressbalance", [searchAdressListJSON ,showAsset])
         response = self.RPCconnexion.getaddressbalance(searchAdressListJSON ,showAsset)
         return response    
@@ -327,7 +759,7 @@ class RVNpyRPC_Wallet():
         searchAdressListJSON = {"addresses":[walletAdress],"assetName":specificAsset}
         response = self.RPCconnexion.getaddressdeltas(searchAdressListJSON)['result']
         
-        #print("checkaddresseUnspent :" + str(walletAdress))
+        #self.logger.info("checkaddresseUnspent :" + str(walletAdress))
         
         _matchs = []
         
@@ -335,16 +767,16 @@ class RVNpyRPC_Wallet():
             if _transactions['satoshis'] < 0:
                 
                 _txid = _transactions['txid']
-                #print("Scan TX with negative value")
+                #self.logger.info("Scan TX with negative value")
                 #_transactionDetails = self.RPCconnexion.gettransaction(_txid)['result']
                 
                 _count = 1
                 _lastTx  = self.RPCconnexion.gettxout(_txid,0)
                 
-                #print(_lastTx)
+                #self.logger.info(_lastTx)
                 while _lastTx != None:
                     
-                    #print(f"Scan TX {_count} with negative value")
+                    #self.logger.info(f"Scan TX {_count} with negative value")
                     
                     if _lastTx.__contains__("result"):
                         if _lastTx['result'] != None:
@@ -356,18 +788,18 @@ class RVNpyRPC_Wallet():
                                         
                                         if not _matchs.__contains__(ad):
                                             _matchs.append(ad)
-                                        #print(f"add {ad} ")
+                                        #self.logger.info(f"add {ad} ")
                                     
                                     
                             except Exception as e:
                                 pass
-                                #print(f"error in transaction {_count} scan {e}")
+                                #self.logger.info(f"error in transaction {_count} scan {e}")
                         else:
                             break        
                     
                     _count = _count+1 
                     _lastTx  = self.RPCconnexion.gettxout(_txid,_count)
-                    #print(_lastTx)
+                    #self.logger.info(_lastTx)
                             
                             
                             

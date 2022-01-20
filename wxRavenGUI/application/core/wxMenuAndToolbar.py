@@ -9,7 +9,7 @@ import inspect
 import threading
 import time 
 import wx.aui  as aui
-
+import logging
 
 from wxRavenGUI.view import *
 
@@ -33,7 +33,7 @@ class MenuAndToolBarManager(object):
         self.setupToolBar()
         self.setupStatusBar()
         
-        
+        self.logger = logging.getLogger('wxRaven')
         
         self._aboutDialog = None
         
@@ -64,7 +64,7 @@ class MenuAndToolBarManager(object):
     
     
     def __PostReadyLoader__(self, evt=None):
-        print("__PostReadyLoader__")
+        self.logger.info("__PostReadyLoader__")
         self.InitPluginsShortcutToolbars()
     
     
@@ -74,7 +74,7 @@ class MenuAndToolBarManager(object):
             _source = str(inspect.stack()[1][0])
             self.parentframe.Log( message, source=str(_source), type=type)
         except Exception as e:
-            print("RaiseMenuAndToolLog() " + str(e))  
+            self.logger.error("RaiseMenuAndToolLog() " + str(e))  
     
     
     
@@ -116,7 +116,7 @@ class MenuAndToolBarManager(object):
         
         self.parentframe.wxRavenStatusBar.SetStatusText(networkName, 1)
         
-        #print("test")
+        #self.logger.info("test")
         
         """
         icon = wx.Bitmap( u"res/default_style/normal/mainnet.png", wx.BITMAP_TYPE_ANY )
@@ -163,7 +163,7 @@ class MenuAndToolBarManager(object):
         self.parentframe.Views.UpdateGUIManager()
     
     def OnContextMenu_ShowNetworkList(self, event):
-        #print("showConnexionList!")
+        #self.logger.info("showConnexionList!")
         self.refreshNetworkMenuItemList()
         self.showNetworkListMenu()
         
@@ -171,7 +171,7 @@ class MenuAndToolBarManager(object):
     
     def getToggleConsoleLogStateIsChecked(self):
         res=False
-        #print(self.parentframe.m_showConsoleLog.GetState())
+        #self.logger.info(self.parentframe.m_showConsoleLog.GetState())
         if self.parentframe.m_auiToolBar2.GetToolToggled(self.parentframe.m_showConsoleLog.GetId()):
         #if self.parentframe.m_showConsoleLog.GetState() in [32 ,34 ] :
             res=True
@@ -191,13 +191,13 @@ class MenuAndToolBarManager(object):
         vmgr = self.parentframe.Views 
         
         if vmgr.isViewVisible('Error Log Console'):
-            #print("Error Log Console visible")
+            #self.logger.info("Error Log Console visible")
             cs = self.parentframe.m_showConsoleLog.GetState()
             #self.parentframe.m_showConsoleLog.SetState(34)
             self.parentframe.m_auiToolBar2.ToggleTool(self.parentframe.m_showConsoleLog.GetId(), True)
             self.parentframe.Views.UpdateView("Error Log Console")
         else:
-            #print("Error Log Console NOT visible")
+            #self.logger.info("Error Log Console NOT visible")
             #self.parentframe.m_showConsoleLog.SetState(2)
             self.parentframe.m_auiToolBar2.ToggleTool(self.parentframe.m_showConsoleLog.GetId(), False)
             #ts = 34
@@ -206,7 +206,7 @@ class MenuAndToolBarManager(object):
     
     def OnToggleConsoleLog(self, event):
         
-        print('OnToggleConsoleLog')
+        self.logger.info('OnToggleConsoleLog')
         if self.getToggleConsoleLogStateIsChecked():
             self.parentframe.Views.OpenView("Error Log Console", "General", True)    
         else:
@@ -270,7 +270,7 @@ class MenuAndToolBarManager(object):
     
     def OnToggleViewShortcutToolbar(self, evt):
         _disp = self.parentframe.m_auiToolBar2.GetToolToggled(self.parentframe.m_showViewShortcutToolbar.GetId())
-        #print(_disp)
+        #self.logger.info(_disp)
         
         _pan = self.parentframe.m_mgr.GetPane('ViewsShortcutToolbar')
         
@@ -318,7 +318,7 @@ class MenuAndToolBarManager(object):
     def refreshNetworkMenuItemList(self):
         
         
-        #print(self.rpcConnexions_dropdown_menu.GetMenuItemCount())
+        #self.logger.info(self.rpcConnexions_dropdown_menu.GetMenuItemCount())
         if self.parentframe.rpcConnexions_dropdown_menu.GetMenuItemCount() > 0:
             
             for i in self.parentframe.rpcConnexions_dropdown_menu.GetMenuItems():
@@ -327,7 +327,7 @@ class MenuAndToolBarManager(object):
         
         for text in self.parentframe.ConnexionManager.getAllConnexions() :
             
-            #print(text)
+            #self.logger.info(text)
             #item = self.rpcConnexions_dropdown_menu.Append(-1, text)
             item = self.parentframe.rpcConnexions_dropdown_menu.AppendRadioItem(-1, text)
              
@@ -437,7 +437,7 @@ class MenuAndToolBarManager(object):
             
             self.parentframe.Bind(wx.EVT_MENU, self.OnToggleViewShortcut, item)
         
-            #print(self._pluginsToolbars)
+            #self.logger.info(self._pluginsToolbars)
         #for _views in _allViews:
         #    pass
         #    item = self.PluginsViewsMenuShortcuts.AppendRadioItem(-1, _views['name'])
@@ -479,9 +479,9 @@ class MenuAndToolBarManager(object):
         # MENU
         #
         
-        #print(f"{evt}")
-        #print(f"OnToggleViewShortcut STRING {evt.GetString()}")
-        #print(f"OnToggleViewShortcut ID {evt.GetId()}")
+        #self.logger.info(f"{evt}")
+        #self.logger.info(f"OnToggleViewShortcut STRING {evt.GetString()}")
+        #self.logger.info(f"OnToggleViewShortcut ID {evt.GetId()}")
         
         
         _item = self.__getToolbarItem__(str(evt.GetId()))
@@ -505,7 +505,7 @@ class MenuAndToolBarManager(object):
                     
                 self.__showPluginToolbar__(_label, False)
             
-            #print(_label)
+            #self.logger.info(_label)
         #evt.GetMenuId()
         
         _p = self.parentframe.GetPlugin('General')
@@ -517,9 +517,9 @@ class MenuAndToolBarManager(object):
         #
         # Toolbar
         #
-        #print(f"{evt}")
-        #print(f"OnPluginToolbarItemClick ID {evt.GetId()}")
-        #print(f"OnPluginToolbarItemClick STR {evt.GetString()}")
+        #self.logger.info(f"{evt}")
+        #self.logger.info(f"OnPluginToolbarItemClick ID {evt.GetId()}")
+        #self.logger.info(f"OnPluginToolbarItemClick STR {evt.GetString()}")
         
         
         
@@ -527,7 +527,7 @@ class MenuAndToolBarManager(object):
         if _item != None:
             pass
             _label = _item.GetLabel()
-            print(_label)
+            self.logger.info(_label)
             
             self.parentframe.Views.OpenView(_label, createIfNull=True)
         #_tb = self._pluginsToolbars[evt.GetId()]
@@ -574,20 +574,20 @@ class MenuAndToolBarManager(object):
             
             self.purgeViewsListMenu(menuObject)
             
-            #print("allv"+str(allViews))
+            #self.logger.info("allv"+str(allViews))
             
             
             
             for framedata in allViews:
                 #framedata = allViews[frameName]
                 
-                #print("r="+str(framedata))
+                #self.logger.info("r="+str(framedata))
                 
                 title = framedata['title']
                 icon = framedata['icon']
                 name = framedata['name']
                 
-                #print(icon)
+                #self.logger.info(icon)
                 
                 #item = self.parentframe.wxRavenMenuBar_Window_Views.Append(-1, name)
                 item = menuObject.Append(-1, name)
@@ -624,7 +624,7 @@ class MenuAndToolBarManager(object):
             itemOther = menuObject.Append(-1, "Other...")
             self.parentframe.Bind(wx.EVT_MENU, self.OnViewItemOther, itemOther)
         except Exception as e:
-            #print(" > refreshViewsListMenu " + str(e))
+            #self.logger.info(" > refreshViewsListMenu " + str(e))
             self.RaiseMenuAndToolLog("Unable to refresh view list menu : "+ str(e), "error")
         
         
@@ -635,7 +635,7 @@ class MenuAndToolBarManager(object):
             item = self.PopupViewMenu.FindItemById(event.GetId())
         text = item.GetItemLabelText()
         self.RaiseMenuAndToolLog("Not implemented.", "msg")
-        #print("to do, a dialog with a list of available views")    
+        #self.logger.info("to do, a dialog with a list of available views")    
     
     
     def OnViewShowAll(self, event):
@@ -645,7 +645,7 @@ class MenuAndToolBarManager(object):
             item = self.PopupViewMenu.FindItemById(event.GetId())
         text = item.GetItemLabelText()
         
-        #print("showall")
+        #self.logger.info("showall")
         
         self.parentframe.Views.ShowAllActiveViews()
         
@@ -656,7 +656,7 @@ class MenuAndToolBarManager(object):
             item = self.PopupViewMenu.FindItemById(event.GetId())
         text = item.GetItemLabelText()    
     
-        #print("destroy all")
+        #self.logger.info("destroy all")
         self.parentframe.Views.DestroyAllNonVisible()
         
         
@@ -678,7 +678,7 @@ class MenuAndToolBarManager(object):
         
         self.parentframe.Views.OpenView(text)
         
-        #print("viewInstance="+str(viewInstance))
+        #self.logger.info("viewInstance="+str(viewInstance))
     
     
     

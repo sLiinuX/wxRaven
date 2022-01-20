@@ -181,6 +181,11 @@ class wxRavenP2PMarket_NewAdDialog ( wx.Panel ):
 		self.m_toggleRawTxDatas = wx.ToggleButton( self.m_assistantPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 32,-1 ), 0 )
 		bSizer121.Add( self.m_toggleRawTxDatas, 0, wx.ALL, 5 )
 		
+		self.m_bpButtonCreateUTXO = wx.BitmapButton( self.m_assistantPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/new_utxo.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_bpButtonCreateUTXO.SetToolTipString( u"Pre-Create UTXO's (Recomended when trying to sell multiple orders)" )
+		
+		bSizer121.Add( self.m_bpButtonCreateUTXO, 0, wx.ALL, 5 )
+		
 		bSizer118 = wx.BoxSizer( wx.VERTICAL )
 		
 		self.m_staticText56 = wx.StaticText( self.m_assistantPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -287,6 +292,7 @@ class wxRavenP2PMarket_NewAdDialog ( wx.Panel ):
 		self.m_AdKeyword.Bind( wx.EVT_TEXT, self.OnKeywordChanged )
 		self.m_txMethod.Bind( wx.EVT_CHOICE, self.OnTxMethodChanged )
 		self.m_toggleRawTxDatas.Bind( wx.EVT_TOGGLEBUTTON, self.OnToggleRawTxData )
+		self.m_bpButtonCreateUTXO.Bind( wx.EVT_BUTTON, self.OnCreateUTXODialogClicked )
 		self.m_AdP2PChannelChoice.Bind( wx.EVT_CHOICE, self.OnP2PChannelChanged )
 		self.m_PreviewAdBt.Bind( wx.EVT_BUTTON, self.OnPreviewAdButtonClick )
 		self.m_GeneraeteAdBt.Bind( wx.EVT_BUTTON, self.OnGenerateButtonClick )
@@ -320,6 +326,9 @@ class wxRavenP2PMarket_NewAdDialog ( wx.Panel ):
 	def OnToggleRawTxData( self, event ):
 		event.Skip()
 	
+	def OnCreateUTXODialogClicked( self, event ):
+		event.Skip()
+	
 	def OnP2PChannelChanged( self, event ):
 		event.Skip()
 	
@@ -337,7 +346,7 @@ class wxRavenP2PMarket_NewAdDialog ( wx.Panel ):
 class wxRavenAtomicSwapPanel ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 483,310 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 611,310 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer109 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -405,6 +414,9 @@ class wxRavenAtomicSwapPanel ( wx.Panel ):
 		
 		self.m_AdAssetQt = wx.TextCtrl( self.m_atomicswapPanel, wx.ID_ANY, u"1", wx.DefaultPosition, wx.DefaultSize, wx.TE_RIGHT )
 		bSizer12.Add( self.m_AdAssetQt, 1, wx.ALL, 5 )
+		
+		self.m_owningAssetVerifBitmap = wx.StaticBitmap( self.m_atomicswapPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/help_contents.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer12.Add( self.m_owningAssetVerifBitmap, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
 		bSizer41.Add( bSizer12, 1, wx.EXPAND, 5 )
@@ -479,9 +491,7 @@ class wxRavenAtomicSwapPanel ( wx.Panel ):
 		
 		bSizer146.Add( self.m_staticText70, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.m_orderCount = wx.SpinCtrl( self.m_atomicswapPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 1, 1 )
-		self.m_orderCount.Enable( False )
-		
+		self.m_orderCount = wx.SpinCtrl( self.m_atomicswapPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 1000, 1 )
 		bSizer146.Add( self.m_orderCount, 0, wx.ALL, 5 )
 		
 		
@@ -1019,9 +1029,41 @@ class wxRavenP2PMarket_MarketPlaceListingPanel ( wx.Panel ):
 class wxRavenDecodeTxPanel ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 567,476 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 567,519 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer230 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_OrderNavigationPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer334 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_buttonPrevious = wx.BitmapButton( self.m_OrderNavigationPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/nav_backward.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer334.Add( self.m_buttonPrevious, 0, wx.ALL, 5 )
+		
+		self.m_staticText185 = wx.StaticText( self.m_OrderNavigationPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText185.Wrap( -1 )
+		bSizer334.Add( self.m_staticText185, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap133 = wx.StaticBitmap( self.m_OrderNavigationPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/order_icon30.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer334.Add( self.m_bitmap133, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText186 = wx.StaticText( self.m_OrderNavigationPanel, wx.ID_ANY, u"ORDER : 1/?", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText186.Wrap( -1 )
+		self.m_staticText186.SetFont( wx.Font( 11, 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer334.Add( self.m_staticText186, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText187 = wx.StaticText( self.m_OrderNavigationPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText187.Wrap( -1 )
+		bSizer334.Add( self.m_staticText187, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_buttonNext = wx.BitmapButton( self.m_OrderNavigationPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/nav_forward.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer334.Add( self.m_buttonNext, 0, wx.ALL, 5 )
+		
+		
+		self.m_OrderNavigationPanel.SetSizer( bSizer334 )
+		self.m_OrderNavigationPanel.Layout()
+		bSizer334.Fit( self.m_OrderNavigationPanel )
+		bSizer230.Add( self.m_OrderNavigationPanel, 0, wx.EXPAND |wx.ALL, 5 )
 		
 		self.m_TXDetailsPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer255 = wx.BoxSizer( wx.VERTICAL )
@@ -1207,23 +1249,6 @@ class wxRavenDecodeTxPanel ( wx.Panel ):
 		
 		bSizer256.Add( bSizer23152, 1, wx.EXPAND, 5 )
 		
-		bSizer231521 = wx.BoxSizer( wx.HORIZONTAL )
-		
-		self.m_bitmap7251 = wx.StaticBitmap( self.m_TXInputPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/raw_datas.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer231521.Add( self.m_bitmap7251, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-		
-		self.m_staticText111521 = wx.StaticText( self.m_TXInputPanel, wx.ID_ANY, u"Order Number", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText111521.Wrap( -1 )
-		self.m_staticText111521.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
-		
-		bSizer231521.Add( self.m_staticText111521, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-		
-		self.m_spinCtrl7 = wx.SpinCtrl( self.m_TXInputPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 3, 1 )
-		bSizer231521.Add( self.m_spinCtrl7, 2, wx.ALL, 5 )
-		
-		
-		bSizer256.Add( bSizer231521, 0, wx.EXPAND, 5 )
-		
 		
 		self.m_TXInputPanel.SetSizer( bSizer256 )
 		self.m_TXInputPanel.Layout()
@@ -1235,11 +1260,25 @@ class wxRavenDecodeTxPanel ( wx.Panel ):
 		
 		bSizer313 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_CloseButton = wx.Button( self.m_InteractionPanel, wx.ID_ANY, u"Close", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer313.Add( self.m_CloseButton, 1, wx.ALL, 5 )
+		self.m_CloseButtonOLD = wx.Button( self.m_InteractionPanel, wx.ID_ANY, u"Close", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_CloseButtonOLD.Hide()
 		
-		self.m_completeButton = wx.Button( self.m_InteractionPanel, wx.ID_ANY, u"Complete Tx", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer313.Add( self.m_CloseButtonOLD, 1, wx.ALL, 5 )
+		
+		self.m_completeButtonOLD = wx.Button( self.m_InteractionPanel, wx.ID_ANY, u"Complete Tx", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_completeButtonOLD.Enable( False )
+		self.m_completeButtonOLD.Hide()
+		
+		bSizer313.Add( self.m_completeButtonOLD, 1, wx.ALL, 5 )
+		
+		self.m_CloseButton = wx.BitmapButton( self.m_InteractionPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/close_button.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_CloseButton.SetMinSize( wx.Size( -1,40 ) )
+		
+		bSizer313.Add( self.m_CloseButton, 0, wx.ALL, 5 )
+		
+		self.m_completeButton = wx.BitmapButton( self.m_InteractionPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/complete_order_button.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
 		self.m_completeButton.Enable( False )
+		self.m_completeButton.SetMinSize( wx.Size( -1,40 ) )
 		
 		bSizer313.Add( self.m_completeButton, 1, wx.ALL, 5 )
 		
@@ -1250,14 +1289,18 @@ class wxRavenDecodeTxPanel ( wx.Panel ):
 		self.m_InteractionPanel.SetSizer( bSizer312 )
 		self.m_InteractionPanel.Layout()
 		bSizer312.Fit( self.m_InteractionPanel )
-		bSizer230.Add( self.m_InteractionPanel, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+		bSizer230.Add( self.m_InteractionPanel, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 		
 		
 		self.SetSizer( bSizer230 )
 		self.Layout()
 		
 		# Connect Events
-		self.m_SignedPartialText.Bind( wx.EVT_TEXT, self.OnRawDataChanged )
+		self.m_buttonPrevious.Bind( wx.EVT_BUTTON, self.OnPreviousOrder )
+		self.m_buttonNext.Bind( wx.EVT_BUTTON, self.OnNextOrder )
+		self.m_SignedPartialText.Bind( wx.EVT_TEXT, self.OnRawDataInputChanged )
+		self.m_CloseButtonOLD.Bind( wx.EVT_BUTTON, self.OnCloseParent )
+		self.m_completeButtonOLD.Bind( wx.EVT_BUTTON, self.OnCompleteTx )
 		self.m_CloseButton.Bind( wx.EVT_BUTTON, self.OnCloseParent )
 		self.m_completeButton.Bind( wx.EVT_BUTTON, self.OnCompleteTx )
 	
@@ -1266,13 +1309,132 @@ class wxRavenDecodeTxPanel ( wx.Panel ):
 	
 	
 	# Virtual event handlers, overide them in your derived class
-	def OnRawDataChanged( self, event ):
+	def OnPreviousOrder( self, event ):
+		event.Skip()
+	
+	def OnNextOrder( self, event ):
+		event.Skip()
+	
+	def OnRawDataInputChanged( self, event ):
 		event.Skip()
 	
 	def OnCloseParent( self, event ):
 		event.Skip()
 	
 	def OnCompleteTx( self, event ):
+		event.Skip()
+	
+	
+	
+
+###########################################################################
+## Class wxRavenP2PMarket_CreateUTXO
+###########################################################################
+
+class wxRavenP2PMarket_CreateUTXO ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 513,144 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer329 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer330 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap126 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer330.Add( self.m_bitmap126, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText178 = wx.StaticText( self, wx.ID_ANY, u"UTXO Asset :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText178.Wrap( -1 )
+		bSizer330.Add( self.m_staticText178, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_AssetChoiceChoices = []
+		self.m_AssetChoice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_AssetChoiceChoices, 0 )
+		self.m_AssetChoice.SetSelection( 0 )
+		bSizer330.Add( self.m_AssetChoice, 1, wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer330, 0, wx.EXPAND, 5 )
+		
+		bSizer333 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap129 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/help_contents.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer333.Add( self.m_bitmap129, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText182 = wx.StaticText( self, wx.ID_ANY, u"Available : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText182.Wrap( -1 )
+		self.m_staticText182.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer333.Add( self.m_staticText182, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_availableText = wx.StaticText( self, wx.ID_ANY, u"0.0", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_availableText.Wrap( -1 )
+		bSizer333.Add( self.m_availableText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer333, 0, wx.ALIGN_RIGHT, 5 )
+		
+		bSizer332 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap127 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/supply_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer332.Add( self.m_bitmap127, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText179 = wx.StaticText( self, wx.ID_ANY, u"Amount :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText179.Wrap( -1 )
+		bSizer332.Add( self.m_staticText179, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_AssetAmount = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer332.Add( self.m_AssetAmount, 0, wx.ALL, 5 )
+		
+		self.m_staticText184 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText184.Wrap( -1 )
+		bSizer332.Add( self.m_staticText184, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap128 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/formula.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer332.Add( self.m_bitmap128, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText180 = wx.StaticText( self, wx.ID_ANY, u"UTXO's :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText180.Wrap( -1 )
+		bSizer332.Add( self.m_staticText180, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_UTXOcount = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 1000, 1 )
+		bSizer332.Add( self.m_UTXOcount, 0, wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer332, 0, wx.EXPAND, 5 )
+		
+		bSizer331 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_CreateUTXOButton = wx.Button( self, wx.ID_ANY, u"Create !", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer331.Add( self.m_CreateUTXOButton, 0, wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer331, 0, wx.ALIGN_RIGHT, 5 )
+		
+		
+		self.SetSizer( bSizer329 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_AssetChoice.Bind( wx.EVT_CHOICE, self.OnAssetChanged )
+		self.m_AssetAmount.Bind( wx.EVT_TEXT, self.OnAmountChanged )
+		self.m_UTXOcount.Bind( wx.EVT_SPINCTRL, self.OnUTXOChanged )
+		self.m_CreateUTXOButton.Bind( wx.EVT_BUTTON, self.OnClickCreateUTXO )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnAssetChanged( self, event ):
+		event.Skip()
+	
+	def OnAmountChanged( self, event ):
+		event.Skip()
+	
+	def OnUTXOChanged( self, event ):
+		event.Skip()
+	
+	def OnClickCreateUTXO( self, event ):
 		event.Skip()
 	
 
@@ -1451,7 +1613,7 @@ class wxRavenP2PMarket_Settings ( wx.Panel ):
 class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 465,374 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 527,374 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer74 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -1503,6 +1665,23 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 		
 		bSizer74.Add( bSizer76, 0, wx.EXPAND, 5 )
 		
+		bSizer782 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap991 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/atomic_swap.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer782.Add( self.m_bitmap991, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText92 = wx.StaticText( self, wx.ID_ANY, u"Atomic Swap Address :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText92.Wrap( -1 )
+		bSizer782.Add( self.m_staticText92, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_AddressSwapChoices = []
+		self.m_AddressSwap = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_AddressSwapChoices, 0 )
+		self.m_AddressSwap.SetSelection( 0 )
+		bSizer782.Add( self.m_AddressSwap, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer74.Add( bSizer782, 0, wx.EXPAND, 5 )
+		
 		self.m_staticline21 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		bSizer74.Add( self.m_staticline21, 0, wx.EXPAND|wx.ALL, 5 )
 		
@@ -1541,11 +1720,20 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 		
 		self.m_staticText911 = wx.StaticText( self, wx.ID_ANY, u"Keeps my trades locked", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText911.Wrap( -1 )
-		bSizer7811.Add( self.m_staticText911, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		bSizer7811.Add( self.m_staticText911, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_staticText165 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText165.Wrap( -1 )
-		bSizer7811.Add( self.m_staticText165, 0, wx.ALL, 5 )
+		bSizer7811.Add( self.m_staticText165, 1, wx.ALL, 5 )
+		
+		self.m_bitmap25121 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/import_log.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7811.Add( self.m_bitmap25121, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_importButton = wx.Button( self, wx.ID_ANY, u"Import", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7811.Add( self.m_importButton, 0, wx.ALL, 5 )
+		
+		self.m_bitmap2512 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/clear_co.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7811.Add( self.m_bitmap2512, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_wipeButton = wx.Button( self, wx.ID_ANY, u"Wipe Session", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer7811.Add( self.m_wipeButton, 0, wx.ALL, 5 )
@@ -1598,6 +1786,7 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 		self.Layout()
 		
 		# Connect Events
+		self.m_importButton.Bind( wx.EVT_BUTTON, self.OnDoImportTradeSessions )
 		self.m_wipeButton.Bind( wx.EVT_BUTTON, self.OnDoWipeTradeSessions )
 		self.m_unlockAll.Bind( wx.EVT_BUTTON, self.OnDoUnlockAll )
 		self.m_initMyMarketPlace.Bind( wx.EVT_BUTTON, self.OnDoInitMyMarketPlace )
@@ -1607,6 +1796,9 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def OnDoImportTradeSessions( self, event ):
+		event.Skip()
+	
 	def OnDoWipeTradeSessions( self, event ):
 		event.Skip()
 	

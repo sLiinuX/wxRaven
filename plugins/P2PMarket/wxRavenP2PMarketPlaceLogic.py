@@ -79,6 +79,7 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         self.m_listCtrl1.Bind(wx.EVT_RIGHT_UP, self.OnRightClick)
         self.m_listCtrl1.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick)
         #self.m_listCtrl1.Bind(wx.EVT_RIGHT_UP, self.OnRightClick)
+        self.m_listCtrl1.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnItemActivated)
         
         
         self.setupTableview()
@@ -112,13 +113,48 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         menuAsset = MarketPlaceAdRightclickPopupMenu(self, self.parent_frame, self._currentItemData)
         
     
+    def OnItemActivated(self, event):
+        self.OpenTxViewAd()
+        
+        
+        
+    
     def OnItemSelected(self, event):
         ##print(event.GetItem().GetTextColour())
+        #_is = self.m_listCtrl1.GetFirstSelected()
+        #print(f"current _is  {_is}")
+        print(f"current event  {event.Index}")
         self._currentItem = event.Index
+        self._currentItem = self.m_listCtrl1.GetItemData(event.Index)
+        print(f"_currentItem  {self._currentItem}")
+        #GetFirstSelected
+        
         itemData = self._datacache[self._currentItem]
         self._currentItemData = itemData
+        #print(f"current item changed {len(self._currentItemData._adTxDatas)}")
+        #print(f"current item changed {type(self._currentItemData._adTxDatas)}")
+        #self.ChangeTxViewIfOpen()
+        #
+    
+    
+    
+    def OpenTxViewAd(self):
+        itemData = self._currentItemData
+        print(f"{itemData}")
+        myPlugin = self.parent_frame.GetPlugin('P2PMarket')
         
-        self.ChangeTxViewIfOpen()
+        _dataEmpty=True
+        if itemData._adTxDatas != None:
+            if itemData._adTxDatas != {}:
+                myPlugin.ShowAdInfos(itemData, openIfnotExist=True)
+                _dataEmpty=False
+        
+        
+        if _dataEmpty :
+            if self.parent_frame.Views.SearchDialog("View TX Infos") != None:
+                myPlugin.ShowAdInfos(None,openIfnotExist=False )
+    
+    
     
     
     def ChangeTxViewIfOpen(self):
@@ -277,6 +313,10 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         info.Text = "Orders"
         self.m_listCtrl1.InsertColumn(7, info)
         
+        info.Align = wx.LIST_FORMAT_RIGHT
+        info.Text = "ID"
+        self.m_listCtrl1.InsertColumn(8, info)
+        
         self.il = wx.ImageList(16, 16)
         
 
@@ -434,9 +474,10 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         self.m_listCtrl1.SetColumnWidth(5, 100)
         self.m_listCtrl1.SetColumnWidth(6, 70)
         self.m_listCtrl1.SetColumnWidth(7, 50)
+        self.m_listCtrl1.SetColumnWidth(8, 20)
         
         self.m_listCtrl1.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        listmix.ColumnSorterMixin.__init__(self, 8)    
+        listmix.ColumnSorterMixin.__init__(self, 9)    
         
  
         self.m_listCtrl1.Thaw()
@@ -472,12 +513,14 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
             self.m_listCtrl1.SetItem(index,5, str(priceComplete))
             self.m_listCtrl1.SetItem(index,6, str(item._adAssetQt))
             #print(str(item._adOrders))
-            self.m_listCtrl1.SetItem(index,7, str(item._adOrders))        
+            self.m_listCtrl1.SetItem(index,7, str(item._adOrders))      
+            
+            self.m_listCtrl1.SetItem(index,8, str(self._cursor))    
                     
             self.m_listCtrl1.SetItemData(index, self._cursor)
                     
             self._datacache[self._cursor] = item
-            self.itemDataMap[self._cursor] = (item._adTitle, item._adType,item._adTxType, str(item._adAddress) ,item._adAsset, float(item._adPrice) ,float(item._adAssetQt), str(item._adOrders))
+            self.itemDataMap[self._cursor] = (item._adTitle, item._adType,item._adTxType, str(item._adAddress) ,item._adAsset, float(item._adPrice) ,float(item._adAssetQt), int(item._adOrders), int(self._cursor))
                     
                     
             print(f"{self._cursor}  {item}")

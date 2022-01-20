@@ -74,7 +74,7 @@ from libs.jsonrpcclient.requests import Request
 from PIL import Image
 import PIL
 
-
+import shutil
 
 
 from ast import literal_eval

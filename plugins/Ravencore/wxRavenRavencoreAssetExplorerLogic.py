@@ -514,7 +514,10 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
     
     def OnItemSelected(self, event):
         ##print(event.GetItem().GetTextColour())
+        print(f"current event  {event.Index}")
         self._currentItem = event.Index
+        self._currentItem = self.m_listCtrl1.GetItemData(event.Index)
+        print(f"_currentItem  {self._currentItem}")
         
         
         itemData = self._datacache[self._currentItem]

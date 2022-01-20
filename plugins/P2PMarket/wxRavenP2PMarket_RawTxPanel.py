@@ -12,7 +12,7 @@ from wxRavenGUI.application.wxcustom import *
 #from libs.RVNpyRPC._P2PmarketPlace import 
 
 from libs.RVNpyRPC._P2PmarketPlace import RavencoinP2PMarketPlaceAd, _P2PMARKET_ID_
-
+import ast
 
 
 
@@ -136,11 +136,22 @@ class wxRavenP2PMarket_RawAtomiSwapWithLogic(wxRavenRawTxPanel):
     '''
     
     def OnRawDataChanged(self, evt):
-        self._newAdObject._adTxDatas = self.m_rawDatasText.GetValue()   
+        
+        _inputRawText=self.m_rawDatasText.GetValue() 
+        jsonData = {}
+        try:
+            jsonData = ast.literal_eval(_inputRawText)
+        except Exception as e:
+            print(e) 
+        self._newAdObject._adTxDatas = jsonData
+        
+        
+        
         if self._newAdObject._adTxDatas == '':
             self._newAdObject._adTxDatas = {}
-        
+        print(f"OnRawDataChanged  {type(self._newAdObject._adTxDatas)}")
         print(f"OnRawDataChanged  {self._newAdObject._adTxDatas}")
+        self.UpdateParentPanelObject()
         
     def UpdateParentPanelObject(self):
         if self.isInternalPanel:

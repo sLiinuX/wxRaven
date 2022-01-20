@@ -4,6 +4,8 @@ Created on 20 déc. 2021
 @author: slinux
 '''
 import datetime
+import logging
+
 
 
 class RVNpyRPC_Utils():
@@ -19,7 +21,7 @@ class RVNpyRPC_Utils():
         #super().__init__(self,connexion)
         self.RPCconnexion = connexion
         self.RVNpyRPC = parent
-    
+        self.logger = logging.getLogger('wxRaven')
     """
     
     End user and sys, return direct usable datas most of the time
@@ -51,6 +53,45 @@ class RVNpyRPC_Utils():
         return self.RVNpyRPC.network.RVN_difficulty_friendly(diff)
     
     
+    
+    
+    
+    
+    
+    
+    def GetTransaction(self, txid):
+        _result = None
+        
+        try:
+            datasRes = self.RPCconnexion.gettransaction(txid)
+            if datasRes['result'] != None:
+                _result = datasRes['result']
+            
+        except Exception as e:
+            self.logger.info(f"DecodeTransaction() ERROR {e}.") 
+    
+        return _result
+    
+    
+    
+    def DecodeTransaction(self, raw):
+        _result = None
+        
+        try:
+            datasRes = self.RPCconnexion.decoderawtransaction(raw)
+            if datasRes['result'] != None:
+                _result = datasRes['result']
+            
+        except Exception as e:
+            self.logger.info(f"DecodeTransaction() ERROR {e}.") 
+    
+        return _result
+    
+    
+    
+    
+    
+    
     def blockHeightToDate(self, height):
         _defaultTime = "???????"
         try:
@@ -59,7 +100,7 @@ class RVNpyRPC_Utils():
             ts = datetime.datetime.fromtimestamp(blockDateTime).strftime('%Y-%m-%d %H:%M:%S')
             _defaultTime = ts
         except Exception as e:
-            print("blockHeightToDate() error.")    
+            self.logger.info("blockHeightToDate() error.")    
             
         return _defaultTime
         

@@ -408,7 +408,7 @@ class wxP2PMarket_TrustedPeers_WithLogic(PluginSettingsPanelObject):
         
         _Panel = wxRavenP2PMarket_TrustedSellers(parent)
         PluginSettingsPanelObject.__init__(self,_Panel, parentFrame, pluginName)
-    
+        self.parent = parent
         #_Panel.SetBackgroundColour( wx.Colour( 217, 228, 255 ) )
         
         
@@ -453,7 +453,7 @@ class wxP2PMarket_TrustedPeers_WithLogic(PluginSettingsPanelObject):
                 _conArr = _con.split('=')
                 _name = _conArr[0]
                 _val = _conArr[1]
-                
+                print(f"addin {_name} as {_val}") 
                 _newList[_name] = _val
 
                 
@@ -463,10 +463,11 @@ class wxP2PMarket_TrustedPeers_WithLogic(PluginSettingsPanelObject):
             
         
         if not _errorsParsing:    
-        
+            
             myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+            print(f"addin {allProviders} ") 
             #myPlugin.PLUGIN_SETTINGS["ipfsgateway_default"]    = default
-            myPlugin.PLUGIN_SETTINGS["p2p_trusted_addresses"]  = allProviders
+            myPlugin.PLUGIN_SETTINGS["p2p_trusted_addresses"]  = _newList
         #print(allProviders)
         #print(default)
         
@@ -559,7 +560,7 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
     
         #_Panel.SetBackgroundColour( wx.Colour( 217, 228, 255 ) )
         
-        
+        self.parent = parent
         self._Panel.m_sameAddressChangeOpt.Bind( wx.EVT_CHECKBOX, self.OnChanged ) 
         self._Panel.m_defaultListingChanel.Bind( wx.EVT_CHECKBOX, self.OnChanged )
         
@@ -567,8 +568,22 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
         self._Panel.m_changeAddressChoiceOpt.Bind( wx.EVT_CHOICE, self.OnChanged )
         self._Panel.m_NetworkChoice.Bind( wx.EVT_CHOICE, self.OnChanged )
         
+        self._Panel.m_AddressSwap.Bind( wx.EVT_CHOICE, self.OnChanged )
+        
         self._Panel.m_keeplocks.Bind( wx.EVT_CHECKBOX, self.OnChanged )
-    
+        
+        self._Panel.m_keeplocks.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        
+        
+        self._Panel.m_importButton.Bind( wx.EVT_BUTTON, self.OnDoImportTradeSessions )
+        self._Panel.m_wipeButton.Bind( wx.EVT_BUTTON, self.OnDoWipeTradeSessions )
+        self._Panel.m_unlockAll.Bind( wx.EVT_BUTTON, self.OnDoUnlockAll )
+        self._Panel.m_initMyMarketPlace.Bind( wx.EVT_BUTTON, self.OnDoInitMyMarketPlace )
+        
+        
+        
+        
+        self.destfile= os.getcwd() + "/userdata/atomicswap_session.cache"
         self.Layout()
     #
     #
@@ -589,6 +604,7 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
          
         p2p_channel_asset_default =  self._Panel.m_NetworkChoice.GetString(self._Panel.m_NetworkChoice.GetCurrentSelection())
         
+        p2p_market_swap_address =  self._Panel.m_AddressSwap.GetString(self._Panel.m_AddressSwap.GetCurrentSelection())
         
         
         
@@ -596,6 +612,7 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
         myPlugin.PLUGIN_SETTINGS["p2p_channel_asset_target_address"] = p2p_channel_asset_target_address
         myPlugin.PLUGIN_SETTINGS["p2p_market_change_address"] = p2p_market_change_address
         myPlugin.PLUGIN_SETTINGS["p2p_channel_asset_default"] = p2p_channel_asset_default
+        myPlugin.PLUGIN_SETTINGS["p2p_market_swap_address"] = p2p_market_swap_address
         
         keep_trades_locked = self._Panel.m_keeplocks.GetValue() 
         myPlugin.PLUGIN_SETTINGS["keep_trades_locked"] = keep_trades_locked
@@ -615,6 +632,8 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
         p2p_channel_asset_target_address = myPlugin.PLUGIN_SETTINGS["p2p_channel_asset_target_address"]
         p2p_market_change_address =  myPlugin.PLUGIN_SETTINGS["p2p_market_change_address"] 
         p2p_channel_asset_default =  myPlugin.PLUGIN_SETTINGS["p2p_channel_asset_default"] 
+        
+        p2p_market_swap_address =  myPlugin.PLUGIN_SETTINGS["p2p_market_swap_address"] 
         
         
         _isSame = False
@@ -675,6 +694,8 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
             for ad in _allmyAddress:
                 self._Panel.m_AddressChoice.Append(ad)
                 self._Panel.m_changeAddressChoiceOpt.Append(ad)
+                self._Panel.m_AddressSwap.Append(ad)
+                
             
         
         
@@ -687,6 +708,11 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
             _dc = self._Panel.m_changeAddressChoiceOpt.FindString(p2p_market_change_address)
             if _dc != wx.NOT_FOUND:
                 self._Panel.m_changeAddressChoiceOpt.SetSelection(_dc)
+        
+        if p2p_market_swap_address != "":
+            _dc = self._Panel.m_AddressSwap.FindString(p2p_market_swap_address)
+            if _dc != wx.NOT_FOUND:
+                self._Panel.m_AddressSwap.SetSelection(_dc)
         
             
         print("LoadPanelSettings")
@@ -728,9 +754,43 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
     
     
     
+    def OnDoImportTradeSessions(self, evt):
+        wildcard = "Cache file (*.cache)|*.cache|"       \
+           "All files (*.*)|*.*"
+        
+        
+        #dest= os.getcwd() + "/userdata/atomicswap_session.cache"   
+           
+        dlg = wx.FileDialog(
+            self.parent, message="Choose a file",
+            defaultDir=os.getcwd(),
+            defaultFile="",
+            wildcard=wildcard,
+            style=wx.FD_OPEN | 
+                  wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST |
+                  wx.FD_PREVIEW
+            )
+        
+        if dlg.ShowModal() == wx.ID_OK:
+            # This returns a Python list of files that were selected.
+            paths = dlg.GetPaths()
+            #print(file)
+            file = paths[0]
+            print(file)
+            print(f'to copy in {self.destfile}')
+            #print(paths[1])
+            import shutil
+            shutil.copy2(file, self.destfile)
+            
+            UserInfo(self._Panel, "Trade session imported !")
+            
+            
+        
+    
     def OnDoWipeTradeSessions(self,evt):
         if UserQuestion(self._Panel, "Do you confirm the trade session wipe ?"):
-            sessionfile = os.getcwd() + f"/userdata/atomicswap_session.cache" 
+            #sessionfile = os.getcwd() + f"/userdata/atomicswap_session.cache" 
+            sessionfile=self.destfile
             
             try:
                 os.remove(sessionfile)

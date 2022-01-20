@@ -21,7 +21,7 @@ from .wxRavenRavencoreAssetExplorerLogic import *
 from .wxRavenRavencoreDesign import *
 from .wxRavenRavencore_NetworkInfosLogic import *
 from .pluginSettings import *
-
+from .wxRavenRavencore_TransactionsViewer_Logic import * 
 
 
 #import the plugin setting panels, from another file to be more simple
@@ -136,7 +136,7 @@ class wxRavenPlugin(PluginObject):
                      'viewid':'Asset Issuer', 
                      'name':'Asset Issuer', 
                      'title':'Asset Issuer', 
-                     'position':'position', 
+                     'position':position, 
                      'icon':self.RessourcesProvider.GetImage('asset_new'), 
                      'class': RavencoreAssetIssuerDialog ,
                      'default':False,
@@ -144,6 +144,16 @@ class wxRavenPlugin(PluginObject):
                      }, 
                     
                     
+                    {
+                     'viewid':'Transactions Viewer', 
+                     'name':'Transactions Viewer', 
+                     'title':'Transactions Viewer', 
+                     'position':'main', 
+                     'icon':self.RessourcesProvider.GetImage('inspect_file'), 
+                     'class': wxRavenP2PMarket_RavencoreTxViewerWithLogic ,
+                     'default':False,
+                     'multipleViewAllowed':True
+                     }, 
                     
                     
         
@@ -194,7 +204,7 @@ class wxRavenPlugin(PluginObject):
                 'filtertype' : False,
                 'filtertypelist' : [],
                 'ipfsgateway_default' : 'https://ravencoinipfs-gateway.com/ipfs/',
-                'ipfsgateway_providers':['https://ravencoinipfs-gateway.com/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/'],
+                'ipfsgateway_providers':['https://ravencoinipfs-gateway.com/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'http://70.81.223.229:8080/ipfs/'],
                 
                 'bookmark_list':['My Assets'],
                 'navigation_use_cache' : True,
