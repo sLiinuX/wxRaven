@@ -141,8 +141,8 @@ class wxRavenPlugin(PluginObject):
         
         
         self.PLUGIN_SETTINGS = {
-                'homepage_url' : "https://ravencoinipfs.com/",
-                'ipfs_rpc_api_ip' : "18.221.217.64",
+                'homepage_url' : "https://ipfs.ravenclause.com/",
+                'ipfs_rpc_api_ip' : "ec2-3-19-32-37.us-east-2.compute.amazonaws.com",
                 'ipfs_rpc_api_ip_bis' : "70.81.223.229",
                 'ipfs_direct_api_ip' : "/ip4/127.0.0.1/tcp/5001",
             }
@@ -168,6 +168,7 @@ class wxRavenPlugin(PluginObject):
         #         it also allow to request those big datas through thread and call update after
         #
         self.setData("_uploadedFiles", {})
+        self.setData("rpcPluginCmdLine", None)
         #self.setData("myPluginData2", False)
         
         
@@ -181,10 +182,31 @@ class wxRavenPlugin(PluginObject):
         # Finally, this last line is MANDATORY to load the default views.
         # REMOVED AND REPLACED BY AN AUTO LOAD
         #self.LoadPluginFrames()
+        self.waitApplicationReady()
+    
+    
+    def waitApplicationReady(self):
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.__applicationReady__,))
+        t.start()
         
+        
+    def __waitLoop_T__(self,callback):
+        while not self.parentFrame._isReady:
+            time.sleep(1)
+            
+        wx.CallAfter(callback, ()) 
     
     
-    
+    def __applicationReady__(self, evt=None):
+        _rpc_ip = self.PLUGIN_SETTINGS['ipfs_rpc_api_ip']
+        _ipfs_direct_api_ip = self.PLUGIN_SETTINGS['ipfs_direct_api_ip']
+        ipfs_rpc = RVNpyIPFS.RavenPyIPFS(ConString=_ipfs_direct_api_ip, rpcServer=_rpc_ip)
+            
+        self.rpcPluginCmdLine = ipfs_rpc
+        self.setData("rpcPluginCmdLine", self.rpcPluginCmdLine)
+        self.parentFrame.GetPlugin("RavenRPC").addLocalVarInShell( self.rpcPluginCmdLine, "ipfs")
+        print("DONE !")
+        
     
     """
     
@@ -263,6 +285,16 @@ class wxRavenPlugin(PluginObject):
     def UploadFileToIPFS_RPC(self, filename):
         t=threading.Thread(target=self.__DoUpload_T__, args=(filename,))
         t.start()
+    
+    
+    def OpenIPFSUploadDialog(self):
+        #_newView = self.LoadView(self.SearchPluginView("IPFS File Uploader"), "dialog")
+        _newView = self.parentFrame.Views.OpenView("IPFS File Uploader", "IPFS", True)
+        if _newView != None:
+            _newView.Show()
+        #_newView = self.parentFrame.Views.OpenView("IPFS File Uploader", "IFPS", True)
+        #if txdatas!="":
+        #    _newView.SetTxId(txdatas)
     
     
     

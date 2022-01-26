@@ -20,7 +20,7 @@ ROOT_PATH = os.getcwd()
 RES_PATH = os.getcwd() + "/res/"
 CONFIG_PATH = os.getcwd() + "/config/"
 PLUGIN_PATH = os.getcwd() + "/plugins/"
-
+USERDATA_PATH = os.getcwd() + "/userdata/"
 
 
 
@@ -48,6 +48,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     MenusAndTool = None
     
     Ressources = None
+    Paths = {}
     
     def __init__(self):
         
@@ -59,7 +60,12 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         #splash.Show()
         
-
+        self.Paths = {'ROOT':os.getcwd(),
+                      'RES' : os.getcwd() + "/res/",
+                      'CONFIG' : os.getcwd() + "/config/",
+                      'PLUGIN' : os.getcwd() + "/plugins/",
+                      'USERDATA' : os.getcwd() + "/userdata/",
+            }
         
         
         
@@ -131,18 +137,21 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         #
         # Environement Variable for the Shells
         #
-        self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Plugins.plugins, "Plugins")
-        self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Views, "Views")
+        #self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Plugins.plugins, "Plugins")
+        #self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Views, "Views")
+        self.GetPlugin("RavenRPC").addLocalVarInShell(  self, "wxRaven")
         
         
         self.Views.OpenView("Welcome", pluginname='', createIfNull=True)
         #self.wxRavenToolBook3.SetArtProvider(wx.aui.AuiSimpleTabArt())
        
         #splash.Close()
+        '''
+        if self.GetPluginSetting('General', 'show_disclaimer'):
+            disclaimer = wxRavenDisclaimerDialogLogic(self)
+            disclaimer.ShowModal()
         
-
-        
-        
+        '''
          
         
     def makeColorPanel(self, color):
@@ -177,6 +186,12 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     def UnregisterOnConnexionChanged(self, callback):
         return self.ConnexionManager.UnregisterOnConnexionChanged(callback)
     
+    
+    def GetPath(self, pathname):
+        _res = self.Paths['ROOT']
+        
+        if self.Paths.__contains__(pathname):
+            _res = self.Paths['ROOT']
     
     
     def GetPlugin(self, pname, loadIfNone = False):
@@ -325,13 +340,16 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     
     
  
-        
-
+    def ForceClose(self):    
+        busy = wx.BusyInfo("One moment please, saving datas...")
+        self.Plugins.CloseAllPlugin()
+        self.Destroy()
+        del busy
         
     def OnClose(self, event):
         
-        busy = wx.BusyInfo("One moment please, saving datas...")
         
+        busy = wx.BusyInfo("One moment please, saving datas...")
         
         self.ConnexionManager.SaveCurrentConnexion()
         self.Settings.SaveSettingsToFile()

@@ -19,15 +19,26 @@ from .wxRavenP2PMarketPlaceLogic import *
 from .wxRavenP2PMarketNewAdDialogLogic import *
 from .wxRavenCreateAtomicSwapLogic import *
 from .wxRavenP2PMarket_CreateUTXOLogic import *
+from .wxRavenP2PMarket_ViewTxInfosPanel import *
+#from plugins.P2PMarket.wxRavenP2PMarket_CreateAirdropLogic import *
+
+
+
+#from .wxRavenP2PMarket_CreateAirdropLogic import *
+#from .wxRavenP2PMarket_CreateAdvertisingLogic import *
+
+
+
 #used for long datas requests
 import threading
 
 
 
 from .pluginSettings import *
-from plugins.P2PMarket.wxRavenP2PMarket_ViewTxInfosPanel import wxRavenP2PMarket_ViewTexInfosDialog
+#from plugins.P2PMarket.wxRavenP2PMarket_ViewTxInfosPanel import wxRavenP2PMarket_ViewTexInfosDialog
 from ast import literal_eval
 import ast
+#from plugins.P2PMarket import wxRavenP2PMarket_CreateAdvertisingLogic
 
 class wxRavenPlugin(PluginObject):
     '''
@@ -63,6 +74,8 @@ class wxRavenPlugin(PluginObject):
         _atomicIconNew =self.RessourcesProvider.GetImage('atomic_swap_new') 
         _utxoIconNew =self.RessourcesProvider.GetImage('new_utxo') 
         _inspectSwap =self.RessourcesProvider.GetImage('inspect_swap') 
+        _airdrop =self.RessourcesProvider.GetImage('airdrop_icon') 
+        _advertise =self.RessourcesProvider.GetImage('advertiser_icon') 
         
         _rawDataIcon =  self.RessourcesProvider.GetImage('raw_datas') 
         
@@ -146,8 +159,40 @@ class wxRavenPlugin(PluginObject):
                      }
                      
         
-                    
+                    ,
+                     
+                     
+                     
                 ]
+        
+        
+        '''
+                     {
+                     'viewid':'Create Airdrop', 
+                     'name':'Create Airdrop', 
+                     'title':'Create Airdrop', 
+                     'position':'dialog', 
+                     'icon':_airdrop, 
+                     'class': wxRavenP2PMarket_CreateAirdropWithLogic,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'toolbar_shortcut': True
+                     }
+                     ,
+                     
+                     
+                     {
+                     'viewid':'Create Advertising', 
+                     'name':'Create Advertising', 
+                     'title':'Create Advertising', 
+                     'position':'dialog', 
+                     'icon':_advertise, 
+                     'class': wxRavenP2PMarket_CreateAdvertisingWithLogic,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'toolbar_shortcut': True
+                     }
+                     '''
         
         
         
@@ -187,6 +232,7 @@ class wxRavenPlugin(PluginObject):
                'p2p_trusted_addresses' : {},
                'include_none_tx' : False,
                'verify_tx' : False,
+               'multiple_ipfs_check_if_none' : True,
                'only_trusted' : False,
                'keep_trades_locked' : True
             }
@@ -244,6 +290,8 @@ class wxRavenPlugin(PluginObject):
         self.setData("P2P_Market_Chanel", '')
         self.setData("thread_running", False)
         self.setData("search_running", False)
+        
+        self.setData("_storage", str(parentFrame.Paths['USERDATA']) + '')
         #self.setData("myPluginData2", False)
         
         
@@ -460,6 +508,9 @@ class wxRavenPlugin(PluginObject):
         t.start()        
         
     def OnNetworkChanged_T(self, networkName=""):  
+        if not self.parentFrame._isReady:
+            return None 
+        
         
         if self.PLUGIN_SETTINGS['p2p_markets_force_network'] == "": 
             t=threading.Thread(target=self.__DoRefreshAllMarkets__)
@@ -494,7 +545,15 @@ class wxRavenPlugin(PluginObject):
                 print(f" searching {keyw} in {str(_fieldValueArray)}")
                 if _fieldValueArray.__contains__(keyw.lower()):
                     _match = True 
+                    print(f"MATCH")
                     break
+            
+                for _fieldKeys in _fieldValueArray:
+                    print(f" searching {keyw} in {str(_fieldKeys)}")
+                    if _fieldKeys.__contains__(keyw.lower()):
+                        _match = True 
+                        print(f"MATCH")
+                        break
             
              
             
@@ -524,15 +583,15 @@ class wxRavenPlugin(PluginObject):
             
             if keywords == []:
                 _match = True
-                print(f" no keyword given match true")
+                #print(f" no keyword given match true")
                 
             if len(keywords) == 0:
                 _match = True
-                print(f" no keyword given match true")
+                #print(f" no keyword given match true")
             
             if len(keywords) == 1 and keywords[0] == "*":
                 _match = True
-                print(f" * keyword given match true")
+                #print(f" * keyword given match true")
             
             
             #
@@ -540,7 +599,8 @@ class wxRavenPlugin(PluginObject):
             if not _match:
                 for _field in searchFields:
                     _match = self.__searchInField__(_field, keywords, itemJson)
-            
+                    if _match:
+                        break
             
             
             
@@ -633,7 +693,13 @@ class wxRavenPlugin(PluginObject):
         include_none_tx  = self.PLUGIN_SETTINGS['include_none_tx']
         verify_tx  = self.PLUGIN_SETTINGS['verify_tx']
         only_trusted  = self.PLUGIN_SETTINGS['only_trusted']
+        multiple_ipfs_check_if_none = self.PLUGIN_SETTINGS['multiple_ipfs_check_if_none']
         
+        
+        ipfsFallbacks = []
+        if multiple_ipfs_check_if_none :
+            _ipfsList =  self.parentFrame.GetPluginSetting('Ravencore', "ipfsgateway_providers")
+            ipfsFallbacks = _ipfsList
         
         print(f"__DoRefreshAllMarkets__")
         print(f"search_limit {search_limit}")
@@ -682,7 +748,7 @@ class wxRavenPlugin(PluginObject):
                 print(f"loading {market_chanel}")
                 _chanelsDatas[market_chanel] = []
                 #_chanelListing = ravencoin.p2pmarket.GetP2PMarketAdsIPFSListingDatas(asset=market_chanel, count=search_limit, ipfs_gateway="specialip", includeNoneTxDatas=include_none_tx) 
-                _chanelListing = ravencoin.p2pmarket.GetP2PMarketAdsIPFSListingDatas(asset=market_chanel, count=search_limit, ipfs_gateway=_ipfsDefault, includeNoneTxDatas=include_none_tx, verifyTx=verify_tx, whitelist=_whiteList) 
+                _chanelListing = ravencoin.p2pmarket.GetP2PMarketAdsIPFSListingDatas(asset=market_chanel, count=search_limit, ipfs_gateway=_ipfsDefault, includeNoneTxDatas=include_none_tx, verifyTx=verify_tx, whitelist=_whiteList, _fallbackIpfsGateways=ipfsFallbacks) 
                 
                 print(f"LOADED ! market_chanel : {market_chanel} = {_chanelListing}")
                 

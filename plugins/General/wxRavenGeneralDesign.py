@@ -213,7 +213,7 @@ class wxRavenWelcomeTab ( wx.Panel ):
 		
 		bSizer25 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.m_richText1 = wx.richtext.RichTextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0|wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS )
+		self.m_richText1 = wx.richtext.RichTextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY|wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS )
 		bSizer25.Add( self.m_richText1, 1, wx.EXPAND |wx.ALL, 1 )
 		
 		
@@ -436,7 +436,7 @@ class wxRavenWelcomeTab ( wx.Panel ):
 class ApplicationSettingPanel ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 574,550 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 594,548 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer3 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -549,6 +549,11 @@ class GeneralSettingPanel ( wx.Panel ):
 	def __init__( self, parent ):
 		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 535,527 ), style = wx.TAB_TRAVERSAL )
 		
+		bSizer132 = wx.BoxSizer( wx.VERTICAL )
+		
+		
+		self.SetSizer( bSizer132 )
+		self.Layout()
 	
 	def __del__( self ):
 		pass

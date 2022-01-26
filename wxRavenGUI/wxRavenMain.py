@@ -10,7 +10,6 @@ from wxRavenGUI.application import *
 import logging
 import time
 import os
-from logging.handlers import TimedRotatingFileHandler
 
 
 class wxRavenMainApp(object):
@@ -28,10 +27,11 @@ class wxRavenMainApp(object):
         Constructor
         '''
         self.app = wx.App()
-        
+        self.doStart=False
         self.appmainframe = None
+        print("> SHOW splashscreen")
         self.splash = SplashScreenMgr(self, None)
-        
+        print("> INIT END splashscreen")
         #self.appmainframe  = wxRavenAppMainFrame()
         #self.splash.SetParent(self.appmainframe)
 

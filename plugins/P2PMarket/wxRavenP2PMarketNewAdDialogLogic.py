@@ -94,7 +94,7 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         self._newAdObject._adPrice=200
         
         self._forceManual = False
-        self.savepath = os.getcwd() + "/userdata/"
+        self.savepath = self.parent_frame.Paths['USERDATA'] + 'p2pmarket/'
         #
         #
         #
@@ -182,16 +182,23 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
             
             
             _hashFile = self.m_AdFileIPFSHash.GetValue()
+            
+            _fakeResult = {'result':None , 'error': {'code':-1, 'message': f"Unknown error, please check logs."}}
+        
+            
             try:
-                ravencoin.p2pmarket.PublishNewP2PAd(self._newAdObject._adP2PChannelAsset, p2p_channel_asset_target_address, _hashFile, p2p_market_change_address, expiration=200000000 )
+                _fakeResult = ravencoin.p2pmarket.PublishNewP2PAd(self._newAdObject._adP2PChannelAsset, p2p_channel_asset_target_address, _hashFile, p2p_market_change_address, expiration=200000000 )
             
-            
-                UserInfo(self, "Your asset is on the P2P Marketplace !")
+                
+                #UserInfo(self, "Your asset is on the P2P Marketplace !")
             
             
             except Exception as e:
                 self.parent_frame.Log("Unable to load publish p2p Market ad." , type="error")
-    
+                _fakeResult = {'result':None , 'error': {'code':-1, 'message': e}}
+        
+            ReportRPCResult(self.parent_frame, _fakeResult, "success", "Your asset is on the P2P Marketplace !", "Unable to publish your ad.", False)
+        
     
     def OnPreviewAdButtonClick(self, evt):
         
@@ -212,6 +219,10 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
         _hasvalidTx = False
         _hasTx = False
         print(self._newAdObject)
+        
+        
+        _fakeResult = {'result':None , 'error': {'code':-1, 'message': f"Unknown error, please check logs."}}
+        
         if self._newAdObject.isEmptyTxData():
             _doCreateSwap = False
             
@@ -293,21 +304,25 @@ class wxRavenP2PMarket_NewAdWithLogic(wxRavenP2PMarket_NewAdDialog):
             if _hash == None:
                 
                 
-                UserInfo(self, f"No IPFS Plugin or an error occured, filed has been saved in {_filtetosave} for manual upload.")
-            
+                #UserInfo(self, f"No IPFS Plugin or an error occured, filed has been saved in {_filtetosave} for manual upload.")
+                UserAdvancedMessage(self.parent_frame, f"No IPFS Plugin or an error occured, filed has been saved in {_filtetosave} for manual upload.", "info", msgdetails=_filtetosave, showCancel=False)
             
             
             
         else:
-            UserError(self, f"An error occured while creating the atomic swap, please retry.")
+            #UserError(self, f"An error occured while creating the atomic swap, please retry.")
+            UserAdvancedMessage(self.parent_frame, f"An error occured while creating the atomic swap, please retry.", "error", msgdetails='', showCancel=False)
             self.m_toggleRawTxDatas.SetValue(True)
             self.SwitchMethodPanel(manual=True)
         
+            
         
         
         if _hash != None :
                 self.m_GeneraeteAdBt.Enable(True)
-                UserInfo(self, f"Ad created, ready for upload.") 
+                #UserInfo(self, f"Ad created, ready for upload.") 
+                UserAdvancedMessage(self.parent_frame, f"Ad created, ready for upload.", "info", msgdetails='', showCancel=False)
+            
         #else:
         #    self.parent_frame.Log("Unable to load upload p2p Market json datas to IPFS." , type="error")        
                    

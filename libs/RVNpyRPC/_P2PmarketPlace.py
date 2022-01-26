@@ -89,6 +89,16 @@ class RavencoinP2PMarketPlaceAd(object):
         self._adPrice = float(self._adPrice)
     
     
+    def __rebuildListIndex__(self):
+        newlist = {}
+        cursor = 0
+        for key in self._adTxDatas:
+            _d =  self._adTxDatas[key]
+            newlist[cursor] = _d
+            cursor = cursor +1
+            
+        self._adTxDatas=newlist
+    
     def isEmptyTxData(self):
         _empty=True 
         if self._adTxDatas != None: 
@@ -100,6 +110,9 @@ class RavencoinP2PMarketPlaceAd(object):
     def __repr__(self, *args, **kwargs):
         return str(self.JSON())
         
+    
+    def GetAvailableOrders(self):
+        return len(self._adTxDatas)
             
     def GetType(self):      
         return  _P2PMARKET_ADTYPES_[self._adType] 
@@ -137,12 +150,12 @@ class RavencoinP2PMarketPlaceAd(object):
         self._adAddress = ad
     
     def Load_JSON(self, jsonData):
-        self.logger.info(f"{type(jsonData)}")
-        self.logger.info(f"{jsonData}")
+        #self.logger.info(f"{type(jsonData)}")
+        #self.logger.info(f"{jsonData}")
         if True:
             if str(type(jsonData)) == "<class 'str'>":
                 jsonData = ast.literal_eval(jsonData)
-                self.logger.info(f"{type(jsonData)}")
+                #self.logger.info(f"{type(jsonData)}")
             #    parsed_data = jsonData.replace("'", '"')
             #    jsonData = json.loads(parsed_data)
         
@@ -172,7 +185,7 @@ class RavencoinP2PMarketPlaceAd(object):
             self._SquawkerProtocolVersion = jsonData['sqp2p_ver'] if jsonData.__contains__('sqp2p_ver') else '0.0'
             
             
-            self.logger.info(f"OK {jsonData}")
+            #self.logger.info(f"OK {jsonData}")
 
     
 class RVNpyRPC_P2P_Marketplace():
@@ -290,11 +303,12 @@ class RVNpyRPC_P2P_Marketplace():
         if Destination != "":
             #ravencoin.p2pmarket.PublishNewP2PAd(self._newAdObject._adP2PChannelAsset, p2p_channel_asset_target_address, _hashFile, p2p_market_change_address, expiration=200000000 )
             #self.RPCconnexion.transfer(ChannelAsset, self.SQUAWKER_PROTOCOLE_MARKET_LISTING_AMMOUNT, Destination,P2PAdFileHash, expiration, ChangeAddress,ChangeAddress )
-            self.RPCconnexion.transferfromaddress(ChannelAsset,Destination, self.SQUAWKER_PROTOCOLE_MARKET_LISTING_AMMOUNT, Destination, P2PAdFileHash,expiration, ChangeAddress,ChangeAddress)
+            return self.RPCconnexion.transferfromaddress(ChannelAsset,Destination, self.SQUAWKER_PROTOCOLE_MARKET_LISTING_AMMOUNT, Destination, P2PAdFileHash,expiration, ChangeAddress,ChangeAddress)
         
         
         else :
             self.logger.info( "destination must be non empty")
+            return None
 
 
     
@@ -349,10 +363,10 @@ class RVNpyRPC_P2P_Marketplace():
     
     def __Load_IPFS_Message__(self, _hash , ipfs_gateway="https://ravencoinipfs-gateway.com/ipfs/"):
         
-        print(ipfs_gateway)
-        print(_hash)
+        #print(ipfs_gateway)
+        #print(_hash)
         
-        self.logger.info(f"loading JSONA {_hash}...")
+        #self.logger.info(f"loading JSONA {_hash}...")
         url = ipfs_gateway+_hash
         self.logger.info(f"loading url {url}...")
         
@@ -361,7 +375,7 @@ class RVNpyRPC_P2P_Marketplace():
         except Exception as e:
             return None
         
-        self.logger.info(f" R {r}...")
+        #self.logger.info(f" R {r}...")
        
         _parsed=False
         _result = None
@@ -372,24 +386,33 @@ class RVNpyRPC_P2P_Marketplace():
                 _result = r.json()
                 _parsed = True
             except Exception as e:
-                self.logger.error("error parsing JSON ")
+                pass
+                #self.logger.error("error parsing JSON ")
             
             if not _parsed or str(type(_result)) == "<class 'str'>":
-                self.logger.info("2nd parsing JSON ")
+                #self.logger.info("2nd parsing JSON ")
                 try:
                     new_str = _result.decode('utf-8')
                     _result = json.loads(new_str)
+                    _parsed = True
                     #my_json = r.content.decode('utf8').replace("'", '"')
                     #data = literal_eval(r.content.decode('utf8'))
                     #_resultI = json.dumps(data, indent=4, sort_keys=True)
                     #_result = json.loads(_resultI)
                 except Exception as e:
-                    self.logger.error("error parsing DICT ")    
+                    pass
+                    #self.logger.error("error parsing DICT ")    
                     
             
             #d=r.json()
-            self.logger.info(f"JSON DATA {type(_result)} = {_result} ")
+            #self.logger.info(f"JSON DATA {type(_result)} = {_result} ")
+        if not   _parsed:
+            self.logger.error("error parsing datas ")  
+            
+        
         return _result
+    
+    
     
     
     
@@ -411,24 +434,27 @@ class RVNpyRPC_P2P_Marketplace():
                     
                     
                     if _scanValidCount > _skipWhenValidCountReached:
-                        return _atLeastOneValid
+                        break
                     
                     _scanValidCount = _scanValidCount+1
                     
                 if not isValid:
                     _iList.append(_order)
         
-        
+        _hasInvalid=False
         if clearList:
             for i in _iList:
+                _hasInvalid=True
                 marketplaceAd._adTxDatas.pop(i)
-                
+        
+        if _hasInvalid:
+            marketplaceAd.__rebuildListIndex__()       
             
         return _atLeastOneValid
     
     
     
-    def GetP2PMarketAdsIPFSListingDatas(self,asset="WXRAVEN/P2P_MARKETPLACE", count=100 , ipfs_gateway="https://ravencoinipfs-gateway.com/ipfs/", blacklist=[], includeNoneTxDatas=False, verifyTx=False, whitelist=[]):
+    def GetP2PMarketAdsIPFSListingDatas(self,asset="WXRAVEN/P2P_MARKETPLACE", count=100 , ipfs_gateway="https://ravencoinipfs-gateway.com/ipfs/", blacklist=[], includeNoneTxDatas=False, verifyTx=False, whitelist=[], _fallbackIpfsGateways=[]):
         
         
         self.__LoadCache__()
@@ -440,13 +466,13 @@ class RVNpyRPC_P2P_Marketplace():
         # Retrieve raw datas with filters blacklist / whitelist
         #
         _RawListing = self.GetP2PMarketAdsRawListing(asset=asset, count=count, blacklist=blacklist, whitelist=whitelist)
-        self.logger.info(f"RAW={_RawListing}")
+        #self.logger.info(f"RAW={_RawListing}")
         _MarketList = {}
         _cursor = 0
         
         for item in _RawListing:
             
-            self.logger.info(item)
+            #self.logger.info(item)
             _origin = item['address']
             _hasMessage = item.__contains__('message')
             #_txId = item["txid"]
@@ -456,7 +482,7 @@ class RVNpyRPC_P2P_Marketplace():
                 
                 
                 if self.__INVALID__CACHE__.__contains__(item['message']):
-                    self.logger.info("Known invalid message")
+                    self.logger.info(f"Known invalid message ; {item['message']}")
                     continue
                 
                 
@@ -465,8 +491,13 @@ class RVNpyRPC_P2P_Marketplace():
                 
                 #
                 # Load IPFS datas
-                #                
-                _listingElem = self.__Load_IPFS_Message__(item['message'],ipfs_gateway)
+                #   
+                _listingElem = None
+                try:            
+                    _listingElem = self.__Load_IPFS_Message__(item['message'],ipfs_gateway)
+                except Exception as e:
+                    #self.logger.error("error __Load_IPFS_Message__")  
+                    pass  
                 if _listingElem==None:
                     self.__addTxInInvalidCacheIfNotExist__(item['message'])
                     continue
@@ -491,9 +522,9 @@ class RVNpyRPC_P2P_Marketplace():
                 
                     
                 _newAd = RavencoinP2PMarketPlaceAd()
-                self.logger.info("loading JSON datas to obj")
+                #self.logger.info("loading JSON datas to obj")
                 _newAd.Load_JSON(res)
-                self.logger.info("Set add")
+                #self.logger.info("Set add")
                 _newAd.SetAddress(_origin[0])
                 
                 
@@ -521,7 +552,7 @@ class RVNpyRPC_P2P_Marketplace():
                 
                 
                 
-                self.logger.info("Set add in market")
+                self.logger.info(f"Set add {item['message']} in market")
                 _MarketList[_cursor] = _newAd
                 _cursor = _cursor+1
                 
@@ -560,7 +591,7 @@ class RVNpyRPC_P2P_Marketplace():
         if deltas != None:
             for tx in deltas:
                 
-                self.logger.info(tx)
+                #self.logger.info(tx)
                 
                 _txId = tx["txid"]
                 
@@ -601,8 +632,8 @@ class RVNpyRPC_P2P_Marketplace():
                 _matchSelf = self.tx_to_self(tx, size=0.2)
                 
                 
-                self.logger.info(f"_matchType {_matchType}")
-                self.logger.info(f"_matchSelf {_matchSelf}")
+                #self.logger.info(f"_matchType {_matchType}")
+                #self.logger.info(f"_matchSelf {_matchSelf}")
                 
                 
                 if _matchType and _matchSelf==1 : #and self.tx_to_self(tx, size=0.2):
@@ -613,7 +644,8 @@ class RVNpyRPC_P2P_Marketplace():
                             kaw = {"address": vout["addresses"], "message": vout["asset"]["message"], "block": transaction["locktime"]}
                             latest.append(kaw)
                 else:
-                    self.logger.info(f"excluded {tx}")
+                    pass
+                    #self.logger.info(f"excluded {tx}")
                     #self.__addTxInInvalidCacheIfNotExist__(_txId)
             _data = []
             
@@ -642,13 +674,13 @@ class RVNpyRPC_P2P_Marketplace():
 
 
     def tx_to_self(self, tx, size=0.2):
-        self.logger.info(f"tx_to_self {size}")
+        #self.logger.info(f"tx_to_self {size}")
         messages = dict()
         messages["addresses"] = [tx["address"]]
         messages["assetName"] = tx["assetName"]
         deltas = self.RPCconnexion.getaddressdeltas(messages)["result"]
         neg_delta = [(a["satoshis"], a["address"]) for a in deltas if a["txid"] == tx["txid"] and a["satoshis"] < -((size * 100000000)-1)]
-        self.logger.info(f"neg_delta {neg_delta}")
+        #self.logger.info(f"neg_delta {neg_delta}")
         return len(neg_delta)
     
     

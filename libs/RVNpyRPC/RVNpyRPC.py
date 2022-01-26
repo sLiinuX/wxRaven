@@ -52,7 +52,34 @@ class Ravencoin:
         return ret
 
 
-    
+    def do_rpc(self,method, log_error=True, **kwargs):
+        req = Request(method, **kwargs)
+        #req=request(method, **kwargs)
+        try:
+            url = self.rpc_url()
+            resp = requests.post(url, json=req, timeout=10)
+            if resp.status_code != 200 and log_error:
+                logging.error("RPC ==> {}".format(req))
+                logging.error("RPC <== {}".format(resp.text))
+            if resp.status_code != 200:
+                try:  # Attempt parse response when failed
+                    return json.loads(resp.text)
+                except:
+                    return None
+            return json.loads(resp.text)
+        except TimeoutError:
+            if log_error:
+                # Any RPC timeout errors are totally fatal
+                logging.error("RPC Timeout")
+                #AppInstance.on_exit()
+                #show_error("RPC Timeout", "Timeout contacting RPC")
+                #exit(-1)
+                return None
+            else:
+                return None
+        except Exception as ex:
+            logging.error(ex)
+            return None
 
 
 
@@ -63,6 +90,11 @@ from ._utils import *
 from ._P2PmarketPlace import *
 from ._atomicSwap import *
 from ._network import * 
+
+try: 
+    from ._directories import *
+except ImportError:
+    pass
 
 class RavenpyRPC(object):
     '''
@@ -80,6 +112,7 @@ class RavenpyRPC(object):
     p2pmarket = None
     atomicswap = None
     network = None
+    directories = None
 
     def __init__(self, connexion):
         '''
@@ -96,6 +129,10 @@ class RavenpyRPC(object):
         self.atomicswap = RVNpyRPC_AtomicSwap(connexion, self)
         self.network = RVNpyRPC_Network(connexion, self)
         
+        try:
+            self.directories = RVNpyRPC_Directories(connexion, self)
+        except:
+            self.directories =  None
     
     
     def test_rpc_status(self):

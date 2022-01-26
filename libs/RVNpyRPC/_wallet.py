@@ -280,24 +280,120 @@ class RVNpyRPC_Wallet():
     
     
     
+    def LockUTXO(self, txoutArray, lock=True):
+        self.logger.info(f"Locking UTXO [{lock}] = {txoutArray}")
+        _unlock = not lock
+        _res = self.RPCconnexion.lockunspent(_unlock,txoutArray)['result']
+        self.logger.info(f"Locking Result : [{_res}] ")
+        return _res
     
     
+    def UnlockUTXO(self,txoutArray ):
+        return self.LockUTXO(txoutArray, False)
     
     
+    def GetLockedUnspentList(self, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[], _fullDatas=True):
+        _res =[]
+        #print(f'GetLockedUnspentList >{_IncludeOnlyAddresses}')
+        _allmatch= self.RPCconnexion.listlockunspent()['result']
+        #print(f'GetLockedUnspentList > {_allmatch}')
+        for _i in _allmatch:
+            
+            
+            #print(f'GetLockedUnspentList > {_i}')
+            if _fullDatas:
+                
+                #print(f'FM > {_i}')
+                
+                try:
+                    #print(f'gettxout > {_i["txid"]} {}')
+                    _txDetails = self.RPCconnexion.gettxout(_i['txid'], _i['vout'])['result']
+                    #print(f"txout = {_txDetails}")
+                    if _txDetails != None:
+                        _txDetails['txid'] = _i['txid']
+                        _txDetails['vout'] = _i['vout']
+                        _txDetails['locked'] = True
+                        _txDetails['amount'] =  _txDetails['value']
+                        _txDetails['utxo_type'] = 'rvn'
+                        try:
+                            _txDetails['address'] =  _txDetails['scriptPubKey']['addresses'][0]
+                        except Exception as e:
+                            _txDetails['address'] = '?'
+                       
+                       
+                            
+                        if   _txDetails['value'] == 0.0:  
+                            #ASSET SO WE SKIP IN THIS FUNCTION
+                            continue
+                            '''
+                            try:
+                                _txDetails['amount'] =  _txDetails['scriptPubKey']['asset']['amount']
+                                _txDetails['account'] =  _txDetails['scriptPubKey']['asset']['name']
+                                _txDetails['utxo_type'] = 'asset'
+                            except Exception as e:
+                                _txDetails['account'] = ''
+                        
+                            '''
+                        
+                        _exclude=False
+                        
+                        if len(_ExlcudeAddresses)>0:
+                            for excl in _ExlcudeAddresses:
+                                if _txDetails['address'].__contains__(excl):
+                                    _exclude = True
+                                    print('GetLockedUnspentList > exclide')
+                                    break
+                        
+                        _matchAd = True
+                        if len(_IncludeOnlyAddresses) > 0:
+                            _matchAd = False
+                            for incl in _IncludeOnlyAddresses:
+                                if _txDetails['address'].__contains__(incl):
+                                    _matchAd = True
+                                    print('GetLockedUnspentList > exclide')
+                                    break
+                            
+                        if not _exclude and _matchAd:
+                            _res.append(_txDetails)
+                    
+                    
+                except Exception as e:
+                    self.logger.error(f"Unable to gettxout  Transaction : {e}")
+            
+            
+            else:
+                _i['locked'] = True
+                _i['utxo_type'] = '?'
+                _res.append(_i)
+                #gettxout 
+            '''
+            if _i['spendable'] == False and _OnlySpendable:
+                continue
+            
+            
+            if _ExlcudeAddresses.__contains__(_i['address']) :
+                continue
+            
+            if len(_IncludeOnlyAddresses) > 0:
+                if not _IncludeOnlyAddresses.__contains__(_i['address']) :
+                    continue
+            
+            if not _fullDatas:
+                _res.append({'txid':_i['txid'], 'vout':_i['vout'],'amount':_i['amount'],})
+            else:
+                _res.append(_i)
     
+            '''
+                
+        #print(_res)
+        return _res
     
-    
-    
-    
-    
-    
-    
-    
-    def GetUnspentList(self, _OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[] ):
+    #Get all Unspent and NON locked
+    def GetUnspentList(self, _OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[], _fullDatas=False , _includeLocked=False):
         
         _res =[]
         
-        _allmatch= self.RPCconnexion.listunspent ()['result']
+        _allmatch= self.RPCconnexion.listunspent()['result']
         
         for _i in _allmatch:
             if _i['spendable'] == False and _OnlySpendable:
@@ -311,9 +407,19 @@ class RVNpyRPC_Wallet():
                 if not _IncludeOnlyAddresses.__contains__(_i['address']) :
                     continue
             
-            
-            _res.append({'txid':_i['txid'], 'vout':_i['vout'],'amount':_i['amount'],})
+            if not _fullDatas:
+                _res.append({'txid':_i['txid'], 'vout':_i['vout'],'amount':_i['amount'],'utxo_type':'rvn' , 'locked':False})
+            else:
+                _i['locked'] = False
+                _i['utxo_type'] = 'rvn'
+                _res.append(_i)
         
+        
+        if _includeLocked :
+            _addRes=self.GetLockedUnspentList(_ExlcudeAddresses, _IncludeOnlyAddresses, _fullDatas)
+            
+            if _addRes != None:
+                _res = _res + _addRes
         
         #print("_allmatch")
         #print(_allmatch)
@@ -412,39 +518,53 @@ class RVNpyRPC_Wallet():
     
     def CombineTransaction(self, txs , _fund=True, _sign=True, _execute=True):
         _combined=None
-        
+        _resultOk = True
         try:
             res = self.RPCconnexion.combinerawtransaction (txs)
             
             if res['result'] != None:
                 _combined = res['result']
+            else:
+                _combined = res['error']    
+                _resultOk = False
                 
                 
                 
-                if _fund:
+                
+                if _fund and _resultOk:
                     res = self.RPCconnexion.fundrawtransaction (_combined)
                     if res['result'] != None:
                         _combined = res['result']['hex']
-                        
+                    else:
+                        _combined = res['error']    
+                        _resultOk = False    
                 
-                if _sign:
+                
+                if _sign and _resultOk:
                     res = self.RPCconnexion.signrawtransaction (_combined)
                     if res['result'] != None:
                         _combined = res['result']['hex']
+                    else:
+                        _combined = res['error']    
+                        _resultOk = False  
                         
                         
-                if _execute:
+                if _execute and _resultOk:
                     res = self.RPCconnexion.sendrawtransaction (_combined)
                     if res['result'] != None:
                         _combined = res['result']
+                    else:
+                        _combined = res['error']    
+                        _resultOk = False  
                     
             
             
         except Exception as e:
             self.logger.error(f"Unable to create Transaction : {e}")
+            _combined = e
             
             
-        return _combined
+        return _resultOk, _combined
     
     
     
@@ -471,8 +591,9 @@ class RVNpyRPC_Wallet():
         self.logger.info(f"_input : {_input}")  
         self.logger.info(f"_outputs : {_outputs}")  
         
-        
+        _isResultOk = True
         txResult = None
+        txError = None
         
         if True:    
             
@@ -485,6 +606,9 @@ class RVNpyRPC_Wallet():
                 res= self.RVNpyRPC.do_rpc("createrawtransaction", inputs=_input,outputs= _outputs)
                 self.logger.info(f" > createrawtransaction result : {res}")  
                 txResult=res
+                
+                #if res['error'] != None:
+                #    txError = res['error']
                 
                 
                 
@@ -499,9 +623,16 @@ class RVNpyRPC_Wallet():
                     try:
                         self.logger.info(f"> fundrawtransaction")  
                         res= self.RVNpyRPC.do_rpc("fundrawtransaction",hexstring=res, options={"changeAddress"  :_changeAddress,"changePosition" :0})
-                        self.logger.info(f" > fundrawtransaction result : {res}")    
+                        self.logger.info(f" > fundrawtransaction result : {res}")   
+                        if res.__contains__('error'):
+                            if res['error'] != None:
+                                txError = res['error']
+                                return False,txError
+                                 
                         txResult=res['hex']
                         res = res['hex']
+                        
+                        
                         
                     except Exception as e:
                         self.logger.error(f"Unable to fund transaction: {e}")  
@@ -517,8 +648,15 @@ class RVNpyRPC_Wallet():
                         self.logger.info(f"> signrawtransaction") 
                         res = self.RPCconnexion.signrawtransaction(res) 
                         self.logger.info(f" > signrawtransaction result : {res}")
+                        
+                        if res.__contains__('error'):
+                            if res['error'] != None:
+                                txError = res['error']
+                                return False,txError
+                            
                         txResult=res['result'] 
                         res = res['result']['hex']
+                    
                     except Exception as e:
                         self.logger.error(f"Unable to sign transaction: {e}") 
                 
@@ -531,20 +669,32 @@ class RVNpyRPC_Wallet():
                         res = self.RPCconnexion.sendrawtransaction(res) 
                         self.logger.info(f" > sendrawtransaction result : {res}")
                         txResult=res['result']
+                        
+                        if res['error'] != None:
+                            txError = res['error']
+                            return False,txError
+                        
+                        
                     except Exception as e:
                         self.logger.error(f"Unable to send transaction: {e}")
+                        
                 
  
                 
                 
             except Exception as e:
                 self.logger.error(f"Unable to create Transaction : {e}")    
+                _isResultOk = False
+                txResult = e
     
+        
+        if txError != None:
+            self.logger.error(f"Unable to create , and send Transaction")
+            txResult = txError 
+            _isResultOk = False
+            
     
-    
-    
-    
-        return txResult
+        return _isResultOk, txResult
     
     
     
@@ -595,7 +745,7 @@ class RVNpyRPC_Wallet():
             return self.DoTransaction(_input, _outputs, _changeAddress, _fund, _sign, _execute)
             
     
-        return sent
+        return sent, 'RVN TX not feasible'
     
     
     def sendSameRVN_Many(self, amount, adresses=[], pwd='', _changeAddress='', _fund=True, _sign=True, _execute=True):
@@ -629,14 +779,15 @@ class RVNpyRPC_Wallet():
             _input = _ids
             _outputs = {}
             _outputs[_changeAddress] =  float(0.0002).__round__(8)
-            _outputs[_changeAddress] = {"transfer": {f"{assetname}": float(delta).__round__(8)  }}
+            if delta >0:
+                _outputs[_changeAddress] = {"transfer": {f"{assetname}": float(delta).__round__(8)  }}
             
             for ad in amounts:
                 _outputs[ad] = {"transfer": {f"{assetname}": float(amounts[ad]).__round__(8)  }}
                 
             return self.DoTransaction(_input, _outputs,_changeAddress, _fund, _sign, _execute)
         
-        return None
+        return False, "Asset TX not feasible"
     
     def sendSameAsset_Many(self, assetname, amount, adresses=[], pwd='', _changeAddress='', _fund=True, _sign=True, _execute=True):
         

@@ -228,18 +228,38 @@ class wxRavenP2PMarket_NewAtomiSwapWithLogic(wxRavenAtomicSwapPanel):
             if ravencoin.wallet.__requires_unlock__():
                 passw = RequestUserWalletPassword(self)
             
-            _AdWithDatas=ravencoin.p2pmarket.CreateAtomicSwapTransaction(self._newAdObject, passw)
+            _AdWithDatas = None
+            _fakeResult = {'result':None , 'error':None}
+            
+            
+            try:
+                _AdWithDatas=ravencoin.p2pmarket.CreateAtomicSwapTransaction(self._newAdObject, passw)
+            except Exception as e:
+                _fakeResult = {'result':None , 'error':e}
+            #ReportRPCResult(self.parent_frame, _result, "success", "Transaction complete !", "Unable to complete the transaction.", False)
+            
+            
             
             
             if _AdWithDatas != None:
                 self._newAdObject = _AdWithDatas
                 self.m_txDatas.SetValue(str(self._newAdObject._adTxDatas))
                 
+                _fakeResult['result'] = str(self._newAdObject._adTxDatas)
+                
+                #ReportRPCResult(self.parent_frame, self._newAdObject._adTxDatas, "success", "Atomic Swap created !", "Unable to create the atomic swap.", False)
+                
+                #ReportRPCResult(self.parent_frame, _result, "success", "Transaction complete !", "Unable to complete the transaction.", False)
+                
                 #UserInfo(self, str(self._newAdObject._adTxDatas) )
             else:
+                _fakeResult['error'] = {'code':-1, 'message': ""}
                 UserError(self, "Error, cannot create atomic swap.")
-    
-    
+                
+            
+            ReportRPCResult(self.parent_frame, _fakeResult, "success", "Atomic Swap created !", "Unable to create the atomic swap.", False)
+                
+            
             
     #Override the UpdateView method to define what happen when plugin call UpdateViews()        
     def UpdateView(self, evt=None):

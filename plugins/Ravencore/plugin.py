@@ -22,7 +22,7 @@ from .wxRavenRavencoreDesign import *
 from .wxRavenRavencore_NetworkInfosLogic import *
 from .pluginSettings import *
 from .wxRavenRavencore_TransactionsViewer_Logic import * 
-
+from .wxRavenRavencore_UTXOManagerLogic import *
 
 #import the plugin setting panels, from another file to be more simple
 #from .pluginSettings import MyTutorialSettingPanel_WithLogic
@@ -145,6 +145,19 @@ class wxRavenPlugin(PluginObject):
                     
                     
                     {
+                     'viewid':'UTXO Manager', 
+                     'name':'UTXO Manager', 
+                     'title':'UTXO Manager', 
+                     'position':'main', 
+                     'icon':self.RessourcesProvider.GetImage('wallet'), 
+                     'class': wxRavenRavencore_UTXOManagerLogic ,
+                     'default':False,
+                     'multipleViewAllowed':True
+                     }, 
+                    
+                    
+                    
+                    {
                      'viewid':'Transactions Viewer', 
                      'name':'Transactions Viewer', 
                      'title':'Transactions Viewer', 
@@ -203,8 +216,8 @@ class wxRavenPlugin(PluginObject):
                 'strictname' : False,
                 'filtertype' : False,
                 'filtertypelist' : [],
-                'ipfsgateway_default' : 'https://ravencoinipfs-gateway.com/ipfs/',
-                'ipfsgateway_providers':['https://ravencoinipfs-gateway.com/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'http://70.81.223.229:8080/ipfs/'],
+                'ipfsgateway_default' : 'http://70.81.223.229:8080/ipfs/',
+                'ipfsgateway_providers':['http://70.81.223.229:8080/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'https://ravencoinipfs-gateway.com/ipfs/'],
                 
                 'bookmark_list':['My Assets'],
                 'navigation_use_cache' : True,
@@ -268,6 +281,8 @@ class wxRavenPlugin(PluginObject):
         
         self.setData("_AssetLibraryList", {'My Assets':None})
         self.setData("_CurrentLibrary", 'My Assets')
+        
+        self.setData("_AllUTXOs", {'RVN':[], 'ASSETS':[]})
         
         
         
@@ -357,8 +372,13 @@ class wxRavenPlugin(PluginObject):
     def OnNetworkChanged_T(self, networkName=""):    
         #t=threading.Thread(target=self.OnUpdatePluginDatas)
         #t.start()
-        wx.CallAfter(self.UpdateActiveViews, ())
+        #wx.CallAfter(self.UpdateActiveViews, ())
         #pass
+        if not self.parentFrame._isReady:
+            return None 
+        
+        
+        self.OnUTXORequested_T()
         
         
     def OnUpdatePluginDatas_SEARCH(self, keyword="", limit=50, onlyMain=False):
@@ -463,6 +483,46 @@ class wxRavenPlugin(PluginObject):
     
     
     
+    
+    
+    
+    
+    
+    def OnUTXORequested_T(self):
+        self.setData("_AllUTXOs", {'RVN':[], 'ASSETS':[]})
+        t=threading.Thread(target=self.OnUpdatePluginDatas_UTXO, args=())
+        t.start() 
+    
+    def OnUpdatePluginDatas_UTXO(self, library=""):
+        print('OnUpdatePluginDatas_UTXO')
+        
+        
+        ravencoin = self.parentFrame.getRvnRPC()
+        _DatasUtxo = {'RVN':[],'ASSETS':[] }
+        if True:
+        #try:
+            _listRaw = ravencoin.wallet.GetUnspentList(_OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[], _fullDatas=True , _includeLocked=True)
+            _DatasUtxo = self.getData('_AllUTXOs')
+            _DatasUtxo['RVN'] = _listRaw
+            
+            
+            _ListAsset = ravencoin.asset.GetAssetUnspentList(assetname='', _fullDatas=True, _includeLocked=True)
+            _DatasUtxo['ASSETS'] = _ListAsset
+            
+            print(f"_DatasUtxo {_DatasUtxo['ASSETS']}")
+            wx.CallAfter(self.UpdateActiveViews, ())
+    
+        #except Exception as e:
+        #    self.RaisePluginLog( "Unable to update UTXO List : "+ str(e), type="error")
+    
+        
+        self.setData("_AllUTXOs", _DatasUtxo)
+        #print(f"SAVEDATA ")
+    #
+    # Views caller and quickwin
+    #
+    
+    
     def AddAssetInBookmark(self, assetName):
         currentBk = self.PLUGIN_SETTINGS['bookmark_list']
         if not currentBk.__contains__(assetName):
@@ -565,5 +625,26 @@ class wxRavenPlugin(PluginObject):
             print(">root setup requested")
             _newView.setupRoot(rootAsset)
         #_popupDialog = RavencoreAssetIssuerDialog(self.parentFrame)
+    
+    
+    
+    def ShowTxInfos(self, txdatas="", openIfnotExist=True):
+        
+        #_newView = self.parentFrame.Views.OpenView("Transactions Viewer", "Ravencore", openIfnotExist)
+        _newView = self.LoadView(self.SearchPluginView("Transactions Viewer"), "main")
+        
+        if txdatas!="":
+            _newView.SetTxId(txdatas)
+            #pv=self.SearchPluginView("Asset Issuer")
+            #if pv!= None:
+            #   pv.SetTxId(txdatas)
+            #_newView['instance'].SetTxId(txdatas)
+        #if txdatas !="":
+        #if True:
+        # #   #_v=self.parentFrame.Views.SearchDialog("Transactions Viewer")
+        #    print(f">txdatas setup requested {txdatas}")
+        #    if _v!=None:
+        #        pass
+                #_v._Panel.SetRaw(txdatas)
     
     

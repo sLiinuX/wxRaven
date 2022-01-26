@@ -292,6 +292,12 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_RavencoreTxReader):
         
         self.UpdateView()
     
+    
+    
+    def SetTxId(self, txid):
+        self.m_txIdText.SetValue(txid)
+        
+    
     def OnTxIdChanged(self, evt):
         if self._INPUT_TREAT:
             return

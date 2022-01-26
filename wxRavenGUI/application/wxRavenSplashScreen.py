@@ -5,6 +5,7 @@ Created on 15 déc. 2021
 '''
 
 from wxRavenGUI.view import wxRavenSplashScreen
+from wxRavenGUI.view import wxRavenDisclaimerDialogLogic
 
 import wx
 import wxRavenGUI.application
@@ -43,6 +44,10 @@ class SplashScreenMgr():
     
     
     confirmation_tick_count = 2
+    
+    
+    
+    max_tick_count = 60
     
     
     progress_array_cursor = 0
@@ -113,8 +118,29 @@ class SplashScreenMgr():
             
             if not self.started:
                 self.started=True
+                
+                
                 p = self.InitParentFrame()
-                p.Show()
+                _show = True
+                
+                
+                if p.GetPluginSetting('General', 'show_disclaimer'):
+                    disclaimer = wxRavenDisclaimerDialogLogic(p)
+                    dis = disclaimer.ShowModal()
+                    
+                    print(f"Disclaimer User Result = {dis}")
+                    
+                    if dis != wx.OK:
+                        p.ForceClose()
+                        self.doStart=False
+                        self.parentObj.doStart=False
+                        _show = False
+                        self.sc.m_timer1.Stop()
+                        self.sc.Destroy()
+                
+                
+                if _show:
+                    p.Show()
             
             
             return 
@@ -138,6 +164,11 @@ class SplashScreenMgr():
             
             self.sc.m_timer1.Stop()
             self.sc.Destroy()
+        
+        if self.showntickCount > self.max_tick_count:
+            self.sc.m_timer1.Stop()
+            self.sc.Destroy()
+            
         
         
         event.Skip()

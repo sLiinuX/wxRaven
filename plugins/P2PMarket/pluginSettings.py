@@ -37,6 +37,8 @@ class wxP2PMarket_GeneralSettings_WithLogic(PluginSettingsPanelObject):
         
         self._needReboot=True
         
+        self._Panel.m_buttonCleanCache.Bind( wx.EVT_BUTTON, self.ClearInvalidCache )
+        
         
         self._Panel.searchopt_maxresults.Bind( wx.EVT_TEXT, self.OnChanged )
         
@@ -48,6 +50,22 @@ class wxP2PMarket_GeneralSettings_WithLogic(PluginSettingsPanelObject):
         #self._Panel.searchopt_onlymain.Bind( wx.EVT_CHECKBOX, self.toggleAssetTypeList )
     
         self.Layout()
+        
+        
+        
+        
+    def ClearInvalidCache(self, evt):
+        rootp = self.parentFrame.Paths['USERDATA']
+        file = rootp +'marketplace_invalid_cache.p'
+        try:
+            os.remove(file )  
+            UserInfo(self._Panel, "Cache clear !")  
+        except Exception as e:
+            UserError(self._Panel, "Unable to clear cache file !")  
+            pass
+        
+        
+        
     #
     #
     # method to be called on close and apply

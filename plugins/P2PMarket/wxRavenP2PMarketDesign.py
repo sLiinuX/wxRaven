@@ -1439,6 +1439,312 @@ class wxRavenP2PMarket_CreateUTXO ( wx.Panel ):
 	
 
 ###########################################################################
+## Class wxRavenP2PMarket_Airdrop
+###########################################################################
+
+class wxRavenP2PMarket_Airdrop ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 678,311 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer329 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer330 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap126 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer330.Add( self.m_bitmap126, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText178 = wx.StaticText( self, wx.ID_ANY, u"Airdrop Asset :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText178.Wrap( -1 )
+		bSizer330.Add( self.m_staticText178, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_AssetChoiceChoices = []
+		self.m_AssetChoice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_AssetChoiceChoices, 0 )
+		self.m_AssetChoice.SetSelection( 0 )
+		bSizer330.Add( self.m_AssetChoice, 1, wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer330, 0, wx.EXPAND, 5 )
+		
+		bSizer333 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap129 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/help_contents.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer333.Add( self.m_bitmap129, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText182 = wx.StaticText( self, wx.ID_ANY, u"Available : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText182.Wrap( -1 )
+		self.m_staticText182.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer333.Add( self.m_staticText182, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_availableText = wx.StaticText( self, wx.ID_ANY, u"0.0", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_availableText.Wrap( -1 )
+		bSizer333.Add( self.m_availableText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer333, 0, wx.ALIGN_RIGHT, 5 )
+		
+		bSizer332 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap127 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/airdrop_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer332.Add( self.m_bitmap127, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText179 = wx.StaticText( self, wx.ID_ANY, u"Distribute :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText179.Wrap( -1 )
+		bSizer332.Add( self.m_staticText179, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_AssetAmount = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer332.Add( self.m_AssetAmount, 0, wx.ALL, 5 )
+		
+		self.m_staticText184 = wx.StaticText( self, wx.ID_ANY, u"Asset(s) to :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText184.Wrap( -1 )
+		bSizer332.Add( self.m_staticText184, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap128 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/formula.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer332.Add( self.m_bitmap128, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_UTXOcount = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 1000, 1 )
+		bSizer332.Add( self.m_UTXOcount, 0, wx.ALL, 5 )
+		
+		self.m_staticText180 = wx.StaticText( self, wx.ID_ANY, u"Max Winner(s)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText180.Wrap( -1 )
+		bSizer332.Add( self.m_staticText180, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer332, 0, wx.EXPAND, 5 )
+		
+		bSizer348 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText202 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText202.Wrap( -1 )
+		bSizer348.Add( self.m_staticText202, 1, wx.ALL, 5 )
+		
+		self.m_checkBox26 = wx.CheckBox( self, wx.ID_ANY, u"Pickup Random Winners from list", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer348.Add( self.m_checkBox26, 0, wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer348, 0, wx.EXPAND, 5 )
+		
+		bSizer349 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_filePicker1 = wx.FilePickerCtrl( self, wx.ID_ANY, wx.EmptyString, u"Select a file", u"*.*", wx.DefaultPosition, wx.DefaultSize, wx.FLP_DEFAULT_STYLE )
+		bSizer349.Add( self.m_filePicker1, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		m_listBox7Choices = []
+		self.m_listBox7 = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_listBox7Choices, 0 )
+		bSizer349.Add( self.m_listBox7, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer329.Add( bSizer349, 1, wx.EXPAND, 5 )
+		
+		bSizer331 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_CreateUTXOButton_OLD = wx.Button( self, wx.ID_ANY, u"DROP !", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_CreateUTXOButton_OLD.Hide()
+		
+		bSizer331.Add( self.m_CreateUTXOButton_OLD, 0, wx.ALL, 5 )
+		
+		self.m_CreateUTXOButton = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/airdrop_icon_35.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer331.Add( self.m_CreateUTXOButton, 0, wx.ALL, 5 )
+		
+		self.m_RocketDrop = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/rocketdrop_35.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_RocketDrop.Hide()
+		
+		bSizer331.Add( self.m_RocketDrop, 0, wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer331, 0, wx.ALIGN_RIGHT, 5 )
+		
+		
+		self.SetSizer( bSizer329 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_AssetChoice.Bind( wx.EVT_CHOICE, self.OnAssetChanged )
+		self.m_AssetAmount.Bind( wx.EVT_TEXT, self.OnAmountChanged )
+		self.m_UTXOcount.Bind( wx.EVT_SPINCTRL, self.OnUTXOChanged )
+		self.m_filePicker1.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChanged )
+		self.m_CreateUTXOButton_OLD.Bind( wx.EVT_BUTTON, self.OnClickCreateUTXO )
+		self.m_CreateUTXOButton.Bind( wx.EVT_BUTTON, self.OnClickCreateUTXO )
+		self.m_RocketDrop.Bind( wx.EVT_BUTTON, self.OnRocketDropClicked )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnAssetChanged( self, event ):
+		event.Skip()
+	
+	def OnAmountChanged( self, event ):
+		event.Skip()
+	
+	def OnUTXOChanged( self, event ):
+		event.Skip()
+	
+	def OnFileChanged( self, event ):
+		event.Skip()
+	
+	def OnClickCreateUTXO( self, event ):
+		event.Skip()
+	
+	
+	def OnRocketDropClicked( self, event ):
+		event.Skip()
+	
+
+###########################################################################
+## Class wxRavenP2PMarket_Advertising
+###########################################################################
+
+class wxRavenP2PMarket_Advertising ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 678,311 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer329 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer330 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap126 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer330.Add( self.m_bitmap126, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText178 = wx.StaticText( self, wx.ID_ANY, u"Asset :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText178.Wrap( -1 )
+		bSizer330.Add( self.m_staticText178, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_AssetChoiceChoices = []
+		self.m_AssetChoice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_AssetChoiceChoices, 0 )
+		self.m_AssetChoice.SetSelection( 0 )
+		bSizer330.Add( self.m_AssetChoice, 1, wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer330, 0, wx.EXPAND, 5 )
+		
+		bSizer332 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap127 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/mailbox_1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer332.Add( self.m_bitmap127, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText179 = wx.StaticText( self, wx.ID_ANY, u"Distribution Amount :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText179.Wrap( -1 )
+		bSizer332.Add( self.m_staticText179, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_AssetAmount = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer332.Add( self.m_AssetAmount, 0, wx.ALL, 5 )
+		
+		self.m_staticText184 = wx.StaticText( self, wx.ID_ANY, u"Unit(s)", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_LEFT )
+		self.m_staticText184.Wrap( -1 )
+		bSizer332.Add( self.m_staticText184, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap129 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/help_contents.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer332.Add( self.m_bitmap129, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText182 = wx.StaticText( self, wx.ID_ANY, u"Available : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText182.Wrap( -1 )
+		self.m_staticText182.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer332.Add( self.m_staticText182, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_availableText = wx.StaticText( self, wx.ID_ANY, u"0.0", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_availableText.Wrap( -1 )
+		bSizer332.Add( self.m_availableText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer332, 0, wx.EXPAND, 5 )
+		
+		bSizer349 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_filePicker1 = wx.FilePickerCtrl( self, wx.ID_ANY, wx.EmptyString, u"Select a file", u"*.*", wx.DefaultPosition, wx.DefaultSize, wx.FLP_DEFAULT_STYLE )
+		bSizer349.Add( self.m_filePicker1, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		m_listBox7Choices = []
+		self.m_listBox7 = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_listBox7Choices, 0 )
+		bSizer349.Add( self.m_listBox7, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer329.Add( bSizer349, 1, wx.EXPAND, 5 )
+		
+		self.m_panel37 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer364 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer367 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_ProgressText = wx.StaticText( self.m_panel37, wx.ID_ANY, u"Progress :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_ProgressText.Wrap( -1 )
+		bSizer367.Add( self.m_ProgressText, 0, wx.ALL, 5 )
+		
+		
+		bSizer364.Add( bSizer367, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer366 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_gauge1 = wx.Gauge( self.m_panel37, wx.ID_ANY, 100, wx.DefaultPosition, wx.Size( -1,20 ), wx.GA_HORIZONTAL )
+		self.m_gauge1.SetValue( 0 ) 
+		bSizer366.Add( self.m_gauge1, 1, wx.ALL, 5 )
+		
+		
+		bSizer364.Add( bSizer366, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_panel37.SetSizer( bSizer364 )
+		self.m_panel37.Layout()
+		bSizer364.Fit( self.m_panel37 )
+		bSizer329.Add( self.m_panel37, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		bSizer331 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_CreateUTXOButton_OLD = wx.Button( self, wx.ID_ANY, u"DROP !", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_CreateUTXOButton_OLD.Hide()
+		
+		bSizer331.Add( self.m_CreateUTXOButton_OLD, 0, wx.ALL, 5 )
+		
+		self.m_CreateUTXOButton = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/airdrop_icon_35.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_CreateUTXOButton.Hide()
+		
+		bSizer331.Add( self.m_CreateUTXOButton, 0, wx.ALL, 5 )
+		
+		self.m_RocketDrop = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/advertiser_icon_45.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer331.Add( self.m_RocketDrop, 0, wx.ALL, 5 )
+		
+		
+		bSizer329.Add( bSizer331, 0, wx.ALIGN_RIGHT, 5 )
+		
+		
+		self.SetSizer( bSizer329 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_AssetChoice.Bind( wx.EVT_CHOICE, self.OnAssetChanged )
+		self.m_AssetAmount.Bind( wx.EVT_TEXT, self.OnAmountChanged )
+		self.m_filePicker1.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChanged )
+		self.m_CreateUTXOButton_OLD.Bind( wx.EVT_BUTTON, self.OnClickCreateUTXO )
+		self.m_CreateUTXOButton.Bind( wx.EVT_BUTTON, self.OnClickCreateUTXO )
+		self.m_RocketDrop.Bind( wx.EVT_BUTTON, self.OnRocketDropClicked )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnAssetChanged( self, event ):
+		event.Skip()
+	
+	def OnAmountChanged( self, event ):
+		event.Skip()
+	
+	def OnFileChanged( self, event ):
+		event.Skip()
+	
+	def OnClickCreateUTXO( self, event ):
+		event.Skip()
+	
+	
+	def OnRocketDropClicked( self, event ):
+		event.Skip()
+	
+
+###########################################################################
 ## Class wxRavenP2PMarket_MarketPlace_ItemPanel
 ###########################################################################
 
@@ -1510,6 +1816,21 @@ class wxRavenP2PMarket_Settings ( wx.Panel ):
 		
 		
 		bSizer74.Add( bSizer78, 0, wx.EXPAND, 5 )
+		
+		bSizer783 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText93 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+		self.m_staticText93.Wrap( -1 )
+		bSizer783.Add( self.m_staticText93, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap137 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/clean_cache.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer783.Add( self.m_bitmap137, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_buttonCleanCache = wx.Button( self, wx.ID_ANY, u"Clear Invalid Cache", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer783.Add( self.m_buttonCleanCache, 0, wx.ALL, 5 )
+		
+		
+		bSizer74.Add( bSizer783, 0, wx.EXPAND, 5 )
 		
 		self.m_staticline21 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		bSizer74.Add( self.m_staticline21, 0, wx.EXPAND|wx.ALL, 5 )

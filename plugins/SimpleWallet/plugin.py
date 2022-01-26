@@ -70,6 +70,9 @@ class wxRavenPlugin(PluginObject):
         
         
     def OnNetworkChanged_T(self, networkName=""):    
+        if not self.parentFrame._isReady:
+            return None 
+        
         t=threading.Thread(target=self.OnNetworkChanged)
         t.start()
         

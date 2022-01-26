@@ -219,16 +219,160 @@ class RVNpyRPC_Asset():
     
     
     
-    def GetAssetUnspentList(self, assetname):
+    def GetAssetLockedUnspentList(self, _fullDatas=True):
+        _res =[]
+        _fullDatas=True
+        #print(f'GetLockedUnspentList >{_IncludeOnlyAddresses}')
+        _allmatch= self.RPCconnexion.listlockunspent()['result']
+        #print(f'GetLockedUnspentList > {_allmatch}')
+        for _i in _allmatch:
+            
+            
+            #print(f'GetLockedUnspentList > {_i}')
+            if _fullDatas:
+                
+                #print(f'FM > {_i}')
+                
+                try:
+                    #print(f'gettxout > {_i["txid"]} {}')
+                    _txDetails = self.RPCconnexion.gettxout(_i['txid'], _i['vout'])['result']
+                    #print(f"txout = {_txDetails}")
+                    if _txDetails != None:
+                        _txDetails['txid'] = _i['txid']
+                        _txDetails['vout'] = _i['vout']
+                        _txDetails['locked'] = True
+                        _txDetails['amount'] =  _txDetails['value']
+                        _txDetails['utxo_type'] = 'asset'
+                        try:
+                            _txDetails['address'] =  _txDetails['scriptPubKey']['addresses'][0]
+                        except Exception as e:
+                            _txDetails['address'] = '?'
+                       
+                       
+                            
+                        if   _txDetails['value'] != 0.0:  
+                            #ASSET SO WE SKIP IN THIS FUNCTION
+                            continue
+                        
+                        try:
+                            _txDetails['amount'] =  _txDetails['scriptPubKey']['asset']['amount']
+                            _txDetails['account'] =  _txDetails['scriptPubKey']['asset']['name']
+                            _txDetails['utxo_type'] = 'asset'
+                        except Exception as e:
+                            _txDetails['account'] = ''
+                        
+                            
+                        
+                        _exclude=False
+                        '''
+                        if len(_ExlcudeAddresses)>0:
+                            for excl in _ExlcudeAddresses:
+                                if _txDetails['address'].__contains__(excl):
+                                    _exclude = True
+                                    print('GetLockedUnspentList > exclide')
+                                    break
+                        '''
+                        _matchAd = True
+                        '''
+                        if len(_IncludeOnlyAddresses) > 0:
+                            _matchAd = False
+                            for incl in _IncludeOnlyAddresses:
+                                if _txDetails['address'].__contains__(incl):
+                                    _matchAd = True
+                                    print('GetLockedUnspentList > exclide')
+                                    break
+                        '''    
+                        if not _exclude and _matchAd:
+                            _res.append(_txDetails)
+                    
+                    
+                except Exception as e:
+                    self.logger.error(f"Unable to gettxout  Transaction : {e}")
+            
+            
+
+                
+                #gettxout 
+
+                
+        #print(_res)
+        return _res
+    
+    
+    def GetAssetUnspentListDetailedData(self, assetname, unspentArray):
+        
+        detailedDataList = []
+        
+        try:
+            for outpoint in unspentArray['outpoints']:
+                _data = {'amount':outpoint['amount'] ,'txid':outpoint['txid'] ,'vout':outpoint['vout'] }
+                _txDetails = self.RPCconnexion.gettxout(outpoint['txid'], outpoint['vout'])['result']
+                _data['utxo_type'] = 'asset'
+                _data['locked'] = False
+                
+                
+                try:
+                    _data['address'] = _txDetails['scriptPubKey']['addresses'][0]
+                except Exception as e:
+                    print('error in get asset unspent')
+                
+                
+                
+                try:
+                    _data['amount'] =  _txDetails['scriptPubKey']['asset']['amount']
+                    _data['account'] =  _txDetails['scriptPubKey']['asset']['name']
+                    _data['confirmations'] =  _txDetails['confirmations']
+                except Exception as e:
+                    _data['account'] = '?'
+                    print('error in get asset unspent')
+                
+                detailedDataList.append(_data)    
+                    
+                
+        except Exception as e:
+            print('error in get asset unspent')
+        
+        
+        return detailedDataList
+    
+    def GetAssetUnspentList(self, assetname, _fullDatas=False, _includeLocked=False):
         
         _res =[]
-        
+        if assetname == '':
+            _fullDatas=True
+            
         _allmatch= self.RPCconnexion.listmyassets(assetname, True)['result']
         #self.logger.info("_allmatch")
         #self.logger.info(_allmatch)
         #_res = _allmatch[assetname]
-        if _allmatch.__contains__(assetname):
-            _res = _allmatch[assetname]
+        
+        if _allmatch.__contains__(assetname) or assetname=='':
+            
+            
+            if not _fullDatas:
+                _res = _allmatch[assetname]
+            
+            else:
+                
+                if assetname != '':
+                    _res = self.GetAssetUnspentListDetailedData(assetname, _allmatch[assetname])
+                else:
+                    
+                    for asset in _allmatch:
+                        _assetArray = self.GetAssetUnspentListDetailedData(asset, _allmatch[asset])
+                        if _assetArray != []:
+                            _res = _res+_assetArray
+               
+                #_assetDatas = _allmatch[assetname]
+                #for _
+        
+        
+        if _includeLocked:
+            _lockArray = self.GetAssetLockedUnspentList(True)
+            if _lockArray != []:
+                _res = _res+_lockArray
+                
+            
             #self.logger.info(f"OK {_res}")
             #self.logger.info(f"A {_allmatch[assetname]}")
         return _res

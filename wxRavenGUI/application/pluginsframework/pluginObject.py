@@ -129,7 +129,7 @@ class PluginObject(object):
         for r in self.VIEWS_INSTANCES:
             rView = r['instance']
             vName = r['name']
-            
+            #self.logger.info(f"updating view {vName}")
             rView.UpdateView()
             
             """
@@ -286,13 +286,21 @@ class PluginObject(object):
         
         
         if createNew:
+            newview = None
+            try:
+                newview = df_class(self.parentFrame , position=df_position, viewName=df_name )
+            except Exception as e:
+                #newview = df_class(self.parentFrame,self.parentFrame , position=df_position, viewName=df_name )
+                self.logger.error("Unable to load view :" + str(e))
+                pass
             
-            newview = df_class(self.parentFrame , position=df_position, viewName=df_name )
+            if newview == None:
+                return None
             
             try:
                 self.parentFrame.RessourcesProvider.ApplyThemeOnPanel(newview)
             except Exception as e:
-                self.logger.info("Unable to themize view :" + str(e))
+                self.logger.error("Unable to themize view :" + str(e))
                 
             
             viewInstanceData = {'viewid': id_view, 

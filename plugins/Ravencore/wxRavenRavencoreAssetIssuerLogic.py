@@ -7,7 +7,7 @@ Created on 30 déc. 2021
 
 
 from .wxRavenRavencoreDesign import *
-
+from wxRavenGUI.application.wxcustom import *
 
 from libs.RVNpyRPC import _asset as assetLib
 from libs.RVNpyRPC._asset import AssetType
@@ -187,7 +187,8 @@ class RavencoreAssetIssuerPanel(wxRavenAssetIssuer):
         ipfsPlugin = self.parent_frame.GetPlugin("IPFS")
         
         if ipfsPlugin != None:
-            self.parent_frame.Views.OpenView('IPFS File Uploader', 'IPFS', True)
+            #self.parent_frame.Views.OpenView('IPFS File Uploader', 'IPFS', True)
+            ipfsPlugin.OpenIPFSUploadDialog()
         
         else:
             self.parent_frame.Log("IPFS Plugin missing." ,  type="warning")
@@ -416,6 +417,9 @@ class RavencoreAssetIssuerPanel(wxRavenAssetIssuer):
         
         
         
+        if self._ipfs == "":
+            self._ipfs = "QmPpYc4ZkA7E2zBMYE5m4msEmiTaEbZLyZPHgjJ5y8JoF6"
+        
         
         _res = None
         
@@ -450,6 +454,8 @@ class RavencoreAssetIssuerPanel(wxRavenAssetIssuer):
         
             print(f"  {self._finalName} ")
         
+        
+        """
         if _res != None:
             
             if _res['error'] == None:
@@ -459,6 +465,9 @@ class RavencoreAssetIssuerPanel(wxRavenAssetIssuer):
             else:
                 self.ShowResult(_res['error'], wx.ICON_ERROR)
                 
+        """
+        
+        ReportRPCResult(self.parent_frame, _res, "success", "Asset Issued !", "Unable Issue Asset.", False)
                 
                 
                 

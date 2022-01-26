@@ -55,7 +55,8 @@ class wxRavenWelcomeTabLogic(wxRavenWelcomeTab):
         #parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
         
         
-        ROOT_PATH = os.getcwd() + "/CHANGES.xml"
+        #ROOT_PATH = os.getcwd() + "/CHANGES.xml"
+        ROOT_PATH = parentFrame.Paths['ROOT'] + "/CHANGES.xml"
         print(ROOT_PATH)
         self.m_richText1.LoadFile(ROOT_PATH,2)
         #

@@ -222,13 +222,19 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
             except Exception as e:
                 self.parent_frame.Log("Unable to complete tx :" + str(e) , type="warning")
             
+            
+            
+            ReportRPCResult(self.parent_frame, _result, "success", "Transaction complete !", "Unable to complete the transaction.", False)
+            '''
             if _result != None:
+
+                #UserAdvancedMessage(self.parent_frame, f"List of {len(self._currentUTXOcount)} Addresses has been loaded.", 'info')
                 UserInfo(self, str(_result))
                 self.m_completeButton.Enable(False)
             else:
                 UserError(self, "Error : Unable to complete the transaction : "+ str(_result))
      
-    
+            '''
     
     
     def OnRawDataInputChanged(self, evt=None):

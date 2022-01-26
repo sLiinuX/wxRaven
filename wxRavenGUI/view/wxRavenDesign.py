@@ -11,6 +11,7 @@ import wx
 import wx.xrc
 import wx.aui
 from wxRavenGUI.application.wxcustom.CustomNotificationBar import *
+import wx.richtext
 
 ###########################################################################
 ## Class wxRavenSplashScreen
@@ -512,5 +513,183 @@ class wxRavenNotAvailablePanel ( wx.Panel ):
 	
 	def __del__( self ):
 		pass
+	
+
+###########################################################################
+## Class wxRavenDisclaimer
+###########################################################################
+
+class wxRavenDisclaimer ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 706,426 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer16 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_panel3 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_panel3.SetBackgroundColour( wx.Colour( 255, 255, 206 ) )
+		
+		bSizer17 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer18 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap5 = wx.StaticBitmap( self.m_panel3, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/warning_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer18.Add( self.m_bitmap5, 0, wx.ALL, 5 )
+		
+		self.m_staticText6 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"wxRaven - User Disclaimer", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6.Wrap( -1 )
+		self.m_staticText6.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer18.Add( self.m_staticText6, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer17.Add( bSizer18, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer19 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_richText1 = wx.richtext.RichTextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0|wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS )
+		self.m_richText1.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_INFOBK ) )
+		
+		bSizer19.Add( self.m_richText1, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		bSizer17.Add( bSizer19, 1, wx.EXPAND, 5 )
+		
+		bSizer21 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_mandatoryCheck = wx.CheckBox( self.m_panel3, wx.ID_ANY, u"I Understood the risks and accept the terms of usage", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer21.Add( self.m_mandatoryCheck, 0, wx.ALL, 5 )
+		
+		
+		bSizer17.Add( bSizer21, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer20 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_CloseButton = wx.Button( self.m_panel3, wx.ID_ANY, u"CLOSE", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_CloseButton.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer20.Add( self.m_CloseButton, 0, wx.ALL, 5 )
+		
+		self.m_OkButton = wx.Button( self.m_panel3, wx.ID_ANY, u"CONTINUE", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_OkButton.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		self.m_OkButton.Enable( False )
+		
+		bSizer20.Add( self.m_OkButton, 0, wx.ALL, 5 )
+		
+		
+		bSizer17.Add( bSizer20, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		
+		self.m_panel3.SetSizer( bSizer17 )
+		self.m_panel3.Layout()
+		bSizer17.Fit( self.m_panel3 )
+		bSizer16.Add( self.m_panel3, 1, wx.EXPAND |wx.ALL, 0 )
+		
+		
+		self.SetSizer( bSizer16 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class wxRavenDisclaimerDialog
+###########################################################################
+
+class wxRavenDisclaimerDialog ( wx.Dialog ):
+	
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"wxRaven - User Disclaimer", pos = wx.DefaultPosition, size = wx.Size( 810,499 ), style = wx.CAPTION|wx.DEFAULT_DIALOG_STYLE|wx.DIALOG_NO_PARENT|wx.STAY_ON_TOP )
+		
+		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
+		
+		bSizer16 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_panel3 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_panel3.SetBackgroundColour( wx.Colour( 255, 255, 206 ) )
+		
+		bSizer17 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer18 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap5 = wx.StaticBitmap( self.m_panel3, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/warning_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer18.Add( self.m_bitmap5, 0, wx.ALL, 5 )
+		
+		self.m_staticText6 = wx.StaticText( self.m_panel3, wx.ID_ANY, u"wxRaven - User Disclaimer", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6.Wrap( -1 )
+		self.m_staticText6.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer18.Add( self.m_staticText6, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer17.Add( bSizer18, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer19 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_richText1 = wx.richtext.RichTextCtrl( self.m_panel3, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0|wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS )
+		self.m_richText1.SetBackgroundColour( wx.Colour( 255, 255, 204 ) )
+		
+		bSizer19.Add( self.m_richText1, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		bSizer17.Add( bSizer19, 1, wx.EXPAND, 5 )
+		
+		bSizer21 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_mandatoryCheck = wx.CheckBox( self.m_panel3, wx.ID_ANY, u"«I Understood the risks and accept the terms of usage»", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_mandatoryCheck.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 92, False, wx.EmptyString ) )
+		
+		bSizer21.Add( self.m_mandatoryCheck, 0, wx.ALL, 5 )
+		
+		
+		bSizer17.Add( bSizer21, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer20 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_CloseButton = wx.Button( self.m_panel3, wx.ID_ANY, u"CLOSE", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_CloseButton.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer20.Add( self.m_CloseButton, 0, wx.ALL, 5 )
+		
+		self.m_OkButton = wx.Button( self.m_panel3, wx.ID_ANY, u"CONTINUE", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_OkButton.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		self.m_OkButton.Enable( False )
+		
+		bSizer20.Add( self.m_OkButton, 0, wx.ALL, 5 )
+		
+		
+		bSizer17.Add( bSizer20, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		
+		self.m_panel3.SetSizer( bSizer17 )
+		self.m_panel3.Layout()
+		bSizer17.Fit( self.m_panel3 )
+		bSizer16.Add( self.m_panel3, 1, wx.EXPAND |wx.ALL, 0 )
+		
+		
+		self.SetSizer( bSizer16 )
+		self.Layout()
+		
+		self.Centre( wx.BOTH )
+		
+		# Connect Events
+		self.m_mandatoryCheck.Bind( wx.EVT_CHECKBOX, self.OnAcceptTerms )
+		self.m_CloseButton.Bind( wx.EVT_BUTTON, self.OnCloseRequest )
+		self.m_OkButton.Bind( wx.EVT_BUTTON, self.OnAccept )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnAcceptTerms( self, event ):
+		event.Skip()
+	
+	def OnCloseRequest( self, event ):
+		event.Skip()
+	
+	def OnAccept( self, event ):
+		event.Skip()
 	
 

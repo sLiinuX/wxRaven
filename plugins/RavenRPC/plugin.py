@@ -85,7 +85,7 @@ class wxRavenPlugin(PluginObject):
         _setPanel = PluginSettingsTreeObject("RavenRPC", _Icon, classPanel=wxRavenRPCPluginSettings, _childs=None)
         self.PLUGIN_SETTINGS_GUI.append(_setPanel)
        
-        
+        self.setData("_icon", self.RessourcesProvider.GetImage('network') )
         
         self.setData("_CmdList", {})
         self.setData("_CmdListInCache", False)
@@ -174,6 +174,10 @@ class wxRavenPlugin(PluginObject):
             
         
     def OnNetworkChanged_T(self, networkName=""):    
+        
+        if not self.parentFrame._isReady:
+            return None 
+        
         t=threading.Thread(target=self.OnNetworkChanged)
         t.start()
         

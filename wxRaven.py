@@ -28,6 +28,7 @@ import wx.grid
 import wx.html2
 import wx.aui
 import wx.py
+import random
 
 try: 
     import wx.msw
@@ -86,3 +87,9 @@ from wxRavenGUI import wxRavenMain
 if __name__ == '__main__':
     Instance_wxRavenApplication = wxRavenMain.wxRavenMainApp()
     Instance_wxRavenApplication.runApp()
+    #if Instance_wxRavenApplication.doStart:
+    #    Instance_wxRavenApplication.runApp()
+    #else:
+    #    wx.Exit()
+    
+    

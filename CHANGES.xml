@@ -5,28 +5,28 @@
       <text fontpointsize="14" fontweight="700">wxRaven Changelog</text>
     </paragraph>
     <paragraph alignment="2" parspacingafter="20" parspacingbefore="0">
-      <text fontstyle="93" fontweight="700">" 0.1.2#BUILD-3"</text>
+      <text fontstyle="93" fontweight="700">" 0.1.2#BUILD-4"</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman">
       <text></text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman">
-      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">[0.1.2#Build-3] - 2022-01-20</text>
+      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">[0.1.2#Build-4] - 2022-01-26</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="100" leftsubindent="0">
       <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">Added</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">"Transation detail viewer (Ravencore) "</text>
+      <text fontstyle="93">Airdrop Feature</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">P2P Market UTXO Preparator</text>
+      <text fontstyle="93">Standardized Error Dialog</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">P2P Market - Multiple Orders</text>
+      <text fontstyle="93">Disclaimer</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
-      <text fontstyle="93">Full Log in Userdata</text>
+      <text fontstyle="93">...</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="100" leftsubindent="0">
       <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">Changed</text>

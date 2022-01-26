@@ -556,8 +556,17 @@ class ViewsManager(object):
                 
                 
         self.UpdateGUIManager()
-        
     
+    
+    def RenameView(self):
+        pass
+    
+    
+    
+    #
+    #
+    #Best and cleanest way to call a view
+    #   
     def OpenView(self, viewName, pluginname="", createIfNull=False):
         
         

@@ -155,7 +155,32 @@ class wxRavenPlugin(PluginObject):
         # REMOVED AND REPLACED BY AN AUTO LOAD
         #self.LoadPluginFrames()
         
+        self.waitApplicationReady()
     
+    #
+    # Run a thread and wait app to be fully loaded
+    #
+    def waitApplicationReady(self):
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.__applicationReady__,))
+        t.start()
+        
+    #
+    #  thread to wait
+    #    
+    def __waitLoop_T__(self,callback):
+        while not self.parentFrame._isReady:
+            time.sleep(1)
+            
+        wx.CallAfter(callback, ()) 
+        
+        
+        #self.initializeAssetManagerBackgroundService()
+    
+    #
+    #  thread callback
+    #
+    def __applicationReady__(self, evt=None):
+        pass
     
     
     
@@ -199,7 +224,9 @@ class wxRavenPlugin(PluginObject):
         
             
         
-    def OnNetworkChanged_T(self, networkName=""):    
+    def OnNetworkChanged_T(self, networkName=""):   
+        if not self.parentFrame._isReady:
+            return None  
         t=threading.Thread(target=self.OnNetworkChanged)
         t.start()
         

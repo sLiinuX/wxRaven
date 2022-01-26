@@ -79,6 +79,8 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         self.m_listCtrl1.Bind(wx.EVT_RIGHT_UP, self.OnRightClick)
         self.m_listCtrl1.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick)
         #self.m_listCtrl1.Bind(wx.EVT_RIGHT_UP, self.OnRightClick)
+        
+        
         self.m_listCtrl1.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnItemActivated)
         
         
@@ -471,9 +473,9 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         self.m_listCtrl1.SetColumnWidth(2,wx.LIST_AUTOSIZE)
         self.m_listCtrl1.SetColumnWidth(3, wx.LIST_AUTOSIZE)
         self.m_listCtrl1.SetColumnWidth(4, wx.LIST_AUTOSIZE)
-        self.m_listCtrl1.SetColumnWidth(5, 100)
-        self.m_listCtrl1.SetColumnWidth(6, 70)
-        self.m_listCtrl1.SetColumnWidth(7, 50)
+        self.m_listCtrl1.SetColumnWidth(5, wx.LIST_AUTOSIZE)
+        self.m_listCtrl1.SetColumnWidth(6, wx.LIST_AUTOSIZE)
+        self.m_listCtrl1.SetColumnWidth(7, 75)
         self.m_listCtrl1.SetColumnWidth(8, 20)
         
         self.m_listCtrl1.SetColumnWidth(0, wx.LIST_AUTOSIZE)
@@ -513,17 +515,21 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
             self.m_listCtrl1.SetItem(index,5, str(priceComplete))
             self.m_listCtrl1.SetItem(index,6, str(item._adAssetQt))
             #print(str(item._adOrders))
-            self.m_listCtrl1.SetItem(index,7, str(item._adOrders))      
+            
+            _avCount = item.GetAvailableOrders()
+            _avorderCol = f"{_avCount}/{item._adOrders}"
+            
+            self.m_listCtrl1.SetItem(index,7, str(_avorderCol))      
             
             self.m_listCtrl1.SetItem(index,8, str(self._cursor))    
                     
             self.m_listCtrl1.SetItemData(index, self._cursor)
                     
             self._datacache[self._cursor] = item
-            self.itemDataMap[self._cursor] = (item._adTitle, item._adType,item._adTxType, str(item._adAddress) ,item._adAsset, float(item._adPrice) ,float(item._adAssetQt), int(item._adOrders), int(self._cursor))
+            self.itemDataMap[self._cursor] = (item._adTitle, item._adType,item._adTxType, str(item._adAddress) ,item._adAsset, float(item._adPrice) ,float(item._adAssetQt), int(_avCount), int(self._cursor))
                     
                     
-            print(f"{self._cursor}  {item}")
+            #print(f"{self._cursor}  {item}")
             self._cursor = self._cursor+1
     
     

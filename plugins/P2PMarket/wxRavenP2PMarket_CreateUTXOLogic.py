@@ -99,10 +99,11 @@ class wxRavenP2PMarket_CreateUTXOWithLogic(wxRavenP2PMarket_CreateUTXO):
         #p2p_market_swap_address= myPlugin.PLUGIN_SETTINGS['p2p_market_swap_address']
         
         self._currentAsset 
+        _fakeResult = {'result':None , 'error': {'code':-1, 'message': f"Unknown error, please check logs."}}
         
         _tx=None
-        if True:
-        #try:
+        #if True:
+        try:
             ravencoin = self.parent_frame.getRvnRPC()
             
             _allAddresses = ravencoin.wallet.GenerateAdress(int(self._currentUTXOcount ))
@@ -110,23 +111,33 @@ class wxRavenP2PMarket_CreateUTXOWithLogic(wxRavenP2PMarket_CreateUTXO):
             
             
             if self._currentAsset  == 'RVN':
-                _tx = ravencoin.wallet.sendSameRVN_Many( self._currentAmount, adresses=_allAddresses, pwd='', _changeAddress=p2p_market_change_address, _fund=True, _sign=True, _execute=True)
+                _txOk, _tx = ravencoin.wallet.sendSameRVN_Many( self._currentAmount, adresses=_allAddresses, pwd='', _changeAddress=p2p_market_change_address, _fund=True, _sign=True, _execute=True)
                
                 print(f"RVN  {_tx}") 
             else:
                 
-                _tx = ravencoin.wallet.sendSameAsset_Many(  self._currentAsset, self._currentAmount, adresses=_allAddresses, pwd='', _changeAddress=p2p_market_change_address, _fund=True, _sign=True, _execute=True)
+                _txOk, _tx = ravencoin.wallet.sendSameAsset_Many(  self._currentAsset, self._currentAmount, adresses=_allAddresses, pwd='', _changeAddress=p2p_market_change_address, _fund=True, _sign=True, _execute=True)
                 
                 print(f"Asset  {_tx}") 
                 
             
-            
-            UserInfo(self, _tx)
+            _fakeResult = {'result':_tx , 'error':None}
+            if not _txOk:
+                _fakeResult['error'] = {'code':-1, 'message': f"{_tx}"}
                 
-        #except Exception as e:
-        #    self.parent_frame.Log(f"Unable Generate UTXO : {e}" , type="warning")
+                
+                
+            
+            #UserInfo(self, _tx)
+                
+        except Exception as e:
+            self.parent_frame.Log(f"Unable Generate UTXO : {e}" , type="warning")
+            _fakeResult = {'result':None , 'error': {'code':-1, 'message': e}}
         
         
+        
+        ReportRPCResult(self.parent_frame, _fakeResult, "success", "UTXO's created !", "Unable Generate UTXO's.", False)
+            
         return _tx
     
     

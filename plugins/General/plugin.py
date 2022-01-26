@@ -93,7 +93,8 @@ class wxRavenPlugin(PluginObject):
                 'last_network':'mainnet_localhost',
                 'disable_plugins' :[],
                 'quick_links' :[],
-                'debug_out' :'stderr'
+                'debug_out' :'stderr',
+                'show_disclaimer':True
             }
         
         
@@ -219,6 +220,9 @@ class wxRavenPlugin(PluginObject):
   
         
     def OnNetworkChanged_T(self, networkName=""):    
+        if not self.parentFrame._isReady:
+            return
+        
         t=threading.Thread(target=self.OnNetworkChanged)
         t.start()
         

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<richtext version="1.0.0.0" xmlns="http://www.wxwidgets.org">
+  <paragraphlayout textcolor="#000000" fontpointsize="9" fontfamily="70" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Segoe UI" alignment="1" parspacingafter="10" parspacingbefore="0" linespacing="10" margin-left="5,4098" margin-right="5,4098" margin-top="5,4098" margin-bottom="5,4098">
+    <paragraph fontweight="700" alignment="2" parspacingafter="20" parspacingbefore="0">
+      <text fontpointsize="14" fontweight="700">DISCLAIMER</text>
+    </paragraph>
+    <paragraph alignment="2" parspacingafter="20" parspacingbefore="0">
+      <text fontstyle="93" fontweight="700">by wxRaven</text>
+    </paragraph>
+    <paragraph parspacingafter="20" parspacingbefore="0">
+      <text></text>
+    </paragraph>
+    <paragraph parspacingafter="20" parspacingbefore="0">
+      <text fontpointsize="12" fontweight="700">INTRODUCTION / WALLET PROTECTION</text>
+    </paragraph>
+    <paragraph parspacingafter="20" parspacingbefore="0">
+      <text>"wxRaven is a software that "</text>
+      <text fontweight="700">requires by nature</text>
+      <text>" a "</text>
+      <text fontweight="700">direct connexion to ravencore wallet</text>
+      <text>" for most of the features. For this reason, user "</text>
+      <text fontweight="700">must configure and verify all the settings</text>
+      <text>" before trying to perform any transaction or wallet actions."</text>
+    </paragraph>
+    <paragraph parspacingafter="20" parspacingbefore="0">
+      <text>"For a regular usage of wxRaven, we strongly recomend to use/create a dedicated ravencore wallet, this one should "</text>
+      <text fontweight="700">"protected by a passphrase and encypted "</text>
+      <text>as well.</text>
+    </paragraph>
+    <paragraph parspacingafter="20" parspacingbefore="0">
+      <text></text>
+    </paragraph>
+    <paragraph parspacingafter="20" parspacingbefore="0">
+      <text>"This software being opensource and available from internet, please "</text>
+      <text fontweight="700">verify the provenance of the package you downloaded</text>
+      <text>" and are about to use. the actual current and "</text>
+      <text fontweight="700">unique official repository is on Github</text>
+      <text>" : https://github.com/sLiinuX/wxRaven/releases"</text>
+    </paragraph>
+    <paragraph parspacingafter="20" parspacingbefore="0">
+      <text></text>
+    </paragraph>
+    <paragraph parspacingafter="20" parspacingbefore="0">
+      <text fontpointsize="12" fontweight="700">EXTERNAL LINKS/PLUGINS DISCLAIMER</text>
+    </paragraph>
+    <paragraph>
+      <text>"The software may contain (or you may be sent through the software) "</text>
+      <text fontweight="700">links to other websites or content</text>
+      <text>" belonging to or originating from third parties or links to websites and features in banners or other advertising. "</text>
+      <text fontweight="700">Such external links are not investigated, monitored, or checked</text>
+      <text>" for accuracy, adequacy, validity, reliability, availability or completeness by us."</text>
+    </paragraph>
+    <paragraph>
+      <text></text>
+    </paragraph>
+    <paragraph>
+      <text>We</text>
+      <text fontweight="700">" do not warrant, endorse, guarantee, or assume responsibility "</text>
+      <text>for the accuracy or reliability of any information offered by third-party websites linked through the application or any website or feature linked in any banner or other advertising. We will not be a party to or in any way be responsible for monitoring any transaction between you and third-party providers of products or services.</text>
+    </paragraph>
+  </paragraphlayout>
+</richtext>
