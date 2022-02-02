@@ -326,7 +326,8 @@ class wxRavencore_BookmarksSettings_WithLogic(PluginSettingsPanelObject):
         bookmark_list_s =  myPlugin.PLUGIN_SETTINGS["bookmark_list"] 
         
         #for i in ipfsgateway_providers:
-        self._Panel.bookmark_list.InsertItems(bookmark_list_s, 0)
+        if len(bookmark_list_s)>0:
+            self._Panel.bookmark_list.InsertItems(bookmark_list_s, 0)
         
         #print("LoadPanelSettings")     
         

@@ -22,7 +22,7 @@ class wxRavenMainApp(object):
     
     
 
-    def __init__(self):
+    def __init__(self, profile=None):
         '''
         Constructor
         '''
@@ -30,25 +30,34 @@ class wxRavenMainApp(object):
         self.doStart=False
         self.appmainframe = None
         print("> SHOW splashscreen")
-        self.splash = SplashScreenMgr(self, None)
+        self.splash = SplashScreenMgr(self, parentframe=None, profile=profile)
+        #self.userpath = self.splash.
         print("> INIT END splashscreen")
         #self.appmainframe  = wxRavenAppMainFrame()
         #self.splash.SetParent(self.appmainframe)
 
 
-    def setup_logging(self, _timeStampIt=False):
+    def setup_logging(self, forcePath='',_timeStampIt=False):
         #self._timestamp = round(time.time() * 1000) 
         
 
         #self._timestamp = round(time.time() * 1000) 
         
-        self.tradepath = os.getcwd() + f"/userdata/atomicswap_session.log"
-        self.savepath = os.getcwd() + f"/userdata/wxraven_last_session.log"
+        _root = os.getcwd()
+        if forcePath :
+            _root = forcePath
+        
+        
+        self.tradepath = _root + f"/userdata/atomicswap_session.log"
+        self.savepath = _root + f"/userdata/wxraven_last_session.log"
         try:
             os.remove(self.savepath )  
             os.remove(self.tradepath )    
         except Exception as e:
             pass
+        
+        
+        
         
         path = os.path.expanduser(self.savepath)
         
@@ -76,9 +85,9 @@ class wxRavenMainApp(object):
         return self.appmainframe
 
         
-    def runApp(self):
+    def runApp(self, forcePath=''):
         #self.appmainframe.Show()
-        self.setup_logging()
+        self.setup_logging(forcePath=forcePath)
         
         self.app.MainLoop() 
          

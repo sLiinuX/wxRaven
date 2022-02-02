@@ -38,8 +38,50 @@ class perspectiveManager(object):
         
         self.perspective_additional_data = {}
         
+        
+        self.parentframe.wxRavenMenuBar_Window_Perspectives.Bind( wx.EVT_MENU, self.OnResumeMenuOptionChanged, id = self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId() )
+        self.parentframe.wxRavenMenuBar_Window_Perspectives.Bind( wx.EVT_MENU, self.OnSaveMenuOptionChanged, id = self.parentframe.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId() )
+        
         if loadLastView:
             self.LoadLastPerspective()
+    
+    
+    
+    
+    def OnResumeMenuOptionChanged(self, evt):
+        #_s = self.wxRavenMenuBar_Window_Perspectives.IsChecked(self.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId())
+        _s = self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId())
+        self.ToggleResumeViewSettings( _s, True)
+    
+    
+    def OnSaveMenuOptionChanged(self, evt):
+        #_s = self.wxRavenMenuBar_Window_Perspectives.IsChecked(self.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId())
+        _s = self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId())
+        self.ToggleSaveViewSettings( _s, True)
+        
+    
+    def ToggleResumeViewSettings(self, _tValue=True, _fromEvent=False):
+        print(f"ToggleResumeViewSettings {_tValue} {_fromEvent}")
+        self.parentframe.Settings.resumeviewonstartup = _tValue
+        self.parentframe.Settings.resumepluginstate = _tValue
+        #self.parentframe.Settings.resumeviewonstartup = _tValue
+        if not _fromEvent:
+            self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.Check( _tValue )
+        #self.parentframe.wxRavenMenuBar_Window_Perspectives_SaveOnClose.Check( True )
+    
+    
+    def ToggleSaveViewSettings(self, _tValue=True, _fromEvent=False):
+        print(f"ToggleSaveViewSettings {_tValue} {_fromEvent}")
+        p = self.parentframe.GetPlugin('General')
+        p.PLUGIN_SETTINGS['save_on_close'] = _tValue
+        #self.parentframe.Settings.resumeviewonstartup = _tValue
+        #self.parentframe.Settings.resumeviewonstartup = _tValue
+        if not _fromEvent:
+            self.parentframe.wxRavenMenuBar_Window_Perspectives_SaveOnClose.Check( _tValue )
+    
+    
+    
+    
     
     
     

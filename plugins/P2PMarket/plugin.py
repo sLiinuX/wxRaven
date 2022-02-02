@@ -20,12 +20,10 @@ from .wxRavenP2PMarketNewAdDialogLogic import *
 from .wxRavenCreateAtomicSwapLogic import *
 from .wxRavenP2PMarket_CreateUTXOLogic import *
 from .wxRavenP2PMarket_ViewTxInfosPanel import *
+from .wxRavenP2PMarket_AdDetailPanel import *
 #from plugins.P2PMarket.wxRavenP2PMarket_CreateAirdropLogic import *
 
 
-
-#from .wxRavenP2PMarket_CreateAirdropLogic import *
-#from .wxRavenP2PMarket_CreateAdvertisingLogic import *
 
 
 
@@ -160,7 +158,24 @@ class wxRavenPlugin(PluginObject):
                      
         
                     ,
+                    
+                    {
+                     'viewid':'Ad Details', 
+                     'name':'Ad Details', 
+                     'title':'Ad Details', 
+                     'position':'main', 
+                     'icon':_utxoIconNew, 
+                     'class': wxRavenP2PMarket_AdDetailsLogic,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'toolbar_shortcut': False,
+                     'hidden_view': True,
+                     'skip_save': True,
+                     }
                      
+        
+                    ,
+                    
                      
                      
                 ]
@@ -440,6 +455,17 @@ class wxRavenPlugin(PluginObject):
     
     
     
+    
+    def OpenAdDetails(self, adDatas):
+        #_newView = self.LoadView(self.SearchPluginView("IPFS File Uploader"), "dialog")
+        _newView = self.parentFrame.Views.OpenView("Ad Details", "P2PMarket", True)
+        print(_newView)
+        if _newView != None:
+            
+            _vi = self.parentFrame.Views.SearchViewInstance("Ad Details")
+            
+            _vi['instance'].Show()
+            _vi['instance'].LoadAd(adDatas)
     
     
     def CreateNewUTXO(self, assetname='RVN'):

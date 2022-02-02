@@ -9,19 +9,25 @@ import os.path
 from wx import *
 import threading
 
-
+from libs.wxRaven_Webservices import wxRaven_RPC_WebserviceClient
 from libs.RVNpyRPC import *
 from wxRavenGUI.view import *
 from wxRavenGUI.application.core import *
 from wxRavenGUI.application.core.wxRessourcesProvider import RessourcesProvider
+from wxRavenGUI.application.wxcustom.CustomUserIO import UserAdvancedMessage
 
-
+#
+#
+# Default Paths for LOCAL Profile
+#
+#
+'''
 ROOT_PATH = os.getcwd()
 RES_PATH = os.getcwd() + "/res/"
 CONFIG_PATH = os.getcwd() + "/config/"
 PLUGIN_PATH = os.getcwd() + "/plugins/"
 USERDATA_PATH = os.getcwd() + "/userdata/"
-
+'''
 
 
 
@@ -50,7 +56,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     Ressources = None
     Paths = {}
     
-    def __init__(self):
+    def __init__(self, _ProfilePath=''):
         
         self.logger = logging.getLogger('wxRaven')
         
@@ -60,18 +66,28 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         #splash.Show()
         
-        self.Paths = {'ROOT':os.getcwd(),
-                      'RES' : os.getcwd() + "/res/",
-                      'CONFIG' : os.getcwd() + "/config/",
-                      'PLUGIN' : os.getcwd() + "/plugins/",
-                      'USERDATA' : os.getcwd() + "/userdata/",
-            }
+        _rootPath = os.getcwd()
+        if _ProfilePath == '':
+            _ProfilePath = os.getcwd()
         
+        self.Paths = {'ROOT':_rootPath,
+                      'RES' : _rootPath + "/res/",
+                      'CONFIG' : _ProfilePath + "/config/",
+                      'PLUGIN' : _rootPath + "/plugins/",
+                      'USERDATA' : _ProfilePath + "/userdata/",
+            }
+        #
+        #
+        #
+        # TODO : look for all and replace with GetPath
+        #    os.getcwd()
+        #    userdata
+        #    config
         
         
         # Setting manager will be used to load settings, both for app and plugin.
-        self.Settings = SettingsManager(self)
-        self.RessourcesProvider = RessourcesProvider(RES_PATH, theme="default_style")
+        self.Settings = SettingsManager(self, configpath=self.Paths['CONFIG'], pluginpath=self.Paths['PLUGIN'])
+        self.RessourcesProvider = RessourcesProvider(self.GetPath('RES'), theme="default_style")
         
         
         
@@ -103,7 +119,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
 
         
         # Plugins management
-        self.Plugins = pluginsManager(PLUGIN_PATH, self, loadPath=False)
+        self.Plugins = pluginsManager(self.GetPath('PLUGIN'), self, loadPath=False)
         self.Plugins.SetExclusionList()
            
         self.Plugins.Initialize()
@@ -114,9 +130,9 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         
         #self.MenusAndTool.refreshViewsListMenu()
-        
+        #UserAdvancedMessage(self, str(self.Settings.resumeviewonstartup), 'info')
 
-        self.PerspectiveManager = perspectiveManager(self, CONFIG_PATH, loadLastView=self.Settings.resumeviewonstartup)  
+        self.PerspectiveManager = perspectiveManager(self, self.GetPath('CONFIG'), loadLastView=self.Settings.resumeviewonstartup)  
         
         
         
@@ -133,16 +149,36 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         self.initDialogOptions()
         
         
-        self._isReady = True
+        #self._isReady = True
+        
+        
         #
         # Environement Variable for the Shells
         #
         #self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Plugins.plugins, "Plugins")
         #self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Views, "Views")
         self.GetPlugin("RavenRPC").addLocalVarInShell(  self, "wxRaven")
+        #
+        
+        '''
+        self.GetPlugin("RavenRPC").addLocalVarInShell(  self.ConnexionManager._wxRavenws, "wxRavenWebService")
+        '''
         
         
-        self.Views.OpenView("Welcome", pluginname='', createIfNull=True)
+        if self.GetPluginSetting('General', 'show_welcome'):
+            self.Views.OpenView("Welcome", pluginname='', createIfNull=True)
+        
+        
+        
+        
+        #
+        # No wallet rpc webservice
+        #
+        #_wxRavenws = wxRaven_RPC_WebserviceClient()
+        #self.GetPlugin("RavenRPC").addLocalVarInShell(  _wxRavenws, "_wxRavenws")
+        #self.ConnexionManager.rpc_connectors['WEBSERVICE-MODE'] = _wxRavenws
+        
+        
         #self.wxRavenToolBook3.SetArtProvider(wx.aui.AuiSimpleTabArt())
        
         #splash.Close()
@@ -166,12 +202,8 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         
 
-        
-
-    
-    
-    
-    
+    def SetReady(self,readyValue=True):
+        self._isReady = readyValue
     
     
     """
@@ -191,8 +223,8 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         _res = self.Paths['ROOT']
         
         if self.Paths.__contains__(pathname):
-            _res = self.Paths['ROOT']
-    
+            _res = self.Paths[pathname]
+        return _res
     
     def GetPlugin(self, pname, loadIfNone = False):
         return self.Plugins.GetPlugin(pname, loadIfNone)
@@ -224,6 +256,13 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         except Exception as e:
             self.logger.error("APPLICATION BUILT-IN LOG : Log (wxRavenApp) :" + str(e))
     
+    
+    
+    
+    def ThreadedRequest(self, requestCallback, postCallback ):
+        pass
+    
+        
     """    
     def Debug(self ,message ):
         try:
@@ -276,8 +315,28 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     def OnConnexionChanged(self, connexionName=""):
         if connexionName == '':
             connexionName= self.ConnexionManager.getCurrent()
-        wx.MessageBox("You selected the network '%s'" % connexionName)    
-    
+        #wx.MessageBox("You selected the network '%s'" % connexionName)    
+        
+        _typeMessage = 'info'
+        _Message = f"Network Changed for {connexionName}"
+        _MessageDetails = ''
+        _showCancel = False
+        
+        
+        if connexionName == 'NO WALLET MODE' or connexionName == 'OFFLINE-MODE':
+            _typeMessage = 'warning'
+            _Message = f"Network Changed for {connexionName}.\nWarning : This connexion only provide limited features through a Third-Part server/service."
+        else:
+            
+            if self.ConnexionManager.CheckConnexionStatus(connexionName):
+                _typeMessage = 'success'
+            
+            
+        if not self.ConnexionManager.CheckConnexionStatus(connexionName):
+            _typeMessage = 'error'
+            _Message = f"Connexion {connexionName} is not responding."
+            
+        UserAdvancedMessage(self,_Message, _typeMessage, _MessageDetails, _showCancel)
     
     
     def OnNewView(self, event):

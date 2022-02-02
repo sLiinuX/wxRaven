@@ -12,6 +12,7 @@ import wx.xrc
 from wxRavenGUI.application.wxcustom.CustomListCtrl import *
 import wx.aui
 import wx.html2 as webview
+from wxRavenGUI.application.wxcustom import *
 
 ###########################################################################
 ## Class wxRavenNetInfos
@@ -566,6 +567,581 @@ class wxRaven_RavencoreTxReader ( wx.Panel ):
 	
 
 ###########################################################################
+## Class wxRaven_Ravencore_TxViewer
+###########################################################################
+
+class wxRaven_Ravencore_TxViewer ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 1048,761 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer126 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_DataPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer152 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer12711 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap3411 = wx.StaticBitmap( self.m_DataPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/wallet_in_out.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer12711.Add( self.m_bitmap3411, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText6911 = wx.StaticText( self.m_DataPanel, wx.ID_ANY, u"Tx ID :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6911.Wrap( -1 )
+		self.m_staticText6911.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer12711.Add( self.m_staticText6911, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_txIdText = wx.TextCtrl( self.m_DataPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer12711.Add( self.m_txIdText, 3, wx.ALL, 5 )
+		
+		
+		bSizer152.Add( bSizer12711, 0, wx.EXPAND, 5 )
+		
+		bSizer127 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap34 = wx.StaticBitmap( self.m_DataPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/raw_datas.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer127.Add( self.m_bitmap34, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText69 = wx.StaticText( self.m_DataPanel, wx.ID_ANY, u"Hash :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText69.Wrap( -1 )
+		self.m_staticText69.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer127.Add( self.m_staticText69, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_hashText = wx.TextCtrl( self.m_DataPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer127.Add( self.m_hashText, 3, wx.ALL, 5 )
+		
+		
+		bSizer152.Add( bSizer127, 0, wx.EXPAND, 5 )
+		
+		bSizer165 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		bSizer1271 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap341 = wx.StaticBitmap( self.m_DataPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/clock_1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1271.Add( self.m_bitmap341, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText691 = wx.StaticText( self.m_DataPanel, wx.ID_ANY, u"Timestamp :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText691.Wrap( -1 )
+		self.m_staticText691.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer1271.Add( self.m_staticText691, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_timestampText = wx.TextCtrl( self.m_DataPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer1271.Add( self.m_timestampText, 1, wx.ALL, 5 )
+		
+		
+		bSizer165.Add( bSizer1271, 1, wx.EXPAND, 5 )
+		
+		bSizer12712 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap3412 = wx.StaticBitmap( self.m_DataPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/cash_1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer12712.Add( self.m_bitmap3412, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText6912 = wx.StaticText( self.m_DataPanel, wx.ID_ANY, u"Fees :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6912.Wrap( -1 )
+		self.m_staticText6912.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer12712.Add( self.m_staticText6912, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_locktimeText = wx.TextCtrl( self.m_DataPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer12712.Add( self.m_locktimeText, 1, wx.ALL, 5 )
+		
+		
+		bSizer165.Add( bSizer12712, 0, wx.EXPAND, 5 )
+		
+		bSizer127121 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap34121 = wx.StaticBitmap( self.m_DataPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/raw_datas_verified.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer127121.Add( self.m_bitmap34121, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText69121 = wx.StaticText( self.m_DataPanel, wx.ID_ANY, u"Confirmations :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText69121.Wrap( -1 )
+		self.m_staticText69121.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer127121.Add( self.m_staticText69121, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_ConfirmationsText = wx.TextCtrl( self.m_DataPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer127121.Add( self.m_ConfirmationsText, 1, wx.ALL, 5 )
+		
+		
+		bSizer165.Add( bSizer127121, 0, wx.EXPAND, 5 )
+		
+		bSizer1271211 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap341211 = wx.StaticBitmap( self.m_DataPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/density.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1271211.Add( self.m_bitmap341211, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText691211 = wx.StaticText( self.m_DataPanel, wx.ID_ANY, u"Size :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText691211.Wrap( -1 )
+		self.m_staticText691211.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer1271211.Add( self.m_staticText691211, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_SizeText = wx.TextCtrl( self.m_DataPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer1271211.Add( self.m_SizeText, 1, wx.ALL, 5 )
+		
+		
+		bSizer165.Add( bSizer1271211, 0, wx.EXPAND, 5 )
+		
+		
+		bSizer152.Add( bSizer165, 0, wx.EXPAND, 5 )
+		
+		
+		self.m_DataPanel.SetSizer( bSizer152 )
+		self.m_DataPanel.Layout()
+		bSizer152.Fit( self.m_DataPanel )
+		bSizer126.Add( self.m_DataPanel, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_auinotebook2 = wx.aui.AuiNotebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE )
+		
+		bSizer126.Add( self.m_auinotebook2, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer126 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_txIdText.Bind( wx.EVT_TEXT, self.OnTxIdChanged )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnTxIdChanged( self, event ):
+		event.Skip()
+	
+
+###########################################################################
+## Class wxRaven_Ravencore_TxViewer_VINOUT_Panel
+###########################################################################
+
+class wxRaven_Ravencore_TxViewer_VINOUT_Panel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 677,330 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer233 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_txDetailsAdvanced = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer1701 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer1711 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		bSizer1711.SetMinSize( wx.Size( -1,200 ) ) 
+		bSizer1722 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		bSizer1742 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer1732 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap502 = wx.StaticBitmap( self.m_txDetailsAdvanced, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/vin_icon1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1732.Add( self.m_bitmap502, 0, wx.ALL, 5 )
+		
+		self.m_staticText862 = wx.StaticText( self.m_txDetailsAdvanced, wx.ID_ANY, u"VINs :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText862.Wrap( -1 )
+		self.m_staticText862.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer1732.Add( self.m_staticText862, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer1742.Add( bSizer1732, 0, wx.EXPAND, 5 )
+		
+		self.m_VINsText = wx.TextCtrl( self.m_txDetailsAdvanced, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
+		bSizer1742.Add( self.m_VINsText, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer1722.Add( bSizer1742, 1, wx.EXPAND, 5 )
+		
+		bSizer17311 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer235 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap5011 = wx.StaticBitmap( self.m_txDetailsAdvanced, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/vout_icon1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer235.Add( self.m_bitmap5011, 0, wx.ALL, 5 )
+		
+		self.m_staticText8611 = wx.StaticText( self.m_txDetailsAdvanced, wx.ID_ANY, u"VOUTs :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText8611.Wrap( -1 )
+		self.m_staticText8611.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer235.Add( self.m_staticText8611, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer17311.Add( bSizer235, 0, wx.EXPAND, 5 )
+		
+		self.m_VOUTsText = wx.TextCtrl( self.m_txDetailsAdvanced, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
+		bSizer17311.Add( self.m_VOUTsText, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer1722.Add( bSizer17311, 1, wx.EXPAND, 5 )
+		
+		
+		bSizer1711.Add( bSizer1722, 1, wx.EXPAND, 5 )
+		
+		
+		bSizer1701.Add( bSizer1711, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_txDetailsAdvanced.SetSizer( bSizer1701 )
+		self.m_txDetailsAdvanced.Layout()
+		bSizer1701.Fit( self.m_txDetailsAdvanced )
+		bSizer233.Add( self.m_txDetailsAdvanced, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer233 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class wxRaven_Ravencore_TxViewer_VINOUT_List_Panel
+###########################################################################
+
+class wxRaven_Ravencore_TxViewer_VINOUT_List_Panel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 714,300 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer248 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_txDetailsPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer170 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_sentPanel = wxRavenListCtrlPanel( self.m_txDetailsPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer172 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer172.SetMinSize( wx.Size( -1,100 ) ) 
+		bSizer173 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap50 = wx.StaticBitmap( self.m_sentPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/vin_icon1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer173.Add( self.m_bitmap50, 0, wx.ALL, 5 )
+		
+		self.m_staticText86 = wx.StaticText( self.m_sentPanel, wx.ID_ANY, u"VINs :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText86.Wrap( -1 )
+		self.m_staticText86.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer173.Add( self.m_staticText86, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer172.Add( bSizer173, 0, wx.EXPAND, 5 )
+		
+		bSizer174 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_listCtrlInputs = wxRavenListCtrl( self.m_sentPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
+		bSizer174.Add( self.m_listCtrlInputs, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer172.Add( bSizer174, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_sentPanel.SetSizer( bSizer172 )
+		self.m_sentPanel.Layout()
+		bSizer172.Fit( self.m_sentPanel )
+		bSizer170.Add( self.m_sentPanel, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		self.m_ReceivedPanel = wxRavenListCtrlPanel( self.m_txDetailsPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer1721 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer1721.SetMinSize( wx.Size( -1,100 ) ) 
+		bSizer1731 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap501 = wx.StaticBitmap( self.m_ReceivedPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/vout_icon1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1731.Add( self.m_bitmap501, 0, wx.ALL, 5 )
+		
+		self.m_staticText861 = wx.StaticText( self.m_ReceivedPanel, wx.ID_ANY, u"VOUTs :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText861.Wrap( -1 )
+		self.m_staticText861.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer1731.Add( self.m_staticText861, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer1721.Add( bSizer1731, 0, wx.EXPAND, 5 )
+		
+		bSizer1741 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_listCtrOutputs = wxRavenListCtrl( self.m_ReceivedPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
+		bSizer1741.Add( self.m_listCtrOutputs, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer1721.Add( bSizer1741, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_ReceivedPanel.SetSizer( bSizer1721 )
+		self.m_ReceivedPanel.Layout()
+		bSizer1721.Fit( self.m_ReceivedPanel )
+		bSizer170.Add( self.m_ReceivedPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.m_txDetailsPanel.SetSizer( bSizer170 )
+		self.m_txDetailsPanel.Layout()
+		bSizer170.Fit( self.m_txDetailsPanel )
+		bSizer248.Add( self.m_txDetailsPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer248 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class wxRaven_Ravencore_TxViewer_RVN_Panel
+###########################################################################
+
+class wxRaven_Ravencore_TxViewer_RVN_Panel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 730,300 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer248 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_txDetailsPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer170 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_sentPanel = wxRavenListCtrlPanel( self.m_txDetailsPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer172 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer172.SetMinSize( wx.Size( -1,100 ) ) 
+		bSizer173 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap50 = wx.StaticBitmap( self.m_sentPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/wallet_out.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer173.Add( self.m_bitmap50, 0, wx.ALL, 5 )
+		
+		self.m_staticText86 = wx.StaticText( self.m_sentPanel, wx.ID_ANY, u"Sent :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText86.Wrap( -1 )
+		self.m_staticText86.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer173.Add( self.m_staticText86, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer172.Add( bSizer173, 0, wx.EXPAND, 5 )
+		
+		bSizer174 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_listCtrlInputs = wxRavenListCtrl( self.m_sentPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
+		bSizer174.Add( self.m_listCtrlInputs, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer172.Add( bSizer174, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_sentPanel.SetSizer( bSizer172 )
+		self.m_sentPanel.Layout()
+		bSizer172.Fit( self.m_sentPanel )
+		bSizer170.Add( self.m_sentPanel, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		self.m_ReceivedPanel = wxRavenListCtrlPanel( self.m_txDetailsPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer1721 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer1721.SetMinSize( wx.Size( -1,100 ) ) 
+		bSizer1731 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap501 = wx.StaticBitmap( self.m_ReceivedPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/wallet_in.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1731.Add( self.m_bitmap501, 0, wx.ALL, 5 )
+		
+		self.m_staticText861 = wx.StaticText( self.m_ReceivedPanel, wx.ID_ANY, u"Received :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText861.Wrap( -1 )
+		self.m_staticText861.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer1731.Add( self.m_staticText861, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer1721.Add( bSizer1731, 0, wx.EXPAND, 5 )
+		
+		bSizer1741 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_listCtrOutputs = wxRavenListCtrl( self.m_ReceivedPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
+		bSizer1741.Add( self.m_listCtrOutputs, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer1721.Add( bSizer1741, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_ReceivedPanel.SetSizer( bSizer1721 )
+		self.m_ReceivedPanel.Layout()
+		bSizer1721.Fit( self.m_ReceivedPanel )
+		bSizer170.Add( self.m_ReceivedPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.m_txDetailsPanel.SetSizer( bSizer170 )
+		self.m_txDetailsPanel.Layout()
+		bSizer170.Fit( self.m_txDetailsPanel )
+		bSizer248.Add( self.m_txDetailsPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer248 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class wxRaven_Ravencore_TxViewer_Asset_Panel
+###########################################################################
+
+class wxRaven_Ravencore_TxViewer_Asset_Panel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 777,300 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer277 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_txDetailsPanel1 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer1702 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_sentPanel1 = wxRavenListCtrlPanel( self.m_txDetailsPanel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer1723 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer1723.SetMinSize( wx.Size( -1,100 ) ) 
+		bSizer1733 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap503 = wx.StaticBitmap( self.m_sentPanel1, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset_out.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1733.Add( self.m_bitmap503, 0, wx.ALL, 5 )
+		
+		self.m_staticText863 = wx.StaticText( self.m_sentPanel1, wx.ID_ANY, u"Asset(s) Sent :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText863.Wrap( -1 )
+		self.m_staticText863.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer1733.Add( self.m_staticText863, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer1723.Add( bSizer1733, 0, wx.EXPAND, 5 )
+		
+		bSizer1743 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_listCtrlInputs1 = wxRavenListCtrl( self.m_sentPanel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
+		bSizer1743.Add( self.m_listCtrlInputs1, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer1723.Add( bSizer1743, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_sentPanel1.SetSizer( bSizer1723 )
+		self.m_sentPanel1.Layout()
+		bSizer1723.Fit( self.m_sentPanel1 )
+		bSizer1702.Add( self.m_sentPanel1, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		self.m_ReceivedPanel1 = wxRavenListCtrlPanel( self.m_txDetailsPanel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer17212 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer17212.SetMinSize( wx.Size( -1,100 ) ) 
+		bSizer17312 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap5012 = wx.StaticBitmap( self.m_ReceivedPanel1, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset_in.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer17312.Add( self.m_bitmap5012, 0, wx.ALL, 5 )
+		
+		self.m_staticText8612 = wx.StaticText( self.m_ReceivedPanel1, wx.ID_ANY, u"Asset(s) Received :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText8612.Wrap( -1 )
+		self.m_staticText8612.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer17312.Add( self.m_staticText8612, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer17212.Add( bSizer17312, 0, wx.EXPAND, 5 )
+		
+		bSizer17412 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_listCtrOutputs1 = wxRavenListCtrl( self.m_ReceivedPanel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
+		bSizer17412.Add( self.m_listCtrOutputs1, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer17212.Add( bSizer17412, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_ReceivedPanel1.SetSizer( bSizer17212 )
+		self.m_ReceivedPanel1.Layout()
+		bSizer17212.Fit( self.m_ReceivedPanel1 )
+		bSizer1702.Add( self.m_ReceivedPanel1, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.m_txDetailsPanel1.SetSizer( bSizer1702 )
+		self.m_txDetailsPanel1.Layout()
+		bSizer1702.Fit( self.m_txDetailsPanel1 )
+		bSizer277.Add( self.m_txDetailsPanel1, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer277 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class wxRaven_Ravencore_TxViewer_HEX_Panel
+###########################################################################
+
+class wxRaven_Ravencore_TxViewer_HEX_Panel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,197 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer305 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_TxHexPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer207 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer199 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer17221 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer17221.SetMinSize( wx.Size( -1,125 ) ) 
+		bSizer17321 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap5021 = wx.StaticBitmap( self.m_TxHexPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/raw_datas_verified.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer17321.Add( self.m_bitmap5021, 0, wx.ALL, 5 )
+		
+		self.m_staticText8621 = wx.StaticText( self.m_TxHexPanel, wx.ID_ANY, u"HEX :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText8621.Wrap( -1 )
+		self.m_staticText8621.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer17321.Add( self.m_staticText8621, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer17221.Add( bSizer17321, 0, wx.EXPAND, 5 )
+		
+		bSizer17421 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_HEXText = wx.TextCtrl( self.m_TxHexPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
+		bSizer17421.Add( self.m_HEXText, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer17221.Add( bSizer17421, 1, wx.EXPAND, 5 )
+		
+		
+		bSizer199.Add( bSizer17221, 1, wx.EXPAND, 5 )
+		
+		
+		bSizer207.Add( bSizer199, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_TxHexPanel.SetSizer( bSizer207 )
+		self.m_TxHexPanel.Layout()
+		bSizer207.Fit( self.m_TxHexPanel )
+		bSizer305.Add( self.m_TxHexPanel, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer305 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_HEXText.Bind( wx.EVT_TEXT, self.OnHexTextChanged )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnHexTextChanged( self, event ):
+		event.Skip()
+	
+
+###########################################################################
 ## Class wxRaven_RavencoreUTXOManager
 ###########################################################################
 
@@ -798,7 +1374,8 @@ class wxRavenHTMLViewer ( wx.Panel ):
 		
 		bSizer11 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.wv = webview.WebView.New(self)
+		#self.wv = webview.WebView.New(self)
+		self.wv = wxRavenWebview.GetWebView(self)
 		bSizer11.Add( self.wv, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		

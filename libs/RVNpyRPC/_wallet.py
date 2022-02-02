@@ -448,9 +448,10 @@ class RVNpyRPC_Wallet():
         
         if _max< _amount:
             _feasible = False
-            print(' UNFFEASIBLE')
+            #print(' UNFFEASIBLE')
         else:
-            print(' FEASIBLE')
+            pass
+            #print(' FEASIBLE')
         
         if _feasible:
         
@@ -465,11 +466,11 @@ class RVNpyRPC_Wallet():
                     _maxId = _i['txid']
                     _maxVout = _i['vout']
             
-            self.logger.info(f'_max {_max}')        
+            #self.logger.info(f'_max {_max}')        
         
             if _OneTx and _max <_amount:
                 _feasible = False
-                print(' UNFFEASIBLE 2 ')
+                #print(' UNFFEASIBLE 2 ')
             
             
             if _feasible:
@@ -478,7 +479,7 @@ class RVNpyRPC_Wallet():
                 delta = _amount-_max
                 _filled=False
                 
-                print(f"delta {delta}")
+                #print(f"delta {delta}")
             
             if _max >= _amount:
                 _filled = True
@@ -488,7 +489,7 @@ class RVNpyRPC_Wallet():
             if not _OneTx and _feasible and not _filled:
                 
                 
-                print(f"DElta = {delta}")
+                #print(f"DElta = {delta}")
                 while delta > 0:
                     for _i in _list['outpoints']:
                         if _i['txid'] != _maxId:
@@ -496,8 +497,8 @@ class RVNpyRPC_Wallet():
                             _txId.append({'txid':_i['txid'], 'vout':_i['vout']})
                             
                             
-                            print(f"DElta - = {_add}")
-                            print(f"DElta - = {delta}")
+                            #print(f"DElta - = {_add}")
+                            #print(f"DElta - = {delta}")
                             delta = delta - _add
                             
                             if delta < 0:
@@ -505,16 +506,36 @@ class RVNpyRPC_Wallet():
                             
                             
         else:
-            print(' UNFFEASIBLE')                    
+            pass
+            #print(' UNFFEASIBLE')                    
         
         print(_txId)
-        
+        self.logger.info(f"GetRavenUnspentTx _feasible {_feasible} , delta {delta}")
         
         return _feasible,_txId, delta
     
 
     
     
+    def TestTxInMempool(self,hexArray):
+        _allowed= False
+        try:
+            self.logger.info(f"TestTxInMempool {hexArray} ")
+            res = self.RPCconnexion.testmempoolaccept(hexArray)['result'][0]
+            
+            if res != None:
+                self.logger.info(f"TestTxInMempool R {res} ")
+                _allowed = res['result'][0]['allowed']
+                
+            self.logger.info(f"TestTxInMempool {_allowed} ")
+            #_allowed = res['allowed']
+            
+            if not _allowed:
+                self.logger.error(f"TestTxInMempool NOT ALLOWED : {res['reject-reason']} ")
+
+        except Exception as e:
+            self.logger.error(f"Unable to TestTxInMempool : {e}")
+        return _allowed
     
     def CombineTransaction(self, txs , _fund=True, _sign=True, _execute=True):
         _combined=None
@@ -621,6 +642,10 @@ class RVNpyRPC_Wallet():
                     
                     
                     try:
+                        
+                        self.TestTxInMempool([res])
+                        
+                        
                         self.logger.info(f"> fundrawtransaction")  
                         res= self.RVNpyRPC.do_rpc("fundrawtransaction",hexstring=res, options={"changeAddress"  :_changeAddress,"changePosition" :0})
                         self.logger.info(f" > fundrawtransaction result : {res}")   
@@ -646,6 +671,8 @@ class RVNpyRPC_Wallet():
                     
                     try:
                         self.logger.info(f"> signrawtransaction") 
+                        self.TestTxInMempool([res])
+                        
                         res = self.RPCconnexion.signrawtransaction(res) 
                         self.logger.info(f" > signrawtransaction result : {res}")
                         

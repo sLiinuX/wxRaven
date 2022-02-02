@@ -46,10 +46,13 @@ class AtomicSwapCacheStorage:
         self.addresses = []
         
         
-        self.savepath = os.getcwd() + f"/userdata/atomicswap_session.cache"   
+        
+        
+        #self.savepath = os.getcwd() + f"/userdata/atomicswap_session.cache"   
+        self.savepath =  AtomicSwapMgr.__userdata_path__+ f"/atomicswap_session.cache"   
         if _timeStampIt:
             self._timestamp = round(time.time() * 1000) 
-            self.savepath = os.getcwd() + f"/userdata/atomicswap_session_{self._timestamp}.cache"
+            self.savepath = self.savepath =  AtomicSwapMgr.__userdata_path__+ f"/atomicswap_session_{self._timestamp}.cache"
             
             
         self.settings = {
@@ -103,7 +106,7 @@ class AtomicSwapCacheStorage:
     
     def save_json(self, path, data):
         #dataJson = json.dumps(data)#, default=lambda o: o.__dict__, indent=2)
-        dataJson = json.dumps(data)#, default=lambda o: o.__dict__, indent=2)
+        dataJson = json.dumps(data, default=lambda o: o.__dict__, indent=2)
         fSwap = open(path, mode="w")
         fSwap.truncate()
         fSwap.write(dataJson)
@@ -160,6 +163,10 @@ class AtomicSwapCacheStorage:
             "history": self.history,
             "addresses": self.addresses
         }
+        
+        
+        print(f'PAYLOAD = {save_payload}')
+        
         self.save_json(self.get_path(), save_payload)
 
     def get_path(self):

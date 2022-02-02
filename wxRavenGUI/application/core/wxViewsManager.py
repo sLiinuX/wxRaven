@@ -43,9 +43,10 @@ class ViewsManager(object):
         self.logger = logging.getLogger('wxRaven')
         self.InitViewManager()
         
-        
+        parentframe.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.OnAuiPaneActivated )
         parentframe.Bind( wx.aui.EVT_AUI_PANE_ACTIVATED, self.OnAuiPaneActivated )
         parentframe.Bind( wx.aui.EVT_AUI_PANE_CLOSE, self.OnAuiPaneClose )
+        #parentframe.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnAuiPaneClose )
         #parentframe.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnAuiNotebookPageClose )
         
     
@@ -606,9 +607,20 @@ class ViewsManager(object):
         
         if _v != None :
             #self.logger.info(_v)
+        
+        
             
             
             if  not _isDialog :
+                
+                
+                if self.force_mgr:
+                    position = "main"
+                    _v['position']= 'main'
+                    self.logger.info("FORCE MAIN !")
+                    
+                  
+                    
                 if _v['position'] == 'mgr':
                     self.logger.info(f"{_v['position']} will be managed dynamically with Manager")
                     self.parentframe.m_mgr.GetPane(_v['name']).Show(True)

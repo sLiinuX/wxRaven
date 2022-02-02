@@ -142,8 +142,8 @@ class wxRavenPlugin(PluginObject):
         
         self.PLUGIN_SETTINGS = {
                 'homepage_url' : "https://ipfs.ravenclause.com/",
-                'ipfs_rpc_api_ip' : "ec2-3-19-32-37.us-east-2.compute.amazonaws.com",
-                'ipfs_rpc_api_ip_bis' : "70.81.223.229",
+                'ipfs_rpc_api_ip' : "ec2-18-221-126-115.us-east-2.compute.amazonaws.com",
+                'ipfs_rpc_api_ip_bis' : "172.105.7.111",
                 'ipfs_direct_api_ip' : "/ip4/127.0.0.1/tcp/5001",
             }
         

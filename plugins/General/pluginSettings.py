@@ -160,22 +160,56 @@ class wxRavenGeneralSettingPanel(PluginSettingsPanelObject):
         _panel = GeneralSettingPanel(parent)
         PluginSettingsPanelObject.__init__(self,_panel, parentFrame, pluginName)
      
-    
+        self._Panel.m_checkBoxDisclaimer.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        self._Panel.m_checkBoxWelcome.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        self._Panel.m_checkBoxResume.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        self._Panel.m_checkBoxPurgeOnClose.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        self._Panel.m_checkBoxSaveSession.Bind( wx.EVT_CHECKBOX, self.OnChanged )
     #
     #
     # method to be called on close and apply
     #    
     def SavePanelSettings(self):
-        pass
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)  
+        
+        
+        myPlugin.PLUGIN_SETTINGS['show_disclaimer'] = not self._Panel.m_checkBoxDisclaimer.GetValue()
+        myPlugin.PLUGIN_SETTINGS['show_welcome'] = not self._Panel.m_checkBoxWelcome.GetValue()
+        
+        myPlugin.PLUGIN_SETTINGS['purge_on_close'] = not self._Panel.m_checkBoxPurgeOnClose.GetValue()
     
     
+        self.parentFrame.PerspectiveManager.ToggleResumeViewSettings(self._Panel.m_checkBoxResume.GetValue())
+        self.parentFrame.PerspectiveManager.ToggleSaveViewSettings(self._Panel.m_checkBoxSaveSession.GetValue())
+        
     #
     #
     # method to be called at first panel creation
     # 
     def LoadPanelSettings(self):
-        pass    
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)  
+        
+        
+        hide_disclaimer = not myPlugin.PLUGIN_SETTINGS['show_disclaimer']
+        self._Panel.m_checkBoxDisclaimer.SetValue(hide_disclaimer)    
+        
+        dont_load_welcome = not myPlugin.PLUGIN_SETTINGS['show_welcome']
+        self._Panel.m_checkBoxWelcome.SetValue(dont_load_welcome)    
+        
+        purge_on_close = myPlugin.PLUGIN_SETTINGS['purge_on_close']
+        self._Panel.m_checkBoxPurgeOnClose.SetValue(purge_on_close)    
+        
+        
+        save_on_close= myPlugin.PLUGIN_SETTINGS['save_on_close']
+        self._Panel.m_checkBoxSaveSession.SetValue(save_on_close)    
+        
+        
+        self._Panel.m_checkBoxResume.SetValue(self.parentFrame.Settings.resumeviewonstartup )   
+       
     
+        
+         
+        
     
     
     
@@ -194,7 +228,7 @@ class wxRavenConexionsSettingPanel(PluginSettingsPanelObject):
         _Panel = wxRavenConnexionSettings_SettingPanel(parent)
         PluginSettingsPanelObject.__init__(self,_Panel, parentFrame, pluginName)
         self._needReboot = True
-    
+        
         #_Panel.SetBackgroundColour( wx.Colour( 217, 228, 255 ) )
         
         #self._Panel
@@ -258,8 +292,8 @@ class wxRavenConexionsSettingPanel(PluginSettingsPanelObject):
             strCon = str(key) + " = " + str(_val)
             
             _dispArray.append(strCon)
-        
-        self._Panel.bookmark_list.InsertItems(_dispArray, 0)
+        if len(_dispArray)>0:
+            self._Panel.bookmark_list.InsertItems(_dispArray, 0)
         
         #print("LoadPanelSettings")     
         

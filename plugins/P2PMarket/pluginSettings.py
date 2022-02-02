@@ -6,7 +6,7 @@ Created on 9 janv. 2022
 
 from wxRavenGUI.application.pluginsframework import PluginSettingsPanelObject
 import wx
-
+import logging
 import os
 from .wxRavenP2PMarketDesign import *
 
@@ -20,6 +20,8 @@ class wxP2PMarket_GeneralSettings_WithLogic(PluginSettingsPanelObject):
 
     def __init__(self,parent, parentFrame, pluginName):
         
+        
+        logging.info(pluginName)
         _Panel = wxRavenP2PMarket_Settings(parent) 
         PluginSettingsPanelObject.__init__(self,_Panel, parentFrame, pluginName)
         #self.parent = parent
@@ -258,7 +260,7 @@ class wxP2PMarket_BookmarksSettings_WithLogic(PluginSettingsPanelObject):
     # method to be called at first panel creation
     # 
     def LoadPanelSettings(self):
-        
+        print(self.pluginName)
         myPlugin = self.parentFrame.GetPlugin(self.pluginName)
         #myPlugin = self.parentFrame.GetPlugin(self.pluginName)
         #ipfsgateway_default = myPlugin.PLUGIN_SETTINGS["ipfsgateway_default"]
@@ -600,8 +602,8 @@ class wxP2PMarket_MyMarketPlaceSettings_WithLogic(PluginSettingsPanelObject):
         
         
         
-        
-        self.destfile= os.getcwd() + "/userdata/atomicswap_session.cache"
+        self.destfile= parentFrame.GetPath("USERDATA") + "atomicswap_session.cache"
+        #self.destfile= os.getcwd() + "/userdata/atomicswap_session.cache"
         self.Layout()
     #
     #

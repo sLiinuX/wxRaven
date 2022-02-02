@@ -7,8 +7,10 @@ Created on 23 déc. 2021
 import wx.html2 as webview
 from .wxRavenRavencoreDesign import wxRavenHTMLViewer
 from wxRavenGUI.application.wxcustom.CustomLoading import *
-
+import logging
 import sys
+from wxRavenGUI.application.wxcustom import *
+
 
 class RavencoreHTMLViewer(wxRavenHTMLViewer):
     '''
@@ -51,12 +53,20 @@ class RavencoreHTMLViewer(wxRavenHTMLViewer):
         #
         if not isInternalPluginView:
             parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
-            
+        '''    
         is_windows = hasattr(sys, 'getwindowsversion')
         if is_windows:  
             self.WindowsSetup()
+        else:
+            self.wv = webview.WebView.New(self, backend=self.GetAvailableBackend(_windows=False))
             
-            
+        '''  
+        #bSizer12 = wx.BoxSizer( wx.VERTICAL )  
+        #bSizer12.Add( self.wv, 1, wx.ALL|wx.EXPAND, 5 ) 
+        #self.SetSizer( bSizer12)
+        #self.Layout()
+        
+        
         self.parent_frame.Views.UpdateGUIManager()
         
         self.Bind(webview.EVT_WEBVIEW_LOADED, self.OnWebViewLoaded, self.wv)
@@ -65,13 +75,47 @@ class RavencoreHTMLViewer(wxRavenHTMLViewer):
         
     def WindowsSetup(self):
         
-        self.wv = webview.WebView.New(self,backend=wx.html2.WebViewBackendEdge )
+        #self.wv = webview.WebView.New(self,backend=wx.html2.WebViewBackendEdge )
+        
+        
+        webview.WebView.MSWSetEmulationLevel(webview.WEBVIEWIE_EMU_IE11)
+        _backend = self.GetAvailableBackend(_windows=True)
+            
+        if _backend == None:
+            UserAdvancedMessage(self.parent_frame, "Unable to find a backend for the webview, \n please verify you do have the webview component or download it (url in details)", "Error", "https://developer.microsoft.com/en-us/microsoft-edge/webview2/", showCancel=False)
+             
+        self.wv = webview.WebView.New(self, backend=_backend)
+        
+        
         bSizer1 = wx.BoxSizer( wx.VERTICAL )
         bSizer1.Add( self.wv, 1, wx.ALL|wx.EXPAND, 5 )
         self.SetSizer( bSizer1 )
         self.Layout()
         
-        
+    def GetAvailableBackend(self, _windows=True):
+        backend = webview.WebViewBackendDefault
+        if _windows: 
+            backend = None
+            backends = [
+                
+                (webview.WebViewBackendIE, 'WebViewBackendIE'),
+                (webview.WebViewBackendWebKit, 'WebViewBackendWebKit'),
+                (webview.WebViewBackendDefault, 'WebViewBackendDefault'),
+            ]
+            
+            if hasattr(sys, 'getwindowsversion') :
+                backends.append((webview.WebViewBackendEdge, 'WebViewBackendEdge'))
+                
+                
+            for id, name in backends:
+                available = webview.WebView.IsBackendAvailable(id)
+                if available and backend is None:
+                    backend = id
+                logging.info("Backend 'wx.html2.{}' availability: {}\n".format(name, available))
+             
+            #self.wv = webview.WebView.New(self, backend=webview.WebViewBackendEdge)
+    
+        return backend    
             
         
     def LoadAssetUrl(self,url):

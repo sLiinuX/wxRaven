@@ -67,6 +67,9 @@ class PluginObject(object):
         self.logger = logging.getLogger('wxRaven')
         self._stop = False
         
+        
+        self.CONFIG_PATH = self.parentFrame.GetPath("CONFIG") + 'plugins/'
+        
         self.RessourcesProvider = parentFrame.RessourcesProvider
         
         
@@ -130,14 +133,15 @@ class PluginObject(object):
             rView = r['instance']
             vName = r['name']
             #self.logger.info(f"updating view {vName}")
-            rView.UpdateView()
             
-            """
+            #rView.UpdateView()
+            
+        
             try:
                 rView.UpdateView()
             except Exception as e:
                 self.logger.info(self.PLUGIN_NAME + " > "+vName+" UpdateView() method failed :" + str(e))
-            """
+            
     
     def getDefaultFrames(self):
         defaultFrames = [] 
@@ -236,6 +240,18 @@ class PluginObject(object):
         
         df_position = view['position']
         
+        
+        skip_save=False
+        if view.__contains__('skip_save'):
+            skip_save = view['skip_save']
+        
+        hidden_view=False
+        if view.__contains__('hidden_view'):
+            hidden_view = view['hidden_view']
+        
+        
+        
+        
         if positionOverride != "":
             #self.logger.info("override pos to " + positionOverride)
             df_position = positionOverride
@@ -303,13 +319,20 @@ class PluginObject(object):
                 self.logger.error("Unable to themize view :" + str(e))
                 
             
+            
+            
+            
+            
             viewInstanceData = {'viewid': id_view, 
                                 'name': df_name,
                                 'title': df_name,
                                 'icon': df_icon,
                                  'instance':newview, 
                                  'position': df_position,
-                                 'isArea': isArea}
+                                 'isArea': isArea,
+                                 'hidden_view' :hidden_view,
+                                 'skip_save' :skip_save,
+                                 }
             self.VIEWS_INSTANCES.append(viewInstanceData)
             
             
@@ -348,6 +371,11 @@ class PluginObject(object):
         
         toSaveArray = []
         for r in self.VIEWS_INSTANCES:
+            
+            if r.__contains__('skip_save'):
+                if r['skip_save']==True:
+                    continue
+            
             viewInstanceData = {'viewid': r['viewid'],  'name': r['name'],  'position': r['position'],  'isArea': r['isArea']}
             toSaveArray.append(viewInstanceData)
         self.checkSaveDirectory()
@@ -371,7 +399,10 @@ class PluginObject(object):
             #self.logger.info("PREVIOUS PLUGIN STATE FOUND  : " + str(existingDatas))
             for oldView in existingDatas:
                 
-                
+                if oldView.__contains__('skip_save'):
+                    if oldView['skip_save']==True:
+                        continue
+            
                 v = self.SearchPluginView(oldView['viewid'])
                 if v != None:
                     

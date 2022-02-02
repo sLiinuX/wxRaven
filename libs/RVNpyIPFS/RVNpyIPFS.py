@@ -27,9 +27,9 @@ class RavenPyIPFS(object):
     IPFS_RPC_Client = None
     
     
-    KNOWN_SERVERS = ['ec2-3-19-32-37.us-east-2.compute.amazonaws.com','70.81.223.229']
+    KNOWN_SERVERS = ['ec2-18-221-126-115.us-east-2.compute.amazonaws.com','172.105.7.111']
     
-    def __init__(self, ConString="/ip4/127.0.0.1/tcp/5001", rpcServer="ec2-3-19-32-37.us-east-2.compute.amazonaws.com", rpcPort=9000):
+    def __init__(self, ConString="/ip4/127.0.0.1/tcp/5001", rpcServer="ec2-18-221-126-115.us-east-2.compute.amazonaws.com", rpcPort=9000):
         '''
         Constructor
         '''

@@ -7,6 +7,9 @@ Created on 15 déc. 2021
 from wxRavenGUI.view import wxRavenSplashScreen
 from wxRavenGUI.view import wxRavenDisclaimerDialogLogic
 
+from plugins.ProfileManager.wxRaven_ProfileManager_ProfileSelector import wxRavenProfileManager_ProfileSelectorDialogLogic
+
+
 import wx
 import wxRavenGUI.application
 
@@ -55,7 +58,7 @@ class SplashScreenMgr():
     
     done_text  = "WxRaven Loaded !" 
     
-    def __init__(self, parentObj,parentframe=None):
+    def __init__(self, parentObj,parentframe=None, profile=None):
         '''
         Constructor
         '''
@@ -67,6 +70,9 @@ class SplashScreenMgr():
         self.tickCount=0
         self.showntickCount=0
         self.sc.Show(show=1)
+        self.doStart = True
+        
+        self._profile = profile
         
     
         
@@ -79,8 +85,8 @@ class SplashScreenMgr():
         
         
         
-    def InitParentFrame(self):
-        x  =  wxRavenGUI.application.wxRavenApp.wxRavenAppMainFrame()
+    def InitParentFrame(self, profilePath =''):
+        x  =  wxRavenGUI.application.wxRavenApp.wxRavenAppMainFrame(_ProfilePath = profilePath)
         self.parentObj.appmainframe  =  x
         self.parentframe = x
         return self.parentObj.appmainframe
@@ -88,7 +94,6 @@ class SplashScreenMgr():
     
     
     def changeLoadText(self, txt=""):
-        
         
         if txt == "":
             newTxt = self.progress_array_text[self.progress_array_cursor]
@@ -120,6 +125,35 @@ class SplashScreenMgr():
                 self.started=True
                 
                 
+                if self._profile == None:
+                    self._profile = self.__ProfileSelector__()
+                    if self._profile != None:
+                        if self._profile != '':
+                            self.doStart = True
+                    
+                    print(f"Profile Selector Returned = {self._profile}")
+                
+                print(f"Starting Logs in = {self._profile}")
+                print(f"Do Start Result = {self.doStart}")
+                #
+                # Change Log direction
+                #
+                self.parentObj.stop_logging()
+                self.parentObj.setup_logging(forcePath=self._profile)
+                
+                
+                if self.doStart:
+                    print(f"Profile = {self._profile}")
+                    self.__InitializeApplication__(self._profile)
+                    
+                else:
+                    self.doStart=False
+                    self.parentObj.doStart=False
+                    _show = False
+                    self.sc.m_timer1.Stop()
+                    self.sc.Destroy()
+                    return
+                '''
                 p = self.InitParentFrame()
                 _show = True
                 
@@ -142,8 +176,11 @@ class SplashScreenMgr():
                 if _show:
                     p.Show()
             
-            
-            return 
+                '''
+                
+                
+                
+            return
         
         
         
@@ -174,5 +211,68 @@ class SplashScreenMgr():
         event.Skip()
         
         
+     
+     
+    
+    
+    
+    def __ProfileSelector__(self):
+        _profileDialog = wxRavenProfileManager_ProfileSelectorDialogLogic(None)
+        _profileResp = _profileDialog.ShowModal()
+        
+        _profile = _profileDialog._panel.selection
+        
+        _profileDialog.Destroy()
         
         
+        if _profileResp != 5100:
+            self.doStart=False
+            
+        return _profile
+    
+    def __InitializeApplication__(self, profilePath=''):
+        
+        
+        
+        _application = self.InitParentFrame(profilePath)
+        _show = True
+                
+        
+        
+        
+        
+        
+        
+        
+        
+                
+        if _application.GetPluginSetting('General', 'show_disclaimer'):
+            disclaimer = wxRavenDisclaimerDialogLogic(_application)
+            dis = disclaimer.ShowModal()
+            disclaimer.Destroy()     
+            print(f"Disclaimer User Result = {dis}")
+                    
+            if dis != wx.OK:
+                print(f"Disclaimer REFUSED ")
+                _application.ForceClose()
+                self.doStart=False
+                self.parentObj.doStart=False
+                _show = False
+                self.sc.m_timer1.Stop()
+                self.sc.Destroy()
+       
+       
+            else:
+                print(f"Disclaimer ACCEPTED ")
+                
+            
+            
+        else:
+            pass
+        
+        
+        
+        _application.SetReady()
+            
+        if _show:
+            _application.Show()

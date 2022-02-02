@@ -277,7 +277,9 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
     
     
     def ChangeMode(self, evt):
+        
         _filterAdressValue = self.m_filterAddress.GetString(self.m_filterAddress.GetCurrentSelection())
+        #self.m_addressFilterText.SetValue('')
         
         _colText= "Account"
         
@@ -296,7 +298,9 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
         info.Align = 0
         info.Text = _colText
         self.m_listCtrl1.SetColumn(2, info)
-            
+        
+        self.m_addressFilterText.SetValue('')  
+          
             
         self.UpdateView(None)  
         

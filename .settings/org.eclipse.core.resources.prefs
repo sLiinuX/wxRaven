@@ -1,11 +1,13 @@
 eclipse.preferences.version=1
 encoding//libs/ipfshttpclient/client/__init__.py=utf-8
 encoding//libs/ipfshttpclient/client/base.py=utf-8
+encoding//libs/ipfshttpclient/client/config.py=utf-8
 encoding//plugins/DatabaseManager/wxRavenDatabaseManagementDesign.py=utf-8
 encoding//plugins/General/wxRavenGeneralDesign.py=utf-8
 encoding//plugins/IPFS/wxRavenIPFSDesign.py=utf-8
 encoding//plugins/NFTMaker/wxRavenNFTMakerDesign.py=utf-8
 encoding//plugins/P2PMarket/wxRavenP2PMarketDesign.py=utf-8
+encoding//plugins/ProfileManager/wxRavenProfileManagerDesign.py=utf-8
 encoding//plugins/RavenRPC/plugin.py=utf-8
 encoding//plugins/RavenRPC/wxRavenShellDesign.py=utf-8
 encoding//plugins/Ravencore/wxRavenRavencoreDesign.py=utf-8

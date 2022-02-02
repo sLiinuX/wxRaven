@@ -57,7 +57,8 @@ Further information
 
 If you are looking for community support, you can get it from
 
-- [Discord](https://discord.gg/jn6uhur)
+- [Ravencoin Discord](https://discord.gg/jn6uhur)
+- [wxRaven Discord] (https://discord.gg/wry5t636G2)
 - Contact the author or any wxRaven Developers
 
 

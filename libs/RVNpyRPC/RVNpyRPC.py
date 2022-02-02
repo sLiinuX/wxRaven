@@ -113,12 +113,23 @@ class RavenpyRPC(object):
     atomicswap = None
     network = None
     directories = None
+    
+    
+    
+    __userdata_path__ = ''
 
-    def __init__(self, connexion):
+    def __init__(self, connexion, userdataPath = ''):
         '''
         Constructor
         '''
         self.logger = logging.getLogger('wxRaven')
+        
+        
+        if userdataPath == '':
+            userdataPath = os.getcwd() + "/userdata/"
+        self.__userdata_path__ = userdataPath
+        
+        
         
         self.RPCconnexion = connexion
         self.wallet = RVNpyRPC_Wallet(connexion, self) 
@@ -133,6 +144,9 @@ class RavenpyRPC(object):
             self.directories = RVNpyRPC_Directories(connexion, self)
         except:
             self.directories =  None
+            
+            
+        
     
     
     def test_rpc_status(self):

@@ -183,7 +183,7 @@ class walletOverviewPane(wxRavenWalletOverview):
                     
                 
                 except Exception as e:
-                    self.parent_frame.Log("Unable to load wallet datas" , type="warning")
+                    self.parent_frame.Log("Unable to load wallet datas." , type="warning")
                     #print("updatePanel getData ERROR> " + str(e))
             
             else:
@@ -229,7 +229,7 @@ class walletOverviewPane(wxRavenWalletOverview):
         
         
         except Exception as e:
-            self.parent_frame.Log("Unable to display wallet datas" , type="error")
+            self.parent_frame.Log("Unable to display wallet datas."  , type="error")
     
         
     def updatePanelOLD(self):
@@ -378,7 +378,7 @@ class walletAssetsOverview(wxRavenWalletAssetsOverview):
                     
                     except Exception as e:
                         #print("updatePanel getData ERROR> " + str(e))
-                        self.parent_frame.Log("Unable to load wallet assets datas" , type="warning")
+                        self.parent_frame.Log("Unable to load wallet assets datas : " + str(e) , type="warning")
                 
                 else:
                     #pass    
@@ -396,7 +396,7 @@ class walletAssetsOverview(wxRavenWalletAssetsOverview):
                     self.assetsViewListCtrl.AppendItem(itemBalanceClean)   
                 
             except Exception as e:
-                self.parent_frame.Log("Unable to display wallet assets" , type="error")
+                self.parent_frame.Log("Unable to display wallet assets " , type="error")
 
 
 
@@ -442,7 +442,7 @@ class walletSendPane(wxRavenWalletSend):
                 self.sendFromTextbox.SetSelection(0)
                 
             except Exception as e:
-                self.parent_frame.Log("Unable to load sending address list" , type="warning")
+                self.parent_frame.Log("Unable to load sending address list " , type="warning")
 
     def OnChoiceChanged(self, evt):
         newChoice=evt.GetString()
@@ -458,7 +458,7 @@ class walletSendPane(wxRavenWalletSend):
             try:
                 availableAmount = self.parent_frame.getNetwork().getbalance()['result']
             except Exception as e:
-                self.parent_frame.Log("Unable to retreive available balance" , type="warning")
+                self.parent_frame.Log("Unable to retreive available balance " , type="warning")
                 #print("availableAmount ERROR> " + str(e))
         
         else:
@@ -469,7 +469,7 @@ class walletSendPane(wxRavenWalletSend):
                 allbalances = self.parent_frame.getRvnRPC().wallet.getaddressbalance(adList, showAsset=True)['result']
              
             except Exception as e:
-                self.parent_frame.Log("Unable to retreive sending address avaailable balance" , type="warning")
+                self.parent_frame.Log("Unable to retreive sending address available balance " , type="warning")
                 #print("allbalances ERROR> " + str(e))
              
             #print(allbalances)

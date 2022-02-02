@@ -41,11 +41,14 @@ class RessourcesProvider(object):
             path = os.getcwd() + ""
         
         self._rootPath = path
+        
+        if theme == '':
+            theme = "default_style"
         self._resMainTheme = theme
         
         
         #todo, check if theme exist and manage error case
-        self._resFullPath = path +"/"+ self._resMainTheme + "/"
+        self._resFullPath = path +"/"+ theme + "/"
         
         self.logger = logging.getLogger('wxRaven')
         self.LoadRessources()

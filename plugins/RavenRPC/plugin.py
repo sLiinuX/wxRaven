@@ -48,7 +48,7 @@ class wxRavenPlugin(PluginObject):
                      'position':position, 
                      'icon':wx.Bitmap( u"res/default_style/normal/shell_adv.png", wx.BITMAP_TYPE_ANY ), 
                      'class': shellAdvancedPanel ,
-                     'default':True,
+                     'default':False,
                      'multipleViewAllowed':True
                      },
                     
@@ -101,7 +101,32 @@ class wxRavenPlugin(PluginObject):
         #self.demoTest()
         
         #For test purpose
+        self.waitApplicationReady()
+    
+    #
+    # Run a thread and wait app to be fully loaded
+    #
+    def waitApplicationReady(self):
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.__applicationReady__,))
+        t.start()
         
+    #
+    #  thread to wait
+    #    
+    def __waitLoop_T__(self,callback):
+        while not self.parentFrame._isReady:
+            time.sleep(1)
+            
+        wx.CallAfter(callback, ()) 
+        
+        
+        #self.initializeAssetManagerBackgroundService()
+    
+    #
+    #  thread callback
+    #
+    def __applicationReady__(self, evt=None):
+        self.OnNetworkChanged_T()
     
     
     def demoTest(self):   

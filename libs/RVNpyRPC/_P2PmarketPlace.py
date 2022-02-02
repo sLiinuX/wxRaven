@@ -210,7 +210,7 @@ class RVNpyRPC_P2P_Marketplace():
         self.RVNpyRPC = parent
         self.logger = logging.getLogger('wxRaven')
         
-
+        self.__userdata_path__ = self.RVNpyRPC.__userdata_path__
         self.__INVALID__CACHE__ = []
         
     
@@ -225,7 +225,7 @@ class RVNpyRPC_P2P_Marketplace():
         try:
             self.logger.info("P2P Marketplace Saving invalid cache file")
             print(self.__INVALID__CACHE__ )
-            pickle.dump( self.__INVALID__CACHE__ , open(os.getcwd()+"/userdata/marketplace_invalid_cache.p", "wb" ) )
+            pickle.dump( self.__INVALID__CACHE__ , open(self.__userdata_path__+"/marketplace_invalid_cache.p", "wb" ) )
         except Exception as e:
             self.logger.info(e) 
     
@@ -233,7 +233,7 @@ class RVNpyRPC_P2P_Marketplace():
         result = []
         try:
             self.logger.info("P2P Marketplace Loading invalid cache file")
-            self.__INVALID__CACHE__  = pickle.load( open( os.getcwd()+"/userdata/marketplace_invalid_cache.p", "rb" ) )
+            self.__INVALID__CACHE__  = pickle.load( open( self.__userdata_path__+"/marketplace_invalid_cache.p", "rb" ) )
         except Exception as e:
             self.logger.info(e) 
         

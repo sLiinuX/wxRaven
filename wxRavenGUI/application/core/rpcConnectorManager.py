@@ -14,7 +14,7 @@ Created on 10 déc. 2021
 from libs.RVNpyRPC.RVNpyRPC import Ravencoin
 import logging
 
-
+from libs.wxRaven_Webservices import wxRaven_RPC_WebserviceClient
 import wx
 import time
 from datetime import timedelta
@@ -115,6 +115,11 @@ class RvnRPC_ConnectorManager(object):
         if defaultCurrent == "":
             self.__initDemo__()    
             
+            
+        '''    
+        self._wxRavenws = wxRaven_RPC_WebserviceClient()
+        self.rpc_connectors['NO WALLET MODE'] = self._wxRavenws
+        '''    
             
     
     def __initDemo__(self):    
@@ -217,8 +222,8 @@ class RvnRPC_ConnectorManager(object):
         network  = self.getConnexion(networkName)
         isActive= False
         try:
-            resultTest = network.help()['result']
-            if resultTest != None:
+            resultTest = network.help()
+            if resultTest['result'] != None:
                 isActive = True
                 #self.logger.info("CheckConnexionStatus OK> " +resultTest)
         except Exception as e:

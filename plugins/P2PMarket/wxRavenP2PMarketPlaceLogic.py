@@ -116,7 +116,8 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         
     
     def OnItemActivated(self, event):
-        self.OpenTxViewAd()
+        #self.OpenTxViewAd()
+        self.OpenAdDetails()
         
         
         
@@ -137,6 +138,15 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         #print(f"current item changed {type(self._currentItemData._adTxDatas)}")
         #self.ChangeTxViewIfOpen()
         #
+    
+    
+    
+    
+    def OpenAdDetails(self):
+        myPlugin = self.parent_frame.GetPlugin('P2PMarket')
+        #adData:RavencoinP2PMarketPlaceAd
+        myPlugin.OpenAdDetails(self._currentItemData)
+    
     
     
     
@@ -179,7 +189,16 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
     
     def GetFilterFields(self):
         _currentDisableValueIndex = self.m_AdInformationsFilter.GetCheckedStrings()
-        print(_currentDisableValueIndex)
+        #print(_currentDisableValueIndex)
+        _toSaveArray = []
+        for _val in _currentDisableValueIndex:
+            _toSaveArray.append(_val)
+    
+        return _toSaveArray
+    
+    def GetFilterTypes(self):
+        _currentDisableValueIndex = self.m_adTypeFilter.GetCheckedStrings()
+        #print(_currentDisableValueIndex)
         _toSaveArray = []
         for _val in _currentDisableValueIndex:
             _toSaveArray.append(_val)
@@ -248,7 +267,7 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
     
     def setupFilterDefault(self):
         
-        self.adTypeFilter = ["Buy", "Sell"]
+        self.adTypeFilter = ["Buy", "Sell", 'Trade']
         self.m_adTypeFilter.SetCheckedStrings(self.adTypeFilter)
         
         
@@ -490,9 +509,19 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
     
     
     def displayMarketInList(self, marketDatas):
+        
+        _displayTypes = self.GetFilterTypes()
+        
+        
         for itemIndex in marketDatas :
                     
             item = marketDatas[itemIndex]
+            
+            
+            
+            if item.GetType() not in _displayTypes:
+                continue
+            
                     
             _baseicon = self.allIcons['sell']
             if item._adType == 0:

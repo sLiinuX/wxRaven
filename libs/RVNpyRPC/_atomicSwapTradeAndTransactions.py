@@ -222,6 +222,9 @@ class SwapTransaction():
             data.pop('txUtils')
             data.pop('WalletMgr')
             data.pop('logger')
+            
+            
+            data.pop('decoded')
         except :
             pass   
         
@@ -706,6 +709,7 @@ class SwapTrade():
             data.pop('txUtils')
             data.pop('WalletMgr')
             data.pop('logger')
+            
         except :
             pass  
         

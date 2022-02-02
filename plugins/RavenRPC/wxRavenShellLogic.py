@@ -10,6 +10,16 @@ from .wxRavenShellDesign import *
 import wx.py as py
 import threading
 import time
+from wxRavenGUI.application.wxcustom import *
+
+import os
+
+wildcard = "Python source (*.py)|*.py|"     \
+           "Compiled Python (*.pyc)|*.pyc|" \
+           "All files (*.*)|*.*"
+
+
+
 
 class shellMainPanel(wxRavenShellPanel):
     '''
@@ -43,7 +53,7 @@ class shellMainPanel(wxRavenShellPanel):
         self.default_position = position
         
         self.simpleShell()
-        
+        #parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
         parentFrame.Add(self, self.view_name ,position, parentFrame.RessourcesProvider.GetImage(self.icon))
         #parentFrame.AddInMainFrame(self, "Shell" )
         #parentFrame.AddInNotebook(self, "Shell",parentFrame.wxRavenMainBook )
@@ -59,10 +69,39 @@ class shellMainPanel(wxRavenShellPanel):
     
     
     
-
-    
-    
-    
+    def OnRunScriptClicked(self, evt):
+        
+        
+        
+        
+        #_chddir = wx.FD_CHANGE_DIR
+        
+        dlg = wx.FileDialog(
+            self, message="Choose a file",
+            defaultDir=os.getcwd(),
+            defaultFile="",
+            wildcard=wildcard,
+            style=wx.FD_OPEN | 
+                  wx.FD_FILE_MUST_EXIST |
+                  wx.FD_PREVIEW  
+            )
+        
+        if dlg.ShowModal() == wx.ID_OK:
+            pathname = dlg.GetPath()
+            dlg.Destroy()
+            
+            
+            #if UserQuestion(self, "Run from file path itself ?"):
+            #    os.chdir(os.path.dirname(pathname))
+            
+            self.RunScript(pathname)
+        
+        
+    def RunScript(self, filescript):
+        print(f'Running Script : {filescript}')
+        self.wxRavenShell.write(f'Running Script : {filescript}') 
+        self.wxRavenShell.execStartupScript(filescript) 
+        
     
     
     
@@ -78,7 +117,10 @@ class shellMainPanel(wxRavenShellPanel):
         
         
         startupText = """PyRPC Basic Shell for wxRaven - Active Network : %NETWORKNAME%
-        
+    
+ - network.<command>()         execute RPC Raw Commands
+ - ravencoin.<command>()         execute Ravencoin API Commands
+         
  - rpc([OptionalName]).<command>()        RPC Raw Commands
  - api([OptionalName]).<command>()        Ravencoin API Commands
 
@@ -88,6 +130,9 @@ class shellMainPanel(wxRavenShellPanel):
         
         _locals['rpc']  = self.parent_frame.getNetwork
         _locals['api']  = self.parent_frame.getRvnRPC
+        
+        _locals['network']  = self.parent_frame.getNetwork(_networkName)
+        _locals['ravencoin']  = self.parent_frame.getRvnRPC(_networkName)
         
         _locals['wxRaven']  = self.parent_frame
         
@@ -106,11 +151,13 @@ class shellMainPanel(wxRavenShellPanel):
         
         
         
-        self.wxRavenShell = py.shell.Shell(self ,-1, introText=startupText, locals = _locals)
+        self.wxRavenShell = py.shell.Shell(self.m_shellPanel ,-1, introText=startupText, locals = _locals)
         bSizer1.Add( self.wxRavenShell, 1, wx.ALL|wx.EXPAND, 5 )
         
+        self.Bind(wx.EVT_TOOL, self.OnRunScriptClicked, id= self.m_runPython.GetId())
         
-        self.SetSizer( bSizer1 )
+        #self.parent_frame.parentFrame.RessourcesProvider.ApplyThemeOnPanel(self.wxRavenShell)
+        self.m_shellPanel.SetSizer( bSizer1 )
         self.Layout()
     
 
@@ -131,7 +178,7 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
     
     
     
-    _autowsitchNetwork = False
+    _autowsitchNetwork = True
     
 
     def __init__(self, parentFrame, position = "toolbox1", viewName= "Shell"):
@@ -154,7 +201,9 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
         
         
         
-        self._autowsitchNetwork=False
+        self._autowsitchNetwork=True
+        self.m_auiToolBar1.ToggleTool(self.rpcConnexions_autoswitch.GetId(),self._autowsitchNetwork)
+        
         self._currentLocalNetworkName= self.parent_frame.ConnexionManager.getCurrent()
         self._currentLocalNetworkIcon=  self.parent_frame.ConnexionManager.getIcon()
         
@@ -208,7 +257,8 @@ class shellAdvancedPanel(wxRavenAdvancedShellPanel):
             _networkName = self._currentLocalNetworkName
             _icon = self._currentLocalNetworkIcon
         
-        
+        if _networkName == None:
+            return 
         
         startupText = """PyRPC Advanced Shell for wxRaven - Active Network : %NETWORKNAME%
         

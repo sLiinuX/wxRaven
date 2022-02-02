@@ -102,6 +102,15 @@ class wxRavenIPFS_SettingsPanel ( wx.Panel ):
 		
 		bSizer6 = wx.BoxSizer( wx.VERTICAL )
 		
+		bSizer20 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_staticText11 = wx.StaticText( self, wx.ID_ANY, u"The RPC IPFS Server IP address may change from a version to another, in case of issue, try with a new profile.", wx.DefaultPosition, wx.Size( -1,55 ), wx.ALIGN_CENTRE|wx.SUNKEN_BORDER )
+		self.m_staticText11.Wrap( -1 )
+		bSizer20.Add( self.m_staticText11, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer6.Add( bSizer20, 0, wx.EXPAND, 5 )
+		
 		bSizer7 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_bitmap3 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/raven_ipfs.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -148,8 +157,6 @@ class wxRavenIPFS_SettingsPanel ( wx.Panel ):
 		bSizer712.Add( self.m_staticText212, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_ipfsRPC2 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_ipfsRPC2.Enable( False )
-		
 		bSizer712.Add( self.m_ipfsRPC2, 1, wx.ALL, 5 )
 		
 		

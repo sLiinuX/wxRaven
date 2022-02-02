@@ -49,9 +49,9 @@ class wxRavenPanel ( wx.Panel ):
 class wxRavenMessageDialog ( wx.Dialog ):
 	
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"wxRaven - Message", pos = wx.DefaultPosition, size = wx.Size( 448,237 ), style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"wxRaven - Message", pos = wx.DefaultPosition, size = wx.Size( 580,250 ), style = wx.DEFAULT_DIALOG_STYLE )
 		
-		self.SetSizeHintsSz( wx.Size( 350,-1 ), wx.DefaultSize )
+		self.SetSizeHintsSz( wx.Size( 580,-1 ), wx.DefaultSize )
 		
 		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -94,6 +94,8 @@ class wxRavenMessageDialog ( wx.Dialog ):
 		bSizer9.Add( self.m_staticline1, 0, wx.EXPAND |wx.ALL, 5 )
 		
 		self.m_textCtrl1 = wx.TextCtrl( self.m_detailsPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
+		self.m_textCtrl1.SetMinSize( wx.Size( -1,100 ) )
+		
 		bSizer9.Add( self.m_textCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		

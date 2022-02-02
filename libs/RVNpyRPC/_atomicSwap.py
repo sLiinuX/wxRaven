@@ -32,6 +32,7 @@ class AtomicSwapManager():
         self.RVNpyRPC = parent 
         self.Session = None
         self._unlockAfter = False
+        self.__userdata_path__ = self.RVNpyRPC.__userdata_path__
     
     #
     # Init all the required object + log in order to do trading swap    
@@ -118,10 +119,10 @@ class AtomicSwapManager():
     def setup_logging(self, _timeStampIt=False):
         #self._timestamp = round(time.time() * 1000) 
         
-        self.savepath = os.getcwd() + f"/userdata/atomicswap_session.log"
+        self.savepath = self.__userdata_path__ + f"atomicswap_session.log"
         if _timeStampIt:
             self._timestamp = round(time.time() * 1000) 
-            self.savepath = os.getcwd() + f"/userdata/atomicswap_session_{self._timestamp}.log"
+            self.savepath = self.__userdata_path__ + f"atomicswap_session_{self._timestamp}.log"
             
         path = os.path.expanduser(self.savepath)
         self.ensure_directory(os.path.dirname(path))
@@ -254,7 +255,7 @@ class RVNpyRPC_AtomicSwap():
                 
                 
             else:
-                return _swap
+                return {'result':None, 'error': {'code':-1 , 'messgae': _swap }}
         
         
         

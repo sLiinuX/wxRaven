@@ -122,7 +122,7 @@ class SettingsManager(object):
     def _SaveGeneralSettings(self, configObj):
         
         resumeviewonstartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
-        #self.logger.info("Save resumeviewonstartup = " +resumeviewonstartup)
+        self.logger.info("Save resumeviewonstartup = " +resumeviewonstartup)
         
         configObj.add_section('Application')
         configObj.set('Application','resumeviewonstartup',resumeviewonstartup)
@@ -207,7 +207,7 @@ class SettingsManager(object):
         # Hidden configuration for dev purpose
         #
         self.forceinprincipalauimanager = configObj.getboolean("Application", "forceinprincipalauimanager", fallback = False) 
-        self.resumepluginstate= configObj.getboolean("Application", "safemode", fallback = True) 
+        self.safemode = configObj.getboolean("Application", "safemode", fallback = True) 
     
     
     def _LoadConnexionSettings(self, configObj):

@@ -10,6 +10,7 @@
 import wx
 import wx.xrc
 from wxRavenGUI.application.wxcustom.CustomListCtrl import *
+import wx.aui
 
 ###########################################################################
 ## Class wxRavenP2PMarket_NewAdDialog
@@ -1503,7 +1504,7 @@ class wxRavenP2PMarket_Airdrop ( wx.Panel ):
 		self.m_bitmap128 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/formula.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer332.Add( self.m_bitmap128, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.m_UTXOcount = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 1000, 1 )
+		self.m_UTXOcount = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 500, 1 )
 		bSizer332.Add( self.m_UTXOcount, 0, wx.ALL, 5 )
 		
 		self.m_staticText180 = wx.StaticText( self, wx.ID_ANY, u"Max Winner(s)", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -1843,7 +1844,7 @@ class wxRavenP2PMarket_Settings ( wx.Panel ):
 		self.m_bitmap25 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer781.Add( self.m_bitmap25, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.m_staticText91 = wx.StaticText( self, wx.ID_ANY, u"Force Network :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText91 = wx.StaticText( self, wx.ID_ANY, u"Force Network (Listing Only) :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText91.Wrap( -1 )
 		bSizer781.Add( self.m_staticText91, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
@@ -2741,5 +2742,295 @@ class wxRavenP2PMarket_NewAdDialog_FIRSTDRAFT ( wx.Panel ):
 	
 	def OnGenerateButtonClick( self, event ):
 		event.Skip()
+	
+
+###########################################################################
+## Class wxRavenP2PMarket_AdDetails
+###########################################################################
+
+class wxRavenP2PMarket_AdDetails ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 831,606 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer368 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer369 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_topPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer372 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer373 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText219 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText219.Wrap( -1 )
+		bSizer373.Add( self.m_staticText219, 1, wx.ALL, 5 )
+		
+		self.m_bitmap154 = wx.StaticBitmap( self.m_topPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/p2p_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer373.Add( self.m_bitmap154, 0, wx.ALL, 5 )
+		
+		self.m_TitleText = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"Ad Title", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )
+		self.m_TitleText.Wrap( -1 )
+		self.m_TitleText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer373.Add( self.m_TitleText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText220 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText220.Wrap( -1 )
+		bSizer373.Add( self.m_staticText220, 1, wx.ALL, 5 )
+		
+		
+		bSizer372.Add( bSizer373, 0, wx.EXPAND, 5 )
+		
+		bSizer376 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap155 = wx.StaticBitmap( self.m_topPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/browser.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer376.Add( self.m_bitmap155, 0, wx.ALL, 5 )
+		
+		self.m_staticText224 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"Website :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText224.Wrap( -1 )
+		self.m_staticText224.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer376.Add( self.m_staticText224, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_websiteText = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"{no url}", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_websiteText.Wrap( -1 )
+		bSizer376.Add( self.m_websiteText, 1, wx.ALL, 5 )
+		
+		
+		bSizer372.Add( bSizer376, 0, wx.EXPAND, 5 )
+		
+		bSizer3761 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap1551 = wx.StaticBitmap( self.m_topPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer3761.Add( self.m_bitmap1551, 0, wx.ALL, 5 )
+		
+		self.m_staticText2241 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"Asset :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText2241.Wrap( -1 )
+		self.m_staticText2241.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer3761.Add( self.m_staticText2241, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_assetText = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"{assetname}", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_assetText.Wrap( -1 )
+		bSizer3761.Add( self.m_assetText, 1, wx.ALL, 5 )
+		
+		
+		bSizer372.Add( bSizer3761, 0, wx.EXPAND, 5 )
+		
+		bSizer374 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_DescriptionText = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_LEFT )
+		self.m_DescriptionText.Wrap( -1 )
+		bSizer374.Add( self.m_DescriptionText, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer372.Add( bSizer374, 1, wx.EXPAND, 5 )
+		
+		bSizer375 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bpButton33 = wx.BitmapButton( self.m_topPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/buy_now.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer375.Add( self.m_bpButton33, 0, wx.ALL, 5 )
+		
+		
+		bSizer372.Add( bSizer375, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		
+		self.m_topPanel.SetSizer( bSizer372 )
+		self.m_topPanel.Layout()
+		bSizer372.Fit( self.m_topPanel )
+		bSizer369.Add( self.m_topPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		bSizer368.Add( bSizer369, 5, wx.EXPAND, 5 )
+		
+		bSizer370 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_detailTabPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer371 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_auinotebook1 = wx.aui.AuiNotebook( self.m_detailTabPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE )
+		
+		bSizer371.Add( self.m_auinotebook1, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.m_detailTabPanel.SetSizer( bSizer371 )
+		self.m_detailTabPanel.Layout()
+		bSizer371.Fit( self.m_detailTabPanel )
+		bSizer370.Add( self.m_detailTabPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		bSizer368.Add( bSizer370, 10, wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer368 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_bpButton33.Bind( wx.EVT_BUTTON, self.OnOpenTxClicked )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnOpenTxClicked( self, event ):
+		event.Skip()
+	
+
+###########################################################################
+## Class wxRavenP2PMarket_AdDetails_Splitter
+###########################################################################
+
+class wxRavenP2PMarket_AdDetails_Splitter ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 831,773 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer368 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_splitter1 = wx.SplitterWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SP_NOBORDER )
+		self.m_splitter1.SetSashGravity( 0 )
+		self.m_splitter1.Bind( wx.EVT_IDLE, self.m_splitter1OnIdle )
+		self.m_splitter1.SetMinimumPaneSize( 20 )
+		
+		self.m_panel46 = wx.Panel( self.m_splitter1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_panel46.SetBackgroundColour( wx.Colour( 255, 255, 255 ) )
+		
+		bSizer369 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_topPanel = wx.Panel( self.m_panel46, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer372 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer373 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText219 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText219.Wrap( -1 )
+		bSizer373.Add( self.m_staticText219, 1, wx.ALL, 5 )
+		
+		self.m_bitmap154 = wx.StaticBitmap( self.m_topPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/p2p_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer373.Add( self.m_bitmap154, 0, wx.ALL, 5 )
+		
+		self.m_TitleText = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"Ad Title", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )
+		self.m_TitleText.Wrap( -1 )
+		self.m_TitleText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer373.Add( self.m_TitleText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText220 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText220.Wrap( -1 )
+		bSizer373.Add( self.m_staticText220, 1, wx.ALL, 5 )
+		
+		
+		bSizer372.Add( bSizer373, 0, wx.EXPAND, 5 )
+		
+		bSizer376 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap155 = wx.StaticBitmap( self.m_topPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/browser.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer376.Add( self.m_bitmap155, 0, wx.ALL, 5 )
+		
+		self.m_staticText224 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"Website :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText224.Wrap( -1 )
+		self.m_staticText224.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer376.Add( self.m_staticText224, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_websiteText = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"{no url}", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_websiteText.Wrap( -1 )
+		bSizer376.Add( self.m_websiteText, 1, wx.ALL, 5 )
+		
+		
+		bSizer372.Add( bSizer376, 0, wx.EXPAND, 5 )
+		
+		bSizer3761 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap1551 = wx.StaticBitmap( self.m_topPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer3761.Add( self.m_bitmap1551, 0, wx.ALL, 5 )
+		
+		self.m_staticText2241 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"Asset :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText2241.Wrap( -1 )
+		self.m_staticText2241.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer3761.Add( self.m_staticText2241, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_assetText = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"{assetname}", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_assetText.Wrap( -1 )
+		bSizer3761.Add( self.m_assetText, 1, wx.ALL, 5 )
+		
+		
+		bSizer372.Add( bSizer3761, 0, wx.EXPAND, 5 )
+		
+		bSizer374 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_DescriptionText = wx.StaticText( self.m_topPanel, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_LEFT )
+		self.m_DescriptionText.Wrap( -1 )
+		bSizer374.Add( self.m_DescriptionText, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer372.Add( bSizer374, 1, wx.EXPAND, 5 )
+		
+		bSizer375 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bpButton33 = wx.BitmapButton( self.m_topPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/buy_now.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer375.Add( self.m_bpButton33, 0, wx.ALL, 5 )
+		
+		
+		bSizer372.Add( bSizer375, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		
+		self.m_topPanel.SetSizer( bSizer372 )
+		self.m_topPanel.Layout()
+		bSizer372.Fit( self.m_topPanel )
+		bSizer369.Add( self.m_topPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.m_panel46.SetSizer( bSizer369 )
+		self.m_panel46.Layout()
+		bSizer369.Fit( self.m_panel46 )
+		self.m_panel47 = wx.Panel( self.m_splitter1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_panel47.SetBackgroundColour( wx.Colour( 255, 255, 255 ) )
+		
+		bSizer370 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_detailTabPanel = wx.Panel( self.m_panel47, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_detailTabPanel.SetBackgroundColour( wx.Colour( 255, 255, 255 ) )
+		
+		bSizer371 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_auinotebook1 = wx.aui.AuiNotebook( self.m_detailTabPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE )
+		
+		bSizer371.Add( self.m_auinotebook1, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.m_detailTabPanel.SetSizer( bSizer371 )
+		self.m_detailTabPanel.Layout()
+		bSizer371.Fit( self.m_detailTabPanel )
+		bSizer370.Add( self.m_detailTabPanel, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.m_panel47.SetSizer( bSizer370 )
+		self.m_panel47.Layout()
+		bSizer370.Fit( self.m_panel47 )
+		self.m_splitter1.SplitHorizontally( self.m_panel46, self.m_panel47, 0 )
+		bSizer368.Add( self.m_splitter1, 1, wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer368 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_bpButton33.Bind( wx.EVT_BUTTON, self.OnOpenTxClicked )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnOpenTxClicked( self, event ):
+		event.Skip()
+	
+	def m_splitter1OnIdle( self, event ):
+		self.m_splitter1.SetSashPosition( 0 )
+		self.m_splitter1.Unbind( wx.EVT_IDLE )
 	
 

@@ -442,11 +442,14 @@ class ApplicationSettingPanel ( wx.Panel ):
 		
 		bSizer6212 = wx.BoxSizer( wx.HORIZONTAL )
 		
+		self.m_bitmap18 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/view_default_frame.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer6212.Add( self.m_bitmap18, 0, wx.ALL, 5 )
+		
 		self.m_staticText362 = wx.StaticText( self, wx.ID_ANY, u"Graphical Interface :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText362.Wrap( -1 )
 		self.m_staticText362.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
 		
-		bSizer6212.Add( self.m_staticText362, 0, wx.ALL, 5 )
+		bSizer6212.Add( self.m_staticText362, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
 		bSizer3.Add( bSizer6212, 0, wx.EXPAND, 5 )
@@ -496,11 +499,14 @@ class ApplicationSettingPanel ( wx.Panel ):
 		
 		bSizer6211 = wx.BoxSizer( wx.HORIZONTAL )
 		
+		self.m_bitmap19 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer6211.Add( self.m_bitmap19, 0, wx.ALL, 5 )
+		
 		self.m_staticText45 = wx.StaticText( self, wx.ID_ANY, u"Description :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText45.Wrap( -1 )
 		self.m_staticText45.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
 		
-		bSizer6211.Add( self.m_staticText45, 1, wx.ALL, 5 )
+		bSizer6211.Add( self.m_staticText45, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
 		bSizer3.Add( bSizer6211, 0, wx.EXPAND, 5 )
@@ -550,6 +556,96 @@ class GeneralSettingPanel ( wx.Panel ):
 		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 535,527 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer132 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer6212 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap18 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/power_on.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer6212.Add( self.m_bitmap18, 0, wx.ALL, 5 )
+		
+		self.m_staticText362 = wx.StaticText( self, wx.ID_ANY, u"Application Startup", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText362.Wrap( -1 )
+		self.m_staticText362.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer6212.Add( self.m_staticText362, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer132.Add( bSizer6212, 0, wx.EXPAND, 5 )
+		
+		bSizer1361 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBoxDisclaimer = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1361.Add( self.m_checkBoxDisclaimer, 0, wx.ALL, 5 )
+		
+		self.m_staticText681 = wx.StaticText( self, wx.ID_ANY, u"DO NOT Show Disclaimer", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText681.Wrap( -1 )
+		bSizer1361.Add( self.m_staticText681, 0, wx.ALL, 5 )
+		
+		
+		bSizer132.Add( bSizer1361, 0, wx.EXPAND, 5 )
+		
+		bSizer136 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBoxWelcome = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer136.Add( self.m_checkBoxWelcome, 0, wx.ALL, 5 )
+		
+		self.m_staticText68 = wx.StaticText( self, wx.ID_ANY, u"DO NOT Show Welcome View", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText68.Wrap( -1 )
+		bSizer136.Add( self.m_staticText68, 0, wx.ALL, 5 )
+		
+		
+		bSizer132.Add( bSizer136, 0, wx.EXPAND, 5 )
+		
+		bSizer1362 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBoxResume = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1362.Add( self.m_checkBoxResume, 0, wx.ALL, 5 )
+		
+		self.m_staticText682 = wx.StaticText( self, wx.ID_ANY, u"Resume views from previous session (if save option active)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText682.Wrap( -1 )
+		bSizer1362.Add( self.m_staticText682, 0, wx.ALL, 5 )
+		
+		
+		bSizer132.Add( bSizer1362, 0, wx.EXPAND, 5 )
+		
+		bSizer62121 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap181 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/power_off.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer62121.Add( self.m_bitmap181, 0, wx.ALL, 5 )
+		
+		self.m_staticText3621 = wx.StaticText( self, wx.ID_ANY, u"Application Shutdown", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText3621.Wrap( -1 )
+		self.m_staticText3621.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer62121.Add( self.m_staticText3621, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer132.Add( bSizer62121, 0, wx.EXPAND, 5 )
+		
+		bSizer136211 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBoxPurgeOnClose = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxPurgeOnClose.SetValue(True) 
+		bSizer136211.Add( self.m_checkBoxPurgeOnClose, 0, wx.ALL, 5 )
+		
+		self.m_staticText68211 = wx.StaticText( self, wx.ID_ANY, u"Purge hidden views", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText68211.Wrap( -1 )
+		bSizer136211.Add( self.m_staticText68211, 0, wx.ALL, 5 )
+		
+		
+		bSizer132.Add( bSizer136211, 0, wx.EXPAND, 5 )
+		
+		bSizer13621 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBoxSaveSession = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxSaveSession.SetValue(True) 
+		bSizer13621.Add( self.m_checkBoxSaveSession, 0, wx.ALL, 5 )
+		
+		self.m_staticText6821 = wx.StaticText( self, wx.ID_ANY, u"Save Session (open views)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6821.Wrap( -1 )
+		bSizer13621.Add( self.m_staticText6821, 0, wx.ALL, 5 )
+		
+		
+		bSizer132.Add( bSizer13621, 0, wx.EXPAND, 5 )
 		
 		
 		self.SetSizer( bSizer132 )

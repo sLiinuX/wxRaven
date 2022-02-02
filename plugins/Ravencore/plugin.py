@@ -19,7 +19,7 @@ from wxRavenGUI.application.pluginsframework import *
 from .wxRavenRavencoreAssetExplorerLogic import *
 #import the logic of your plugin (inherit design class with logic)
 from .wxRavenRavencoreDesign import *
-from .wxRavenRavencore_NetworkInfosLogic import *
+#from .wxRavenRavencore_NetworkInfosLogic import *
 from .pluginSettings import *
 from .wxRavenRavencore_TransactionsViewer_Logic import * 
 from .wxRavenRavencore_UTXOManagerLogic import *
@@ -93,17 +93,7 @@ class wxRavenPlugin(PluginObject):
         
         self.PLUGINS_VIEWS= [ 
                     
-                     {
-                     'viewid':"Network Infos", 
-                     'name':"Network Infos", 
-                     'title':"Network Infos", 
-                     'position':position, 
-                     'icon':self.RessourcesProvider.GetImage('connexion_speed_2'), 
-                     'class': wxRavenRavencore_NetInfosLogic ,
-                     'default':False,
-                     'multipleViewAllowed':False, 
-                     'toolbar_shortcut': False
-                     },
+                    
                      
                      
                     {
@@ -140,7 +130,8 @@ class wxRavenPlugin(PluginObject):
                      'icon':self.RessourcesProvider.GetImage('asset_new'), 
                      'class': RavencoreAssetIssuerDialog ,
                      'default':False,
-                     'multipleViewAllowed':False
+                     'multipleViewAllowed':False,
+                     'skip_save': True,
                      }, 
                     
                     
@@ -152,7 +143,8 @@ class wxRavenPlugin(PluginObject):
                      'icon':self.RessourcesProvider.GetImage('wallet'), 
                      'class': wxRavenRavencore_UTXOManagerLogic ,
                      'default':False,
-                     'multipleViewAllowed':True
+                     'multipleViewAllowed':True,
+                     
                      }, 
                     
                     
@@ -165,7 +157,8 @@ class wxRavenPlugin(PluginObject):
                      'icon':self.RessourcesProvider.GetImage('inspect_file'), 
                      'class': wxRavenP2PMarket_RavencoreTxViewerWithLogic ,
                      'default':False,
-                     'multipleViewAllowed':True
+                     'multipleViewAllowed':True,
+                     'skip_save': True,
                      }, 
                     
                     
@@ -174,7 +167,17 @@ class wxRavenPlugin(PluginObject):
                 ]
         
         """
-        
+         {
+                     'viewid':"Network Infos", 
+                     'name':"Network Infos", 
+                     'title':"Network Infos", 
+                     'position':position, 
+                     'icon':self.RessourcesProvider.GetImage('connexion_speed_2'), 
+                     'class': wxRavenRavencore_NetInfosLogic ,
+                     'default':False,
+                     'multipleViewAllowed':False, 
+                     'toolbar_shortcut': False
+                     },
         ,
                     
                     
@@ -216,8 +219,8 @@ class wxRavenPlugin(PluginObject):
                 'strictname' : False,
                 'filtertype' : False,
                 'filtertypelist' : [],
-                'ipfsgateway_default' : 'http://70.81.223.229:8080/ipfs/',
-                'ipfsgateway_providers':['http://70.81.223.229:8080/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'https://ravencoinipfs-gateway.com/ipfs/'],
+                'ipfsgateway_default' : 'http://172.105.7.111:8080/ipfs/',
+                'ipfsgateway_providers':['http://172.105.7.111:8080/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'https://ravencoinipfs-gateway.com/ipfs/'],
                 
                 'bookmark_list':['My Assets'],
                 'navigation_use_cache' : True,
@@ -365,9 +368,20 @@ class wxRavenPlugin(PluginObject):
      
     '''
         
-    def OnSearchRequested_T(self, keyword="", limit=50, onlyMain=False):    
+    def OnSearchRequested_T(self, keyword="", limit=50, onlyMain=False, openViewAfter=False):    
         t=threading.Thread(target=self.OnUpdatePluginDatas_SEARCH, args=(keyword,limit, onlyMain))
-        t.start()        
+        t.start()     
+        
+        
+        if openViewAfter:
+            _newView = self.parentFrame.Views.OpenView("Asset Search", "Ravencore", True)
+            print(_newView)
+            if _newView != None:
+                self.parentFrame.Views.OpenView("Asset Search", "Ravencore", False)
+                #_vi = self.parentFrame.Views.SearchViewInstance("Asset Search")
+                #_vi['instance'].Show()
+                #self.parentFrame.Views.
+           
         
     def OnNetworkChanged_T(self, networkName=""):    
         #t=threading.Thread(target=self.OnUpdatePluginDatas)
@@ -499,8 +513,8 @@ class wxRavenPlugin(PluginObject):
         
         ravencoin = self.parentFrame.getRvnRPC()
         _DatasUtxo = {'RVN':[],'ASSETS':[] }
-        if True:
-        #try:
+        #if True:
+        try:
             _listRaw = ravencoin.wallet.GetUnspentList(_OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[], _fullDatas=True , _includeLocked=True)
             _DatasUtxo = self.getData('_AllUTXOs')
             _DatasUtxo['RVN'] = _listRaw
@@ -512,8 +526,11 @@ class wxRavenPlugin(PluginObject):
             print(f"_DatasUtxo {_DatasUtxo['ASSETS']}")
             wx.CallAfter(self.UpdateActiveViews, ())
     
-        #except Exception as e:
-        #    self.RaisePluginLog( "Unable to update UTXO List : "+ str(e), type="error")
+    
+        
+    
+        except Exception as e:
+            self.RaisePluginLog( "Unable to update UTXO List : "+ str(e), type="error")
     
         
         self.setData("_AllUTXOs", _DatasUtxo)

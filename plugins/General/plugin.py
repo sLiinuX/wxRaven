@@ -9,7 +9,7 @@ import threading
 from datetime import datetime
 import inspect
 
-
+import re
 from .wxRavenDebugConsoleLogic import *
 from .wxRavenErrorLogConsoleLogic import *
 from .wxNotebookToolbox import *
@@ -76,7 +76,7 @@ class wxRavenPlugin(PluginObject):
                      'position':'main', 
                      'icon':   self.RessourcesProvider.GetImage('welcome16') , 
                      'class': wxRavenWelcomeTabLogic ,
-                     'default':False,
+                     'default':True,
                      'multipleViewAllowed':False,
                      'isArea':False,
                      
@@ -94,7 +94,11 @@ class wxRavenPlugin(PluginObject):
                 'disable_plugins' :[],
                 'quick_links' :[],
                 'debug_out' :'stderr',
-                'show_disclaimer':True
+                'show_disclaimer':True,
+                'show_welcome':True,
+                'purge_on_close':True,
+                'save_on_close':True,
+                
             }
         
         
@@ -132,7 +136,7 @@ class wxRavenPlugin(PluginObject):
         
 
         _generalPannel = PluginSettingsTreeObject("General", _prefIcon, classPanel=wxRavenGeneralSettingPanel, _childs=None)
-        _viewPannel = PluginSettingsTreeObject("Views", _viewIcon, classPanel=None, _childs=None)
+        #_viewPannel = PluginSettingsTreeObject("Views", _viewIcon, classPanel=None, _childs=None)
         _connexionPannel = PluginSettingsTreeObject("Connexions", _conIcon, classPanel=wxRavenConexionsSettingPanel, _childs=None)
         
         _pluginsPannel = PluginSettingsTreeObject("Plugins", _pluginsIcon, classPanel=wxRavenPluginsSettingPanel, _childs=None)
@@ -141,7 +145,7 @@ class wxRavenPlugin(PluginObject):
         
         
         _applicationPannel._childs.append(_generalPannel)
-        _applicationPannel._childs.append(_viewPannel)
+        #_applicationPannel._childs.append(_viewPannel)
         _applicationPannel._childs.append(_connexionPannel)
         _applicationPannel._childs.append(_pluginsPannel)
         
@@ -172,6 +176,7 @@ class wxRavenPlugin(PluginObject):
         
         self.setData("allLogs", {})
         self.setData("_cursor",0)
+        self.setData("_errorPushed",False)
         
         
         #self.LoadPluginFrames()
@@ -237,6 +242,28 @@ class wxRavenPlugin(PluginObject):
         self.setData("globalAssetBalance", [])
         self.setData("allAddresses", [])
         """
+    
+    
+    
+    def PopStatusBarErrorMessage(self, evt=None):
+        pass
+        '''
+        if self.getData("_errorPushed") :
+            print('pop')
+            self.parentFrame.wxRavenStatusBar.PopStatusText(  0)
+            self.setData("_errorPushed",False)
+        '''
+    
+    def PushStatusBarErrorMessage(self, evt=None):
+        self.parentFrame.MenusAndTool.PushStatusBarErrorMessage()
+        #self.parentFrame.Views.PopStatusBarErrorMessage()
+        '''
+        if not self.getData("_errorPushed") :
+            print('push')
+            self.parentFrame.wxRavenStatusBar.PushStatusText( "Some Errors occured, check the console log.", 0)
+            self.setData("_errorPushed",True)
+        #self.parentFrame.wxRavenStatusBar.PushStatusText( "Some Errors occured, check the console log.", 1)
+        '''
             
         
     def Log(self, message , source="", timestamp=None, type="info"):
@@ -256,8 +283,21 @@ class wxRavenPlugin(PluginObject):
         #print(str(inspect.stack()[0][0]))
         #print(str(inspect.stack()[1][0]))
         #print(str(inspect.stack()[2][0]))
+        #print(message)
+        
+        
+        '''
+        _match = re.search(r'(.+)(<Fault.+)', message)
+        if _match:
+            message = _match.group(1) + ' Feature not available in Webservice / No Wallet Mode.'
+        '''
+        
         if source == "":
             source = str(inspect.stack()[1][0])
+         
+        if type=="error":
+            wx.CallAfter(self.PushStatusBarErrorMessage, ())
+             
          
         newLogLine = [type,str(message), source, timestamp]
         existingLogs[_cursor] = newLogLine

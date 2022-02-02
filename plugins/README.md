@@ -12,18 +12,29 @@ General
 Basic but essential components like the error console, and area panels.
 
 
+Miscellaneous
+---------
+Miscellaneous features like airdrop, advertising, monitoring panel...
+
+P2PMarket
+---------
+P2PMarket features to publish and buy on the P2P Market.
+
+ProfileManager
+---------
+Profile Manager, store local settings and log in a profile folder
 
 Ravencore
 ---------
 Main ravencoin components such as an asset search dialog, etc..
 
 
-RavenRPC
+RavenRPC 
 ---------
 Provide RPC Shells and documentation helper.
 
 
-SimpleWallet 
+SimpleWallet (IN-DEV)
 ---------
 An example of of to create a wallet with some basic features.
 

@@ -224,6 +224,8 @@ class wxRavenP2PMarket_ViewTexInfosDialog( wxRavenDecodeTxPanel):
             
             
             
+            
+            self.parent.Close()
             ReportRPCResult(self.parent_frame, _result, "success", "Transaction complete !", "Unable to complete the transaction.", False)
             '''
             if _result != None:

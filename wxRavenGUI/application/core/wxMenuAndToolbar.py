@@ -11,6 +11,8 @@ import time
 import wx.aui  as aui
 import logging
 
+
+
 from wxRavenGUI.view import *
 
 
@@ -41,6 +43,8 @@ class MenuAndToolBarManager(object):
         self._pluginsToolbars = {}
     
     
+    
+        self.statusBarErrorPushed = False
     
     
     
@@ -86,8 +90,50 @@ class MenuAndToolBarManager(object):
     
     """
     
+    
+    def PopStatusBarErrorMessage(self, evt=None):
+        if self.statusBarErrorPushed :
+            print('pop')
+            self.parentframe.wxRavenStatusBar.PopStatusText(  0)
+            self.statusBarErrorPushed =False
+            
+            
+            if self.parentframe.wxRavenStatusBarLeftIcon != None:
+                try:
+                    self.parentframe.wxRavenStatusBarLeftIcon.Destroy()
+                except Exception as e:
+                    pass
+    
+    def PushStatusBarErrorMessage(self, evt=None):
+        
+        if not self.statusBarErrorPushed :
+            print('push')
+            self.parentframe.wxRavenStatusBar.PushStatusText( "--   Some Errors occured, check the console log.", 0)
+            self.statusBarErrorPushed =True
+            
+            if self.parentframe.wxRavenStatusBarLeftIcon != None:
+                try:
+                    self.parentframe.wxRavenStatusBarLeftIcon.Destroy()
+                except Exception as e:
+                    pass
+            _icon =self.parentframe.RessourcesProvider.GetImage('warning_2')
+            self.parentframe.wxRavenStatusBarLeftIcon = wx.StaticBitmap(self.parentframe.wxRavenStatusBar, -1, _icon, (16, 16))
+        
+            rect = self.parentframe.wxRavenStatusBar.GetFieldRect(1)
+            w, h = self.parentframe.wxRavenStatusBarLeftIcon.Size
+            xpad = (rect.width - w) / 2
+            ypad = (rect.height - h) / 2
+            self.parentframe.wxRavenStatusBarLeftIcon.SetPosition((rect.x, rect.y + ypad))
+            
+        #self.parentFrame.wxRavenStatusBar.PushStatusText( "Some Errors occured, check the console log.", 1)
+    
+     
+    
+    
+    
     def setupStatusBar(self):
         self.parentframe.wxRavenStatusBarIcon=None
+        self.parentframe.wxRavenStatusBarLeftIcon=None
         
         self.parentframe.wxRavenStatusBar.SetFieldsCount( 3, [-3,150,32])
         self.parentframe.wxRavenStatusBar.SetStatusText("welcome to wxRaven", 0)
@@ -99,15 +145,49 @@ class MenuAndToolBarManager(object):
     
     
     
+    
+    
+    
+    
+    
     def OnSizeSB(self, event):
-        rect = self.parentframe.wxRavenStatusBar.GetFieldRect(2)
-        w, h = self.parentframe.wxRavenStatusBarIcon.Size
-        xpad = (rect.width - w) / 2
-        ypad = (rect.height - h) / 2
-        self.parentframe.wxRavenStatusBarIcon.SetPosition((rect.x + xpad, rect.y + ypad))
-        event.Skip() 
+        try:
+            rect = self.parentframe.wxRavenStatusBar.GetFieldRect(2)
+            w, h = self.parentframe.wxRavenStatusBarIcon.Size
+            xpad = (rect.width - w) / 2
+            ypad = (rect.height - h) / 2
+            self.parentframe.wxRavenStatusBarIcon.SetPosition((rect.x + xpad, rect.y + ypad))
+             
+        except Exception as e:
+            pass
         
         
+        try:
+            rect = self.parentframe.wxRavenStatusBar.GetFieldRect(0)
+            w, h = self.parentframe.wxRavenStatusBarLeftIcon.Size
+            xpad = (rect.width - w) / 2
+            ypad = (rect.height - h) / 2
+            self.parentframe.wxRavenStatusBarLeftIcon.SetPosition((rect.x, rect.y + ypad))
+             
+        except Exception as e:
+            pass
+        event.Skip()
+    
+    
+    def __StatusBar_DetroyIcons__(self):
+        if self.parentframe.wxRavenStatusBarIcon != None:
+            try:
+                self.parentframe.wxRavenStatusBarIcon.Destroy()
+            except Exception as e:
+                pass   
+            
+         
+         
+        if self.parentframe.wxRavenStatusBarLeftIcon != None:
+            try:
+                self.parentframe.wxRavenStatusBarLeftIcon.Destroy()
+            except Exception as e:
+                pass
     
     def setStatusBarActiveNetwork(self, networkName=""):
         
@@ -126,9 +206,8 @@ class MenuAndToolBarManager(object):
         
         icon = self.parentframe.ConnexionManager.getIcon(networkName)
         
-        if self.parentframe.wxRavenStatusBarIcon != None:
-            self.parentframe.wxRavenStatusBarIcon.Destroy()
-            
+        self.__StatusBar_DetroyIcons__()
+           
         #toolbar as well    
         self.parentframe.wxRavenNetworkBarIcon = icon
         self.parentframe.rpcConnexions_dropdown_button.SetBitmap(icon)
@@ -146,6 +225,7 @@ class MenuAndToolBarManager(object):
         
         self.parentframe.m_auiToolBar2.Layout()
         self.parentframe.Layout()
+        
     """
     
     Tool bar
@@ -154,6 +234,7 @@ class MenuAndToolBarManager(object):
     
     
     def RefreshToolbar(self, evt=None):
+        self.logger.info('RefreshToolbar')
         self.RefreshConsoleToogleButtonState()
         self.RefreshViewShortcutButtonState()
         
@@ -187,15 +268,24 @@ class MenuAndToolBarManager(object):
         else:
             self.parentframe.m_auiToolBar2.ToggleTool(self.parentframe.m_showViewShortcutToolbar.GetId(), False)
     
+    
+    
+    
     def RefreshConsoleToogleButtonState(self, evt=None):
         vmgr = self.parentframe.Views 
         
         if vmgr.isViewVisible('Error Log Console'):
+            #self.parentframe.GetPlugin('General').PopStatusBarErrorMessage()
+            self.PopStatusBarErrorMessage()
             #self.logger.info("Error Log Console visible")
             cs = self.parentframe.m_showConsoleLog.GetState()
             #self.parentframe.m_showConsoleLog.SetState(34)
             self.parentframe.m_auiToolBar2.ToggleTool(self.parentframe.m_showConsoleLog.GetId(), True)
             self.parentframe.Views.UpdateView("Error Log Console")
+            
+            
+            
+            
         else:
             #self.logger.info("Error Log Console NOT visible")
             #self.parentframe.m_showConsoleLog.SetState(2)
@@ -552,12 +642,10 @@ class MenuAndToolBarManager(object):
     
     
     def refreshViewsListMenu(self, args=[]):
-        
         self.refreshViewsListMenu_Param( self.parentframe.wxRavenMenuBar_Window_Views)
-        
         #self.PopupViewMenu = wx.Menu()
-        
         self.refreshViewsListMenu_Param( self.PopupViewMenu)
+        self.logger.info('refreshViewsListMenu')
        
     
     

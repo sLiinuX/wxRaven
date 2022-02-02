@@ -174,6 +174,10 @@ class wxRavenMainFrame ( wx.Frame ):
 		
 		self.m_auiViewsShortcutToolbar.AddSeparator()
 		
+		self.m_ProfileToolBt = self.m_auiViewsShortcutToolbar.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/UserAccount.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
+		self.m_auiViewsShortcutToolbar.SetToolDropDown( self.m_ProfileToolBt.GetId(), True );
+		
+		
 		self.m_auiViewsShortcutToolbar.Realize()
 		self.m_mgr.AddPane( self.m_auiViewsShortcutToolbar, wx.aui.AuiPaneInfo().Name( u"ViewsShortcutToolbar" ).Top().Caption( u"ViewsShortcutToolbar" ).PinButton( True ).Dock().Resizable().FloatingSize( wx.DefaultSize ).Layer( 10 ).ToolbarPane() )
 		
@@ -210,6 +214,7 @@ class wxRavenMainFrame ( wx.Frame ):
 		self.m_auiToolBar2.Bind( wx.EVT_RIGHT_DOWN, self.OnRDown )
 		self.Bind( wx.EVT_TOOL, self.OnContextMenu_ShowNetworkList, id = self.rpcConnexions_dropdown_button.GetId() )
 		self.Bind( wx.EVT_TOOL, self.OnShowCurrentOpenViews, id = self.m_ShowOpenViewList.GetId() )
+		self.wxRavenMainBook.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.OnAuiNotebookPageChanged )
 		self.wxRavenMainBook.Bind( wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnAuiNotebookPageClose )
 	
 	def __del__( self ):
@@ -240,6 +245,9 @@ class wxRavenMainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def OnShowCurrentOpenViews( self, event ):
+		event.Skip()
+	
+	def OnAuiNotebookPageChanged( self, event ):
 		event.Skip()
 	
 	def OnAuiNotebookPageClose( self, event ):

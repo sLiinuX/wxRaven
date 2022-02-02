@@ -104,6 +104,13 @@ class MarketPlaceAdRightclickPopupMenu(object):
         self._menu.AppendSeparator()
         
         
+        nid = wx.NewId()
+        self._search = self._menu.Append(nid, "Inspect Asset In Ravencore" )
+        self._search.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('search_asset'))
+        self.parentBinding.Bind(wx.EVT_MENU, self.inspectAsset, id=nid)
+        
+        
+        self._menu.AppendSeparator()
         
         #Add Bkmrk
         #
@@ -260,7 +267,17 @@ class MarketPlaceAdRightclickPopupMenu(object):
         #    self.parent_frame.GetPlugin("Ravencore").OpenIPFSinWebBrowser(_data, str(self.popupMAP[event.GetId()]))
         
         
-    
+    def inspectAsset(self, event):
+        myPlugin = self.parent_frame.GetPlugin('Ravencore')
+        
+        _assetInspect = self._data._adAsset
+        
+        if self._data._adType in range(1,2):
+            _assetInspect = self._data._adPriceAsset
+        
+        if myPlugin!= None:
+            myPlugin.OnSearchRequested_T( keyword=_assetInspect, limit=50, onlyMain=False, openViewAfter=True)
+            
     
     
     def addInBlacklist(self, event):
@@ -340,6 +357,8 @@ class MarketPlaceAdRightclickPopupMenu(object):
         print(self._data._adTitle)
         
         myPlugin = self.parent_frame.GetPlugin('P2PMarket')
+        #adData:RavencoinP2PMarketPlaceAd
+        myPlugin.OpenAdDetails(self._data)
         #ShowTxInfos
         #if self._hasIpfs :
         #    _url = self._ipfsgateway_default  + self._data['ipfs_hash']

@@ -4,8 +4,6 @@ ConfigParser
 jsonrpcclient
 ravenrpc
 wxPython
-ipfsapi
-ipfshttpclient
 sqlalchemy
 python-socketio
 qrcode[pil]
