@@ -165,7 +165,7 @@ class AtomicSwapCacheStorage:
         }
         
         
-        print(f'PAYLOAD = {save_payload}')
+        #print(f'PAYLOAD = {save_payload}')
         
         self.save_json(self.get_path(), save_payload)
 

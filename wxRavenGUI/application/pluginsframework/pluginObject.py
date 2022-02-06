@@ -136,7 +136,7 @@ class PluginObject(object):
             
             #rView.UpdateView()
             
-        
+            
             try:
                 rView.UpdateView()
             except Exception as e:

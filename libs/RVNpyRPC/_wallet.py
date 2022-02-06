@@ -5,6 +5,10 @@ Created on 11 déc. 2021
 '''
 import logging
 import requests
+import time
+
+#import datetime
+from datetime import date, datetime
 
 class RVNpyRPC_Wallet():
     '''
@@ -64,7 +68,80 @@ class RVNpyRPC_Wallet():
         return balanceValue    
     
     
+    def GetWalletTransactionList(self, categorie='', filter_addresses=[], start_date=None, stop_date=None):
+        _maxTxWallet = self.RPCconnexion.getwalletinfo()['result']['txcount']
     
+        self.logger.info(f" wallet tx count : {_maxTxWallet}")
+        _allTransactions = self.RPCconnexion.listtransactions('*', _maxTxWallet, 0)['result']
+        
+        _startDateInt=0
+        _stopDateInt=time.time()
+        
+        
+        #self.logger.info(f" y {start_date.year} m {start_date.month} d {start_date.day}")
+        
+        if start_date != None:
+            #_startDateInt = start_date.timestamp()
+            self.logger.info(f" y {start_date.year} m {start_date.month} d {start_date.day}")
+            
+            dt = datetime(
+                    year=start_date.year,
+                    month=start_date.month+1,
+                    day=start_date.day
+                 )
+            #timestamp = int(dt.timestamp())
+            _startDateInt= int(dt.timestamp())
+            
+        if stop_date != None:
+            self.logger.info(f" y {stop_date.year} m {stop_date.month} d {stop_date.day}")
+            
+            dt = datetime(
+                    year=stop_date.year,
+                    month=stop_date.month+1,
+                    day=stop_date.day
+                 )
+            _stopDateInt = int(dt.timestamp())
+            
+        
+        
+        _transactions_list = {}
+        _transactions_count= 0
+            
+        for _tx in _allTransactions:
+            
+            #self.logger.info(f'TX = {_tx}')
+            if categorie != '':
+                if not _tx['category']  ==   categorie:
+                    continue
+                
+            if len(filter_addresses) > 0:
+                if not filter_addresses.__contains__(_tx['address']):
+                    continue
+            
+            
+            #self.logger.info(f'TXb = {_tx["blocktime"]}')
+            if  _tx['blocktime'] < _startDateInt:
+                continue
+            
+            
+            if _tx['blocktime'] > _stopDateInt:
+                continue
+                #break ?
+            
+            
+            _tx['datetime'] = datetime.fromtimestamp(_tx['blocktime']).strftime('%Y-%m-%d %H:%M:%S')
+            
+            _transactions_list[_transactions_count] = _tx
+            _transactions_count = _transactions_count + 1
+        
+        
+        return _transactions_list
+        #INT TO DATE
+        #ts = datetime.datetime.fromtimestamp(blockDateTime).strftime('%Y-%m-%d %H:%M:%S')
+        #
+        #DATE TO INT
+        #datetimeobj.timestamp()
+        #
     
     def GetBalance(self):
         return self.RPCconnexion.getbalance()['result'] 
@@ -81,7 +158,7 @@ class RVNpyRPC_Wallet():
                 
                 if includeUnspent:
                     for _checkAd in dataAc['address']:
-                        _changes = self.parentFrame.getRvnRPC().wallet.checkaddresseUnspent(_checkAd)
+                        _changes = self.checkaddresseUnspent(_checkAd)
                         if _changes != []:
                             allAddresses = allAddresses+_changes
                             
@@ -341,7 +418,7 @@ class RVNpyRPC_Wallet():
                             for excl in _ExlcudeAddresses:
                                 if _txDetails['address'].__contains__(excl):
                                     _exclude = True
-                                    print('GetLockedUnspentList > exclide')
+                                    #print('GetLockedUnspentList > exclide')
                                     break
                         
                         _matchAd = True
@@ -350,7 +427,7 @@ class RVNpyRPC_Wallet():
                             for incl in _IncludeOnlyAddresses:
                                 if _txDetails['address'].__contains__(incl):
                                     _matchAd = True
-                                    print('GetLockedUnspentList > exclide')
+                                    #print('GetLockedUnspentList > exclide')
                                     break
                             
                         if not _exclude and _matchAd:

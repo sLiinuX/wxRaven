@@ -66,9 +66,9 @@ Finally, keep in mind that wxRaven is an open source project collaboratively
 developed by its users and your contributions to it are always welcome. Please
 check [our guidelines](CONTRIBUTING.md) if you'd like to do it.
 
-
+```
 Have fun!
-
+```
 The wxRaven Team.
 
 

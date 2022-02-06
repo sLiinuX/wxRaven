@@ -11,6 +11,8 @@ import wx
 import wx.xrc
 from wxRavenGUI.application.wxcustom.CustomListCtrl import *
 import wx.aui
+from wxRavenGUI.application.wxcustom.CustomListCtrl import *
+from wxRavenGUI.application.wxcustom import *
 import wx.html2 as webview
 from wxRavenGUI.application.wxcustom import *
 
@@ -1157,7 +1159,7 @@ class wxRaven_RavencoreUTXOManager ( wx.Panel ):
 		self.m_bitmap39 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/wallet.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer111.Add( self.m_bitmap39, 0, wx.ALL, 5 )
 		
-		self.m_staticText48 = wx.StaticText( self, wx.ID_ANY, u"Wallet UTXO's :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText48 = wx.StaticText( self, wx.ID_ANY, u"Wallet :", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText48.Wrap( -1 )
 		self.m_staticText48.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
 		
@@ -1224,6 +1226,92 @@ class wxRaven_RavencoreUTXOManager_RVN_View ( wx.Panel ):
 		self.m_showUnlock = wx.CheckBox( self.m_FilterPanel, wx.ID_ANY, u"Show Unlocked", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_showUnlock.SetValue(True) 
 		bSizer117.Add( self.m_showUnlock, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer116.Add( bSizer117, 1, wx.EXPAND, 5 )
+		
+		bSizer118 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap40 = wx.StaticBitmap( self.m_FilterPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/filter_ps.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer118.Add( self.m_bitmap40, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_addressFilterText = wx.TextCtrl( self.m_FilterPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer118.Add( self.m_addressFilterText, 3, wx.ALL, 5 )
+		
+		
+		bSizer116.Add( bSizer118, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_FilterPanel.SetSizer( bSizer116 )
+		self.m_FilterPanel.Layout()
+		bSizer116.Fit( self.m_FilterPanel )
+		bSizer112.Add( self.m_FilterPanel, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_scrolledWindow2 = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
+		self.m_scrolledWindow2.SetScrollRate( 5, 5 )
+		bSizer113 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_listCtrl1 = wxRavenListCtrl( self.m_scrolledWindow2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
+		bSizer113.Add( self.m_listCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		self.m_scrolledWindow2.SetSizer( bSizer113 )
+		self.m_scrolledWindow2.Layout()
+		bSizer113.Fit( self.m_scrolledWindow2 )
+		bSizer112.Add( self.m_scrolledWindow2, 1, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer112 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class wxRaven_RavencoreUTXOManager_TxHistory_View
+###########################################################################
+
+class wxRaven_RavencoreUTXOManager_TxHistory_View ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 700,445 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer112 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_FilterPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer116 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer117 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap34 = wx.StaticBitmap( self.m_FilterPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/wallet_in_out.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer117.Add( self.m_bitmap34, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_filterAddressChoices = [ u"ALL", u"SENT", u"RECEIVED" ]
+		self.m_filterAddress = wx.Choice( self.m_FilterPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_filterAddressChoices, 0 )
+		self.m_filterAddress.SetSelection( 0 )
+		bSizer117.Add( self.m_filterAddress, 3, wx.ALL, 5 )
+		
+		self.m_staticText49 = wx.StaticText( self.m_FilterPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText49.Wrap( -1 )
+		bSizer117.Add( self.m_staticText49, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap35 = wx.StaticBitmap( self.m_FilterPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/calendar_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer117.Add( self.m_bitmap35, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_startDCheck = wx.CheckBox( self.m_FilterPanel, wx.ID_ANY, u"From :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_startDCheck.SetValue(True) 
+		bSizer117.Add( self.m_startDCheck, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_datePicker1 = wxRavenDatePicker( self.m_FilterPanel, wx.ID_ANY, wx.DefaultDateTime, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer117.Add( self.m_datePicker1, 0, wx.ALL, 5 )
+		
+		self.m_stopDCheck = wx.CheckBox( self.m_FilterPanel, wx.ID_ANY, u"To :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_stopDCheck.SetValue(True) 
+		bSizer117.Add( self.m_stopDCheck, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_datePicker2 = wxRavenDatePicker( self.m_FilterPanel, wx.ID_ANY, wx.DefaultDateTime, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer117.Add( self.m_datePicker2, 0, wx.ALL, 5 )
 		
 		
 		bSizer116.Add( bSizer117, 1, wx.EXPAND, 5 )

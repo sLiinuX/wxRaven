@@ -690,11 +690,14 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
                 if self.LastDecode != None:
                     self.ShowDecodeTx()
                     
-                    
+                    '''
                     self.LastTx = ravencoin.utils.GetTransaction(self.LastDecode['txid'] )
                     if self.LastTx != None:
                         self.ShowTx()
-                    
+                    '''
+                    self.LastTx = ravencoin.utils.GetTransaction(self.LastDecode['txid'] )
+                    if self.LastTx != None:
+                        self.ShowTx()
                     
                     
                 else:
@@ -746,12 +749,33 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         panelIn.cursor = 0
         
         for _vin in self.LastDecode['vin']:
-            pass
-            index = listIn.InsertItem(listIn.GetItemCount(),str(_vin['txid']), self.allIcons['vin'] )
-            listIn.SetItem(index,1, str(_vin['vout'].__abs__()))
-            listIn.SetItemData(index, panelIn.cursor)
+            print(_vin)
             
-            panelIn.itemDataMap[panelIn.cursor] = ( str(_vin['txid'] ),int( _vin['vout'] ) )
+            if _vin.__contains__('txid'):
+            
+                index = listIn.InsertItem(listIn.GetItemCount(),str(_vin['txid']), self.allIcons['vin'] )
+                listIn.SetItem(index,1, str(_vin['vout'].__abs__()))
+                listIn.SetItemData(index, panelIn.cursor)
+                
+                panelIn.itemDataMap[panelIn.cursor] = ( str(_vin['txid'] ),int( _vin['vout'] ) )
+                
+                
+            else:
+                
+                
+                _text= ''
+                if _vin.__contains__('coinbase'):
+                    _text = "coinbase"
+                
+                index = listIn.InsertItem(listIn.GetItemCount(),str(_vin[_text]), self.allIcons['vin'] )
+                listIn.SetItem(index,1, str(-1))
+                listIn.SetItemData(index, panelIn.cursor)
+                
+                panelIn.itemDataMap[panelIn.cursor] = ( str(_vin[_text] ),int(-1 ) )    
+                
+                
+                
+                
                                                 
             panelIn.cursor = panelIn.cursor+1
         
@@ -791,7 +815,12 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
             index = listOut.InsertItem(listOut.GetItemCount(),str(_vout['n']), self.allIcons[_icon] )
             listOut.SetItem(index,1, str(_vout['value'] ) )
             listOut.SetItem(index,2, str(_vout['scriptPubKey']['type'] ) )
-            listOut.SetItem(index,3, str(_vout['scriptPubKey']['addresses'] ) )
+            
+            _address = ""
+            if _vout['scriptPubKey'].__contains__('addresses'):
+                _address = _vout['scriptPubKey']['addresses']
+            
+            listOut.SetItem(index,3, str( _address) )
             
             _more = ''
             if _vout['scriptPubKey'].__contains__('asset'):
@@ -803,7 +832,7 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
             
             listOut.SetItemData(index, panelOut.cursor)
             
-            panelOut.itemDataMap[panelOut.cursor] = ( int(_vout['n'] ),str( _vout['value'] ) ,  str(_vout['scriptPubKey']['type'] ),  str(_vout['scriptPubKey']['addresses'] ), _more    )
+            panelOut.itemDataMap[panelOut.cursor] = ( int(_vout['n'] ),str( _vout['value'] ) ,  str(_vout['scriptPubKey']['type'] ),  str(_address ), _more    )
                                                 
             panelOut.cursor = panelOut.cursor+1
         
@@ -876,31 +905,33 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         
         list.DeleteAllItems()
         
-        for _det in self.LastTx['details']:
-            if _det['category'] != category:
-                continue
+        if self.LastTx.__contains__('details'):
+        
+            for _det in self.LastTx['details']:
+                if _det['category'] != category:
+                    continue
+                
+                
+                index = list.InsertItem(list.GetItemCount(),str(_det['address']), self.allIcons['rvn'] )
+                list.SetItem(index,1, str(_det['amount'].__abs__()))
+                list.SetItemData(index, panel.cursor)
+                panel.itemDataMap[panel.cursor] = ( str(_det['address'] ),str( _det['amount'].__abs__() ) )
+                                                    
+                panel.cursor = panel.cursor+1
             
             
-            index = list.InsertItem(list.GetItemCount(),str(_det['address']), self.allIcons['rvn'] )
-            list.SetItem(index,1, str(_det['amount'].__abs__()))
-            list.SetItemData(index, panel.cursor)
-            panel.itemDataMap[panel.cursor] = ( str(_det['address'] ),str( _det['amount'].__abs__() ) )
-                                                
-            panel.cursor = panel.cursor+1
-        
-        
-        
-        
-        
-        
-               
-        list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        list.SetColumnWidth(1, 100)      
-        
-        panel.list= list
-        panel.allIcons = self.allIcons
-        listmix.ColumnSorterMixin.__init__(panel, 2)
-        listmix.ColumnSorterMixin.SortListItems(panel, col=1, ascending=0)
+            
+            
+            
+            
+                   
+            list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+            list.SetColumnWidth(1, 100)      
+            
+            panel.list= list
+            panel.allIcons = self.allIcons
+            listmix.ColumnSorterMixin.__init__(panel, 2)
+            listmix.ColumnSorterMixin.SortListItems(panel, col=1, ascending=0)
         
         list.Thaw()
         self.Layout() 
@@ -917,33 +948,35 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         
         list.DeleteAllItems()
         
-        for _det in self.LastTx['asset_details']:
-            if _det['category'] != category:
-                continue
+        if self.LastTx.__contains__('asset_details'):
+        
+            for _det in self.LastTx['asset_details']:
+                if _det['category'] != category:
+                    continue
+                
+                
+                index = list.InsertItem(list.GetItemCount(),str(_det['destination']), self.allIcons['asset'] )
+                list.SetItem(index,1, str(_det['asset_name']))
+                list.SetItem(index,2, str(_det['amount'].__abs__()))
+                list.SetItemData(index, panel.cursor)
+                panel.itemDataMap[panel.cursor] = ( str(_det['destination'] ),str(_det['asset_name']),str( _det['amount'].__abs__() ) )
+                                                    
+                panel.cursor = panel.cursor+1
             
             
-            index = list.InsertItem(list.GetItemCount(),str(_det['destination']), self.allIcons['asset'] )
-            list.SetItem(index,1, str(_det['asset_name']))
-            list.SetItem(index,2, str(_det['amount'].__abs__()))
-            list.SetItemData(index, panel.cursor)
-            panel.itemDataMap[panel.cursor] = ( str(_det['destination'] ),str(_det['asset_name']),str( _det['amount'].__abs__() ) )
-                                                
-            panel.cursor = panel.cursor+1
-        
-        
-        
-        
-        
-        
-               
-        list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-        list.SetColumnWidth(2, 150)      
-        
-        panel.list= list
-        panel.allIcons = self.allIcons
-        listmix.ColumnSorterMixin.__init__(panel, 3)
-        listmix.ColumnSorterMixin.SortListItems(panel, col=2, ascending=0)
+            
+            
+            
+            
+                   
+            list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+            list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+            list.SetColumnWidth(2, 150)      
+            
+            panel.list= list
+            panel.allIcons = self.allIcons
+            listmix.ColumnSorterMixin.__init__(panel, 3)
+            listmix.ColumnSorterMixin.SortListItems(panel, col=2, ascending=0)
         
         list.Thaw()
         self.Layout()    

@@ -547,8 +547,8 @@ class wxRavenPlugin(PluginObject):
     
     def __searchInField__(self, fieldname, keywords, itemJson, _caseSensitive=False):
         _match = False
-        print('__searchInField__')
-        print(itemJson)
+        #print('__searchInField__')
+        #print(itemJson)
         try:
             _fieldValueArray = str(itemJson[fieldname]).split(' ')
             _fieldValueArrayLow = []
@@ -568,17 +568,17 @@ class wxRavenPlugin(PluginObject):
                 
             
             for keyw in keywords:
-                print(f" searching {keyw} in {str(_fieldValueArray)}")
+                #print(f" searching {keyw} in {str(_fieldValueArray)}")
                 if _fieldValueArray.__contains__(keyw.lower()):
                     _match = True 
-                    print(f"MATCH")
+                    #print(f"MATCH")
                     break
             
                 for _fieldKeys in _fieldValueArray:
-                    print(f" searching {keyw} in {str(_fieldKeys)}")
+                    #print(f" searching {keyw} in {str(_fieldKeys)}")
                     if _fieldKeys.__contains__(keyw.lower()):
                         _match = True 
-                        print(f"MATCH")
+                        #print(f"MATCH")
                         break
             
              
@@ -672,7 +672,7 @@ class wxRavenPlugin(PluginObject):
             
             
             for _market in market_chanels:
-                print(f'start search in  {_market}')
+                #print(f'start search in  {_market}')
                 if _chanelsDatas.__contains__(_market):
                     marketDatas = _chanelsDatas[_market]
                     P2P_Market_Search_Result[_market] = self.__searchInMarket__(marketDatas,keywords, searchFields )

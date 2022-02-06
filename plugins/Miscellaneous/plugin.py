@@ -24,7 +24,7 @@ from wxRavenGUI.application.pluginsframework import *
 #from .pluginSettings import MyTutorialSettingPanel_WithLogic
 
 from .wxRavenMiscellaneous_CreateAirdropLogic import *
-f#rom .wxRavenMiscellaneous_CreateAdvertisingLogic import *
+#from .wxRavenMiscellaneous_CreateAdvertisingLogic import *
 from .wxRavenMiscellaneous_NodeMonitorLogic import *
 
 
@@ -100,8 +100,6 @@ class wxRavenPlugin(PluginObject):
                      'toolbar_shortcut': True
                      }
                      ,
-                     
-                     
                     
                      
                       {
@@ -119,7 +117,8 @@ class wxRavenPlugin(PluginObject):
                 ]
         
         '''
-         {
+          
+                     {
                      'viewid':'Create Advertising', 
                      'name':'Create Advertising', 
                      'title':'Create Advertising', 
@@ -130,6 +129,7 @@ class wxRavenPlugin(PluginObject):
                      'multipleViewAllowed':False,
                      'toolbar_shortcut': True
                      },
+                    
                      '''
         
         #

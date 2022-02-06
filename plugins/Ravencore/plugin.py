@@ -41,6 +41,9 @@ except ImportError:
     from libs import pyperclip
     
     
+from datetime import datetime
+
+
 
 class wxRavenPlugin(PluginObject):
     '''
@@ -136,9 +139,9 @@ class wxRavenPlugin(PluginObject):
                     
                     
                     {
-                     'viewid':'UTXO Manager', 
-                     'name':'UTXO Manager', 
-                     'title':'UTXO Manager', 
+                     'viewid':'Wallet', 
+                     'name':'Wallet', 
+                     'title':'Wallet', 
                      'position':'main', 
                      'icon':self.RessourcesProvider.GetImage('wallet'), 
                      'class': wxRavenRavencore_UTXOManagerLogic ,
@@ -288,7 +291,11 @@ class wxRavenPlugin(PluginObject):
         self.setData("_AllUTXOs", {'RVN':[], 'ASSETS':[]})
         
         
-        
+        self.setData("_tx_history", {}) 
+        self.setData("_tx_history_category", '') 
+        self.setData("_tx_history_start", None) 
+        self.setData("_tx_history_stop", None) 
+        self.setData("_tx_history_address_filter", []) 
         
         
         #
@@ -502,6 +509,59 @@ class wxRavenPlugin(PluginObject):
     
     
     
+    
+    
+    
+    
+    def OnHISTORYRequested_T(self):
+        self.setData("_tx_history", {})
+        t=threading.Thread(target=self.OnUpdatePluginDatas_HISTORY, args=())
+        t.start() 
+    
+    def OnUpdatePluginDatas_HISTORY(self, library=""):
+        print('OnUpdatePluginDatas_HISTORY')
+        
+        
+        ravencoin = self.parentFrame.getRvnRPC()
+        _DatasHistory = { }
+        #if True:
+        #if True:
+        try:
+            
+            
+            _categorie = self.getData("_tx_history_category") 
+            _start_date = self.getData("_tx_history_start") 
+            _stop_date = self.getData("_tx_history_stop") 
+            _filter_addresses = self.getData("_tx_history_address_filter") 
+
+            _DatasHistory = ravencoin.wallet.GetWalletTransactionList(categorie=_categorie, filter_addresses=_filter_addresses, start_date=_start_date, stop_date=_stop_date)
+            
+            #_ListAsset = ravencoin.asset.GetAssetUnspentList(assetname='', _fullDatas=True, _includeLocked=True)
+            #_DatasUtxo['ASSETS'] = _ListAsset
+            
+            #print(f"_DatasUtxo {_DatasUtxo['ASSETS']}")
+            wx.CallAfter(self.UpdateActiveViews, ())
+
+        except Exception as e:
+            self.RaisePluginLog( "Unable to update UTXO List : "+ str(e), type="error")
+    
+        
+        self.setData("_tx_history", _DatasHistory)
+        #print(f"SAVEDATA ")
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     def OnUTXORequested_T(self):
         self.setData("_AllUTXOs", {'RVN':[], 'ASSETS':[]})
         t=threading.Thread(target=self.OnUpdatePluginDatas_UTXO, args=())
@@ -523,7 +583,7 @@ class wxRavenPlugin(PluginObject):
             _ListAsset = ravencoin.asset.GetAssetUnspentList(assetname='', _fullDatas=True, _includeLocked=True)
             _DatasUtxo['ASSETS'] = _ListAsset
             
-            print(f"_DatasUtxo {_DatasUtxo['ASSETS']}")
+            #print(f"_DatasUtxo {_DatasUtxo['ASSETS']}")
             wx.CallAfter(self.UpdateActiveViews, ())
     
     

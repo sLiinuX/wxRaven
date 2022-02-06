@@ -55,20 +55,48 @@ class RVNpyRPC_Utils():
     
     
     
+    def GetRawTransaction(self, txid, decoded=True):
+        _result = None
+        
+        try:
+            datasRes = self.RPCconnexion.getrawtransaction(txid, decoded)
+            print(datasRes)
+            if datasRes['result'] != None:
+                _result = datasRes['result']
+                
+                
+                if decoded:
+                    _dataDecode = _decodedTx = self.DecodeTransaction(_result)
+                    if _dataDecode['result'] != None:
+                        _result = _dataDecode['result']
+                
+            
+        except Exception as e:
+            self.logger.error(f"GetRawTransaction() ERROR {e}.") 
     
+        return _result
     
     
     
     def GetTransaction(self, txid):
         _result = None
-        
+        self.logger.info(f"GetTransaction().") 
         try:
             datasRes = self.RPCconnexion.gettransaction(txid)
+            self.logger.info(f"GetTransaction() {datasRes}.") 
             if datasRes['result'] != None:
                 _result = datasRes['result']
-            
+                return _result
+            else:
+                if    datasRes['error']['message'] == 'Invalid or non-wallet transaction id':
+                    self.logger.info(f"GetRawTransaction().") 
+                    _result = self.GetRawTransaction(txid, True)
+                    return _result
+                
+                
+                
         except Exception as e:
-            self.logger.info(f"DecodeTransaction() ERROR {e}.") 
+            self.logger.error(f"GetTransaction() ERROR {e}.") 
     
         return _result
     

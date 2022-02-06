@@ -13,8 +13,8 @@ __MAJOR__ = 0
 __REVISION__ = 1
 __MINOR__ = 2
 
-__BUILD__ = 5
-__BUILD_ID__ = "RC1"
+__BUILD__ = 6
+__BUILD_ID__ = "Official-Release"
 
 
 
