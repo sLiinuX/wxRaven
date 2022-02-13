@@ -12,6 +12,7 @@ import time
 from wxRavenGUI.application.wxcustom.CustomLoading import *
 import wx.lib.mixins.listctrl as listmix 
 from .wxRavenRavencore_UTXOManager_ListRightClickMenu import *
+from .wxRavenRavencore_UTXOManager_TxHistoryRightClickMenu import *
 from datetime import date
 import datetime
 
@@ -93,6 +94,9 @@ class wxRavenRavencore_UTXOManagerLogic(wxRaven_RavencoreUTXOManager):
     def setupPanels(self, evt=None):
         self.createUtxoPanels()
         self.createTxHistoryPanel()
+        
+        self.createAddinsPanels()
+        
     
      
     def createUtxoPanels(self, evt=None):
@@ -116,8 +120,31 @@ class wxRavenRavencore_UTXOManagerLogic(wxRaven_RavencoreUTXOManager):
         
         
         self.Layout() 
+    
+    def createAddinsPanels(self, evt=None):
+        ravencorep = self.parent_frame.GetPlugin("Ravencore")
+        _adds_callbacks = ravencorep.getData("_utxo_manager_views_addons_callbacks") 
         
         
+        for cb in _adds_callbacks:
+            try:
+                cb()
+            except Exception as e:
+                self.parent_frame.Log("Unable to load UTXO addins tab: " + str(e) , type="warning")
+                
+                
+            
+    
+    def createNewPluginPanel(self, panelName, panelClass, pannelIcon):    
+        
+        if not self._allTabs.__contains__(panelName):
+            _Panel = panelClass(self, self.parent_frame, isInternalPluginView=True)
+            _icon = self.parent_frame.RessourcesProvider.GetImage(pannelIcon)
+            self.m_auinotebook1.AddPage(_Panel, panelName, bitmap = _icon)
+            self._allTabs[panelName] = _Panel
+        
+        
+        self.Layout() 
             
     #Override the UpdateView method to define what happen when plugin call UpdateViews()        
     def UpdateView(self, evt=None):
@@ -727,6 +754,11 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         self.default_position = position
         self.allIcons  = {}
         self.itemDataMap = {}
+        
+        self._totalIn = 0.0
+        self._totalOut = 0.0
+        self._totalFees = 0.0
+        
         self._datacache = {}
         self._loadingPanel = None
         #This is to add the view in the appropriate place using the mainapp to do so
@@ -751,6 +783,15 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         
         self.m_startDCheck.Bind(wx.EVT_CHECKBOX, self.StartDateChanged)
         self.m_stopDCheck.Bind(wx.EVT_CHECKBOX, self.StopDateChanged)
+        
+        self.Bind(wx.EVT_BUTTON, self.OnRefreshClicked ,self.m_refreshButton)
+        
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected, self.m_listCtrl1)
+        self.m_listCtrl1.Bind(wx.EVT_RIGHT_UP, self.OnRightClick)
+        self.m_listCtrl1.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick)
+        
+        
+        self.m_addressFilterText.Bind(wx.EVT_TEXT, self.UpdateView)
         
         self.setupListFilter()
         self.setupListControl()
@@ -799,7 +840,7 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         if self.m_startDCheck.GetValue():
             myPlugin = self.parent_frame.GetPlugin('Ravencore')  
             myPlugin.setData("_tx_history_start", d)    
-            self.DoRequestUpdateHistory()
+            #self.DoRequestUpdateHistory()
    
    
             
@@ -809,7 +850,7 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         if self.m_stopDCheck.GetValue():
             myPlugin = self.parent_frame.GetPlugin('Ravencore')  
             myPlugin.setData("_tx_history_stop", d)    
-            self.DoRequestUpdateHistory()    
+            #self.DoRequestUpdateHistory()    
         
         
     def ChangeMode(self, evt):
@@ -848,9 +889,13 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         
         myPlugin = self.parent_frame.GetPlugin('Ravencore')  
         myPlugin.setData("_tx_history_category", str(_type_filter) )    
-        self.DoRequestUpdateHistory()
+        #self.DoRequestUpdateHistory()
         #self.UpdateView(None)  
-        
+    
+    
+    
+    def OnRefreshClicked(self, evt=None):
+        self.DoRequestUpdateHistory()
         
     #Override the UpdateView method to define what happen when plugin call UpdateViews()        
     def UpdateView(self, evt=None):
@@ -867,6 +912,11 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         self.m_listCtrl1.Freeze()
         self.ClearResults()
         
+        self._totalIn = 0.0
+        self._totalOut = 0.0
+        self._totalFees = 0.0
+        
+        
         if True:
         #try:
             
@@ -882,7 +932,7 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
                 _IncludeAddresses.append(_filterAdressValue)
             '''
             
-            #_filterText = self.m_addressFilterText.GetValue()
+            _filterText = self.m_addressFilterText.GetValue()
             
             
             #_showLocked = self.m_showLocked.GetValue()
@@ -934,6 +984,45 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
                 rowData = _listRawAll[row]
                 
                 
+                
+                if _filterText != '':
+                    
+                    
+                    
+                    _foundinfields=False
+                    
+                    if str(rowData['address']).__contains__(_filterText):
+                        _foundinfields = True
+                
+                    if str(rowData['address']).__contains__(_filterText):
+                        _foundinfields = True
+                    
+                    if str(rowData['txid']).__contains__(_filterText):
+                        _foundinfields = True
+                         
+                    if str(rowData['amount']).__contains__(_filterText):
+                        _foundinfields = True
+                        
+                    if rowData.__contains__('fee'):
+                        if str(rowData['amount']).__contains__(_filterText):
+                            _foundinfields = True
+                    
+                    if str(rowData['blocktime']).__contains__(_filterText):
+                        _foundinfields = True
+                        
+                    if str(rowData['datetime']).__contains__(_filterText):
+                        _foundinfields = True
+                        
+                                     
+                        
+                    if not _foundinfields:
+                        continue    
+                
+                
+                
+                
+                
+                
                 #print('adding')
                 index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(),str(row), self.allIcons[rowData['category']] )
                 
@@ -942,20 +1031,44 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
                 
                 self.m_listCtrl1.SetItem(index,1, str(rowData['category']))
                 
+                _fee = 0.0
+                if rowData.__contains__('fee'):
+                    _fee = rowData['fee']
                 
                 self.m_listCtrl1.SetItem(index,2, str(rowData['address']) )
                 self.m_listCtrl1.SetItem(index,3, str(rowData['amount']))
-                self.m_listCtrl1.SetItem(index,4, str(rowData['blocktime']))
-                self.m_listCtrl1.SetItem(index,5, str(rowData['datetime']))
-                self.m_listCtrl1.SetItem(index,6, str(rowData['txid']))
+                self.m_listCtrl1.SetItem(index,4, str(_fee))
+                
+                self.m_listCtrl1.SetItem(index,5, str(rowData['blocktime']))
+                self.m_listCtrl1.SetItem(index,6, str(rowData['datetime']))
+                self.m_listCtrl1.SetItem(index,7, str(rowData['txid']))
                 
                 #print('SetItemData')
                 self.m_listCtrl1.SetItemData(index, _cursor)
                 
                 
+                if rowData['category'] == 'send':
+                    self._totalOut = self._totalOut + float(rowData['amount']).__abs__()
+                    self._totalOut = self._totalOut.__round__(8)
+                    
+                    self._totalFees = self._totalFees  + float(_fee).__abs__()
+                    self._totalFees = self._totalFees.__round__(8)
+                    
+                    
+                
+                if rowData['category'] == 'receive':
+                    self._totalIn = self._totalIn + float(rowData['amount']).__abs__()
+                    self._totalIn = self._totalIn.__round__(8)
+                
+                
+                
+                
+                
+                
+                
                 #print('_datacache')
-                self._datacache[_cursor] = row
-                self.itemDataMap[_cursor] = (int(row), str(rowData['category']), str(rowData['address']), float(rowData['amount']) ,int(rowData['blocktime']), str(rowData['datetime'])  )
+                self._datacache[_cursor] = rowData#str(rowData['txid'])
+                self.itemDataMap[_cursor] = (int(row), str(rowData['category']), str(rowData['address']), float(rowData['amount']),float(_fee) ,int(rowData['blocktime']), str(rowData['datetime']), str(rowData['txid'])  )
                     
                     
                 _cursor= _cursor + 1
@@ -965,11 +1078,12 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
             self.m_listCtrl1.SetColumnWidth(1, wx.LIST_AUTOSIZE)
             self.m_listCtrl1.SetColumnWidth(2, wx.LIST_AUTOSIZE)
             self.m_listCtrl1.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+            self.m_listCtrl1.SetColumnWidth(4, wx.LIST_AUTOSIZE)
             self.m_listCtrl1.SetColumnWidth(5, wx.LIST_AUTOSIZE)
             self.m_listCtrl1.SetColumnWidth(6, wx.LIST_AUTOSIZE)
-            
+            self.m_listCtrl1.SetColumnWidth(7, wx.LIST_AUTOSIZE)
             #self.m_listCtrl1.itemDataMap = self._datacache
-            listmix.ColumnSorterMixin.__init__(self, 7)
+            listmix.ColumnSorterMixin.__init__(self, 8)
                   
             
                 
@@ -978,6 +1092,11 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         #except Exception as e:
         #   self.parent_frame.Log("Unable to load Wallet History infos datas : " + str(e) , type="warning")
                     
+        
+        
+        self.m_textTotalIn.SetValue(str(self._totalIn.__round__(2)))
+        self.m_textTotalOut.SetValue(str(self._totalOut.__round__(2)))
+        self.m_textFee.SetValue(str(self._totalFees.__round__(2)))
             
         self.HideLoading()        
         self.m_listCtrl1.Thaw()
@@ -998,12 +1117,13 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         
     def OnRightClick(self, event):
         _data= self._datacache[self._currentItem]
+        print(_data)
         #_hasIpfs =  _data['has_ipfs']
         
         #menuAsset = RavencoreAssetRightclickPopupMenu(self, self.parent_frame, _data)    
-        '''
-        menuAsset = RavencoreUTXORightclickPopupMenu(self, self.parent_frame, _data)    
-        '''
+        
+        #menuAsset = RavencoreUTXORightclickPopupMenu(self, self.parent_frame, _data)    
+        menuAsset = RavencoreUTXOHistoryRightclickPopupMenu(self, self.parent_frame, _data)   
         
         
     # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
@@ -1054,16 +1174,20 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         self.m_listCtrl1.InsertColumn(3, info)
         
         info.Align = 0
-        info.Text = "Blocktime"
+        info.Text = "Fee"
         self.m_listCtrl1.InsertColumn(4, info)
         
         info.Align = 0
-        info.Text = "Datetime"
+        info.Text = "Blocktime"
         self.m_listCtrl1.InsertColumn(5, info)
+        
+        info.Align = 0
+        info.Text = "Datetime"
+        self.m_listCtrl1.InsertColumn(6, info)
         
         info.Align = wx.LIST_FORMAT_RIGHT
         info.Text = "TxId"
-        self.m_listCtrl1.InsertColumn(6, info)
+        self.m_listCtrl1.InsertColumn(7, info)
         
         
         

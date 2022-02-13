@@ -24,7 +24,7 @@ from .wxRavenP2PMarket_AdDetailPanel import *
 #from plugins.P2PMarket.wxRavenP2PMarket_CreateAirdropLogic import *
 
 
-
+from .wxRavenP2PMarket_UTXOManager_TradesHistoryView_Logic import *
 
 
 #used for long datas requests
@@ -249,7 +249,10 @@ class wxRavenPlugin(PluginObject):
                'verify_tx' : False,
                'multiple_ipfs_check_if_none' : True,
                'only_trusted' : False,
-               'keep_trades_locked' : True
+               'keep_trades_locked' : True,
+               
+               
+               'market_webservice_enable' : False
             }
         
         
@@ -306,6 +309,10 @@ class wxRavenPlugin(PluginObject):
         self.setData("thread_running", False)
         self.setData("search_running", False)
         
+        self.setData("_tx_history", {})
+        
+        
+        
         self.setData("_storage", str(parentFrame.Paths['USERDATA']) + '')
         #self.setData("myPluginData2", False)
         
@@ -358,7 +365,7 @@ class wxRavenPlugin(PluginObject):
     
     
     def waitApplicationReady(self):
-        t=threading.Thread(target=self.__waitLoop_T__, args=(self.RequestMarketUpdate_T,))
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.ApplicationReady,))
         t.start()
         
         
@@ -386,7 +393,13 @@ class wxRavenPlugin(PluginObject):
     
     
     
-    
+    def ApplicationReady(self, evt=None):
+        self.RequestMarketUpdate_T()
+        
+        ravencorep=self.parentFrame.GetPlugin("Ravencore")
+        _addins = ravencorep.getData("_utxo_manager_views_addons_callbacks") 
+        _addins.append(self.OpenMarketHistoryDetails)
+        ravencorep.setData("_utxo_manager_views_addons_callbacks", _addins) 
     
     
     
@@ -472,6 +485,17 @@ class wxRavenPlugin(PluginObject):
         _newView = self.parentFrame.Views.OpenView("Create UTXO", "P2PMarket", True)
         
     
+    
+    
+    def OpenMarketHistoryDetails(self):
+        plugin = self.parentFrame.GetPlugin('Ravencore')
+        if plugin != None:
+            _v = plugin.GetUTXOManager()
+            _v.createNewPluginPanel( 'Trades History', wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic, 'trade_history')  
+    
+    
+    
+    
       
     def DecodeTx(self,txdata):
         ravencoin = self.__getNetwork__()  
@@ -528,6 +552,182 @@ class wxRavenPlugin(PluginObject):
     Plugin Triggers / Callbacks for data update , DO NOT CALL WX UPDATE OUT OUF wx.CallAfter(cb, param)
      
     '''
+    
+    def RequestMarketTradesHistory_T(self, evt=None):
+        #GetAtomicSessionCache_Trades
+        self.setData("_tx_history", {})
+        t=threading.Thread(target=self.__DoRetreiveMarketTradesHistory__)
+        t.start()  
+    
+    
+    
+    
+    
+    def __searchMatchingAdInCache__(self, trade, _cache_list):
+        
+        
+        '''
+        if not trade.__contains__('transactions'):
+            return None
+        
+        if len(trade['transactions']) == 0:
+        '''
+        _found = False
+        _match_ad = None
+        _id = None
+        
+        if len(trade['transactions']) > 0:
+        
+            for _tx in trade['transactions']:
+                _rawSearch = _tx['raw']
+        
+        
+                for _c in _cache_list:
+                    _ad=_cache_list[_c]
+                    
+                    for _txAdCursor in _ad._adTxDatas:
+                        _txAd = _ad._adTxDatas[_txAdCursor]
+                        
+                        if _txAd == _rawSearch:
+                            _found = True
+                            _match_ad = _ad
+                            _id = _c
+                            break
+                        
+                    if _found:
+                        break
+                
+                if _found:
+                    break
+        
+        
+        
+        if not _found:
+            pass
+        
+        
+        return (_found, _match_ad, _id)
+        
+        
+        
+        
+        
+    
+    def __DoRetreiveMarketTradesHistory__(self):
+        ravencoin = self.__getNetwork__()
+        
+        
+        
+        _final_datas= {}
+        _data_cursor  = 0
+        
+        #Retreive CACHE
+        _trade_cache = ravencoin.atomicswap.GetAtomicSessionCache_Trades()
+        self.logger.info(f" {len(_trade_cache)} session trades.")
+        
+        
+        #Retreives ADS
+        _ads_cache = ravencoin.p2pmarket.GetAllAdsInCache()
+        self.logger.info(f" {len(_ads_cache)} ads cache.")
+        
+        #CrossCheck and Analyse
+        
+        for _trId in _trade_cache:
+            _trade = _trade_cache[_trId]
+            
+            
+            _trade['description'] = '?'
+            if _trade['type'] == 'buy':
+                _trade['description'] = f"BUYING {_trade['out_quantity']} {_trade['out_type']}"
+            if _trade['type'] == 'sell':
+                _trade['description'] = f"SELLING {_trade['in_quantity']} {_trade['in_type']}"
+            if _trade['type'] == 'trade':
+                _trade['description'] = f"TRADING {_trade['in_quantity']} {_trade['in_type']}  <-> {_trade['out_quantity']} {_trade['out_type']}"
+                
+            
+            
+            
+            _trade['status'] = '?'
+            _trade['ad'] = None
+            _trade['unresolved'] = 0
+            
+            
+            _found, _matchAd, _id = self.__searchMatchingAdInCache__(_trade, _ads_cache)
+            
+            if _found:
+                _ads_cache.pop(_id, None)
+                _trade['ad'] = _matchAd
+                _trade['status'] = 'WAITING'
+                
+            else:
+                _trade['unresolved'] = 1
+                
+                if len(_trade['executed_utxos']) > 0 :
+                    _trade['status'] = 'COMPLETE'
+            
+            
+            
+            
+            
+            _final_datas[_data_cursor] = _trade
+            _data_cursor = _data_cursor+1
+        
+        
+        
+        
+        self.logger.info(f" {len(_ads_cache)} has not been identified in transactions.")
+        
+        for _ad_cursor in _ads_cache:
+            _ad = _ads_cache[_ad_cursor]
+            
+            
+            _unresolvedTrade = {}
+            _unresolvedTrade['description'] = _ad._adTitle
+            _unresolvedTrade['type'] = _ad.GetType()
+            if _ad.GetType() == 'buy':
+                _unresolvedTrade['description'] = f"BUYING {_ad._adAssetQt} {_ad._adAssetQt}"
+            if _ad.GetType() == 'sell':
+                _unresolvedTrade['description'] = f"SELLING  {_ad._adAssetQt} {_ad._adAssetQt}"
+            if _ad.GetType() == 'trade':
+                _unresolvedTrade['description'] = f"TRADING {_ad._adAssetQt} {_ad._adAssetQt}  <-> {_ad._adPrice} {_ad._adPriceAsset}"
+            
+            _unresolvedTrade['unresolved'] = 1
+            _unresolvedTrade['order_utxos'] = range(0, len(_ad._adTxDatas))
+            _unresolvedTrade['executed_utxos'] = []
+            _unresolvedTrade['transactions'] = []
+            
+            _unresolvedTrade['status'] = 'NOT FOUND'
+            
+            _final_datas[_data_cursor] = _unresolvedTrade
+            _data_cursor = _data_cursor+1
+            
+        
+        
+        
+        
+        #Save datas
+        self.setData("_tx_history", _final_datas)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        #
+        #Update GUI
+        #
+        _ravenCorePlugin = self.parentFrame.GetPlugin('Ravencore')
+        if _ravenCorePlugin != None:
+            ut = _ravenCorePlugin.GetUTXOManager()
+            if ut != None:
+                #ut._allTabs['Trades History'].UpdateView()
+                wx.CallAfter(ut._allTabs['Trades History'].UpdateView, ())
+        
+    
         
     def RequestMarketUpdate_T(self, evt=None ):  
         t=threading.Thread(target=self.__DoRefreshAllMarkets__)

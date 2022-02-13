@@ -23,7 +23,7 @@ from .wxRavenRavencoreDesign import *
 from .pluginSettings import *
 from .wxRavenRavencore_TransactionsViewer_Logic import * 
 from .wxRavenRavencore_UTXOManagerLogic import *
-
+from .wxRaven_Ravencore_AssetOwnerExporterLogic import * 
 #import the plugin setting panels, from another file to be more simple
 #from .pluginSettings import MyTutorialSettingPanel_WithLogic
 import json
@@ -76,7 +76,7 @@ class wxRavenPlugin(PluginObject):
         self.PLUGIN_NAME = "Ravencore"
         self.PLUGIN_ICON = self.RessourcesProvider.GetImage('ravencoin') #wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY )
         
-        
+        _iconOwnerlist = self.RessourcesProvider.GetImage('ownerlist')
         
         
         #
@@ -164,7 +164,19 @@ class wxRavenPlugin(PluginObject):
                      'skip_save': True,
                      }, 
                     
-                    
+                    {
+                     'viewid':'Asset Owner Exporter', 
+                     'name':'Asset Owner Exporter', 
+                     'title':'Asset Owner Exporter', 
+                     'position':'dialog', 
+                     'icon':_iconOwnerlist, 
+                     'class': wxRaven_Ravencore_AssetOwnerExporterLogic ,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'skip_save': True,
+                     'toolbar_shortcut': False,
+                     'hidden_view': True,
+                     },
         
                     
                 ]
@@ -296,6 +308,10 @@ class wxRavenPlugin(PluginObject):
         self.setData("_tx_history_start", None) 
         self.setData("_tx_history_stop", None) 
         self.setData("_tx_history_address_filter", []) 
+        
+        
+        self.setData("_utxo_manager_views_addons_callbacks", []) 
+        
         
         
         #
@@ -619,8 +635,6 @@ class wxRavenPlugin(PluginObject):
         print("Plugin navigation requested:"+str(assetName))
         
         self.OnNavigateRequested_T(assetName)
-        
-        
         vcount = 0
         _views = []
         
@@ -705,6 +719,20 @@ class wxRavenPlugin(PluginObject):
     
     
     
+    def ExportAssetOwnerList(self, assetSearch):
+        
+        _newView = self.parentFrame.Views.OpenView("Asset Owner Exporter", "Ravencore", True)
+        
+        #if txdatas !="":
+        if True:
+            _v=self.parentFrame.Views.SearchDialog("Asset Owner Exporter")
+            
+            if _v!=None:
+                print(f">ExportAssetOwnerList requested {assetSearch}")
+                _v._Panel.SetAssetAndStart(assetSearch)
+    
+    
+    
     def ShowTxInfos(self, txdatas="", openIfnotExist=True):
         
         #_newView = self.parentFrame.Views.OpenView("Transactions Viewer", "Ravencore", openIfnotExist)
@@ -712,16 +740,16 @@ class wxRavenPlugin(PluginObject):
         
         if txdatas!="":
             _newView.SetTxId(txdatas)
-            #pv=self.SearchPluginView("Asset Issuer")
-            #if pv!= None:
-            #   pv.SetTxId(txdatas)
-            #_newView['instance'].SetTxId(txdatas)
-        #if txdatas !="":
-        #if True:
-        # #   #_v=self.parentFrame.Views.SearchDialog("Transactions Viewer")
-        #    print(f">txdatas setup requested {txdatas}")
-        #    if _v!=None:
-        #        pass
-                #_v._Panel.SetRaw(txdatas)
-    
+            
+            
+            
+            
+            
+    def GetUTXOManager(self, open=True):
+        _newView = self.parentFrame.Views.OpenView("Wallet", "Ravencore", open)
+        print(_newView)
+        if _newView == None:
+            _vi = self.parentFrame.Views.SearchViewInstance("Wallet")
+            return _vi['instance']
+        return _newView['instance']
     

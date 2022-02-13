@@ -118,12 +118,16 @@ class MenuAndToolBarManager(object):
                     pass
             _icon =self.parentframe.RessourcesProvider.GetImage('warning_2')
             self.parentframe.wxRavenStatusBarLeftIcon = wx.StaticBitmap(self.parentframe.wxRavenStatusBar, -1, _icon, (16, 16))
-        
-            rect = self.parentframe.wxRavenStatusBar.GetFieldRect(1)
-            w, h = self.parentframe.wxRavenStatusBarLeftIcon.Size
-            xpad = (rect.width - w) / 2
-            ypad = (rect.height - h) / 2
-            self.parentframe.wxRavenStatusBarLeftIcon.SetPosition((rect.x, rect.y + ypad))
+            
+            try:
+                rect = self.parentframe.wxRavenStatusBar.GetFieldRect(0)
+                w, h = self.parentframe.wxRavenStatusBarLeftIcon.Size
+                xpad = (rect.width - w) / 2
+                ypad = (rect.height - h) / 2
+                self.parentframe.wxRavenStatusBarLeftIcon.SetPosition((rect.x, rect.y + ypad))
+            except Exception as e:
+                pass
+            
             
         #self.parentFrame.wxRavenStatusBar.PushStatusText( "Some Errors occured, check the console log.", 1)
     

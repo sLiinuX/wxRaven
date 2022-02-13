@@ -147,8 +147,13 @@ class RVNpyRPC_Wallet():
         return self.RPCconnexion.getbalance()['result'] 
     
     
-    def getAllWalletAddresses(self, includeUnspent=False):
-        _allAccountsDatas = self.getAllAccounts(displayAddress=True)
+    
+    #def getAllNamedAccountAddresses(self):
+    #    return self.getAllWalletAddresses(includeUnspent=False, includeEmptyName=False)
+    
+    
+    def getAllWalletAddresses(self, includeUnspent=False, includeEmptyName=False):
+        _allAccountsDatas = self.getAllAccounts(displayAddress=True, includeEmptyName=includeEmptyName)
             
         allAddresses = []
         for ac in _allAccountsDatas:
@@ -173,7 +178,7 @@ class RVNpyRPC_Wallet():
           
     
     
-    def getAllAccounts(self,displayAddress=False, displayAssets=False):
+    def getAllAccounts(self,displayAddress=False, displayAssets=False, includeEmptyName=False):
         r = self.RPCconnexion.listaccounts()
         
         
@@ -189,6 +194,10 @@ class RVNpyRPC_Wallet():
         
         for ac in allAccounts: 
             acBalance = allAccounts[ac]
+            
+            if not includeEmptyName and ac =='':
+                continue
+            
             
             cleanRow = {}
             
@@ -225,8 +234,9 @@ class RVNpyRPC_Wallet():
     
     
     
+    
     def getAllAccountAssets(self):
-        return self.getAllAccounts(displayAddress=True, displayAssets=True)
+        return self.getAllAccounts(displayAddress=True, displayAssets=True, includeEmptyName=True)
     
     
     
@@ -842,7 +852,7 @@ class RVNpyRPC_Wallet():
             _input =  _ids
             
             
-            _outputs[_changeAddress]= ( _delta.__abs__())
+            _outputs[_changeAddress]= float( _delta.__abs__()).__round__(8)
             for ad in amounts:
                 _outputs[ad] = float(amounts[ad]).__round__(8) 
                 
@@ -865,7 +875,7 @@ class RVNpyRPC_Wallet():
     def sendAsset_Many(self, assetname, amounts={}, pwd='', _changeAddress='', _fund=True, _sign=True, _execute=True):
         totalRaven = 0.5
         print("sendAsset_Many ="+str(amounts))
-        _feasible, _rvnids, _delta = self.RVNpyRPC.wallet.GetRavenUnspentTx(totalRaven,_takeBiggest=True, _OneTx=True, _OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[])
+        _feasible, _rvnids, _delta = self.RVNpyRPC.wallet.GetRavenUnspentTx(totalRaven,_takeBiggest=False, _OneTx=True, _OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[])
         
     
         print(f'_feasible RVN {_feasible} - {_rvnids} ')

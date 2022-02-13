@@ -417,9 +417,9 @@ class RVNpyRPC_Asset():
                     _maxId = _i['txid']
                     _maxVout = _i['vout']
                     
-                self.logger.info(f' Ammout {_iVal}')
-                self.logger.info(f' txid {_itxid}')
-                self.logger.info(f' vout {_iVout}')
+                #self.logger.info(f' Ammout {_iVal}')
+                #self.logger.info(f' txid {_itxid}')
+                #self.logger.info(f' vout {_iVout}')
                     
         
             self.logger.info(f'_max {_max}')

@@ -72,7 +72,10 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
     def UpdateView(self):
         self.Layout()  
         
-        
+    def OnExportOwnerListClicked(self, evt):
+        if self.assetName!= '':
+            self.parent_frame.GetPlugin("Ravencore").ExportAssetOwnerList(self.assetName)
+            
     
     def DisplayAsset(self, assetData, assetUrl=""):
         if assetData != None:
@@ -172,7 +175,12 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
         t.start() 
     
     def DoRequestOwnerList(self):
-        self._resultOwnerList = self.parent_frame.getNetwork().listaddressesbyasset(self.assetName)['result']
+        #self._resultOwnerList = self.parent_frame.getNetwork().listaddressesbyasset(self.assetName)['result']
+        #self._resultOwnerList = self.parent_frame.getNetwork().listaddressesbyasset(self.assetName)['result']
+        ravencoin = self.parent_frame.getRvnRPC()
+        self._resultOwnerList = ravencoin.directories.GetAssetOwnerAddressList(self.assetName, detailed=True)
+        
+        
         wx.CallAfter(self.ShowOwners, (self.assetName))
         
     def ShowLoading(self):
@@ -204,10 +212,13 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
         resultData = {}
         _cursor = 0
         if self._resultOwnerList!= None:
-            
+            self._resultOwnerList
             #_cursor = 0
+            
+            print(len(self._resultOwnerList))
+            
             for key in self._resultOwnerList:
-                qt = self._resultOwnerList[str(key)]
+                qt = self._resultOwnerList[key]
                 
                 
                 index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(),str(key), self.allIcons['wallet'] )

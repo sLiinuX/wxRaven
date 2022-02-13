@@ -730,6 +730,80 @@ class wxRavenConnexionSettings_SettingPanel ( wx.Panel ):
 	
 
 ###########################################################################
+## Class wxRavenConnexionRelaysSettings_SettingPanel
+###########################################################################
+
+class wxRavenConnexionRelaysSettings_SettingPanel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 505,374 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer113 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer118 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_staticText61 = wx.StaticText( self, wx.ID_ANY, u"Use the format :  connexion_name = user:password@ip:port\nExample : wxRaven_Relay1 = mylogin:mypwd@127.0.0.1:8766", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE|wx.STATIC_BORDER )
+		self.m_staticText61.Wrap( -1 )
+		bSizer118.Add( self.m_staticText61, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer113.Add( bSizer118, 0, wx.EXPAND, 5 )
+		
+		bSizer114 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap4 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/p2p_icon2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer114.Add( self.m_bitmap4, 0, wx.ALL, 5 )
+		
+		self.m_staticText12 = wx.StaticText( self, wx.ID_ANY, u"My Relays :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText12.Wrap( -1 )
+		bSizer114.Add( self.m_staticText12, 0, wx.ALL, 5 )
+		
+		bSizer115 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.bookmark_text_area = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.bookmark_text_area.SetMaxLength( 0 ) 
+		bSizer115.Add( self.bookmark_text_area, 0, wx.ALL|wx.EXPAND, 5 )
+		
+		bookmark_listChoices = []
+		self.bookmark_list = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, bookmark_listChoices, 0 )
+		bSizer115.Add( self.bookmark_list, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		
+		bSizer114.Add( bSizer115, 1, wx.EXPAND, 5 )
+		
+		bSizer116 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.bookmark_addbt = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/add_plus.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer116.Add( self.bookmark_addbt, 0, wx.ALL, 5 )
+		
+		self.bookmark_rembt = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/remove_minus.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer116.Add( self.bookmark_rembt, 0, wx.ALL, 5 )
+		
+		self.ipfs_provider_upbt = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/prev_nav.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.ipfs_provider_upbt.Enable( False )
+		
+		bSizer116.Add( self.ipfs_provider_upbt, 0, wx.ALL, 5 )
+		
+		
+		bSizer114.Add( bSizer116, 0, wx.EXPAND, 5 )
+		
+		bSizer117 = wx.BoxSizer( wx.VERTICAL )
+		
+		
+		bSizer114.Add( bSizer117, 0, wx.EXPAND, 5 )
+		
+		
+		bSizer113.Add( bSizer114, 1, wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer113 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
 ## Class wxRavenPluginsSettings_SettingPanel
 ###########################################################################
 
@@ -777,6 +851,131 @@ class wxRavenPluginsSettings_SettingPanel ( wx.Panel ):
 		
 		
 		self.SetSizer( bSizer113 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class wxRaven_General_WalletSettings
+###########################################################################
+
+class wxRaven_General_WalletSettings ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer154 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer6212 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap18 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/wallet.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer6212.Add( self.m_bitmap18, 0, wx.ALL, 5 )
+		
+		self.m_staticText362 = wx.StaticText( self, wx.ID_ANY, u"Wallet Operations", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText362.Wrap( -1 )
+		self.m_staticText362.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer6212.Add( self.m_staticText362, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap31 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/network.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer6212.Add( self.m_bitmap31, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_NetworkChoiceChoices = []
+		self.m_NetworkChoice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_NetworkChoiceChoices, 0 )
+		self.m_NetworkChoice.SetSelection( 0 )
+		bSizer6212.Add( self.m_NetworkChoice, 1, wx.ALL, 5 )
+		
+		
+		bSizer154.Add( bSizer6212, 0, wx.EXPAND, 5 )
+		
+		self.m_staticline7 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer154.Add( self.m_staticline7, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		bSizer158 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBox15 = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBox15.SetValue(True) 
+		self.m_checkBox15.Enable( False )
+		
+		bSizer158.Add( self.m_checkBox15, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText83 = wx.StaticText( self, wx.ID_ANY, u"Favorite address for transactions :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText83.Wrap( -1 )
+		bSizer158.Add( self.m_staticText83, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap26 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/mail_send.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer158.Add( self.m_bitmap26, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_AddrSendChoiceChoices = []
+		self.m_AddrSendChoice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_AddrSendChoiceChoices, 0 )
+		self.m_AddrSendChoice.SetSelection( 0 )
+		bSizer158.Add( self.m_AddrSendChoice, 1, wx.ALL, 5 )
+		
+		
+		bSizer154.Add( bSizer158, 0, wx.EXPAND, 5 )
+		
+		bSizer1581 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBox151 = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBox151.SetValue(True) 
+		self.m_checkBox151.Enable( False )
+		
+		bSizer1581.Add( self.m_checkBox151, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText831 = wx.StaticText( self, wx.ID_ANY, u"Favorite address for receiving :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText831.Wrap( -1 )
+		bSizer1581.Add( self.m_staticText831, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap261 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/mail_in_green.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1581.Add( self.m_bitmap261, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_AddreReceiveChoiceChoices = []
+		self.m_AddreReceiveChoice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_AddreReceiveChoiceChoices, 0 )
+		self.m_AddreReceiveChoice.SetSelection( 0 )
+		bSizer1581.Add( self.m_AddreReceiveChoice, 1, wx.ALL, 5 )
+		
+		
+		bSizer154.Add( bSizer1581, 0, wx.EXPAND, 5 )
+		
+		bSizer15811 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBox1511 = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBox1511.SetValue(True) 
+		self.m_checkBox1511.Enable( False )
+		
+		bSizer15811.Add( self.m_checkBox1511, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText8311 = wx.StaticText( self, wx.ID_ANY, u"Favorite address for change :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText8311.Wrap( -1 )
+		bSizer15811.Add( self.m_staticText8311, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap2611 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/mail_in_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer15811.Add( self.m_bitmap2611, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_AddrChangeChoiceChoices = []
+		self.m_AddrChangeChoice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_AddrChangeChoiceChoices, 0 )
+		self.m_AddrChangeChoice.SetSelection( 0 )
+		bSizer15811.Add( self.m_AddrChangeChoice, 1, wx.ALL, 5 )
+		
+		
+		bSizer154.Add( bSizer15811, 0, wx.EXPAND, 5 )
+		
+		bSizer165 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText88 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText88.Wrap( -1 )
+		bSizer165.Add( self.m_staticText88, 1, wx.ALL, 5 )
+		
+		self.m_SaveNetwork = wx.Button( self, wx.ID_ANY, u"Save Network Settings", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer165.Add( self.m_SaveNetwork, 0, wx.ALL, 5 )
+		
+		
+		bSizer154.Add( bSizer165, 0, wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer154 )
 		self.Layout()
 	
 	def __del__( self ):

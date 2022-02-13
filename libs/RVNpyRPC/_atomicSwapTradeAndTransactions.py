@@ -17,6 +17,7 @@ import logging
 
 import time
 
+
 try:
     from ._atomicSwap import AtomicSwapManager
 except ImportError:
@@ -119,8 +120,14 @@ class TransactionUtils():
     
     
     def decode_full(self,txid, isTestNet=False):
-        local_decode = self.RVNpyRPC.do_rpc("getrawtransaction",
-                              log_error=False, txid=txid, verbose=True)
+        #local_decode = self.RVNpyRPC.do_rpc("getrawtransaction",
+        #                      log_error=False, txid=txid, verbose=True)
+        local_decode = None
+        try:
+            local_decode = self.RPCconnexion.getrawtransaction(txid, True)['result']
+        except Exception as ex:
+            print(ex)
+        
         if local_decode and "error" not in local_decode:
             result = local_decode
         else:
@@ -539,8 +546,15 @@ class SwapTransaction():
 
 
     def decode_swap(self, raw_swap):
-        parsed = self.RVNpyRPC.do_rpc("decoderawtransaction",
-                        log_error=False, hexstring=raw_swap)
+        #parsed = self.RVNpyRPC.do_rpc("decoderawtransaction",
+        #                log_error=False, hexstring=raw_swap)
+        parsed = None
+        try:
+            parsed = self.RPCconnexion.decoderawtransaction(raw_swap)['result']
+        except Exception as ex:
+            print(ex)
+        
+        
         if parsed and "error" not in parsed:
             if len(parsed["vin"]) != 1 or len(parsed["vout"]) != 1:
                 return (False, "Invalid Transaction. Has more than one vin/vout")
@@ -576,7 +590,15 @@ class SwapTransaction():
             if order_type == "unknown":
                 return (False, "Uknonwn trade type")
             
-            test_vout = self.RVNpyRPC.do_rpc("gettxout", txid=swap_vin["txid"], n=swap_vin["vout"])
+            #test_vout = self.RVNpyRPC.do_rpc("gettxout", txid=swap_vin["txid"], n=swap_vin["vout"])
+            
+            test_vout = None
+            try:
+                test_vout = self.RPCconnexion.gettxout(swap_vin["txid"], swap_vin["vout"])['result']
+            except Exception as ex:
+                print(ex)
+            
+            
             if not test_vout:
                 return (False, "Unable to find UTXO, this transaction may have been executed already.")
             '''

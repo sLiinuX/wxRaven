@@ -6,6 +6,8 @@ Created on 9 déc. 2021
 import wx
 
 from wxRavenGUI.application import * 
+from logging.handlers import TimedRotatingFileHandler
+
 
 import logging
 import time
@@ -50,13 +52,15 @@ class wxRavenMainApp(object):
         
         self.tradepath = _root + f"/userdata/atomicswap_session.log"
         self.savepath = _root + f"/userdata/wxraven_last_session.log"
+        
+        '''
         try:
             os.remove(self.savepath )  
             os.remove(self.tradepath )    
         except Exception as e:
             pass
         
-        
+        '''
         
         
         path = os.path.expanduser(self.savepath)

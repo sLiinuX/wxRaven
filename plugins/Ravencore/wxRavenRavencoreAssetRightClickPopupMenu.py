@@ -6,6 +6,7 @@ Created on 3 janv. 2022
 import wx 
 
 from libs.RVNpyRPC._asset import AssetType
+from wxRavenGUI.application.wxcustom.CustomUserIO import UserQuestion
 
 
 
@@ -143,6 +144,15 @@ class RavencoreAssetRightclickPopupMenu(object):
             
         
         
+        self._menu.AppendSeparator()
+        #export list
+        #ownerlist_export
+        nid = wx.NewId()
+        _Navigate = self._menu.Append(nid, "Export Owner List" )
+        _Navigate.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('ownerlist_export'))
+        self.parentBinding.Bind(wx.EVT_MENU, self.exportOwnerList, id=nid)
+        
+        
         #_hasIpfs =  _data['has_ipfs']
         
         
@@ -247,6 +257,19 @@ class RavencoreAssetRightclickPopupMenu(object):
             self.parent_frame.GetPlugin("Ravencore").OpenIPFSinWebBrowser(_data)
            
 
+
+    def exportOwnerList(self, event):
+        _includeChilds = False
+        itemData = self._data
+        if itemData['type'] != AssetType.MAINASSET or itemData['type'] != AssetType.SUBASSET:
+            _includeChilds = UserQuestion(self.parentBinding, "Include Childs ?")
+        
+        _navItem = itemData['name']
+        
+        if _includeChilds:
+            _navItem = _navItem+'*'
+
+        self.parent_frame.GetPlugin("Ravencore").ExportAssetOwnerList(_navItem)
         
     def getMenu(self):
         return self._menu

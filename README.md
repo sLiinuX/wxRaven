@@ -7,7 +7,7 @@ for the Ravencoin community who want to write advanced GUI applications connecte
 It provide a Customizable environment direclty connected to a ravencorewallet.
 
     
-![wxRaven Logo](res/splash-test.png)
+![wxRaven Logo](res/wxraven_splash.png)
 
 Written in Python 3.x and using the wxWidget Library with the inspiration of Eclipse IDE, wxRaven natively support the plugin approach and the view/perspective concept.
 

@@ -6,13 +6,16 @@ Created on 20 déc. 2021
 
 
 
-from .wxRavenGeneralDesign import GeneralSettingPanel, ApplicationSettingPanel, wxRavenConnexionSettings_SettingPanel, wxRavenPluginsSettings_SettingPanel
+from .wxRavenGeneralDesign import GeneralSettingPanel, ApplicationSettingPanel, wxRavenConnexionSettings_SettingPanel, wxRavenPluginsSettings_SettingPanel, wxRaven_General_WalletSettings, wxRavenConnexionRelaysSettings_SettingPanel
 
 from wxRavenGUI.application.pluginsframework import PluginSettingsPanelObject
 
 
+from wxRavenGUI.application.wxcustom import *
+
 
 import wx
+from wxRavenGUI.application.wxcustom.CustomUserIO import UserAdvancedMessage
 
 class wxRavenApplicationSettingPanel(PluginSettingsPanelObject):
     '''
@@ -330,6 +333,154 @@ class wxRavenConexionsSettingPanel(PluginSettingsPanelObject):
         
         
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class wxRavenConnexionRelaysSettings_SettingLogic(PluginSettingsPanelObject):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self,parent, parentFrame, pluginName):
+        
+        _Panel = wxRavenConnexionRelaysSettings_SettingPanel(parent)
+        PluginSettingsPanelObject.__init__(self,_Panel, parentFrame, pluginName)
+        self._needReboot = True
+        
+        #_Panel.SetBackgroundColour( wx.Colour( 217, 228, 255 ) )
+        
+        #self._Panel
+        
+        
+        _Panel.Bind( wx.EVT_BUTTON, self.OnAddProvider,id = _Panel.bookmark_addbt.GetId()  )
+        _Panel.Bind( wx.EVT_BUTTON, self.OnRemoveProvider,id = _Panel.bookmark_rembt.GetId()  )
+     
+        self.Layout()
+    #
+    #
+    # method to be called on close and apply
+    #    
+    def SavePanelSettings(self):
+        allProviders = []
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName) 
+        #appSettings = self.parentFrame.Settings
+        _newList = {}
+        _errorsParsing = False
+        for i in range(0, self._Panel.bookmark_list.Count):
+            
+            
+            _con = self._Panel.bookmark_list.GetString(i)
+             
+            try:
+                _conArr = _con.split('=')
+                _name = _conArr[0]
+                _val = _conArr[1]
+                
+                _newList[_name] = _val
+
+                
+            except Exception as e:
+                _errorsParsing = True
+                print(f"erreur in the connexion '{_con}', data will not be saved")
+            
+        
+        if not _errorsParsing:    
+            myPlugin.PLUGIN_SETTINGS['webservices_relays'] = _newList
+            
+            
+        
+        
+        #default =    allProviders[0] 
+        #Settings
+        #myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        #myPlugin.PLUGIN_SETTINGS["ipfsgateway_default"]    = default
+        #myPlugin.PLUGIN_SETTINGS["bookmark_list"]  = allProviders
+    
+    
+    #
+    #
+    # method to be called at first panel creation
+    # 
+    def LoadPanelSettings(self):
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName) 
+        allproviders = myPlugin.PLUGIN_SETTINGS['webservices_relays']
+        
+        _dispArray = []
+        for key in allproviders:
+            _val=allproviders[key]
+            
+            strCon = str(key) + " = " + str(_val)
+            
+            _dispArray.append(strCon)
+        if len(_dispArray)>0:
+            self._Panel.bookmark_list.InsertItems(_dispArray, 0)
+        
+        #print("LoadPanelSettings")     
+        
+        
+        self._Panel.Layout()
+        
+    def OnAddProvider(self, evt):    
+        
+        newp  = self._Panel.bookmark_text_area.GetValue()
+        self._Panel.bookmark_list.InsertItems([newp], self._Panel.bookmark_list.Count)
+        self._settingsHasChanged = True
+        self._Panel.Layout()
+        
+        
+    def OnRemoveProvider(self, evt):    
+        x = self._Panel.bookmark_list.GetSelection()
+        self._Panel.bookmark_list.Delete(x)
+        self._settingsHasChanged = True
+        self._Panel.Layout()
+        
+        
+    def OnMoveProviderUp(self, evt): 
+        x = self._Panel.bookmark_list.GetSelection()
+        #self._Panel.ipfs_provider_list.SetFirstItem(x)
+        #print(x)
+        
+        _itemTopromote = self._Panel.bookmark_list.GetString(x)
+        self._Panel.bookmark_list.Delete(x)
+        
+        self._Panel.bookmark_list.InsertItems([_itemTopromote], 0)
+        
+        self._settingsHasChanged = True
+        self._Panel.Layout()
+        
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
         
         
@@ -422,4 +573,193 @@ class wxRavenPluginsSettingPanel(PluginSettingsPanelObject):
 
 
 
+        
 
+
+
+
+
+
+
+
+        
+        
+class wxRaven_General_WalletSettingsLogic(PluginSettingsPanelObject):
+
+    def __init__(self,parent, parentFrame, pluginName):
+        
+        _Panel = wxRaven_General_WalletSettings(parent)
+        PluginSettingsPanelObject.__init__(self,_Panel, parentFrame, pluginName)
+    
+        #self._needReboot = True
+        
+        #self._Panel.m_pluginCheckListbox.Bind( wx.EVT_CHECKLISTBOX, self.OnChanged )
+        self._Panel.m_NetworkChoice.Bind( wx.EVT_CHOICE, self.OnChangedNetwork )
+        self._Panel.m_SaveNetwork.Bind(wx.EVT_BUTTON, self.DoSaveNetworkSettings )
+    
+    #
+    #
+    # method to be called on close and apply
+    #    
+    def SavePanelSettings(self):
+        #print("SavePanelSettings")
+        #_newValueForBoolSetting = self._Panel.booleansetting.IsChecked()
+        
+        #now its up to the dev to chose how to take this information
+        #in our demo lets do simple and just change the  booleansetting in PLUGIN_SETTINGS
+ 
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        #_currentPluginList = self.parentFrame.Plugins.plugins
+        # _currentDisableValue = myPlugin.PLUGIN_SETTINGS['disable_plugins']
+        #_currentDisableValueIndex = self._Panel.m_pluginCheckListbox.GetCheckedStrings()
+        
+        
+        #print(_currentDisableValueIndex)
+        
+        
+        #_toSaveArray = []
+        
+        #for _val in _currentDisableValueIndex:
+        #    _toSaveArray.append(_val)
+        
+        #myPlugin.PLUGIN_SETTINGS['disable_plugins'] = _toSaveArray
+        print("SavePanelSettings")
+        #myPlugin.PLUGIN_SETTINGS['booleansetting'] = _newValueForBoolSetting
+    
+        #print("SavePanelSettings" + str(_newValueForBoolSetting))
+    #
+    #
+    # method to be called at first panel creation
+    # 
+    def LoadPanelSettings(self):
+        
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        #_currentDisableValue = myPlugin.PLUGIN_SETTINGS['disable_plugins']
+        
+        
+        
+        #
+        #Connexion list
+        allproviders = self.parentFrame.Settings.allconnexions 
+        
+        _dispArray = []
+        for key in allproviders:
+            self._Panel.m_NetworkChoice.Append(key)
+        
+        #_currentPluginList = self.parentFrame.Plugins._detected_plugin_list
+        #_toArray = []
+        
+        #for key in _currentPluginList:
+        #    _toArray.append(key)
+
+
+
+
+
+
+    def DoSaveNetworkSettings(self, evt=None):
+        _selected = self._Panel.m_NetworkChoice.GetString(self._Panel.m_NetworkChoice.GetCurrentSelection())
+        
+        favorite_send_addresses =  self._Panel.m_AddrSendChoice.GetString(self._Panel.m_AddrSendChoice.GetCurrentSelection())
+        favorite_receive_addresses =  self._Panel.m_AddreReceiveChoice.GetString(self._Panel.m_AddreReceiveChoice.GetCurrentSelection())
+        favorite_change_addresses =  self._Panel.m_AddrChangeChoice.GetString(self._Panel.m_AddrChangeChoice.GetCurrentSelection())
+        
+
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        myPlugin.PLUGIN_SETTINGS['favorite_send_addresses'][_selected] = favorite_send_addresses
+        myPlugin.PLUGIN_SETTINGS['favorite_receive_addresses'][_selected]= favorite_receive_addresses
+        myPlugin.PLUGIN_SETTINGS['favorite_change_addresses'][_selected]= favorite_change_addresses
+
+
+
+
+
+    def OnChangedNetwork(self, evt):
+        _selected = self._Panel.m_NetworkChoice.GetString(self._Panel.m_NetworkChoice.GetCurrentSelection())
+        ravencoin = self.parentFrame.getRvnRPC(_selected)        
+         
+         
+        if self._settingsHasChanged:
+            _dosave = UserQuestion(self.parentFrame, "Settings unsaved, save now ?")
+            
+            if _dosave:
+                self.DoSaveNetworkSettings()
+        
+        
+        
+        
+        _allmyAddress = ravencoin.wallet.getAllWalletAddresses()
+        
+        self._Panel.m_AddrSendChoice.Clear()  
+        self._Panel.m_AddreReceiveChoice.Clear() 
+        self._Panel.m_AddrChangeChoice.Clear() 
+        
+        
+        for ad in _allmyAddress :
+            self._Panel.m_AddrSendChoice.Append(ad)
+            self._Panel.m_AddreReceiveChoice.Append(ad)
+            self._Panel.m_AddrChangeChoice.Append(ad)
+        
+        
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        favorite_send_addresses_all = myPlugin.PLUGIN_SETTINGS['favorite_send_addresses']
+        favorite_receive_addresses_all = myPlugin.PLUGIN_SETTINGS['favorite_receive_addresses']
+        favorite_change_addresses_all = myPlugin.PLUGIN_SETTINGS['favorite_change_addresses']
+        
+        favorite_send_addresses = ''
+        favorite_receive_addresses = ''
+        favorite_change_addresses = ''
+        
+        
+        
+        if favorite_send_addresses_all.__contains__(_selected):
+            favorite_send_addresses = favorite_send_addresses_all[_selected]
+            
+            _dc = self._Panel.m_AddrSendChoice.FindString(favorite_send_addresses)
+            if _dc != wx.NOT_FOUND:
+                self._Panel.m_AddrSendChoice.SetSelection(_dc)
+            
+        
+        if favorite_receive_addresses_all.__contains__(_selected):
+            favorite_receive_addresses = favorite_receive_addresses_all[_selected]
+            
+            _dc = self._Panel.m_AddreReceiveChoice.FindString(favorite_receive_addresses)
+            if _dc != wx.NOT_FOUND:
+                self._Panel.m_AddreReceiveChoice.SetSelection(_dc)
+                
+                
+                
+        if favorite_change_addresses_all.__contains__(_selected):
+            favorite_change_addresses = favorite_change_addresses_all[_selected]
+            
+            _dc = self._Panel.m_AddrChangeChoice.FindString(favorite_change_addresses)
+            if _dc != wx.NOT_FOUND:
+                self._Panel.m_AddrChangeChoice.SetSelection(_dc)
+        '''    
+        _dc = self._Panel.m_NetworkChoice.FindString(p2p_channel_asset_default)
+        if _dc != wx.NOT_FOUND:
+            self._Panel.m_NetworkChoice.SetSelection(_dc)
+        '''
+        #self._Panel.m_pluginCheckListbox.InsertItems(_toArray, 0) 
+        
+        #iList=[]
+        #for disable in _currentDisableValue:
+        #    i = self._Panel.m_pluginCheckListbox.FindString(disable)
+        #    if i != -1:
+        #        iList.append(i)
+        
+        #print(iList)
+        #self._Panel.m_pluginCheckListbox.SetCheckedItems(iList)
+        
+        #self._Panel.booleansetting.SetValue(_currentValue)
+        self.Layout()
+        print("LoadPanelSettings")
+        
+        
+    #
+    #
+    # method called when closing in case of thread or anything
+    #     
+    def safeClose(self):
+        pass    
+        

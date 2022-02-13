@@ -12,6 +12,16 @@ import os
 
 import logging
 
+'''
+
+
+NOTE : XML RPC got some limitations.
+still looking for the best way to bridge 2 wxRaven
+
+
+'''
+
+
 
 class wxRaven_RPC_WebserviceClient(object):
     

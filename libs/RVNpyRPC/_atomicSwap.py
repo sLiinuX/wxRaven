@@ -17,7 +17,7 @@ import os
 from logging.handlers import TimedRotatingFileHandler
 
 from ._atomicSwapWalletManager import AtomicSwapCacheStorage, WalletManager
-from ._atomicSwapTradeAndTransactions import TransactionUtils, SwapTradeManager, SwapTransaction
+from ._atomicSwapTradeAndTransactions import TransactionUtils, SwapTradeManager, SwapTransaction, SwapTrade
 from contextlib import contextmanager
 
 
@@ -222,7 +222,21 @@ class RVNpyRPC_AtomicSwap():
             
     ''' 
     
-            
+    
+    
+    def GetAtomicSessionCache_Trades(self):
+        all_trades_incache = {}
+        count = 0
+        
+        with self.SwapMgr as SwapMgrSession:
+            trade:SwapTrade
+            for trade in  SwapMgrSession.CacheStorage.swaps :
+                all_trades_incache[count] = trade.Export()
+                count = count +1
+        
+        return all_trades_incache    
+    
+    
     
     def GetAtomicSwap(self, raw):
         read_session = self.SwapMgr.NewReadOnlySession()

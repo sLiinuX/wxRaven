@@ -7,3 +7,5 @@ wxPython
 sqlalchemy
 python-socketio
 qrcode[pil]
+flask
+flask-classful

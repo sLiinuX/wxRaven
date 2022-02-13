@@ -11,6 +11,8 @@ import wx
 import wx.xrc
 from wxRavenGUI.application.wxcustom.CustomListCtrl import *
 import wx.aui
+from wxRavenGUI.application.wxcustom.CustomListCtrl import *
+from wxRavenGUI.application.wxcustom import *
 
 ###########################################################################
 ## Class wxRavenP2PMarket_NewAdDialog
@@ -189,7 +191,7 @@ class wxRavenP2PMarket_NewAdDialog ( wx.Panel ):
 		
 		bSizer118 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.m_staticText56 = wx.StaticText( self.m_assistantPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText56 = wx.StaticText( self.m_assistantPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText56.Wrap( -1 )
 		bSizer118.Add( self.m_staticText56, 0, wx.ALL, 5 )
 		
@@ -230,7 +232,7 @@ class wxRavenP2PMarket_NewAdDialog ( wx.Panel ):
 		
 		bSizer1111 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_staticText2121 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText2121 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText2121.Wrap( -1 )
 		self.m_staticText2121.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
 		
@@ -477,7 +479,7 @@ class wxRavenAtomicSwapPanel ( wx.Panel ):
 		
 		bSizer145 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.m_staticText69 = wx.StaticText( self.m_atomicswapPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText69 = wx.StaticText( self.m_atomicswapPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText69.Wrap( -1 )
 		bSizer145.Add( self.m_staticText69, 0, wx.ALL, 5 )
 		
@@ -711,7 +713,7 @@ class wxRavenAtomicSwapPanel_NoDetails ( wx.Panel ):
 		
 		bSizer145 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.m_staticText69 = wx.StaticText( self.m_atomicswapPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText69 = wx.StaticText( self.m_atomicswapPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText69.Wrap( -1 )
 		bSizer145.Add( self.m_staticText69, 0, wx.ALL, 5 )
 		
@@ -1040,7 +1042,7 @@ class wxRavenDecodeTxPanel ( wx.Panel ):
 		self.m_buttonPrevious = wx.BitmapButton( self.m_OrderNavigationPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/nav_backward.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
 		bSizer334.Add( self.m_buttonPrevious, 0, wx.ALL, 5 )
 		
-		self.m_staticText185 = wx.StaticText( self.m_OrderNavigationPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText185 = wx.StaticText( self.m_OrderNavigationPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText185.Wrap( -1 )
 		bSizer334.Add( self.m_staticText185, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
@@ -1053,7 +1055,7 @@ class wxRavenDecodeTxPanel ( wx.Panel ):
 		
 		bSizer334.Add( self.m_staticText186, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.m_staticText187 = wx.StaticText( self.m_OrderNavigationPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText187 = wx.StaticText( self.m_OrderNavigationPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText187.Wrap( -1 )
 		bSizer334.Add( self.m_staticText187, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
@@ -1386,7 +1388,7 @@ class wxRavenP2PMarket_CreateUTXO ( wx.Panel ):
 		self.m_AssetAmount = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer332.Add( self.m_AssetAmount, 0, wx.ALL, 5 )
 		
-		self.m_staticText184 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText184 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText184.Wrap( -1 )
 		bSizer332.Add( self.m_staticText184, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
@@ -1516,7 +1518,7 @@ class wxRavenP2PMarket_Airdrop ( wx.Panel ):
 		
 		bSizer348 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_staticText202 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText202 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText202.Wrap( -1 )
 		bSizer348.Add( self.m_staticText202, 1, wx.ALL, 5 )
 		
@@ -1820,7 +1822,7 @@ class wxRavenP2PMarket_Settings ( wx.Panel ):
 		
 		bSizer783 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_staticText93 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+		self.m_staticText93 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
 		self.m_staticText93.Wrap( -1 )
 		bSizer783.Add( self.m_staticText93, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
@@ -2044,7 +2046,7 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 		self.m_staticText911.Wrap( -1 )
 		bSizer7811.Add( self.m_staticText911, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.m_staticText165 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText165 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText165.Wrap( -1 )
 		bSizer7811.Add( self.m_staticText165, 1, wx.ALL, 5 )
 		
@@ -2065,11 +2067,11 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 		
 		bSizer78111 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_staticText9111 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText9111 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText9111.Wrap( -1 )
 		bSizer78111.Add( self.m_staticText9111, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.m_staticText1651 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText1651 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText1651.Wrap( -1 )
 		bSizer78111.Add( self.m_staticText1651, 0, wx.ALL, 5 )
 		
@@ -2090,7 +2092,7 @@ class wxRavenP2PMarket_MyMarketSettings ( wx.Panel ):
 		
 		bSizer781111.Add( self.m_staticText91111, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.m_staticText16511 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16511 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText16511.Wrap( -1 )
 		bSizer781111.Add( self.m_staticText16511, 0, wx.ALL, 5 )
 		
@@ -2522,7 +2524,7 @@ class wxRavenP2PMarket_NewAdDialog_FIRSTDRAFT ( wx.Panel ):
 		
 		bSizer118 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.m_staticText56 = wx.StaticText( self.m_assistantPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText56 = wx.StaticText( self.m_assistantPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText56.Wrap( -1 )
 		bSizer118.Add( self.m_staticText56, 0, wx.ALL, 5 )
 		
@@ -2630,7 +2632,7 @@ class wxRavenP2PMarket_NewAdDialog_FIRSTDRAFT ( wx.Panel ):
 		
 		bSizer1111 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_staticText2121 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText2121 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText2121.Wrap( -1 )
 		self.m_staticText2121.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
 		
@@ -2762,7 +2764,7 @@ class wxRavenP2PMarket_AdDetails ( wx.Panel ):
 		
 		bSizer373 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_staticText219 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText219 = wx.StaticText( self.m_topPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText219.Wrap( -1 )
 		bSizer373.Add( self.m_staticText219, 1, wx.ALL, 5 )
 		
@@ -2775,7 +2777,7 @@ class wxRavenP2PMarket_AdDetails ( wx.Panel ):
 		
 		bSizer373.Add( self.m_TitleText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.m_staticText220 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText220 = wx.StaticText( self.m_topPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText220.Wrap( -1 )
 		bSizer373.Add( self.m_staticText220, 1, wx.ALL, 5 )
 		
@@ -2904,7 +2906,7 @@ class wxRavenP2PMarket_AdDetails_Splitter ( wx.Panel ):
 		
 		bSizer373 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_staticText219 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText219 = wx.StaticText( self.m_topPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText219.Wrap( -1 )
 		bSizer373.Add( self.m_staticText219, 1, wx.ALL, 5 )
 		
@@ -2917,7 +2919,7 @@ class wxRavenP2PMarket_AdDetails_Splitter ( wx.Panel ):
 		
 		bSizer373.Add( self.m_TitleText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.m_staticText220 = wx.StaticText( self.m_topPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText220 = wx.StaticText( self.m_topPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText220.Wrap( -1 )
 		bSizer373.Add( self.m_staticText220, 1, wx.ALL, 5 )
 		
@@ -3032,5 +3034,141 @@ class wxRavenP2PMarket_AdDetails_Splitter ( wx.Panel ):
 	def m_splitter1OnIdle( self, event ):
 		self.m_splitter1.SetSashPosition( 0 )
 		self.m_splitter1.Unbind( wx.EVT_IDLE )
+	
+
+###########################################################################
+## Class wxRavenP2PMarket__RavencoreUTXOManager_TradesHistory_View
+###########################################################################
+
+class wxRavenP2PMarket__RavencoreUTXOManager_TradesHistory_View ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 807,498 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer184 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_FilterPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer185 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer186 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap34 = wx.StaticBitmap( self.m_FilterPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/p2p_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer186.Add( self.m_bitmap34, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_filterAddressChoices = [ u"ALL" ]
+		self.m_filterAddress = wx.Choice( self.m_FilterPanel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_filterAddressChoices, 0 )
+		self.m_filterAddress.SetSelection( 0 )
+		bSizer186.Add( self.m_filterAddress, 3, wx.ALL, 5 )
+		
+		self.m_staticText49 = wx.StaticText( self.m_FilterPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText49.Wrap( -1 )
+		bSizer186.Add( self.m_staticText49, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap35 = wx.StaticBitmap( self.m_FilterPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/calendar_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer186.Add( self.m_bitmap35, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_startDCheck = wx.CheckBox( self.m_FilterPanel, wx.ID_ANY, u"From :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_startDCheck.SetValue(True) 
+		bSizer186.Add( self.m_startDCheck, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_datePicker1 = wxRavenDatePicker( self.m_FilterPanel, wx.ID_ANY, wx.DefaultDateTime, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer186.Add( self.m_datePicker1, 0, wx.ALL, 5 )
+		
+		self.m_stopDCheck = wx.CheckBox( self.m_FilterPanel, wx.ID_ANY, u"To :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_stopDCheck.SetValue(True) 
+		bSizer186.Add( self.m_stopDCheck, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_datePicker2 = wxRavenDatePicker( self.m_FilterPanel, wx.ID_ANY, wx.DefaultDateTime, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer186.Add( self.m_datePicker2, 0, wx.ALL, 5 )
+		
+		self.m_refreshButton = wx.BitmapButton( self.m_FilterPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/refresh.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer186.Add( self.m_refreshButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer185.Add( bSizer186, 1, wx.EXPAND, 5 )
+		
+		bSizer187 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap40 = wx.StaticBitmap( self.m_FilterPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/filter_ps.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer187.Add( self.m_bitmap40, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_addressFilterText = wx.TextCtrl( self.m_FilterPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_addressFilterText.SetMaxLength( 0 ) 
+		bSizer187.Add( self.m_addressFilterText, 3, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer185.Add( bSizer187, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_FilterPanel.SetSizer( bSizer185 )
+		self.m_FilterPanel.Layout()
+		bSizer185.Fit( self.m_FilterPanel )
+		bSizer184.Add( self.m_FilterPanel, 0, wx.EXPAND|wx.ALL, 5 )
+		
+		self.m_scrolledWindow2 = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
+		self.m_scrolledWindow2.SetScrollRate( 5, 5 )
+		bSizer188 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_listCtrl1 = wxRavenListCtrl( self.m_scrolledWindow2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
+		bSizer188.Add( self.m_listCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		bSizer189 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap112 = wx.StaticBitmap( self.m_scrolledWindow2, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/table_total_in.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer189.Add( self.m_bitmap112, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText119 = wx.StaticText( self.m_scrolledWindow2, wx.ID_ANY, u"Count SELL (Period) :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText119.Wrap( -1 )
+		bSizer189.Add( self.m_staticText119, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_textTotalIn = wx.TextCtrl( self.m_scrolledWindow2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		self.m_textTotalIn.SetMaxLength( 0 ) 
+		self.m_textTotalIn.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer189.Add( self.m_textTotalIn, 1, wx.ALL, 5 )
+		
+		self.m_bitmap1121 = wx.StaticBitmap( self.m_scrolledWindow2, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/table_total_out.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer189.Add( self.m_bitmap1121, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText1191 = wx.StaticText( self.m_scrolledWindow2, wx.ID_ANY, u"Count BUY (Period) :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText1191.Wrap( -1 )
+		bSizer189.Add( self.m_staticText1191, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_textTotalOut = wx.TextCtrl( self.m_scrolledWindow2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		self.m_textTotalOut.SetMaxLength( 0 ) 
+		self.m_textTotalOut.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer189.Add( self.m_textTotalOut, 1, wx.ALL, 5 )
+		
+		self.m_bitmap3412 = wx.StaticBitmap( self.m_scrolledWindow2, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/p2p_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer189.Add( self.m_bitmap3412, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText6912 = wx.StaticText( self.m_scrolledWindow2, wx.ID_ANY, u"Trades :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6912.Wrap( -1 )
+		self.m_staticText6912.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 90, False, wx.EmptyString ) )
+		
+		bSizer189.Add( self.m_staticText6912, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_textFee = wx.TextCtrl( self.m_scrolledWindow2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		self.m_textFee.SetMaxLength( 0 ) 
+		self.m_textFee.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer189.Add( self.m_textFee, 1, wx.ALL, 5 )
+		
+		
+		bSizer188.Add( bSizer189, 0, wx.EXPAND, 5 )
+		
+		
+		self.m_scrolledWindow2.SetSizer( bSizer188 )
+		self.m_scrolledWindow2.Layout()
+		bSizer188.Fit( self.m_scrolledWindow2 )
+		bSizer184.Add( self.m_scrolledWindow2, 1, wx.EXPAND|wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer184 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
 	
 

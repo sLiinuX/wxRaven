@@ -134,6 +134,7 @@ class wxRavenMiscellaneous_Advertising ( wx.Panel ):
 		
 		# Connect Events
 		self.m_AssetChoice.Bind( wx.EVT_CHOICE, self.OnAssetChanged )
+		self.m_AssetAmount.Bind( wx.EVT_TEXT, self.OnAmountChanged )
 		self.m_filePicker1.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChanged )
 		self.m_RocketDrop.Bind( wx.EVT_BUTTON, self.OnRocketDropClicked )
 	
@@ -143,6 +144,9 @@ class wxRavenMiscellaneous_Advertising ( wx.Panel ):
 	
 	# Virtual event handlers, overide them in your derived class
 	def OnAssetChanged( self, event ):
+		event.Skip()
+	
+	def OnAmountChanged( self, event ):
 		event.Skip()
 	
 	def OnFileChanged( self, event ):
@@ -276,6 +280,8 @@ class wxRavenMiscellaneous_Airdrop ( wx.Panel ):
 		
 		# Connect Events
 		self.m_AssetChoice.Bind( wx.EVT_CHOICE, self.OnAssetChanged )
+		self.m_AssetAmount.Bind( wx.EVT_TEXT, self.OnAmountChanged )
+		self.m_UTXOcount.Bind( wx.EVT_SPINCTRL, self.OnUTXOChanged )
 		self.m_filePicker1.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChanged )
 		self.m_CreateUTXOButton.Bind( wx.EVT_BUTTON, self.OnClickCreateUTXO )
 	
@@ -285,6 +291,12 @@ class wxRavenMiscellaneous_Airdrop ( wx.Panel ):
 	
 	# Virtual event handlers, overide them in your derived class
 	def OnAssetChanged( self, event ):
+		event.Skip()
+	
+	def OnAmountChanged( self, event ):
+		event.Skip()
+	
+	def OnUTXOChanged( self, event ):
 		event.Skip()
 	
 	def OnFileChanged( self, event ):
@@ -533,6 +545,118 @@ class wxRavenMiscellaneous_NodeMonitor ( wx.Panel ):
 		event.Skip()
 	
 	def OnTimerTick( self, event ):
+		event.Skip()
+	
+
+###########################################################################
+## Class wxRavenMiscellaneous_CreateUTXO
+###########################################################################
+
+class wxRavenMiscellaneous_CreateUTXO ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 513,144 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer29 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer30 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap126 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer30.Add( self.m_bitmap126, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText178 = wx.StaticText( self, wx.ID_ANY, u"UTXO Asset :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText178.Wrap( -1 )
+		bSizer30.Add( self.m_staticText178, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		m_AssetChoiceChoices = []
+		self.m_AssetChoice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_AssetChoiceChoices, 0 )
+		self.m_AssetChoice.SetSelection( 0 )
+		bSizer30.Add( self.m_AssetChoice, 1, wx.ALL, 5 )
+		
+		
+		bSizer29.Add( bSizer30, 0, wx.EXPAND, 5 )
+		
+		bSizer31 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap129 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/help_contents.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer31.Add( self.m_bitmap129, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText182 = wx.StaticText( self, wx.ID_ANY, u"Available : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText182.Wrap( -1 )
+		self.m_staticText182.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer31.Add( self.m_staticText182, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_availableText = wx.StaticText( self, wx.ID_ANY, u"0.0", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_availableText.Wrap( -1 )
+		bSizer31.Add( self.m_availableText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer29.Add( bSizer31, 0, wx.ALIGN_RIGHT, 5 )
+		
+		bSizer32 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap127 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/supply_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer32.Add( self.m_bitmap127, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText179 = wx.StaticText( self, wx.ID_ANY, u"Amount :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText179.Wrap( -1 )
+		bSizer32.Add( self.m_staticText179, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_AssetAmount = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_AssetAmount.SetMaxLength( 0 ) 
+		bSizer32.Add( self.m_AssetAmount, 0, wx.ALL, 5 )
+		
+		self.m_staticText184 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText184.Wrap( -1 )
+		bSizer32.Add( self.m_staticText184, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_bitmap128 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/formula.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer32.Add( self.m_bitmap128, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText180 = wx.StaticText( self, wx.ID_ANY, u"UTXO's :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText180.Wrap( -1 )
+		bSizer32.Add( self.m_staticText180, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_UTXOcount = wx.SpinCtrl( self, wx.ID_ANY, u"1", wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 1000, 1 )
+		bSizer32.Add( self.m_UTXOcount, 0, wx.ALL, 5 )
+		
+		
+		bSizer29.Add( bSizer32, 0, wx.EXPAND, 5 )
+		
+		bSizer33 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_CreateUTXOButton = wx.Button( self, wx.ID_ANY, u"Create !", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer33.Add( self.m_CreateUTXOButton, 0, wx.ALL, 5 )
+		
+		
+		bSizer29.Add( bSizer33, 0, wx.ALIGN_RIGHT, 5 )
+		
+		
+		self.SetSizer( bSizer29 )
+		self.Layout()
+		
+		# Connect Events
+		self.m_AssetChoice.Bind( wx.EVT_CHOICE, self.OnAssetChanged )
+		self.m_AssetAmount.Bind( wx.EVT_TEXT, self.OnAmountChanged )
+		self.m_UTXOcount.Bind( wx.EVT_SPINCTRL, self.OnUTXOChanged )
+		self.m_CreateUTXOButton.Bind( wx.EVT_BUTTON, self.OnClickCreateUTXO )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnAssetChanged( self, event ):
+		event.Skip()
+	
+	def OnAmountChanged( self, event ):
+		event.Skip()
+	
+	def OnUTXOChanged( self, event ):
+		event.Skip()
+	
+	def OnClickCreateUTXO( self, event ):
 		event.Skip()
 	
 

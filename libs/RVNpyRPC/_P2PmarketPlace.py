@@ -152,7 +152,8 @@ class RavencoinP2PMarketPlaceAd(object):
     def Load_JSON(self, jsonData):
         #self.logger.info(f"{type(jsonData)}")
         #self.logger.info(f"{jsonData}")
-        if True:
+        try:
+        #if True:
             if str(type(jsonData)) == "<class 'str'>":
                 jsonData = ast.literal_eval(jsonData)
                 #self.logger.info(f"{type(jsonData)}")
@@ -183,7 +184,10 @@ class RavencoinP2PMarketPlaceAd(object):
             self._adP2PChannelAsset = jsonData['channel']
             
             self._SquawkerProtocolVersion = jsonData['sqp2p_ver'] if jsonData.__contains__('sqp2p_ver') else '0.0'
-            
+            return True
+        except Exception as e:
+            self.logger.error(f"Invalid JSON Data.")  
+            return False   
             
             #self.logger.info(f"OK {jsonData}")
 
@@ -248,6 +252,33 @@ class RVNpyRPC_P2P_Marketplace():
     
     """
     
+    
+    
+    def GetAllAdsInCache(self):
+        
+        cached_ads_list = {}
+        count = 0
+        
+        _ads_path = self.__userdata_path__+"/p2pmarket/"
+        
+        for filename in os.listdir(_ads_path):
+            f = os.path.join(_ads_path, filename)
+            # checking if it is a file
+            
+            _nameAndExt = str(filename).split('.')
+            if os.path.isfile(f):
+                if _nameAndExt[1] == 'json':
+                    f = open(f, "r")
+                    datas =f.read()
+                    
+                    _cached_ad = RavencoinP2PMarketPlaceAd()
+                    if _cached_ad.Load_JSON(datas):
+                        cached_ads_list[count] = _cached_ad
+                        count = count+1
+                        
+                        
+        return cached_ads_list
+    
     def LoadInvalidCache(self):
         pass
     
@@ -311,6 +342,9 @@ class RVNpyRPC_P2P_Marketplace():
             return None
 
 
+    
+    
+    
     
     
     def CreateAtomicSwapTransaction(self, marketAd:RavencoinP2PMarketPlaceAd, pw=''):
@@ -540,10 +574,11 @@ class RVNpyRPC_P2P_Marketplace():
                 
                 
                 if verifyTx:
+                    #self.logger.info(f"verifying {_newAd.JSON()}")
                     _valid = self.VerifyMarketplaceAdTxDatas(_newAd)
                     
                     if not _valid:
-                        self.logger.info("Filtering ad, no valid tx datas found")
+                        self.logger.info(f"Filtering ad , no valid tx datas found")
                         self.__addTxInInvalidCacheIfNotExist__(item['message'])
                         continue
                 

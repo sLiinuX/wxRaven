@@ -93,7 +93,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         icon = wx.EmptyIcon()
         #icon.CopyFromBitmap(wx.Bitmap( u"res/default_style/normal/ravencoin.png", wx.BITMAP_TYPE_ANY ))
-        icon.CopyFromBitmap(self.RessourcesProvider.GetImage('ravencoin'))
+        icon.CopyFromBitmap(self.RessourcesProvider.GetImage('wx_raven_64'))
         self.SetIcon(icon)
         self.RessourcesProvider.ApplyThemeOnPanel(self)
         
@@ -111,7 +111,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         # Homemade work in progress API which intend to be END USER 
         # any basic data that requires multiple RPC call could finish in this
-        self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getCurrentConnexion())
+        self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getCurrentConnexion(), userdataPath=self.Paths['USERDATA'])
         
         
         # Tools and menu management
@@ -277,9 +277,9 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     #Get the highlevel queries
     def getRvnRPC(self, networkName=None):
         if networkName != None:
-            self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getConnexion(networkName))
+            self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getConnexion(networkName), userdataPath=self.Paths['USERDATA'])
         else:
-            self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getCurrentConnexion())
+            self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getCurrentConnexion(), userdataPath=self.Paths['USERDATA'])
             
             
         return self.RavencoinRPC  
@@ -323,7 +323,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         _showCancel = False
         
         
-        if connexionName == 'NO WALLET MODE' or connexionName == 'OFFLINE-MODE':
+        if connexionName == 'NO WALLET MODE' or connexionName == 'OFFLINE-MODE' or connexionName.__contains__('Relay'):
             _typeMessage = 'warning'
             _Message = f"Network Changed for {connexionName}.\nWarning : This connexion only provide limited features through a Third-Part server/service."
         else:

@@ -27,21 +27,26 @@ class RVNpyRPC_Directories():
         self.logger = logging.getLogger('wxRaven')
         
         
-    def GetAssetOwnerAddressList(self, assetname):
+    def GetAssetOwnerAddressList(self, assetname, detailed=False):
         
         
         _ownerAddrCount = self.RPCconnexion.listaddressesbyasset(assetname, True)['result'] 
         _adList= []
-        
+        if detailed:
+            _adList = {}
+        _rList=None
         if _ownerAddrCount == None:
             return _adList
         
-        self.logger.info(f'GetAssetOwnerAddress {_ownerAddrCount}')
+        self.logger.info(f'GetAssetOwnerAddress {assetname} : {_ownerAddrCount}')
         if _ownerAddrCount < self.MAX_RPC_RETURN:
             _adListRaw = self.RPCconnexion.listaddressesbyasset(assetname, False)['result'] 
-            
-            for ad in _adListRaw:
-                _adList.append(ad)
+            if not detailed:
+                for ad in _adListRaw:
+                    _adList.append(ad)
+            else:
+                for ad in _adListRaw:
+                    _adList[ad] = _adListRaw[ad]
         
         else:
             
@@ -49,21 +54,27 @@ class RVNpyRPC_Directories():
             _cursorStop = 0
             #steps = self.MAX_RPC_RETURN
             
-            while _cursorStop < _ownerAddrCount:
+            while _cursorStart < _ownerAddrCount:
                 self.logger.info(f' Cursor {_cursorStart}')
                 _adListRaw = self.RPCconnexion.listaddressesbyasset(assetname, False, self.MAX_RPC_RETURN, _cursorStart)['result'] 
                 
-                for ad in _adListRaw:
-                    _adList.append(ad)
+                if not detailed:
+                    for ad in _adListRaw:
+                        _adList.append(ad)
+                        
+                else:
+                    for ad in _adListRaw:
+                        _adList[ad] = _adListRaw[ad]
                 
                 _cursorStart = _cursorStart + self.MAX_RPC_RETURN
                 _cursorStop = _cursorStart + self.MAX_RPC_RETURN
                 
-                  
-        mylist = list(dict.fromkeys(_adList))        
+        if not detailed :         
+            _rList = list(dict.fromkeys(_adList))        
+        else:
+            _rList =  _adList   
                 
-                
-        return mylist
+        return _adList
     
     
     

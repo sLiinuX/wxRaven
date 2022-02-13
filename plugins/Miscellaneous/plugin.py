@@ -24,9 +24,9 @@ from wxRavenGUI.application.pluginsframework import *
 #from .pluginSettings import MyTutorialSettingPanel_WithLogic
 
 from .wxRavenMiscellaneous_CreateAirdropLogic import *
-#from .wxRavenMiscellaneous_CreateAdvertisingLogic import *
+from .wxRavenMiscellaneous_CreateAdvertisingLogic import *
 from .wxRavenMiscellaneous_NodeMonitorLogic import *
-
+from .wxRavenMiscellaneous_CreateUTXOLogic import * 
 
 #from .wxRavenMiscellaneousDesign import *
 
@@ -50,6 +50,7 @@ class wxRavenPlugin(PluginObject):
         
         _airdrop =self.RessourcesProvider.GetImage('airdrop_icon') 
         _advertise =self.RessourcesProvider.GetImage('advertiser_icon') 
+        _utxoIconNew =self.RessourcesProvider.GetImage('new_utxo') 
         #
         #ParentFrame is used to refer to the main app
         #Position is used to refer to the defaut position views are open.
@@ -87,6 +88,20 @@ class wxRavenPlugin(PluginObject):
         
         self.PLUGINS_VIEWS= [ 
                     
+                    {
+                     'viewid':'Create UTXO', 
+                     'name':'Create UTXO', 
+                     'title':'Create UTXO', 
+                     'position':'dialog', 
+                     'icon':_utxoIconNew, 
+                     'class': wxRavenMiscellaneous_CreateUTXOWithLogic,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'toolbar_shortcut': True
+                     }
+                     
+        
+                    ,
                     
                      {
                      'viewid':'Create Airdrop', 
@@ -100,6 +115,18 @@ class wxRavenPlugin(PluginObject):
                      'toolbar_shortcut': True
                      }
                      ,
+                     
+                     {
+                     'viewid':'Create Advertising', 
+                     'name':'Create Advertising', 
+                     'title':'Create Advertising', 
+                     'position':'dialog', 
+                     'icon':_advertise, 
+                     'class': wxRavenMiscellaneous_CreateAdvertisingWithLogic,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'toolbar_shortcut': True
+                     },
                     
                      
                       {
@@ -118,17 +145,6 @@ class wxRavenPlugin(PluginObject):
         
         '''
           
-                     {
-                     'viewid':'Create Advertising', 
-                     'name':'Create Advertising', 
-                     'title':'Create Advertising', 
-                     'position':'dialog', 
-                     'icon':_advertise, 
-                     'class': wxRavenMiscellaneous_CreateAdvertisingWithLogic,
-                     'default':False,
-                     'multipleViewAllowed':False,
-                     'toolbar_shortcut': True
-                     },
                     
                      '''
         

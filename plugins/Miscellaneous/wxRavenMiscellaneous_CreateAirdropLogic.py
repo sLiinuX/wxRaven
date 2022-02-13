@@ -89,8 +89,8 @@ class wxRavenMiscellaneous_CreateAirdropWithLogic(wxRavenMiscellaneous_Airdrop):
         self.Layout()
     
     
-    
-    
+        self.m_AssetAmount.Bind( wx.EVT_TEXT, self.OnAmountChanged )
+        self.m_UTXOcount.Bind( wx.EVT_SPINCTRL, self.OnUTXOChanged )
     
     
     
@@ -117,9 +117,11 @@ class wxRavenMiscellaneous_CreateAirdropWithLogic(wxRavenMiscellaneous_Airdrop):
     def __GenerateAirdrop__(self, allListWin=False):
         print("__GenerateUTXO__")  
         
-        
-        myPlugin = self.parent_frame.GetPlugin("P2PMarket")
-        p2p_market_change_address = myPlugin.PLUGIN_SETTINGS['p2p_market_change_address']
+        """
+        Updated change address settings
+        """
+        myPlugin = self.parent_frame.GetPlugin("General")
+        p2p_market_change_address = myPlugin.GetFavoriteChangeAddress()
         #p2p_market_swap_address= myPlugin.PLUGIN_SETTINGS['p2p_market_swap_address']
         
         #self._currentAsset 
@@ -150,9 +152,9 @@ class wxRavenMiscellaneous_CreateAirdropWithLogic(wxRavenMiscellaneous_Airdrop):
                 if isRandom:
                     _rdmText='Radomly selected'
                 #UserInfo(self, f"TX = {_tx}  \n Winners : {len(_allAddresses)} ")
-                UserAdvancedMessage(self.parent_frame, f"Airdrop Sent to {len(_allAddresses)} Addresses {_rdmText} !", "success", msgdetails=f'{_tx}', showCancel=False)
+                UserAdvancedMessage(self.parent_frame, f"Airdrop Sent to {len(_allAddresses)} Addresses {_rdmText} !", "success", msgdetails=f'Tx = {_tx} \nWinner List = {_allAddresses}', showCancel=False)
             else:
-                UserAdvancedMessage(self.parent_frame, f"Airdrop Failed !", "error", msgdetails=f'{_tx}', showCancel=False)   
+                UserAdvancedMessage(self.parent_frame, f"Airdrop Failed !", "error", msgdetails=f'Tx = {_tx}\nWinner List = {_allAddresses}', showCancel=False)   
         #except Exception as e:
         #    self.parent_frame.Log(f"Unable Generate UTXO : {e}" , type="warning")
         
@@ -173,7 +175,7 @@ class wxRavenMiscellaneous_CreateAirdropWithLogic(wxRavenMiscellaneous_Airdrop):
         _maxRequested = float(self._currentUTXOcount) *  float(self._currentAmount)
         
         print(f"__CheckFeasibility__ _maxRequested = {_maxRequested}  , av= {self._currentBalance}" )  
-        if self._currentBalance>_maxRequested :
+        if self._currentBalance>=_maxRequested :
             return True
         return False
         

@@ -1209,7 +1209,7 @@ class wxRaven_RavencoreUTXOManager_RVN_View ( wx.Panel ):
 		self.m_filterAddress.SetSelection( 0 )
 		bSizer117.Add( self.m_filterAddress, 3, wx.ALL, 5 )
 		
-		self.m_staticText49 = wx.StaticText( self.m_FilterPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText49 = wx.StaticText( self.m_FilterPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText49.Wrap( -1 )
 		bSizer117.Add( self.m_staticText49, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
@@ -1275,7 +1275,7 @@ class wxRaven_RavencoreUTXOManager_RVN_View ( wx.Panel ):
 class wxRaven_RavencoreUTXOManager_TxHistory_View ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 700,445 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 756,498 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer112 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -1292,7 +1292,7 @@ class wxRaven_RavencoreUTXOManager_TxHistory_View ( wx.Panel ):
 		self.m_filterAddress.SetSelection( 0 )
 		bSizer117.Add( self.m_filterAddress, 3, wx.ALL, 5 )
 		
-		self.m_staticText49 = wx.StaticText( self.m_FilterPanel, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText49 = wx.StaticText( self.m_FilterPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText49.Wrap( -1 )
 		bSizer117.Add( self.m_staticText49, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
@@ -1313,6 +1313,9 @@ class wxRaven_RavencoreUTXOManager_TxHistory_View ( wx.Panel ):
 		self.m_datePicker2 = wxRavenDatePicker( self.m_FilterPanel, wx.ID_ANY, wx.DefaultDateTime, wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer117.Add( self.m_datePicker2, 0, wx.ALL, 5 )
 		
+		self.m_refreshButton = wx.BitmapButton( self.m_FilterPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/refresh.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer117.Add( self.m_refreshButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
 		
 		bSizer116.Add( bSizer117, 1, wx.EXPAND, 5 )
 		
@@ -1322,7 +1325,7 @@ class wxRaven_RavencoreUTXOManager_TxHistory_View ( wx.Panel ):
 		bSizer118.Add( self.m_bitmap40, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_addressFilterText = wx.TextCtrl( self.m_FilterPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer118.Add( self.m_addressFilterText, 3, wx.ALL, 5 )
+		bSizer118.Add( self.m_addressFilterText, 3, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
 		bSizer116.Add( bSizer118, 1, wx.EXPAND, 5 )
@@ -1339,6 +1342,49 @@ class wxRaven_RavencoreUTXOManager_TxHistory_View ( wx.Panel ):
 		
 		self.m_listCtrl1 = wxRavenListCtrl( self.m_scrolledWindow2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_AUTOARRANGE|wx.LC_REPORT )
 		bSizer113.Add( self.m_listCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		bSizer346 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap112 = wx.StaticBitmap( self.m_scrolledWindow2, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/table_total_in.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer346.Add( self.m_bitmap112, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText119 = wx.StaticText( self.m_scrolledWindow2, wx.ID_ANY, u"Total IN (Period) :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText119.Wrap( -1 )
+		bSizer346.Add( self.m_staticText119, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_textTotalIn = wx.TextCtrl( self.m_scrolledWindow2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		self.m_textTotalIn.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer346.Add( self.m_textTotalIn, 1, wx.ALL, 5 )
+		
+		self.m_bitmap1121 = wx.StaticBitmap( self.m_scrolledWindow2, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/table_total_out.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer346.Add( self.m_bitmap1121, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText1191 = wx.StaticText( self.m_scrolledWindow2, wx.ID_ANY, u"Total OUT (Period) :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText1191.Wrap( -1 )
+		bSizer346.Add( self.m_staticText1191, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_textTotalOut = wx.TextCtrl( self.m_scrolledWindow2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		self.m_textTotalOut.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer346.Add( self.m_textTotalOut, 1, wx.ALL, 5 )
+		
+		self.m_bitmap3412 = wx.StaticBitmap( self.m_scrolledWindow2, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/cash_1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer346.Add( self.m_bitmap3412, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticText6912 = wx.StaticText( self.m_scrolledWindow2, wx.ID_ANY, u"Fees :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6912.Wrap( -1 )
+		self.m_staticText6912.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 90, False, wx.EmptyString ) )
+		
+		bSizer346.Add( self.m_staticText6912, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_textFee = wx.TextCtrl( self.m_scrolledWindow2, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		self.m_textFee.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer346.Add( self.m_textFee, 1, wx.ALL, 5 )
+		
+		
+		bSizer113.Add( bSizer346, 0, wx.EXPAND, 5 )
 		
 		
 		self.m_scrolledWindow2.SetSizer( bSizer113 )
@@ -1685,7 +1731,7 @@ class wxRavenAssetNavigator ( wx.Panel ):
 class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 	
 	def __init__( self, parent ):
-		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 677,477 ), style = wx.TAB_TRAVERSAL )
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 688,477 ), style = wx.TAB_TRAVERSAL )
 		
 		bSizer76 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -1831,7 +1877,10 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		bSizer94.Add( self.m_staticText42, 3, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_ownerCount = wx.TextCtrl( self.m_panel9, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY|wx.TE_RIGHT )
-		bSizer94.Add( self.m_ownerCount, 1, wx.ALL, 5 )
+		bSizer94.Add( self.m_ownerCount, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_ownerListExport = wx.BitmapButton( self.m_panel9, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/ownerlist_export.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		bSizer94.Add( self.m_ownerListExport, 0, wx.ALL, 5 )
 		
 		
 		bSizer93.Add( bSizer94, 0, wx.EXPAND, 5 )
@@ -1860,6 +1909,7 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 		
 		# Connect Events
 		self.m_bpButton27.Bind( wx.EVT_BUTTON, self.OnQrCodeClick )
+		self.m_ownerListExport.Bind( wx.EVT_BUTTON, self.OnExportOwnerListClicked )
 	
 	def __del__( self ):
 		pass
@@ -1867,6 +1917,9 @@ class wxRavenAssetDetails_OverviewPanel ( wx.Panel ):
 	
 	# Virtual event handlers, overide them in your derived class
 	def OnQrCodeClick( self, event ):
+		event.Skip()
+	
+	def OnExportOwnerListClicked( self, event ):
 		event.Skip()
 	
 
@@ -2388,5 +2441,77 @@ class DONOTUSE_TestPanel2 ( wx.Panel ):
 	
 	def __del__( self ):
 		pass
+	
+
+###########################################################################
+## Class wxRaven_RavencoreAsset_OwnerListExporter
+###########################################################################
+
+class wxRaven_RavencoreAsset_OwnerListExporter ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 499,123 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer341 = wx.BoxSizer( wx.VERTICAL )
+		
+		bSizer342 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap18 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/asset.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer342.Add( self.m_bitmap18, 0, wx.ALL, 5 )
+		
+		self.m_staticText15 = wx.StaticText( self, wx.ID_ANY, u"1/?", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText15.Wrap( -1 )
+		bSizer342.Add( self.m_staticText15, 0, wx.ALL, 5 )
+		
+		self.m_staticText34 = wx.StaticText( self, wx.ID_ANY, u": [AssetName]", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText34.Wrap( -1 )
+		bSizer342.Add( self.m_staticText34, 0, wx.ALL, 5 )
+		
+		
+		bSizer341.Add( bSizer342, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer343 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_gauge1 = wx.Gauge( self, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL )
+		self.m_gauge1.SetValue( 0 ) 
+		bSizer343.Add( self.m_gauge1, 1, wx.ALL, 5 )
+		
+		
+		bSizer341.Add( bSizer343, 0, wx.EXPAND, 5 )
+		
+		bSizer344 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_bitmap19 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/mailbox_1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer344.Add( self.m_bitmap19, 0, wx.ALL, 5 )
+		
+		self.m_staticText35 = wx.StaticText( self, wx.ID_ANY, u"0 Addresses found", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText35.Wrap( -1 )
+		bSizer344.Add( self.m_staticText35, 0, wx.ALL, 5 )
+		
+		
+		bSizer341.Add( bSizer344, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer345 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_button1 = wx.Button( self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer345.Add( self.m_button1, 0, wx.ALL, 5 )
+		
+		
+		bSizer341.Add( bSizer345, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		
+		self.SetSizer( bSizer341 )
+		self.Layout()
+		
+		# Connect Events
+		self.Bind( wx.EVT_INIT_DIALOG, self.OnStartFullIndex )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def OnStartFullIndex( self, event ):
+		event.Skip()
 	
 

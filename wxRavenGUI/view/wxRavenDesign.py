@@ -27,7 +27,7 @@ class wxRavenSplashScreen ( wx.Dialog ):
 		
 		bSizer3 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.m_bitmap1 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/splash-test.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_bitmap1 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/wxraven_splash.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer3.Add( self.m_bitmap1, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		self.m_staticText1 = wx.StaticText( self, wx.ID_ANY, u"Loading WxRaven...", wx.DefaultPosition, wx.DefaultSize, 0 )

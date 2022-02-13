@@ -94,8 +94,11 @@ class wxRavenP2PMarket_CreateUTXOWithLogic(wxRavenP2PMarket_CreateUTXO):
     
     def __GenerateUTXO__(self):
         print("__GenerateUTXO__")  
-        myPlugin = self.parent_frame.GetPlugin("P2PMarket")
-        p2p_market_change_address = myPlugin.PLUGIN_SETTINGS['p2p_market_change_address']
+        #myPlugin = self.parent_frame.GetPlugin("P2PMarket")
+        #p2p_market_change_address = myPlugin.PLUGIN_SETTINGS['p2p_market_change_address']
+        myPlugin = self.parent_frame.GetPlugin("General")
+        p2p_market_change_address = myPlugin.GetFavoriteChangeAddress()
+        
         #p2p_market_swap_address= myPlugin.PLUGIN_SETTINGS['p2p_market_swap_address']
         
         self._currentAsset 

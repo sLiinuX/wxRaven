@@ -255,6 +255,11 @@ class RvnRPC_ConnectorManager(object):
         if networkName.__contains__("testnet"):
             icon = self.parentObjSynch.RessourcesProvider.GetImage('testnet')#wx.Bitmap( u"res/default_style/normal/testnet.png", wx.BITMAP_TYPE_ANY )  
         
+        
+        if networkName == 'NO WALLET MODE' or networkName == 'OFFLINE-MODE' or networkName.__contains__('Relay'):
+            icon =  self.parentObjSynch.RessourcesProvider.GetImage('network_limited')
+        
+        
         if checkIt:  
             
             isActive = self.CheckConnexionStatus(networkName)
@@ -272,8 +277,11 @@ class RvnRPC_ConnectorManager(object):
     
     def getIcon(self, networkName=""):
         
+        
         if networkName != "" and networkName != self.rpc_current:
             return self.__iconCompute__(networkName, checkIt=False)
+       
+        
         return self.net_icon
     
     

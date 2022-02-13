@@ -11,10 +11,10 @@ Created on 26 déc. 2021
 
 __MAJOR__ = 0
 __REVISION__ = 1
-__MINOR__ = 2
+__MINOR__ = 3
 
-__BUILD__ = 6
-__BUILD_ID__ = "Official-Release"
+__BUILD__ = 1
+__BUILD_ID__ = "Development-Build"
 
 
 

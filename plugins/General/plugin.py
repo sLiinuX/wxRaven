@@ -17,6 +17,10 @@ from .pluginSettings import *
 
 from .wxRavenWelcomePanel import wxRavenWelcomeTabLogic
 
+
+#import libs.wxRaven_Flask_WebserviceClient
+from libs.wxRaven_Webservices.wxRaven_Flask_Webservice import wxRaven_Flask_WebserviceClient
+
 class wxRavenPlugin(PluginObject):
     
     
@@ -99,6 +103,13 @@ class wxRavenPlugin(PluginObject):
                 'purge_on_close':True,
                 'save_on_close':True,
                 
+                
+                'favorite_send_addresses':{},
+                'favorite_receive_addresses':{},
+                'favorite_change_addresses':{},
+                
+                
+                'webservices_relays':{'wxRaven_Relay1':'wx:wx@18.221.126.115:9090'},
             }
         
         
@@ -123,9 +134,10 @@ class wxRavenPlugin(PluginObject):
         _prefIcon = self.RessourcesProvider.GetImage('wizard-prefs')
         _viewIcon = self.RessourcesProvider.GetImage('perspective_default')
         _conIcon = self.RessourcesProvider.GetImage('network')
+        _relays = self.RessourcesProvider.GetImage('connexion_share_1')
         _appIcon = self.RessourcesProvider.GetImage('frame_default')
         _pluginsIcon = self.RessourcesProvider.GetImage('install-handler')
-        
+        _walletIcon = self.RessourcesProvider.GetImage('wallet')
         
         
 
@@ -139,7 +151,13 @@ class wxRavenPlugin(PluginObject):
         #_viewPannel = PluginSettingsTreeObject("Views", _viewIcon, classPanel=None, _childs=None)
         _connexionPannel = PluginSettingsTreeObject("Connexions", _conIcon, classPanel=wxRavenConexionsSettingPanel, _childs=None)
         
+        _relaysPannel = PluginSettingsTreeObject("Relays", _relays, classPanel=wxRavenConnexionRelaysSettings_SettingLogic, _childs=None)
+        
+        
         _pluginsPannel = PluginSettingsTreeObject("Plugins", _pluginsIcon, classPanel=wxRavenPluginsSettingPanel, _childs=None)
+        
+        
+        _WalletPannel = PluginSettingsTreeObject("Wallet", _walletIcon, classPanel=wxRaven_General_WalletSettingsLogic, _childs=None)
         
         
         
@@ -147,6 +165,8 @@ class wxRavenPlugin(PluginObject):
         _applicationPannel._childs.append(_generalPannel)
         #_applicationPannel._childs.append(_viewPannel)
         _applicationPannel._childs.append(_connexionPannel)
+        _applicationPannel._childs.append(_relaysPannel)
+        _applicationPannel._childs.append(_WalletPannel)
         _applicationPannel._childs.append(_pluginsPannel)
         
         
@@ -177,6 +197,9 @@ class wxRavenPlugin(PluginObject):
         self.setData("allLogs", {})
         self.setData("_cursor",0)
         self.setData("_errorPushed",False)
+        
+        self.Init_Webservices_Relays()
+        
         
         
         #self.LoadPluginFrames()
@@ -215,6 +238,65 @@ class wxRavenPlugin(PluginObject):
                 
             #print(key) 
             #print(self.PLUGIN_SETTINGS[key])
+    
+    
+    
+    
+    
+    
+    def Init_Webservices_Relays(self):
+        allCons = self.PLUGIN_SETTINGS['webservices_relays']
+        
+        
+        for conName in allCons:
+                #pass
+                data = allCons[conName]
+
+                _creds = data.split("@")
+                _loginPwd = _creds[0].split(":")
+                _hostPort = _creds[1].split(":")
+                
+                #newCon = Ravencoin(username=_loginPwd[0], password=_loginPwd[1],host=_hostPort[0],port=_hostPort[1])
+                newCon = wxRaven_Flask_WebserviceClient(ip=_hostPort[0], port=_hostPort[1])
+                
+                self.parentFrame.ConnexionManager.rpc_connectors[conName] = newCon
+    
+    
+    '''
+    Quick wins
+    '''
+    
+    
+    
+    
+    
+    def GetFavoriteAddress(self, favorite_key, network):
+        
+        if network == '':
+            network = self.parentFrame.ConnexionManager.getCurrent()
+        
+        _res=''
+        if self.PLUGIN_SETTINGS[favorite_key].__contains__(network):
+            _res = self.PLUGIN_SETTINGS[favorite_key][network]
+        return _res
+    
+    
+    
+    
+    def GetFavoriteSendAddress(self, network=''):
+        return self.GetFavoriteAddress('favorite_send_addresses', network)
+    
+    def GetFavoriteReceiveAddress(self, network=''):
+        return self.GetFavoriteAddress('favorite_receive_addresses', network)
+    
+    def GetFavoriteChangeAddress(self, network=''):
+        return self.GetFavoriteAddress('favorite_change_addresses', network)
+    
+    
+    
+    
+    
+    
     
     
         
