@@ -1,0 +1,16 @@
+'''
+Created on 17 févr. 2022
+@author: slinux
+'''
+
+class MyClass(object):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, params):
+        '''
+        Constructor
+        '''
+        

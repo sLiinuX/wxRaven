@@ -226,7 +226,7 @@ class PluginObject(object):
     
     
     def LoadView(self, view, positionOverride=""):
-        self.logger.info("LoadView")
+        self.logger.info(f"LoadView  {view['name']}" )
         
         df_class = view['class']
         df_name = view['name']
@@ -367,7 +367,7 @@ class PluginObject(object):
         return result
     
     
-    def SavePluginFrames(self):
+    def SavePluginFrames(self, virtual=False):
         
         toSaveArray = []
         for r in self.VIEWS_INSTANCES:
@@ -378,18 +378,24 @@ class PluginObject(object):
             
             viewInstanceData = {'viewid': r['viewid'],  'name': r['name'],  'position': r['position'],  'isArea': r['isArea']}
             toSaveArray.append(viewInstanceData)
-        self.checkSaveDirectory()
-        self.__saveVar__(self.PLUGIN_NAME, toSaveArray)
+        if not  virtual:   
+            self.checkSaveDirectory()
+            self.__saveVar__(self.PLUGIN_NAME, toSaveArray)
+        
+        return toSaveArray
     
     
-    
-    def LoadPluginFrames(self):
+    #
+    #Resume plugin states
+    #
+    def LoadPluginFrames(self, existingDatas = None):
         
-        existingDatas = None
         
-        
-        if self.parentFrame.Settings.resumepluginstate:
-            existingDatas = self.__LoadVar__(self.PLUGIN_NAME, None)
+        self.logger.info(f'LoadPluginFrames {self.PLUGIN_NAME} | existingDatas : {existingDatas}')
+        if existingDatas==None:
+            if self.parentFrame.Settings.resumepluginstate:
+                existingDatas = self.__LoadVar__(self.PLUGIN_NAME, None)
+                self.logger.info(f'{self.PLUGIN_NAME} : Saved state found !')
         
         
         
@@ -398,6 +404,7 @@ class PluginObject(object):
             
             #self.logger.info("PREVIOUS PLUGIN STATE FOUND  : " + str(existingDatas))
             for oldView in existingDatas:
+                self.logger.info(f'{self.PLUGIN_NAME} : Loading saved state  {oldView["name"]}')
                 
                 if oldView.__contains__('skip_save'):
                     if oldView['skip_save']==True:

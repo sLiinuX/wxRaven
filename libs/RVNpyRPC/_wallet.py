@@ -48,9 +48,10 @@ class RVNpyRPC_Wallet():
         return phrase_test and phrase_test.startswith("walletpassphrase")
     
     def __check_unlock__(self, _passphrase , timeout = 10):
-        if self.requires_unlock():
+        if self.__requires_unlock__():
             self.RPCconnexion.walletpassphrase(passphrase=_passphrase, timeout=timeout)
-    
+        else :
+            return {'result':None, 'error': {'code':-1, 'message':'wallet doesnt require unlock.'}}
     
     def __UnlockAll__(self):
         allTx = self.RPCconnexion.listlockunspent()['result']

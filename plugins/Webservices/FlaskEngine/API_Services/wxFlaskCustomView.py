@@ -67,6 +67,8 @@ def login_required(f):
 
 
 def extract_parameters(parms):
+    
+    #logging.error(f'extract_parameters : {parms}') 
     newDict={}
     for key in parms.copy():
         #print(f"{key} = {type(key)}")
@@ -80,8 +82,10 @@ def extract_parameters(parms):
             
         except Exception as e:
             newDict[key] = parms[key]
-            logging.error(e) 
-
+            #logging.error(f'extract_parameters ERROR : {e}') 
+    
+    
+    logging.info(f'extract_parameters : {newDict}') 
     return newDict
 
 

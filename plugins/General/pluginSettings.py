@@ -4,7 +4,7 @@ Created on 20 déc. 2021
 @author: slinux
 '''
 
-
+from plugins.configurations import  __wxraven_configurations_list__, __wxraven_configurations_icons__
 
 from .wxRavenGeneralDesign import GeneralSettingPanel, ApplicationSettingPanel, wxRavenConnexionSettings_SettingPanel, wxRavenPluginsSettings_SettingPanel, wxRaven_General_WalletSettings, wxRavenConnexionRelaysSettings_SettingPanel
 
@@ -496,8 +496,33 @@ class wxRavenPluginsSettingPanel(PluginSettingsPanelObject):
         
         self._Panel.m_pluginCheckListbox.Bind( wx.EVT_CHECKLISTBOX, self.OnChanged )
     
+        self._Panel.m_choiceEdition.Bind( wx.EVT_CHOICE, self.EdditionChanged ) 
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    def EdditionChanged(self, evt=None):
+        if evt!=None:
+            self._settingsHasChanged=True
+        
+        _edd= self._Panel.m_choiceEdition.GetString(self._Panel.m_choiceEdition.GetCurrentSelection())      
+        
+        
+        if _edd != 'wxRaven : Developer/Server Edition':
+            self._Panel.m_pluginCheckListbox.Enable(False)
+        else:
+            self._Panel.m_pluginCheckListbox.Enable(True)
+            
+            
+        _editionIcon = __wxraven_configurations_icons__[_edd]
+        
+        self._Panel.m_bitmap19.SetBitmap(self.parentFrame.RessourcesProvider.GetImage(_editionIcon))
     #
     #
     # method to be called on close and apply
@@ -523,7 +548,20 @@ class wxRavenPluginsSettingPanel(PluginSettingsPanelObject):
         for _val in _currentDisableValueIndex:
             _toSaveArray.append(_val)
         
-        myPlugin.PLUGIN_SETTINGS['disable_plugins'] = _toSaveArray
+        
+        
+        _edd= self._Panel.m_choiceEdition.GetString(self._Panel.m_choiceEdition.GetCurrentSelection())      
+        
+        myPlugin.PLUGIN_SETTINGS['sw_configuration'] = _edd
+        
+        if _edd == 'wxRaven : Developer/Server Edition':
+            myPlugin.PLUGIN_SETTINGS['disable_plugins'] = _toSaveArray
+        else:
+            myPlugin.PLUGIN_SETTINGS['disable_plugins'] = []
+        
+        
+        
+        
         print("SavePanelSettings")
         #myPlugin.PLUGIN_SETTINGS['booleansetting'] = _newValueForBoolSetting
     
@@ -535,9 +573,27 @@ class wxRavenPluginsSettingPanel(PluginSettingsPanelObject):
     def LoadPanelSettings(self):
         
         myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        
+        
+        sw_configuration = myPlugin.PLUGIN_SETTINGS['sw_configuration']
+        
+        allAvailableEditions = list(__wxraven_configurations_list__.keys())
+        for ed in allAvailableEditions:
+            self._Panel.m_choiceEdition.Append(ed)
+        
+        _dc = self._Panel.m_choiceEdition.FindString(sw_configuration)
+        if _dc != wx.NOT_FOUND:
+            self._Panel.m_choiceEdition.SetSelection(_dc)
+            
+            
+            
+            
+            
+        
         _currentDisableValue = myPlugin.PLUGIN_SETTINGS['disable_plugins']
         
         
+  
         _currentPluginList = self.parentFrame.Plugins._detected_plugin_list
         _toArray = []
         
@@ -560,6 +616,7 @@ class wxRavenPluginsSettingPanel(PluginSettingsPanelObject):
         #self._Panel.booleansetting.SetValue(_currentValue)
         
         print("LoadPanelSettings" + str(_toArray))
+        self.EdditionChanged(None)
         
         
     #

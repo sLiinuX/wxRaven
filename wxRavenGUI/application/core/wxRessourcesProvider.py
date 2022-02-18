@@ -23,8 +23,8 @@ class RessourcesProvider(object):
     
     
     _THEME_PANEL_BACKGROUND_COLOR = wx.Colour( 255, 255, 255 )
-    _THEME_PANEL_SETTINGS_BACKGROUND_COLOR = wx.Colour( 217, 228, 255 )
-    
+    #_THEME_PANEL_SETTINGS_BACKGROUND_COLOR = wx.Colour( 217, 228, 255 )
+    _THEME_PANEL_SETTINGS_BACKGROUND_COLOR = wx.Colour( 255, 255, 255 )
     
     
     def __init__(self, path="", theme="default_style" ):

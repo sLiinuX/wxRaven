@@ -68,11 +68,11 @@ class RPCView(wxCustomFlaskView):
         #print(args.get('asset'))
         #print(asset)
         assetname = args.get('asset', asset)
-        verbose = args.get('verbose', verbose )
+        verbose = args.get('verbose', False )
         count = args.get('count', count )
         start = args.get('start', start)
         
-        #print(assetname)
+        print(f"listassets {assetname} verbose = {verbose}")
         
         network = self.daemon.getNetwork()
         result = network.listassets(assetname ,verbose,count,start)

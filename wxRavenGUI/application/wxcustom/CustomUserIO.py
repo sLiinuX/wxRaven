@@ -5,7 +5,7 @@ Created on 8 janv. 2022
 '''
 import inspect
 import wx
-from .CustomUserIO_Advanced import wxRavenAdvancedMessageDialog
+from .CustomUserIO_Advanced import wxRavenAdvancedMessageDialog, wxRavenUnSavedFileDialog
 
 def UserInfo(parent, err):
     dlg = wx.MessageDialog(parent, f'{err}',
@@ -53,14 +53,19 @@ def RequestUserTextInput(parent, question, title="Userinput"):
     return _res
 
 def RequestUserWalletPassword(parent):
+    _res = None
     dlg = wx.TextEntryDialog(
                 parent, 'Enter your wallet passphrase if any',
-                'protected wallet??', '')
+                'protected wallet??', '', style=wx.TE_PASSWORD | wx.OK | wx.CANCEL)
 
     dlg.SetValue("")
-    dlg.ShowModal()
-    _res = dlg.GetValue()
+    _dialogres=dlg.ShowModal()
+    print(_dialogres)
+    if _dialogres == wx.OK or _dialogres == 5100:
+        _res = dlg.GetValue()
+    
     dlg.Destroy()
+    
     
     return _res
     
@@ -74,6 +79,24 @@ def UserAdvancedMessage(parentf, message, type, msgdetails='', showCancel=False)
     dlg.Destroy()
 
 
+
+def UserUnsavedFileMessage(parentf, filename='', details=''):
+    
+    result = {'result_dialog:' : None, 'result_method': 'Cancel', 'result_backup':False}
+    dlg =wxRavenUnSavedFileDialog(parentframe=parentf, message=filename, type='warning', msgdetails=details)
+    res = dlg.ShowModal()
+    
+    result['result_dialog'] = res
+    
+    result['result_method'] = dlg.method
+    result['result_backup'] = dlg.doBackup
+    
+    
+    
+    dlg.Destroy()
+    
+    
+    return result
 
     
 def ReportRPCResult(parentf, resultObj, _type="info", bypassMessage="", bypassError="", _showCancel=False):

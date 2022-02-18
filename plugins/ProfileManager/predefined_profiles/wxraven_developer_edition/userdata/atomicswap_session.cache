@@ -1,0 +1,11 @@
+{
+  "trades": [],
+  "locks": [],
+  "history": [],
+  "addresses": [
+    {
+      "name": "default",
+      "addresses": []
+    }
+  ]
+}

@@ -61,6 +61,11 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
         self._totalOut = 0.0
         self._totalFees = 0.0
         
+        
+        #self.FILTER_STATUS = ''
+        #self.FILTER_TEXT = ''
+        
+        
         self._datacache = {}
         self._loadingPanel = None
         #This is to add the view in the appropriate place using the mainapp to do so
@@ -88,6 +93,9 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
         
         self.Bind(wx.EVT_BUTTON, self.OnRefreshClicked ,self.m_refreshButton)
         
+        self.m_addressFilterText.Bind(wx.EVT_TEXT, self.UpdateView)
+        self.m_choiceStatus.Bind(wx.EVT_CHOICE, self.UpdateView)
+        
         #self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected, self.m_listCtrl1)
         #self.m_listCtrl1.Bind(wx.EVT_RIGHT_UP, self.OnRightClick)
         #self.m_listCtrl1.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick)
@@ -108,7 +116,7 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
         
         
         
-        self.m_addressFilterText.Bind(wx.EVT_TEXT, self.UpdateView)
+        
         '''
         
         self.waitApplicationReady()
@@ -150,10 +158,42 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
             myPlugin = self.parent_frame.GetPlugin('Ravencore')  
             #myPlugin.setData("_tx_history_stop", d)    
             #self.DoRequestUpdateHistory()    
+    
+    
+    
+    
         
         
     def ChangeMode(self, evt):
-        pass
+        _filterAdressValue = self.m_filterAddress.GetString(self.m_filterAddress.GetCurrentSelection())
+        self.m_addressFilterText.SetValue('')
+        myPlugin = self.parent_frame.GetPlugin('P2PMarket')
+        
+        _img_filter = 'trade_history'
+        
+        
+        if _filterAdressValue == "ALL":
+            myPlugin.setData("_tx_history_skip_swap", False)
+            myPlugin.setData("_tx_history_skip_ads", False)
+            
+        elif _filterAdressValue == "SWAP CACHE":
+            myPlugin.setData("_tx_history_skip_swap", False)
+            myPlugin.setData("_tx_history_skip_ads", True)
+            
+            _img_filter = 'atomic_swap_log'
+            
+        elif _filterAdressValue == "ADS CACHE":
+            myPlugin.setData("_tx_history_skip_swap", True)
+            myPlugin.setData("_tx_history_skip_ads", False)
+            
+            _img_filter = 'p2p_logs'
+            
+        else:
+            myPlugin.setData("_tx_history_skip_swap", False)
+            myPlugin.setData("_tx_history_skip_ads", False)
+            
+        self.m_bitmap34.SetBitmap(self.parent_frame.RessourcesProvider.GetImage(_img_filter))    
+            
         '''
         
         _filterAdressValue = self.m_filterAddress.GetString(self.m_filterAddress.GetCurrentSelection())
@@ -223,8 +263,8 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
             if _filterAdressValue != "All UTXO's":
                 _IncludeAddresses.append(_filterAdressValue)
             '''
-            
-            #_filterText = self.m_addressFilterText.GetValue()
+            FILTER_STATUS = self.m_choiceStatus.GetString(self.m_choiceStatus.GetCurrentSelection())
+            FILTER_TEXT = self.m_addressFilterText.GetValue()
             
             
             #_showLocked = self.m_showLocked.GetValue()
@@ -276,9 +316,36 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
                 rowData = _listRawAll[row]
                 
                 
+                if FILTER_STATUS != '' and FILTER_STATUS!=  'ALL':
+                    if rowData['status'] != FILTER_STATUS:
+                        continue
+                
+                
+                
+                if FILTER_TEXT!= '':
+                    _foundinfields=False
+                    
+                    if str(rowData['description'].lower()).__contains__(FILTER_TEXT.lower()):
+                        _foundinfields = True
+                      
+                        
+                    if not _foundinfields:
+                        continue    
+                
+                
+                
+                
+                
+                
+                
                 _icon =  self.allIcons['trade'] 
-                if rowData['status'] != '?':
+                if rowData['status'] != 'NOT FOUND':
                     _icon =  self.allIcons[rowData['status']] 
+                else:
+                    if rowData['cache_type'] == 'SWAP':
+                        _icon =  self.allIcons['atomic_swap'] 
+                    else:
+                        _icon =  self.allIcons['trade'] 
                 #print('adding')
                 index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(),str(row), _icon )
                 
@@ -495,6 +562,7 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
         
         
         self.allIcons['trade'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('p2p_icon') )
+        self.allIcons['atomic_swap'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('atomic_swap') )
         
         
         self.allIcons['COMPLETE'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('task_done') )
@@ -503,6 +571,7 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
         self.allIcons['NOT FOUND'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('task_error') )
         self.allIcons['?'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('task_unresolved') )
         
+       
         
         self.allIcons['wallet_in_out'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('wallet_in_out') )
         self.allIcons['wallet_in'] = self.il.Add( self.parent_frame.RessourcesProvider.GetImage('wallet_in') )

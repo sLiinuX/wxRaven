@@ -98,19 +98,19 @@ class SettingsManager(object):
             
             
     
-    def SaveSettingsToFile(self):
+    def SaveSettingsToFile(self, onlyGeneral=False):
         cfgfile = open(self.CONFIG_PATH+self.application_config_file ,'w')
         
         Config = ConfigParser()
         
         #Config.exist
-
+        
         #resumeviewonstartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
         #self.logger.info("Save resumeviewonstartup = " +resumeviewonstartup)
         self._SaveGeneralSettings(Config)
         self._SaveConnexionSettings(Config)
-        
-        self._SaveAllPluginsSettings(Config)
+        if not onlyGeneral:
+            self._SaveAllPluginsSettings(Config)
         
 
         #Config.set('General','connexionChangedCallbackInsafemode',str(self.connexionChangedCallbackInsafemode))
@@ -122,12 +122,14 @@ class SettingsManager(object):
     def _SaveGeneralSettings(self, configObj):
         
         resumeviewonstartup = str(self.parentframe.wxRavenMenuBar_Window_Perspectives.IsChecked(self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.GetId()))
+        
         self.logger.info("Save resumeviewonstartup = " +resumeviewonstartup)
+        #self.logger.info("Save resumeviewonstartup = " +self.resumepluginstate)
         
         configObj.add_section('Application')
         configObj.set('Application','resumeviewonstartup',resumeviewonstartup)
         configObj.set('Application','forceinprincipalauimanager',str(self.forceinprincipalauimanager))
-        configObj.set('Application','resumepluginstate',str(self.resumepluginstate))
+        configObj.set('Application','resumepluginstate',resumeviewonstartup)
         configObj.set('Application','safemode',str(self.safemode))
         
         

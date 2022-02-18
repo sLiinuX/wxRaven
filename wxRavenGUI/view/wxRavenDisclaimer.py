@@ -32,6 +32,7 @@ class wxRavenDisclaimerDialogLogic(wxRavenDisclaimerDialog):
         
         ROOT_PATH = parentFrame.Paths['ROOT'] + "/DISCLAIMER.xml"
         print(ROOT_PATH)
+        self.AddRTCHandlers()
         self.m_richText1.LoadFile(ROOT_PATH,2)
         
         
@@ -80,3 +81,6 @@ class wxRavenDisclaimerDialogLogic(wxRavenDisclaimerDialog):
         # This is needed for the view as HTML option since we tell it
         # to store the images in the memory file system.
         wx.FileSystem.AddHandler(wx.MemoryFSHandler())
+        
+        
+        

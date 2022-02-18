@@ -12,6 +12,7 @@ from libs.jsonrpcclient.requests import Request
 from jsonrpcclient import parse, request
 import inspect
 import time
+import urllib.parse
 
 def get_kwargs():
     #start_time = time.time()
@@ -20,7 +21,10 @@ def get_kwargs():
     kwargs = {}
     for key in keys:
         if key != 'self':
-            kwargs[key] = values[key]
+            kwargs[key] =  values[key]
+            
+            if isinstance(values[key], str):
+                kwargs[key] = urllib.parse.quote(values[key].encode('utf8'))
             
     end_time = time.time()
     #time_elapsed = (end_time - start_time)

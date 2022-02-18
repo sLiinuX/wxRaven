@@ -9,7 +9,7 @@ import time
 import wx
 from wxRavenGUI.application.pluginsframework import *
 from .wxRaven_ProfileManager_ProfileSelector import wxRavenProfileManager_ProfileSelectorLogic , wxRavenProfileManager_ProfileSelectorDialogLogic
-
+from .pluginSettings import wxRaven_ProfileManager_SettingPanel_Logic
 
 class wxRavenPlugin(PluginObject):
     '''
@@ -122,11 +122,11 @@ class wxRavenPlugin(PluginObject):
         # Lets put some setting pannels from pluginsetting file (to define as well)
         #
         self.PLUGIN_SETTINGS_GUI = []
-        '''
-        _prefIcon = self.RessourcesProvider.GetImage('wizard-prefs')
-        _MyTutorialSettingPanel_WithLogic = PluginSettingsTreeObject("Tutorial", _prefIcon, classPanel=MyTutorialSettingPanel_WithLogic, _childs=None)
-        self.PLUGIN_SETTINGS_GUI.append(_MyTutorialSettingPanel_WithLogic)
-        '''
+        
+        _prefIcon = self.RessourcesProvider.GetImage('UserAccount_custom')
+        _MyProfileSettingPanel_WithLogic = PluginSettingsTreeObject("Profile", _prefIcon, classPanel=wxRaven_ProfileManager_SettingPanel_Logic, _childs=None)
+        self.PLUGIN_SETTINGS_GUI.append(_MyProfileSettingPanel_WithLogic)
+        
         
         
         

@@ -120,6 +120,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         # Plugins management
         self.Plugins = pluginsManager(self.GetPath('PLUGIN'), self, loadPath=False)
+        self.Plugins.SetSwConfiguration()
         self.Plugins.SetExclusionList()
            
         self.Plugins.Initialize()
@@ -157,18 +158,22 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         #
         #self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Plugins.plugins, "Plugins")
         #self.GetPlugin("RavenRPC").addLocalVarInShell(  self.Views, "Views")
-        self.GetPlugin("RavenRPC").addLocalVarInShell(  self, "wxRaven")
+        self.addLocalVarInShell(  self, "wxRaven")
         #
         
         '''
         self.GetPlugin("RavenRPC").addLocalVarInShell(  self.ConnexionManager._wxRavenws, "wxRavenWebService")
         '''
         
+        try:
+            if self.GetPluginSetting('General', 'show_welcome'):
+                self.logger.info(f'Welcome ON')
+                self.Views.OpenView("Welcome", pluginname='', createIfNull=True)
+            else:
+                self.logger.info(f'Welcome OFF')
         
-        if self.GetPluginSetting('General', 'show_welcome'):
-            self.Views.OpenView("Welcome", pluginname='', createIfNull=True)
-        
-        
+        except Exception as e:
+            self.logger.info(f'Error Welcome : {e}')
         
         
         #
@@ -226,6 +231,8 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
             _res = self.Paths[pathname]
         return _res
     
+    
+    
     def GetPlugin(self, pname, loadIfNone = False):
         return self.Plugins.GetPlugin(pname, loadIfNone)
     
@@ -272,7 +279,12 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     
     """
     
-    
+    def addLocalVarInShell(self,_var, _name):
+        if self.GetPlugin("RavenRPC")!=None:
+            self.GetPlugin("RavenRPC").addLocalVarInShell(  _var, _name)
+        else:
+            self.Log('Plugin RavenRPC not detected, unable to add variable environment in shell', type='warning')
+            self.logger.error("APPLICATION BUILT-IN LOG : Raven-RPC Plugin missing.")            
     
     #Get the highlevel queries
     def getRvnRPC(self, networkName=None):

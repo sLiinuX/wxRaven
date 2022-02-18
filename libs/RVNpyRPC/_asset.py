@@ -563,7 +563,7 @@ class RVNpyRPC_Asset():
     
     def SearchAsset(self, AssetName, limit=50, start=0 , details=True, datetime=True, skipChars=[]):
         
-
+        self.logger.info(f'SearchAsset : {AssetName}  : {details} ') 
         _res =  self.RPCconnexion.listassets(AssetName ,details,limit, start )['result']
         _result= {}
         
@@ -572,6 +572,8 @@ class RVNpyRPC_Asset():
             for _asset in _res:
                 
                 _assetData = {}
+                
+                #self.logger.info(f'listassets with detail : {details}  : {_res} ')   
                 
                 if details:
                     _assetData = _res[_asset]
@@ -652,7 +654,7 @@ class RVNpyRPC_Asset():
         _assetData = {'name':assetName}
         _identifiedassetData = self.IdentifyAsset(_assetData)
         _identifiedassetData = self.GetAssetData(_identifiedassetData)
-        
+        self.logger.info(f'ExploreAsset : {assetName}  ') 
         ObjTreeEmpty = AssetTreeObj(assetName, _assetData['shortname'], _assetData['path'], _assetData['type'], _identifiedassetData)
 
         
@@ -684,6 +686,8 @@ class RVNpyRPC_Asset():
         
     
     def GetAssetChilds(self, assetname,allLevels=True,_limit=999999, _skipchars = []):
+        
+        
         _assetMatchList = self.SearchAsset(assetname+"*", limit=_limit, start=0, details=True, datetime=False, skipChars=_skipchars)   
         
         
@@ -705,6 +709,9 @@ class RVNpyRPC_Asset():
                 
             _allChilds.append(asset['name'])
     
+    
+    
+        
         return _allChilds
 
     

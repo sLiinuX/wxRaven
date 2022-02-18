@@ -7,7 +7,7 @@ import os
 import pickle
 import logging
 import shutil
-
+from plugins.configurations import  __wxraven_configurations_list__, __wxraven_configurations_predefined__
 
 
 class wxRavenProfileEngine(object):
@@ -32,8 +32,10 @@ class wxRavenProfileEngine(object):
         if ApplicationRoot == '':
             self.application_root = os.getcwd() + '/'
         
-        self.default_profile_path = self.application_root + 'plugins/ProfileManager/default_profile/'
-        
+        #self.default_profile_path = self.application_root + 'plugins/ProfileManager/default_profile/'
+        self.default_profile_path = self.application_root + 'plugins/ProfileManager/predefined_profiles/wxraven_standard_edition/'
+        self.predefined_profile_path = self.application_root + 'plugins/ProfileManager/predefined_profiles/'
+       
         if profileFileCache == None:
             self.profile_cache_file = self.application_root + self.profile_cache_default_name
         
@@ -47,7 +49,12 @@ class wxRavenProfileEngine(object):
         
         if len(self.profile_list)==0:
             self.profile_list = {'localuser':self.application_root}
-            
+        
+        
+        self.sw_editions_list = {}
+        
+        for ed in __wxraven_configurations_predefined__:
+            self.sw_editions_list[ed] = self.predefined_profile_path + __wxraven_configurations_predefined__[ed]
             
             
     
@@ -68,9 +75,22 @@ class wxRavenProfileEngine(object):
         return _valid
             
     
-    def CreateProfileInPath(self, path, profilename):
+    def CreateProfileInPath(self, path, profilename, sw_edition=''):
+        
+        
+        
+        _profile_template = ''
+        
+        
+        
+        
+        if sw_edition == '' or sw_edition not in  __wxraven_configurations_predefined__:
+            _profile_template = self.default_profile_path
+        else:
+            _profile_template = self.predefined_profile_path + __wxraven_configurations_predefined__[sw_edition]
+        
         try:
-            shutil.copytree(self.default_profile_path, path + '/' + profilename )
+            shutil.copytree(_profile_template, path + '/' + profilename )
             self.profile_list[profilename] = path + '/' + profilename
             self.__saveProfiles__()
             return True

@@ -150,7 +150,7 @@ class wxRavenMiscellaneous_CreateAirdropWithLogic(wxRavenMiscellaneous_Airdrop):
                 isRandom= self.m_checkBox26.GetValue()
                 _rdmText=''
                 if isRandom:
-                    _rdmText='Radomly selected'
+                    _rdmText='Randomly selected'
                 #UserInfo(self, f"TX = {_tx}  \n Winners : {len(_allAddresses)} ")
                 UserAdvancedMessage(self.parent_frame, f"Airdrop Sent to {len(_allAddresses)} Addresses {_rdmText} !", "success", msgdetails=f'Tx = {_tx} \nWinner List = {_allAddresses}', showCancel=False)
             else:

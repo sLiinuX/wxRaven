@@ -59,7 +59,7 @@ class wxRaven_Webservices_BackgroundServiceManager(object):
             
             t=threading.Thread(target=self.Service_Run_T, daemon=True)
             t.start()
-            self.parent_frame.GetPlugin("RavenRPC").addLocalVarInShell(  t, "webserviceDaemonTH")
+            self.parent_frame.addLocalVarInShell(  t, "webserviceDaemonTH")
             self.thread = t
             self.logger.info(" wxRaven_Webservices STARTED")
             self.plugin.setData("_status", "RUNNING")

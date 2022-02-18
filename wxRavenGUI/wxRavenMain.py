@@ -50,7 +50,7 @@ class wxRavenMainApp(object):
             _root = forcePath
         
         
-        self.tradepath = _root + f"/userdata/atomicswap_session.log"
+        #self.tradepath = _root + f"/userdata/atomicswap_session.log"
         self.savepath = _root + f"/userdata/wxraven_last_session.log"
         
         '''

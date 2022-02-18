@@ -9,6 +9,9 @@ from wxRavenGUI.application.pluginsframework import *
 import inspect
 import logging
 
+
+from plugins.configurations import __wxraven_configurations_list__,__wxraven_configurations_default__
+
 class pluginsManager(object):
     '''
     classdocs
@@ -32,12 +35,12 @@ class pluginsManager(object):
     
     
     _exclude_list =[]
-    
+    _include_only_list =[]
     _detected_plugin_list=[]
     
     
 
-    def __init__(self, pluginRootDir, contextAppMainFrame,resumestate=True , loadPath=True, _exclude=[]):
+    def __init__(self, pluginRootDir, contextAppMainFrame,resumestate=True , loadPath=True, _exclude=[], _includeOnly=[]):
         '''
         Constructor
         '''
@@ -53,7 +56,7 @@ class pluginsManager(object):
         
         self.logger = logging.getLogger('wxRaven')
         self._exclude_list = _exclude
-        
+        self._include_only_list = _includeOnly
         
         #self.LoadPlugin("plugins.General.plugin.*")
         
@@ -77,7 +80,17 @@ class pluginsManager(object):
             for p in self.plugins:
                 pinst = self.plugins[p]
                 pinst.LoadPluginFrames()
+                
+                
+    def RestorePluginsDatas(self, datas):
+        pass
     
+        for p in datas:
+            pinst = self.plugins[p]
+            try:
+                pinst.LoadPluginFrames(datas[p])
+            except Exception as e:
+                self.logger.error("RestorePluginsDatas() " + str(e))
     
     def RaisePluginError(self, message):
         try:
@@ -212,15 +225,20 @@ class pluginsManager(object):
     
     
     
-    def SaveAllPluginState(self):
+    def SaveAllPluginState(self, virtual=False):
         
+        all_plugins_state = {}
         for p in self.plugins:
             #self.logger.info("saving plugin state : " + p) 
-            self.ReportPluginInfo("Saving plugins state..." )
+            self.ReportPluginInfo(f"Saving plugins {p} state [Virtual={virtual}]..." )
             
             pinst = self.plugins[p]
-            pinst.SavePluginFrames()
+            _state = pinst.SavePluginFrames(virtual=virtual)
+            
+            all_plugins_state[p] = _state
     
+    
+        return all_plugins_state
     
     def LoadFromPluginDirectory(self):
         
@@ -240,7 +258,10 @@ class pluginsManager(object):
             
             self._detected_plugin_list.append(s)
             
-            
+            if len(self._include_only_list) > 0:
+                if s not in self._include_only_list:
+                    self.ReportPluginInfo(f"The plugin {s} has not been initialized (INITITALIZE ONLY in preferences). ")
+                    continue
             
             if s in self._exclude_list:
                 self.ReportPluginInfo(f"The plugin {s} has not been initialized (DISABLED in preferences). ")
@@ -320,7 +341,21 @@ class pluginsManager(object):
         if _gp != None:
             self._exclude_list = _gp.PLUGIN_SETTINGS['disable_plugins']
     """        
-   
+    
+    
+    def SetSwConfiguration(self):
+        _gp = self.appmainframe.GetPlugin("General")
+        if _gp != None:
+            swconfiguration = _gp.PLUGIN_SETTINGS['sw_configuration']
+            self.logger.info(f"Loading {swconfiguration} ...")
+            
+            #self.logger.info(f"available {__wxraven_configurations_list__} ...")
+            
+            if __wxraven_configurations_list__.__contains__(swconfiguration):
+                self._include_only_list = __wxraven_configurations_list__[swconfiguration]
+            else:
+                self._include_only_list = __wxraven_configurations_list__[__wxraven_configurations_default__]
+                self.logger.warning(f"Configuration {swconfiguration} does not exist anymore, loading std...")
    
     def SetExclusionList(self):
         _gp = self.appmainframe.GetPlugin("General")

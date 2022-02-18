@@ -103,6 +103,8 @@ class wxRavenPlugin(PluginObject):
                 'purge_on_close':True,
                 'save_on_close':True,
                 
+                'sw_configuration':'wxRaven : Developer/Server Edition',
+                
                 
                 'favorite_send_addresses':{},
                 'favorite_receive_addresses':{},

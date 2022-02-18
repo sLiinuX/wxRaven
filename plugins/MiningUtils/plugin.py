@@ -171,7 +171,8 @@ class wxRavenPlugin(PluginObject):
             
             
             self.hiveosClient = HiveOS_Client(_tk, _currentFarm)
-            self.parentFrame.GetPlugin("RavenRPC").addLocalVarInShell(  self.hiveosClient, "hiveOS")
+            
+            self.parentFrame.addLocalVarInShell(  self.hiveosClient, "hiveOS")
     
     
     

@@ -254,13 +254,17 @@ class RVNpyRPC_P2P_Marketplace():
     
     
     
+    
+    
+    
     def GetAllAdsInCache(self):
         
         cached_ads_list = {}
         count = 0
         
         _ads_path = self.__userdata_path__+"/p2pmarket/"
-        
+        if not os.path.exists(_ads_path):
+            os.makedirs(_ads_path)
         for filename in os.listdir(_ads_path):
             f = os.path.join(_ads_path, filename)
             # checking if it is a file
@@ -395,7 +399,7 @@ class RVNpyRPC_P2P_Marketplace():
     
 
     
-    def __Load_IPFS_Message__(self, _hash , ipfs_gateway="https://ravencoinipfs-gateway.com/ipfs/"):
+    def __Load_IPFS_Message__(self, _hash , ipfs_gateway="https://ravencoinipfs-gateway.com/ipfs/", _firstRun=True):
         
         #print(ipfs_gateway)
         #print(_hash)
@@ -441,8 +445,10 @@ class RVNpyRPC_P2P_Marketplace():
             #d=r.json()
             #self.logger.info(f"JSON DATA {type(_result)} = {_result} ")
         if not   _parsed:
-            self.logger.error("error parsing datas ")  
-            
+            self.logger.error(f"error parsing datas FR={_firstRun}")  
+        
+            if _firstRun :
+                _result = self.__Load_IPFS_Message__(_hash, "https://ravencoinipfs-gateway.com/ipfs/", False)
         
         return _result
     

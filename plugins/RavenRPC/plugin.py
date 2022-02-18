@@ -13,8 +13,16 @@ import datetime
 
 import re
 
-
+from .wxRaven_CodeEditorLogic import *
 from .pluginSettings import wxRavenRPCPluginSettings
+
+
+from .wxRaven_CodeEditor_FileObj import wxRaven_CodeEditor_File
+from .wxRaven_CodeFileBrowserLogic import *
+from plugins.RavenRPC import wxRaven_CodeEditor_FileObj
+
+import shutil
+
 
 class wxRavenPlugin(PluginObject):
     
@@ -63,6 +71,34 @@ class wxRavenPlugin(PluginObject):
                      'multipleViewAllowed':True
                      }
                     
+                    ,
+                    
+                     {
+                     'viewid':'Code Editor', 
+                     'name':'Code Editor', 
+                     'title':'Code Editor', 
+                     'position':'main', 
+                     'icon':wx.Bitmap( u"res/default_style/normal/python_editor.png", wx.BITMAP_TYPE_ANY ), 
+                     'class': wxRavenRavenRPC_CodeEditorLogic ,
+                     'default':False,
+                     'multipleViewAllowed':False
+                     }
+                     
+                     ,
+                    
+                     {
+                     'viewid':'Source Code Browser', 
+                     'name':'Source Code Browser', 
+                     'title':'Source Code Browser', 
+                     'position':'main', 
+                     'icon':wx.Bitmap( u"res/default_style/normal/folder_python_browser.png", wx.BITMAP_TYPE_ANY ), 
+                     'class': wxRaven_General_CodeBrowserLogic ,
+                     'default':False,
+                     'multipleViewAllowed':False
+                     }
+                    
+                    
+                    
                 ]
         
         
@@ -91,6 +127,28 @@ class wxRavenPlugin(PluginObject):
         self.setData("_CmdListInCache", False)
         
         self.setData("_ShellLocalsAddins", {})
+        
+        
+        
+        
+        self._codeEditorPath = self.parentFrame.GetPath('USERDATA')+'CodeEditor/'
+        if not os.path.exists(self._codeEditorPath):
+            os.makedirs(self._codeEditorPath)
+        self._backupFolderFiles = self._codeEditorPath+'Backups/'
+        if not os.path.exists(self._backupFolderFiles):
+            os.makedirs(self._backupFolderFiles)
+        
+        #files in instance in the format {name:path}
+        self.setData("code_editor_filelist", {})
+        self.setData("code_editor_new_count", 1)
+        self.setData("code_editor_file_open", '')
+        
+        self.setData("code_editor_user_folder", self._codeEditorPath)
+        self.setData("code_editor_backup_folder", self._backupFolderFiles)
+        
+        
+        
+        
         
         self.ALLOW_MULTIPLE_VIEWS_INSTANCE = True
         self.parentFrame.ConnexionManager.RegisterOnConnexionChanged(self.OnNetworkChanged_T)
@@ -143,6 +201,157 @@ class wxRavenPlugin(PluginObject):
         #self.LoadView(self.PLUGINS_VIEWS[0])
         #self.LoadView(self.PLUGINS_VIEWS[0])
         
+    
+    
+    
+    
+    
+    
+    #
+    # Code editor functions
+    #
+    
+    def OpenCodeEditor(self, filename=''):
+        self.setData("code_editor_file_open", filename)
+        _newView = self.parentFrame.Views.OpenView("Code Editor", "RavenRPC", open)
+        
+        print(_newView)
+        if _newView == None:
+            _vi = self.parentFrame.Views.SearchViewInstance("Code Editor")
+            _newView = _vi
+            
+            
+        if filename!= '':
+            self.logger.info(f'LoadFileCodePagePanel : {filename}')
+            _newView['instance'].LoadFileCodePagePanel(filename)
+            
+            
+        return _newView['instance']
+    
+    
+        
+    
+    
+    def CodeEditor_NewFile(self, editor=None):
+        
+        
+        
+        _currentList = self.getData("code_editor_filelist")
+        _currentIndex = self.getData("code_editor_new_count")
+        
+        _newfilename = f'new {_currentIndex}'
+        _currentIndex = _currentIndex+1
+        self.setData("code_editor_new_count", _currentIndex)
+        
+        _newfile = wxRaven_CodeEditor_File(filename=_newfilename, _isnew=True, _editor=editor)
+        
+        _currentList[_newfilename] = _newfile
+        self.setData("code_editor_filelist", _currentList)
+        
+        self.logger.info(f'New file created in Code Editor : {_newfilename}')
+        
+        return _newfile
+        
+        
+    
+    
+    def GetOpenFile(self, filename ):
+        _currentList = self.getData("code_editor_filelist")
+        self.logger.info(f'Searching in openned Code Editor files : {filename}')
+        self.logger.info(f'Cachelist : {_currentList}')
+        if _currentList.__contains__(filename):
+            return _currentList[filename]
+        else :
+            return None
+        
+    
+        
+    
+    
+    def CodeEditor_OpenFile(self, filename,editor=None):
+        
+        head, tail = os.path.split(filename)
+        _exist = self.GetOpenFile(tail)
+        _filetoload=None
+        if _exist != None:
+            _filetoload= _exist
+        
+        else:
+            _filetoload = wxRaven_CodeEditor_File(filename=filename, _isnew=False, _editor=editor)
+            _currentList = self.getData("code_editor_filelist")
+            
+            _currentList[_filetoload._name] = _filetoload
+            self.setData("code_editor_filelist", _currentList)
+            
+        self.logger.info(f'New file opened in Code Editor : {filename}')    
+            
+        return _filetoload
+    
+    
+    
+    
+    def CodeEditor_OpenCodeEditor(self, filename=''):
+        ce = self.OpenCodeEditor(filename)    
+        #ce.LoadFileCodePagePanel(filename)
+    
+    
+    def __UpdateFileObj_Editor__(self, fileobj:wxRaven_CodeEditor_File):
+        self.logger.info(f'Code Editor update : {fileobj._name}')    
+        _currentList = self.getData("code_editor_filelist")
+        _currentList[fileobj._name] = fileobj
+        self.setData("code_editor_filelist", _currentList)
+    
+    
+    
+    def CodeEditor_SaveFile(self, filename,method='Save', _dobackup=False):
+        _f:wxRaven_CodeEditor_File
+        _f = self.GetOpenFile(filename)
+        if _f == None:
+            head, tail = os.path.split(filename)
+            _f = self.GetOpenFile(tail)
+            
+        if _f !=None:
+            
+            if _dobackup and not _f._new:
+                shutil.copy2(_f._filepath, self._backupFolderFiles + _f._name + '.backup') 
+            
+            
+            _savePath = _f._filepath
+            head, tail = os.path.split(_savePath)
+            if method == 'SaveAs':
+                wildcard = "Python source (*.py)|*.py|"     \
+                   "All files (*.*)|*.*"
+        
+        
+                dlg = wx.FileDialog(
+                    self, message="Choose a file",
+                    defaultDir=head,
+                    defaultFile=tail,
+                    wildcard=wildcard,
+                    style=wx.FD_SAVE  |   wx.FD_PREVIEW   )
+        
+                # Show the dialog and retrieve the user response. If it is the OK response,
+                # process the data.
+                if dlg.ShowModal() == wx.ID_OK:
+                    _savePath = dlg.GetPath() 
+                else:
+                    print('canceled by user..')
+                    _savePath = None
+                    
+            
+            if _savePath != None:
+                _f._editor.SaveFile(_savePath)
+                
+                
+                self.RaisePluginLog(f"{_savePath} Saved", 'info')
+    
+    def CodeEditor_PushToGit(self, filename):
+        pass
+    
+    
+    def CodeEditor_FetchLocal(self, filename):
+        pass
+    
     
     
     """

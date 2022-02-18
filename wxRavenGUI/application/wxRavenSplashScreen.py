@@ -232,11 +232,15 @@ class SplashScreenMgr():
     
     def __InitializeApplication__(self, profilePath=''):
         
-        
-        
-        _application = self.InitParentFrame(profilePath)
+        _application=None
         _show = True
-                
+        #try:
+        if True:
+            print(f'InitParentFrame : {profilePath}') 
+            _application = self.InitParentFrame(profilePath)
+            _show = True
+        #except Exception as e:
+        #    print(f'ERROR InitParentFrame : {e}')        
         
         
         

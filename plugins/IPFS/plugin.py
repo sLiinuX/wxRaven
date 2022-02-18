@@ -204,7 +204,9 @@ class wxRavenPlugin(PluginObject):
             
         self.rpcPluginCmdLine = ipfs_rpc
         self.setData("rpcPluginCmdLine", self.rpcPluginCmdLine)
-        self.parentFrame.GetPlugin("RavenRPC").addLocalVarInShell( self.rpcPluginCmdLine, "ipfs")
+        self.parentFrame.addLocalVarInShell( self.rpcPluginCmdLine, "ipfs")
+        
+        
         print("DONE !")
         
     

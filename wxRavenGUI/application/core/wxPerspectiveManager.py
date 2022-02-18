@@ -9,6 +9,101 @@ import pickle
 import inspect 
 import logging
 
+from wxRavenGUI.application.wxcustom.CustomUserIO import UserAdvancedMessage, RequestUserTextInput
+
+class perspectiveContentDescriptor(object):
+    
+    
+    
+    _initialized=False
+    _name = ''
+    
+    mgr_perspective_datas=''
+    plugins_datas={}
+    
+     
+    def __init__(self):
+        pass
+    
+    def ExportPerspective(self, _name='wxRavenPerpective'):
+        return {
+            'name' : _name,
+            'mgr_perspective':self.mgr_perspective_datas,
+            'plugins':self.plugins_datas
+            }
+        
+        
+        
+    def SnapshotPerspective(self, parentframe):
+        self.mgr_perspective_datas = parentframe.m_mgr.SavePerspective()
+        self.plugins_datas = parentframe.Plugins.SaveAllPluginState(virtual=True)
+        self._initialized= True
+        
+        return self._initialized
+        
+        
+    def SaveUserPerspective(self, path, name='wxRavenPerpective'):
+        logger = logging.getLogger('wxRaven')
+        _saved = False
+        if self._initialized==False:
+            logger.error('Invalid or null perspective.') 
+            return
+        
+        try:
+            if not os.path.exists(path):
+                os.makedirs(path)
+            
+            logger.info(f'Saving user perspective {name} in {path}...')
+            pickle.dump( self.ExportPerspective(name), open(path+name+".perspective", "wb" ) )
+            _saved = True
+        except Exception as e:
+            logger.error(e) 
+            
+        return _saved
+        
+        
+    def LoadUserPerspective(self, perspective_filename):    
+        logger = logging.getLogger('wxRaven')
+        
+        try:
+            
+            
+            logger.info(f'Loading user perspective {perspective_filename}...')
+            result = pickle.load( open(perspective_filename, "rb" ) )
+            
+            self.mgr_perspective_datas = result['mgr_perspective']
+            self.plugins_datas = result['plugins']
+            self._name = result['name']
+            self._initialized= True
+        
+            
+        except Exception as e:
+            logger.error(e)
+            
+        return self._initialized
+    
+    
+    
+    def RestoreSnapshot(self, parentframe):
+        logger = logging.getLogger('wxRaven')
+        _saved = False
+        if self._initialized==False:
+            logger.error('Invalid or null perspective.') 
+            return
+        
+        
+        parentframe.Plugins.RestorePluginsDatas(self.plugins_datas)
+        parentframe.m_mgr.LoadPerspective(self.mgr_perspective_datas)
+        
+    
+        
+    #self.PerspectiveManager.SaveLastPerspective()
+    #self.Plugins.SaveAllPluginState()
+
+
+
+
+
 class perspectiveManager(object):
     '''
     classdocs
@@ -35,6 +130,11 @@ class perspectiveManager(object):
         
         self.lastperspectivefilename = self.configpath+"perspective.last"
         self.lastsizefilename = self.configpath+"window.last"
+        
+        
+        self.userperspectivepath = parentframe.GetPath('USERDATA')+'perspectives/'
+        if not os.path.exists(self.userperspectivepath):
+            os.makedirs(self.userperspectivepath)
         
         self.perspective_additional_data = {}
         
@@ -64,6 +164,7 @@ class perspectiveManager(object):
         print(f"ToggleResumeViewSettings {_tValue} {_fromEvent}")
         self.parentframe.Settings.resumeviewonstartup = _tValue
         self.parentframe.Settings.resumepluginstate = _tValue
+        #self.parentframe.Settings.
         #self.parentframe.Settings.resumeviewonstartup = _tValue
         if not _fromEvent:
             self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLastOnStartup.Check( _tValue )
@@ -149,6 +250,10 @@ class perspectiveManager(object):
         #wx.MessageBox("Last perspective has been purged.")  
         self.RaisePerspectiveLog("Last perspective has been purged.", "msg")
         
+    
+    
+    
+    
         
     def LoadPerspectiveFromFile(self, filename):    
         if os.path.isfile(filename) :
@@ -206,16 +311,58 @@ class perspectiveManager(object):
             
         self.parentframe.m_mgr.Update()
         self.parentframe.Layout()
+    
+    
+    
+    def GetPerspectiveList(self):
+        perspective_list = [ f.name for f in os.scandir(self.userperspectivepath ) if f.is_file() ] 
         
+        list_clean = {}
+        for p in perspective_list:
+            name_ext = p.split('.')
+            if name_ext[1] != 'perspective':
+                continue
+            
+            list_clean[name_ext[0]] = self.userperspectivepath+p
+            
+            
+        return   list_clean  
+           
             
     def LoadLastPerspective(self):
         self.loadWindowsSize()
         self.LoadPerspectiveFromFile(self.lastperspectivefilename)
         
+    
+    def LoadUserPerspective(self, perspective_name):
+        path = self.parentframe.GetPath('USERDATA')+'perspectives/'+perspective_name+'.perspective'
+        
+        _newPerspective= perspectiveContentDescriptor()
+        if _newPerspective.LoadUserPerspective(path):
+            _newPerspective.RestoreSnapshot(self.parentframe)
+        
+        
         
     
-    
-    
+    def SaveCurrentPerspective(self):
+        
+        _name = RequestUserTextInput(self.parentframe, "Input a perspective name", 'Input a perspective name')
+        
+        if _name!= '':
+            
+            _currentPerspective= perspectiveContentDescriptor()
+            _currentPerspective.SnapshotPerspective(self.parentframe)
+            _res = _currentPerspective.SaveUserPerspective(self.parentframe.GetPath("USERDATA")+'perspectives/', _name)
+            
+            
+            if _res:
+                UserAdvancedMessage(self.parentframe, f"Perspective {_name} saved with success !", 'success', self.parentframe.GetPath("USERDATA")+'perspectives/'+_name+'.perspective')
+            else:
+                UserAdvancedMessage(self.parentframe, f"Unable to save Perspective {_name} !", 'error', self.parentframe.GetPath("USERDATA")+'perspectives/'+_name+'.perspective')
+        
+        
+        
+        #_currentPerspective.SnapshotPerspective(self.parentframe)
     
     
     

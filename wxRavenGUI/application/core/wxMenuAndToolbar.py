@@ -11,6 +11,7 @@ import time
 import wx.aui  as aui
 import logging
 
+import webbrowser
 
 
 from wxRavenGUI.view import *
@@ -70,6 +71,8 @@ class MenuAndToolBarManager(object):
     def __PostReadyLoader__(self, evt=None):
         self.logger.info("__PostReadyLoader__")
         self.InitPluginsShortcutToolbars()
+        self.refreshPerspectiveListMenu()
+        
     
     
     
@@ -633,6 +636,9 @@ class MenuAndToolBarManager(object):
     
     """
     
+    def purgePerspectiveListMenu(self):
+        self.purgeViewsListMenu(self.parentframe.wxRavenMenuBar_Window_Perspectives_OpenPerspectives)
+    
     
     def purgeViewsListMenu(self , menuObject=None):
         if menuObject==None:
@@ -642,6 +648,32 @@ class MenuAndToolBarManager(object):
             
             for i in menuObject.GetMenuItems():
                 menuObject.Delete(i) 
+    
+    
+    
+    
+    def refreshPerspectiveListMenu(self, args=[]):
+        
+        self.logger.info('refreshPerspectiveListMenu')
+        
+        self.purgePerspectiveListMenu()
+        try:
+            
+            _allPersp = self.parentframe.PerspectiveManager.GetPerspectiveList()
+            
+            menuObject =   self.parentframe.wxRavenMenuBar_Window_Perspectives_OpenPerspectives
+            for p in _allPersp:
+                item = menuObject.Append(-1, p)
+                item.SetBitmap(self.parentframe.RessourcesProvider.GetImage('perspective_default'))
+                
+                
+                self.parentframe.Bind(wx.EVT_MENU, self.OnPerspectiveItemSelected, item)
+                
+                
+            
+        except Exception as e:
+            #self.logger.info(" > refreshViewsListMenu " + str(e))
+            self.RaiseMenuAndToolLog("Unable to refresh perspective list menu : "+ str(e), "error")
     
     
     
@@ -751,7 +783,15 @@ class MenuAndToolBarManager(object):
         #self.logger.info("destroy all")
         self.parentframe.Views.DestroyAllNonVisible()
         
+    
+    
+    
+    def OnPerspectiveItemSelected(self, event): 
+        item = self.parentframe.wxRavenMenuBar_Window_Perspectives_OpenPerspectives.FindItemById(event.GetId())
         
+        text = item.GetItemLabelText()
+        self.parentframe.PerspectiveManager.LoadUserPerspective(text)
+          
     
     def OnViewItemSelected(self, event):
         item = self.parentframe.wxRavenMenuBar_Window_Views.FindItemById(event.GetId())
@@ -780,6 +820,12 @@ class MenuAndToolBarManager(object):
     
     def OnLoadLastPerspectiveClick(self, evt):
         self.parentframe.PerspectiveManager.LoadLastPerspective()
+        
+    def OnSavePerspectiveAsClick(self, evt):
+        self.parentframe.PerspectiveManager.SaveCurrentPerspective()
+        self.refreshPerspectiveListMenu()
+    
+    
     
     
     
@@ -816,6 +862,18 @@ class MenuAndToolBarManager(object):
             self._aboutDialog = None
     
     
+    def OnSupportClicked(self, evt):
+        _inviteToken = 'e4tNn3C3N3'
+        webbrowser.open('https://discord.gg/'+_inviteToken)
+        
+        
+    def OnQuickUnlockClicked(self, evt):
+        _p = self.parentframe.GetPlugin('Ravencore')
+        if _p != None:
+            _p.QuickWalletUnlockRequest()
+        
+    
+    
     def setupMenuBar(self):
         
         
@@ -830,8 +888,14 @@ class MenuAndToolBarManager(object):
         #res\default_style\normal\default_persp.png
         
         
+        
+        
         self.parentframe.Bind( wx.EVT_MENU, self.OnLoadLastPerspectiveClick, id = self.parentframe.wxRavenMenuBar_Window_Perspectives_LoadLast.GetId() )
         self.parentframe.Bind( wx.EVT_MENU, self.OnDeleteLastPerspectiveClick, id = self.parentframe.wxRavenMenuBar_Window_Perspectives_DeleteLast.GetId() )
+        self.parentframe.Bind( wx.EVT_MENU, self.OnSavePerspectiveAsClick, id = self.parentframe.wxRavenMenuBar_Window_Perspectives_SavePerspAs.GetId() )
+        
+        
+        
         
         self.parentframe.Bind( wx.EVT_MENU, self.OnOpenWidgetInspector, id = self.parentframe.wxRavenMenuBar_Help_WidgetInspector.GetId() )
         
@@ -839,7 +903,12 @@ class MenuAndToolBarManager(object):
         
         self.parentframe.Bind( wx.EVT_MENU, self.OnAboutWxRaven, id = self.parentframe.wxRavenMenuBar_Help_About.GetId() )
         
+        self.parentframe.Bind( wx.EVT_MENU, self.OnSupportClicked, id = self.parentframe.wxRavenMenuBar_Help_Support.GetId() )
         
+    
+        self.parentframe.Bind( wx.EVT_MENU, self.OnQuickUnlockClicked, id = self.parentframe.wxRavenMenuBar_Wallet_Unlock.GetId() )
+        
+    
     
     
         

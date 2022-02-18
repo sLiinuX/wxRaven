@@ -92,7 +92,7 @@ import functools
 import flask_classful
 from flask_classful import *
 
-
+import urllib.parse
 
 from wxRavenGUI import wxRavenMain
 
@@ -100,7 +100,17 @@ import wx
 import sys, os
 import argparse
 #sys.stderr = open(os.getcwd() + "session.log", "wb")
-    
+
+
+
+from wx import stc
+import keyword
+import  wx.stc  as  stc
+from wx import stc
+import  wx.stc
+#from StyledTextCtrl import PythonSTC
+
+
 
 if __name__ == '__main__':
     

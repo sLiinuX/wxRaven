@@ -39,10 +39,12 @@ class testPanel(basicTestMessageRead):
         try:
           
             _lastMessage = self.parent_frame.GetPluginData("Squawker","_lastMessage")
-            
             self.m_textCtrl1.SetValue(str(_lastMessage))
         
         except Exception as e:
             print("updatePanel getData ERROR> " + str(e))
         
         self.Layout()
+        
+        
+        

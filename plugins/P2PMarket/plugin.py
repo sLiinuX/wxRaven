@@ -310,8 +310,9 @@ class wxRavenPlugin(PluginObject):
         self.setData("search_running", False)
         
         self.setData("_tx_history", {})
-        
-        
+        self.setData("_tx_history_running", False)
+        self.setData("_tx_history_skip_swap", False)
+        self.setData("_tx_history_skip_ads", False)
         
         self.setData("_storage", str(parentFrame.Paths['USERDATA']) + '')
         #self.setData("myPluginData2", False)
@@ -610,12 +611,59 @@ class wxRavenPlugin(PluginObject):
         
         
         
+    def __AnalyzeAdStatus__(self, adObject):
+        _AnalysisResult = {
+            'executed_utxos':[],
+            'order_utxos':[],
+            'transactions':[],
+            'unresolved' : 1
+            }
+        
+        _order_utxos = []
+        _executed_utxos = []
+        _transactions = []
+        
+        for _txid in adObject._adTxDatas:
+            _tx = adObject._adTxDatas[_txid]
+            
+            _valid, _data = self.DecodeTx(_tx)    
+            
+            #self.logger.info(f"TX ANALYSIS : {_valid} {_data}.")
+            
+            _obj = {'raw':_tx}
+            
+            if _valid:
+                _transactions.append(_obj)
+                _order_utxos.append('notfoundUTXO-1')
+                
+        
+            else:
+                if _data.__contains__('Has more than one vin/vout'):
+                    #invalid issue
+                    pass
+                if _data.__contains__('this transaction may have been executed already'):
+                    _executed_utxos.append(_obj)
         
         
+        _AnalysisResult['executed_utxos'] = _executed_utxos
+        _AnalysisResult['order_utxos'] = _order_utxos
+        _AnalysisResult['transactions'] = _transactions
+        
+        return _AnalysisResult
+    
+    
+    
+    
     
     def __DoRetreiveMarketTradesHistory__(self):
+        if self.getData("_tx_history_running")==True:
+            return
+        
+        self.setData("_tx_history_running", True)
         ravencoin = self.__getNetwork__()
         
+        _tx_history_skip_swap = self.getData("_tx_history_skip_swap")
+        _tx_history_skip_ads = self.getData("_tx_history_skip_ads")
         
         
         _final_datas= {}
@@ -631,75 +679,98 @@ class wxRavenPlugin(PluginObject):
         self.logger.info(f" {len(_ads_cache)} ads cache.")
         
         #CrossCheck and Analyse
-        
-        for _trId in _trade_cache:
-            _trade = _trade_cache[_trId]
-            
-            
-            _trade['description'] = '?'
-            if _trade['type'] == 'buy':
-                _trade['description'] = f"BUYING {_trade['out_quantity']} {_trade['out_type']}"
-            if _trade['type'] == 'sell':
-                _trade['description'] = f"SELLING {_trade['in_quantity']} {_trade['in_type']}"
-            if _trade['type'] == 'trade':
-                _trade['description'] = f"TRADING {_trade['in_quantity']} {_trade['in_type']}  <-> {_trade['out_quantity']} {_trade['out_type']}"
+        if not _tx_history_skip_swap:
+            for _trId in _trade_cache:
+                _trade = _trade_cache[_trId]
                 
-            
-            
-            
-            _trade['status'] = '?'
-            _trade['ad'] = None
-            _trade['unresolved'] = 0
-            
-            
-            _found, _matchAd, _id = self.__searchMatchingAdInCache__(_trade, _ads_cache)
-            
-            if _found:
-                _ads_cache.pop(_id, None)
-                _trade['ad'] = _matchAd
-                _trade['status'] = 'WAITING'
+                _trade['cache_type'] = 'SWAP'
+                _trade['description'] = '?'
+                if _trade['type'] == 'buy':
+                    _trade['description'] = f"BUYING {_trade['out_quantity']} {_trade['out_type']}"
+                if _trade['type'] == 'sell':
+                    _trade['description'] = f"SELLING {_trade['in_quantity']} {_trade['in_type']}"
+                if _trade['type'] == 'trade':
+                    _trade['description'] = f"TRADING {_trade['in_quantity']} {_trade['in_type']}  <-> {_trade['out_quantity']} {_trade['out_type']}"
+                    
                 
-            else:
-                _trade['unresolved'] = 1
                 
-                if len(_trade['executed_utxos']) > 0 :
-                    _trade['status'] = 'COMPLETE'
-            
-            
-            
-            
-            
-            _final_datas[_data_cursor] = _trade
-            _data_cursor = _data_cursor+1
+                
+                _trade['status'] = 'NOT FOUND'
+                _trade['ad'] = None
+                _trade['unresolved'] = 0
+                
+                
+                _found, _matchAd, _id = self.__searchMatchingAdInCache__(_trade, _ads_cache)
+                
+                if _found:
+                    _ads_cache.pop(_id, None)
+                    _trade['ad'] = _matchAd
+                    _trade['status'] = 'WAITING'
+                    
+                else:
+                    _trade['unresolved'] = 1
+                    
+                    if len(_trade['executed_utxos']) > 0 :
+                        _trade['status'] = 'COMPLETE'
+                
+                
+                
+                
+                
+                _final_datas[_data_cursor] = _trade
+                _data_cursor = _data_cursor+1
         
         
         
         
         self.logger.info(f" {len(_ads_cache)} has not been identified in transactions.")
         
-        for _ad_cursor in _ads_cache:
-            _ad = _ads_cache[_ad_cursor]
-            
-            
-            _unresolvedTrade = {}
-            _unresolvedTrade['description'] = _ad._adTitle
-            _unresolvedTrade['type'] = _ad.GetType()
-            if _ad.GetType() == 'buy':
-                _unresolvedTrade['description'] = f"BUYING {_ad._adAssetQt} {_ad._adAssetQt}"
-            if _ad.GetType() == 'sell':
-                _unresolvedTrade['description'] = f"SELLING  {_ad._adAssetQt} {_ad._adAssetQt}"
-            if _ad.GetType() == 'trade':
-                _unresolvedTrade['description'] = f"TRADING {_ad._adAssetQt} {_ad._adAssetQt}  <-> {_ad._adPrice} {_ad._adPriceAsset}"
-            
-            _unresolvedTrade['unresolved'] = 1
-            _unresolvedTrade['order_utxos'] = range(0, len(_ad._adTxDatas))
-            _unresolvedTrade['executed_utxos'] = []
-            _unresolvedTrade['transactions'] = []
-            
-            _unresolvedTrade['status'] = 'NOT FOUND'
-            
-            _final_datas[_data_cursor] = _unresolvedTrade
-            _data_cursor = _data_cursor+1
+        
+        
+        if not _tx_history_skip_ads:
+            for _ad_cursor in _ads_cache:
+                _ad = _ads_cache[_ad_cursor]
+                
+                
+                _unresolvedTrade = {}
+                _unresolvedTrade['cache_type'] = 'AD'
+                _unresolvedTrade['description'] = _ad._adTitle
+                _unresolvedTrade['type'] = _ad.GetType()
+                if _ad.GetType().lower() == 'buy':
+                    _unresolvedTrade['description'] = f"BUYING {_ad._adAssetQt} {_ad._adPriceAsset}"
+                if _ad.GetType().lower() == 'sell':
+                    _unresolvedTrade['description'] = f"SELLING  {_ad._adAssetQt} {_ad._adAsset}"
+                if _ad.GetType().lower() == 'trade':
+                    _unresolvedTrade['description'] = f"TRADING {_ad._adAssetQt} {_ad._adAsset}  <-> {_ad._adPrice} {_ad._adPriceAsset}"
+                
+                
+                '''
+                _unresolvedTrade['unresolved'] = 1
+                _unresolvedTrade['order_utxos'] = range(0, len(_ad._adTxDatas))
+                _unresolvedTrade['executed_utxos'] = []
+                _unresolvedTrade['transactions'] = []
+                '''
+                    
+                complementData = self.__AnalyzeAdStatus__(_ad)    
+                   
+                for key in   complementData:
+                    _Data = complementData[key]
+                    _unresolvedTrade[key] = _Data
+                    
+                _unresolvedTrade['status'] = 'NOT FOUND'
+                
+                
+                
+                    
+                if len(_unresolvedTrade['executed_utxos']) > 0 :
+                    
+                    if len(_unresolvedTrade['executed_utxos']) > len(_unresolvedTrade['transactions']):
+                        _unresolvedTrade['status'] = 'COMPLETE'
+                    else:
+                        _unresolvedTrade['status'] = 'WAITING'
+    
+                _final_datas[_data_cursor] = _unresolvedTrade
+                _data_cursor = _data_cursor+1
             
         
         
@@ -709,7 +780,7 @@ class wxRavenPlugin(PluginObject):
         self.setData("_tx_history", _final_datas)
         
         
-        
+        self.setData("_tx_history_running", False)
         
         
         

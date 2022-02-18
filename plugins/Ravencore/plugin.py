@@ -11,7 +11,7 @@ Each plugin must have a plugin.py file which declare a class wxRavenPlugin(Plugi
 
 '''
 
-
+import webbrowser
 #import the class form above level, it contains predefined functions to overwrite.
 #from plugins.pluginObjectTemplate import * 
 from wxRavenGUI.application.pluginsframework import *
@@ -33,7 +33,7 @@ import threading
 from .wxRavenRavencoreAssetNavigatorLogic import *
 
 from .wxRavenRavencoreAssetIssuerLogic import *
-
+from wxRavenGUI.application.wxcustom import *
 
 try:
     import pyperclip
@@ -752,4 +752,23 @@ class wxRavenPlugin(PluginObject):
             _vi = self.parentFrame.Views.SearchViewInstance("Wallet")
             return _vi['instance']
         return _newView['instance']
+    
+    
+    
+    def CheckIPFSGateway(self):
+        pass
+    
+    def QuickWalletUnlockRequest(self):
+        
+        
+        ravencoin = self.parentFrame.getRvnRPC()
+        pwd=RequestUserWalletPassword(self.parentFrame)
+        if pwd != None:
+            res=ravencoin.wallet.__check_unlock__(_passphrase=pwd, timeout=30)
+            #UserAdvancedMessage(parentf, message, type, msgdetails, showCancel)
+        
+            ReportRPCResult(self.parentFrame, res )
+    
+    
+    
     
