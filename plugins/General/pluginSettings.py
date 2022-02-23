@@ -258,8 +258,8 @@ class wxRavenConexionsSettingPanel(PluginSettingsPanelObject):
              
             try:
                 _conArr = _con.split('=')
-                _name = _conArr[0]
-                _val = _conArr[1]
+                _name = _conArr[0].replace(' ', '')
+                _val = _conArr[1].replace(' ', '')
                 
                 _newList[_name] = _val
 
@@ -387,8 +387,8 @@ class wxRavenConnexionRelaysSettings_SettingLogic(PluginSettingsPanelObject):
              
             try:
                 _conArr = _con.split('=')
-                _name = _conArr[0]
-                _val = _conArr[1]
+                _name = _conArr[0].replace(' ', '')
+                _val = _conArr[1].replace(' ', '')
                 
                 _newList[_name] = _val
 

@@ -32,11 +32,21 @@ class wxRaven_RPC_WebserviceClient(object):
     
     _client = None
     
-    def __init__(self, ip="ec2-18-221-126-115.us-east-2.compute.amazonaws.com", port=9090):
+    def __init__(self, ip="relay.wxraven.link", port=9090, useHTTPS=False):
         self._ip = ip
         self._port = port
         self.logger = logging.getLogger('wxRaven')
+        
+        
+        
         self.url = 'http://{}:{}'.format(ip, port)
+        if useHTTPS:
+            self.url = 'https://{}'.format(ip)
+            
+        if ip.__contains__('https'):
+            self.url = '{}'.format(ip)
+        
+        self.logger.info(f'Creating a new RPC Client at {self.url}')
         self._client = xmlrpc.client.ServerProxy(self.url, allow_none=True)
         
 

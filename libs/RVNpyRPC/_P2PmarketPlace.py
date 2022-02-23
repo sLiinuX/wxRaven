@@ -399,7 +399,7 @@ class RVNpyRPC_P2P_Marketplace():
     
 
     
-    def __Load_IPFS_Message__(self, _hash , ipfs_gateway="https://ravencoinipfs-gateway.com/ipfs/", _firstRun=True):
+    def __Load_IPFS_Message__(self, _hash , ipfs_gateway="https://wxraven.link/ipfs/", _firstRun=True):
         
         #print(ipfs_gateway)
         #print(_hash)
@@ -676,16 +676,19 @@ class RVNpyRPC_P2P_Marketplace():
                 #self.logger.info(f"_matchType {_matchType}")
                 #self.logger.info(f"_matchSelf {_matchSelf}")
                 
-                
-                if _matchType and _matchSelf==1 : #and self.tx_to_self(tx, size=0.2):
-                    transaction = self.RPCconnexion.decoderawtransaction(self.RPCconnexion.getrawtransaction(tx["txid"])["result"])["result"]
-                    for vout in transaction["vout"]:
-                        vout = vout["scriptPubKey"]
-                        if vout["type"] == "transfer_asset" and vout["asset"]["name"] == asset and vout["asset"]["amount"] == 0.2:
-                            kaw = {"address": vout["addresses"], "message": vout["asset"]["message"], "block": transaction["locktime"]}
-                            latest.append(kaw)
-                else:
-                    pass
+                try:
+                    if _matchType and _matchSelf==1 : #and self.tx_to_self(tx, size=0.2):
+                        transaction = self.RPCconnexion.decoderawtransaction(self.RPCconnexion.getrawtransaction(tx["txid"])["result"])["result"]
+                        for vout in transaction["vout"]:
+                            vout = vout["scriptPubKey"]
+                            if vout["type"] == "transfer_asset" and vout["asset"]["name"] == asset and vout["asset"]["amount"] == 0.2:
+                                kaw = {"address": vout["addresses"], "message": vout["asset"]["message"], "block": transaction["locktime"]}
+                                latest.append(kaw)
+                    else:
+                        pass
+                except Exception as e:
+                    self.logger.error(f"error reading message in {tx['txid']}GetP2PMarketAdsRawListing") 
+                    continue
                     #self.logger.info(f"excluded {tx}")
                     #self.__addTxInInvalidCacheIfNotExist__(_txId)
             _data = []

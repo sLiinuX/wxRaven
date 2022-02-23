@@ -234,8 +234,8 @@ class wxRavenPlugin(PluginObject):
                 'strictname' : False,
                 'filtertype' : False,
                 'filtertypelist' : [],
-                'ipfsgateway_default' : 'http://172.105.7.111:8080/ipfs/',
-                'ipfsgateway_providers':['http://172.105.7.111:8080/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'https://ravencoinipfs-gateway.com/ipfs/'],
+                'ipfsgateway_default' : 'https://wxraven.link/ipfs/',
+                'ipfsgateway_providers':['https://wxraven.link/ipfs/','https://wxraven.link/ipfs2/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'https://ravencoinipfs-gateway.com/ipfs/'],
                 
                 'bookmark_list':['My Assets'],
                 'navigation_use_cache' : True,

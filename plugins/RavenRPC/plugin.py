@@ -130,6 +130,9 @@ class wxRavenPlugin(PluginObject):
         
         
         
+        self._pluginPath = self.parentFrame.GetPath('PLUGIN')+'RavenRPC/'
+        self._RpcHelpCache = self.parentFrame.GetPath('PLUGIN')+'RavenRPC/help.cache'
+        
         
         self._codeEditorPath = self.parentFrame.GetPath('USERDATA')+'CodeEditor/'
         if not os.path.exists(self._codeEditorPath):
@@ -437,8 +440,8 @@ class wxRavenPlugin(PluginObject):
             self.setData("_dataTimeStamp", _dataTimeStamp)
             
             
-            if self.getData("_CmdListInCache") == False:
-                self.LoadRPCCommandsCache()
+            #if self.getData("_CmdListInCache") == False:
+            self.LoadRPCCommandsCache()
             
             wx.CallAfter(self.UpdateActiveViews, ())
             
@@ -448,7 +451,33 @@ class wxRavenPlugin(PluginObject):
             
             
     
+    
+    
     def LoadRPCCommandsCache(self):
+        
+         
+        
+        _CmdListInCache = False
+        _CmdList = {}
+    
+        if not self.__LoadCommandCache___():
+            
+            self.logger.info(f'Loading Help commands from RPC...')   
+            
+            
+            self.LoadRPCCommandsFromRPC()
+            
+            _newCache = self.getData("_CmdList") 
+            _newCacheExist = self.getData("_CmdListInCache") 
+            
+            if _newCacheExist and len(_newCache) > 0: 
+                self.__saveCommandCache__(_newCache)
+    
+    
+    
+    
+    
+    def LoadRPCCommandsFromRPC(self):
         
         _CmdListInCache = False
         _CmdList = {}
@@ -480,3 +509,30 @@ class wxRavenPlugin(PluginObject):
             self.RaisePluginLog( "Unable to load RPC Commands list in cache", type="error")
             #print(self.PLUGIN_NAME + " > LoadRPCCommandsCache " + str(e))
         
+        
+    def __saveCommandCache__(self, cacheData):
+        try:
+            #currentCache = self.setData("_CmdList", _CmdList) 
+            pickle.dump( cacheData, open(self._RpcHelpCache, "wb" ) )
+            self.logger.info(f'Help commands cache saved in {self._RpcHelpCache}...')   
+        except Exception as e:
+            self.logger.error(e) 
+    
+    def __LoadCommandCache___(self):
+        result = None
+        loaded=False
+        
+        try:
+            result = pickle.load( open(self._RpcHelpCache, "rb" ) )
+            
+            if result != {}:
+                self.setData("_CmdList", result)
+                self.setData("_CmdListInCache", True) 
+                loaded = True
+                self.logger.info(f'Help commands cache found in {self._RpcHelpCache}...')  
+        except Exception as e:
+            self.logger.error(e) 
+            self.setData("_CmdListInCache", False) 
+        
+        return loaded            
+    

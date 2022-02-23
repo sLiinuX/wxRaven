@@ -12,6 +12,8 @@ import wx.xrc
 import wx.aui
 from wxRavenGUI.application.wxcustom.CustomListCtrl import *
 import wx.richtext
+import wx.html2 as webview
+from wxRavenGUI.application.wxcustom import *
 
 ###########################################################################
 ## Class wxRavenErrorLogConsolePanel
@@ -119,7 +121,7 @@ class wxNotebookToolbar ( wx.Panel ):
 
 		self.m_auinotebook1 = wx.aui.AuiNotebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_NB_DEFAULT_STYLE )
 
-		bSizer2.Add( self.m_auinotebook1, 1, wx.EXPAND |wx.ALL, 5 )
+		bSizer2.Add( self.m_auinotebook1, 1, wx.EXPAND |wx.ALL, 0 )
 
 
 		self.SetSizer( bSizer2 )
@@ -448,6 +450,54 @@ class wxRavenWelcomeTab ( wx.Panel ):
 
 	def OnIssueAsset( self, event ):
 		event.Skip()
+
+
+###########################################################################
+## Class wxRavenWebBrowser
+###########################################################################
+
+class wxRavenWebBrowser ( wx.Panel ):
+
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 603,409 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		bSizer80 = wx.BoxSizer( wx.VERTICAL )
+
+		bSizer81 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_textCtrlURL = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer81.Add( self.m_textCtrlURL, 1, wx.ALL, 5 )
+
+		self.m_buttonGo = wx.Button( self, wx.ID_ANY, u"GO", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer81.Add( self.m_buttonGo, 0, wx.ALL, 5 )
+
+
+		bSizer80.Add( bSizer81, 0, wx.EXPAND, 5 )
+
+		bSizer82 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_webPan = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer83 = wx.BoxSizer( wx.VERTICAL )
+
+		#self.wv = webview.WebView.New(self)
+		self.wv = wxRavenWebview.GetWebView(self.m_webPan)
+		bSizer83.Add( self.wv, 1, wx.ALL|wx.EXPAND, 5 )
+
+
+		self.m_webPan.SetSizer( bSizer83 )
+		self.m_webPan.Layout()
+		bSizer83.Fit( self.m_webPan )
+		bSizer82.Add( self.m_webPan, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+		bSizer80.Add( bSizer82, 1, wx.EXPAND, 5 )
+
+
+		self.SetSizer( bSizer80 )
+		self.Layout()
+
+	def __del__( self ):
+		pass
 
 
 ###########################################################################

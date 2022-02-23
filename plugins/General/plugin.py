@@ -16,7 +16,7 @@ from .wxNotebookToolbox import *
 from .pluginSettings import *
 
 from .wxRavenWelcomePanel import wxRavenWelcomeTabLogic
-
+from .wxRaven_WebBrowser import *
 
 #import libs.wxRaven_Flask_WebserviceClient
 from libs.wxRaven_Webservices.wxRaven_Flask_Webservice import wxRaven_Flask_WebserviceClient
@@ -85,6 +85,20 @@ class wxRavenPlugin(PluginObject):
                      'isArea':False,
                      
                      },
+                     
+                     
+                     {
+                     'viewid':'WebBrowser', 
+                     'name':'WebBrowser', 
+                     'title':'WebBrowser', 
+                     'position':'main', 
+                     'icon':   self.RessourcesProvider.GetImage('internal_browser') , 
+                     'class': wxRaven_WebBrowserLogic ,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'isArea':False,
+                     
+                     },
                     
                     
                 ]
@@ -111,7 +125,10 @@ class wxRavenPlugin(PluginObject):
                 'favorite_change_addresses':{},
                 
                 
-                'webservices_relays':{'wxRaven_Relay1':'wx:wx@18.221.126.115:9090'},
+                'webservices_relays':{
+                    'wxRaven_Relay1_HTTPS':'https://wxraven.link/relay/',
+                    'wxRaven_Relay1_HTTP':'wx:wx@relay.wxraven.link:9090'
+                    },
             }
         
         
@@ -200,17 +217,38 @@ class wxRavenPlugin(PluginObject):
         self.setData("_cursor",0)
         self.setData("_errorPushed",False)
         
-        self.Init_Webservices_Relays()
+        #self.Init_Webservices_Relays()
         
         
         
         #self.LoadPluginFrames()
+        
+        self.waitApplicationReady()
+    
+    
+    def waitApplicationReady(self):
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.__applicationReady__,))
+        t.start()
+        
+        
+    def __waitLoop_T__(self,callback):
+        while not self.parentFrame._isReady:
+            time.sleep(1)
+            
+        wx.CallAfter(callback, ()) 
+        
+        
+        #self.initializeAssetManagerBackgroundService()
+    
+    
+    def __applicationReady__(self, evt=None):
+        self.Init_Webservices_Relays()
     
     
     
     
     
-    
+    '''
     def _LoadPluginSettings(self):
         _recordedSettings = self.parentFrame.Settings._GetPluginSettings(self.PLUGIN_NAME)
         
@@ -241,7 +279,7 @@ class wxRavenPlugin(PluginObject):
             #print(key) 
             #print(self.PLUGIN_SETTINGS[key])
     
-    
+    '''
     
     
     
@@ -253,13 +291,24 @@ class wxRavenPlugin(PluginObject):
         for conName in allCons:
                 #pass
                 data = allCons[conName]
-
-                _creds = data.split("@")
-                _loginPwd = _creds[0].split(":")
-                _hostPort = _creds[1].split(":")
+                self.logger.info(f" {conName} Relay detected !")
+                
+                
+                _host = data
+                _port = 9090
+                
+                if data.__contains__('@'):
+                    _creds = data.split("@")
+                    _loginPwd = _creds[0].split(":")
+                    _hostPort = _creds[1].split(":")
+                    _host=_hostPort[0]
+                    _port=_hostPort[1]
+                if data.__contains__('http'):
+                    _host = data
+                    _port = 9090
                 
                 #newCon = Ravencoin(username=_loginPwd[0], password=_loginPwd[1],host=_hostPort[0],port=_hostPort[1])
-                newCon = wxRaven_Flask_WebserviceClient(ip=_hostPort[0], port=_hostPort[1])
+                newCon = wxRaven_Flask_WebserviceClient(ip=_host, port=_port)
                 
                 self.parentFrame.ConnexionManager.rpc_connectors[conName] = newCon
     

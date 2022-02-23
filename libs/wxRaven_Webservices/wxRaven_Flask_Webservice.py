@@ -42,11 +42,23 @@ class wxRaven_Flask_WebserviceClient(object):
     id = 0 
     _client = None
     
-    def __init__(self, ip="ec2-18-221-126-115.us-east-2.compute.amazonaws.com", port=9090):
+    def __init__(self, ip="relay.wxraven.link", port=9090, useHTTPS=False):
         self._ip = ip
         self._port = port
         self.logger = logging.getLogger('wxRaven')
         self.url = 'http://{}:{}'.format(ip, port)
+        
+        
+        if useHTTPS:
+            self.url = 'https://{}'.format(ip)
+            
+        if ip.__contains__('http'):
+            self.url = '{}'.format(ip)
+        
+        self.logger.info(f'Creating a new Flask WebserviceClient Client at {self.url}')
+        
+        
+        
         self._client = None
         self.id = 0 
         
@@ -54,12 +66,14 @@ class wxRaven_Flask_WebserviceClient(object):
     
     #def generate_GET_argurments(self):
     def rpc_url(self):
-        return "http://{}:{}@{}:{}".format('wx', 'wx', self._ip, self._port)
+        return self.url
+        #return "http://{}:{}@{}:{}".format('wx', 'wx', self._ip, self._port)
         
         
     def get_query(self, name, params, auth=False):
         self.id += 1
-        url = f'http://{self._ip}:{self._port}/{name}'
+        url = f'{self.url}/{name}'
+        self.logger.info(f"WebserviceClient Query : {url}")
         #auth = HTTPBasicAuth(self.username, self.password)
         data = {
                 'method': name,

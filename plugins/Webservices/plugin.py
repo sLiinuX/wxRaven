@@ -191,7 +191,13 @@ class wxRavenPlugin(PluginObject):
     
     
     def StartWebService(self, evt=None): 
+        
         self.setData("_status", "STARTED")
+        
+        if self.backgroundService ==None:
+            self.backgroundService = wxRaven_Webservices_BackgroundServiceManager(self.parentFrame, self)
+            
+        
         self.backgroundService.StartService()
         
         self.setData("webservicebackgroundManager", self.backgroundService)

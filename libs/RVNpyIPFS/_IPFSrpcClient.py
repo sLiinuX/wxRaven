@@ -23,11 +23,20 @@ class IPFS_RPC_Client(object):
     
     _client = None
     
-    def __init__(self, ip="127.0.0.1", port=9000):
+    def __init__(self, ip="127.0.0.1", port=9000, useHTTPS=False):
         self._ip = ip
         self._port = port
         self.logger = logging.getLogger('wxRaven')
         self.url = 'http://{}:{}'.format(ip, port)
+        
+        if useHTTPS:
+            self.url = 'https://{}'.format(ip)
+            
+        if ip.__contains__('http'):
+            self.url = '{}'.format(ip)
+        
+        self.logger.info(f'Creating a new IPFS RPC Client at {self.url}')
+        
         self._client = xmlrpc.client.ServerProxy(self.url)
         
 

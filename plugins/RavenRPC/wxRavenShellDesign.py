@@ -226,7 +226,7 @@ class wxRavenShell_SettingsPanel ( wx.Panel ):
 
 		bSizer6 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, u"- addLocalVarInShell(_data, _dataName)\n\tAdd the variable in the shell _locals_\n\n- removeLocalVarInShell( _dataName)\n\tRemove the variable in the shell _locals_\n\n\nExemple :\n\n<data> = <plugin>.getData(<dataname>)\nself.parent_frame.GetPlugin(\"RavenRPC\").addLocalVarInShell(  <data>, <dataname>)", wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
+		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, u"- addLocalVarInShell(_data, _dataName)\n\tAdd the variable in the shell _locals_\n\n- removeLocalVarInShell( _dataName)\n\tRemove the variable in the shell _locals_\n\n\nExemple :\n\n<data> = <plugin>.getData(<dataname>)\nself.parent_frame.addLocalVarInShell(  <data>, <dataname>)", wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
 		bSizer6.Add( self.m_textCtrl2, 1, wx.ALL|wx.EXPAND, 5 )
 
 

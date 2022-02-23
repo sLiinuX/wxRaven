@@ -245,11 +245,43 @@
                     <property name="label">File</property>
                     <property name="name">wxRavenMenuBar_File</property>
                     <property name="permission">protected</property>
+                    <object class="wxMenuItem" expanded="0">
+                        <property name="bitmap">Load From File; res/default_style/normal/wizard-prefs.png</property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Preferences</property>
+                        <property name="name">wxRavenMenuBar_Window_Preferences</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">OnPreferenceDialog</event>
+                    </object>
                 </object>
                 <object class="wxMenu" expanded="0">
                     <property name="label">Edit</property>
                     <property name="name">wxRavenMenuBar_Edit</property>
                     <property name="permission">protected</property>
+                </object>
+                <object class="wxMenu" expanded="1">
+                    <property name="label">Wallet</property>
+                    <property name="name">wxRavenMenuBar_Wallet</property>
+                    <property name="permission">protected</property>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap">Load From File; res/default_style/normal/unlock.png</property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help">Unlock temporarly your wallet for executin tx</property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Unlock...</property>
+                        <property name="name">wxRavenMenuBar_Wallet_Unlock</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                    </object>
                 </object>
                 <object class="wxMenu" expanded="1">
                     <property name="label">Window</property>
@@ -292,23 +324,27 @@
                         <property name="name">wxRavenMenuBar_Window_Views</property>
                         <property name="permission">protected</property>
                     </object>
-                    <object class="submenu" expanded="1">
+                    <object class="separator" expanded="0">
+                        <property name="name">m_separator41</property>
+                        <property name="permission">none</property>
+                    </object>
+                    <object class="submenu" expanded="0">
                         <property name="bitmap">Load From File; res/default_style/normal/default_persp.png</property>
                         <property name="label">Perspectives</property>
                         <property name="name">wxRavenMenuBar_Window_Perspectives</property>
                         <property name="permission">protected</property>
-                        <object class="submenu" expanded="1">
-                            <property name="bitmap"></property>
+                        <object class="submenu" expanded="0">
+                            <property name="bitmap">Load From File; res/default_style/normal/perspective_open.png</property>
                             <property name="label">Open Perspective</property>
                             <property name="name">wxRavenMenuBar_Window_Perspectives_OpenPerspectives</property>
                             <property name="permission">protected</property>
                         </object>
-                        <object class="separator" expanded="1">
+                        <object class="separator" expanded="0">
                             <property name="name">m_separator6</property>
                             <property name="permission">none</property>
                         </object>
-                        <object class="wxMenuItem" expanded="1">
-                            <property name="bitmap"></property>
+                        <object class="wxMenuItem" expanded="0">
+                            <property name="bitmap">Load From File; res/default_style/normal/save_perspective_2.png</property>
                             <property name="checked">0</property>
                             <property name="enabled">1</property>
                             <property name="help"></property>
@@ -380,24 +416,6 @@
                             <property name="unchecked_bitmap"></property>
                         </object>
                     </object>
-                    <object class="separator" expanded="0">
-                        <property name="name">m_separator41</property>
-                        <property name="permission">none</property>
-                    </object>
-                    <object class="wxMenuItem" expanded="0">
-                        <property name="bitmap">Load From File; res/default_style/normal/wizard-prefs.png</property>
-                        <property name="checked">0</property>
-                        <property name="enabled">1</property>
-                        <property name="help"></property>
-                        <property name="id">wxID_ANY</property>
-                        <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Preferences</property>
-                        <property name="name">wxRavenMenuBar_Window_Preferences</property>
-                        <property name="permission">none</property>
-                        <property name="shortcut"></property>
-                        <property name="unchecked_bitmap"></property>
-                        <event name="OnMenuSelection">OnPreferenceDialog</event>
-                    </object>
                 </object>
                 <object class="wxMenu" expanded="1">
                     <property name="label">Help</property>
@@ -433,11 +451,11 @@
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
                     </object>
-                    <object class="separator" expanded="1">
+                    <object class="separator" expanded="0">
                         <property name="name">m_separator51</property>
                         <property name="permission">none</property>
                     </object>
-                    <object class="wxMenuItem" expanded="1">
+                    <object class="wxMenuItem" expanded="0">
                         <property name="bitmap"></property>
                         <property name="checked">0</property>
                         <property name="enabled">1</property>
@@ -3011,7 +3029,7 @@
                 </object>
             </object>
         </object>
-        <object class="Dialog" expanded="0">
+        <object class="Dialog" expanded="1">
             <property name="aui_managed">0</property>
             <property name="aui_manager_style">wxAUI_MGR_DEFAULT</property>
             <property name="bg"></property>
