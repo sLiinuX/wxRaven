@@ -12,7 +12,7 @@ from flask_classful import route
 # This file must be imported WITHIN a specific context
 #
 #
-class ElectrumView(object):
+class ElectrumView(wxCustomFlaskView):
     '''
     classdocs
     '''
@@ -42,4 +42,7 @@ class ElectrumView(object):
             command = ''
             
         '''
-        return jsonify({'result':None})  
+        return jsonify({'result':command})  
+    
+    
+    
