@@ -7,6 +7,10 @@ import flask
 from flask import request, jsonify
 from .wxFlaskCustomView import * 
 from flask_classful import route
+
+from ast import literal_eval
+import pickle
+import ast
 #
 #
 # This file must be imported WITHIN a specific context
@@ -127,6 +131,14 @@ class RPCView(wxCustomFlaskView):
         
         searchAdressListJSON = args.get('addresses', addresses)
         showAsset = args.get('showAsset', showAsset )
+        
+        
+        
+        print(f"searchAdressListJSON ({type(searchAdressListJSON)}): {searchAdressListJSON} ")
+        if isinstance(searchAdressListJSON, str):
+            searchAdressListJSON = ast.literal_eval(searchAdressListJSON)
+        print(f"searchAdressListJSON ({type(searchAdressListJSON)}): {searchAdressListJSON} ")
+        
         
         
         network = self.daemon.getNetwork()

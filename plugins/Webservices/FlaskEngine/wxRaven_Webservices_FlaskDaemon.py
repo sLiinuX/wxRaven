@@ -309,11 +309,15 @@ class wxRaven_Webservices_FlaskDaemon(object):
         
 
         #self._timestamp = round(time.time() * 1000) 
-        
-        
-        
         print(self.LogFile)
         path = os.path.expanduser(self.LogFile)
+        
+        
+        
+        #logging.basicConfig(filename = self.LogFile+'.debug', level=logging.DEBUG, format = f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+
+        
+        
         
         #self.ensure_directory(os.path.dirname(path))
         self.logger = logging.getLogger('wxRaven-Webservices')

@@ -59,7 +59,7 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
         self.parent_frame = parentFrame
         self.default_position = position
         self.allIcons = {}
-        
+        self._listInit = False
         
         
         #
@@ -109,7 +109,7 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
         return (self.allIcons['sort_down_2'], self.allIcons['sort_up_2'])
             
     #Override the UpdateView method to define what happen when plugin call UpdateViews()        
-    def UpdateView(self):
+    def UpdateView(self, evt=None):
         
         self.UpdateDataFromPluginDatas()
         self.Layout()
@@ -325,7 +325,9 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
         self.m_listCtrl1.SetColumnWidth(4, wx.LIST_AUTOSIZE)
         
         #self.m_listCtrl1.itemDataMap = self._datacache
-        listmix.ColumnSorterMixin.__init__(self, 5)
+        if not self._listInit:
+            listmix.ColumnSorterMixin.__init__(self, 5)
+            self._listInit = True
               
         self.HideLoading()
         
@@ -453,7 +455,7 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
         # Asynch Search
         #
         self.ClearResults()
-        self.parent_frame.GetPlugin("Ravencore").OnSearchRequested_T(filterSearch, assetsearchlimit,mainOnly )
+        self.parent_frame.GetPlugin("Ravencore").OnSearchRequested_T(filterSearch, assetsearchlimit,mainOnly , callback=self.UpdateView)
         
         
         

@@ -87,6 +87,85 @@ class wxRavenErrorLogConsolePanel ( wx.Panel ):
 
 
 ###########################################################################
+## Class wxRavenJobManagerConsole
+###########################################################################
+
+class wxRavenJobManagerConsole ( wx.Panel ):
+
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 697,387 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		bSizer1 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_auiToolBar1 = wx.aui.AuiToolBar( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT )
+		self.m_bitmap17 = wx.StaticBitmap( self.m_auiToolBar1, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/filter_ps.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_auiToolBar1.AddControl( self.m_bitmap17 )
+		self.m_showComplete = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/jobs_complete.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show 'Informations' Logs", wx.EmptyString, None )
+
+		self.m_showWaiting = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/jobs_standby.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show 'Messages' Logs", wx.EmptyString, None )
+
+		self.m_showProgress = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/jobs_running.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show 'Messages' Logs", wx.EmptyString, None )
+
+		self.m_showErrors = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/jobs_stopped.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show 'Warnings' Logs", wx.EmptyString, None )
+
+		self.m_auiToolBar1.AddSeparator()
+
+		self.m_stopSelected = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/nav_stop.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
+
+		self.m_ClearAllDone = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/garbarge_icon.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
+
+		self.m_tool5 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/view_menu.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
+
+		self.m_auiToolBar1.Realize()
+
+		bSizer1.Add( self.m_auiToolBar1, 0, wx.ALL|wx.EXPAND, 5 )
+
+		self.m_listCtrl1 = wxRavenVirtualListCtrl( self )
+		bSizer1.Add( self.m_listCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
+
+
+		self.SetSizer( bSizer1 )
+		self.Layout()
+
+		# Connect Events
+		self.Bind( wx.aui.EVT_AUI_PANE_CLOSE, self.OnAuiPaneClose )
+		self.Bind( wx.aui.EVT_AUI_PANE_RESTORE, self.OnAuiPaneRestore )
+		self.Bind( wx.aui.EVT_AUI_RENDER, self.OnAuiPaneRender )
+		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showComplete.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showWaiting.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showProgress.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showErrors.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnStopCurrent, id = self.m_stopSelected.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnGarbageClicked, id = self.m_ClearAllDone.GetId() )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def OnAuiPaneClose( self, event ):
+		event.Skip()
+
+	def OnAuiPaneRestore( self, event ):
+		event.Skip()
+
+	def OnAuiPaneRender( self, event ):
+		event.Skip()
+
+	def OnViewOptionsChanged( self, event ):
+		event.Skip()
+
+
+
+
+	def OnStopCurrent( self, event ):
+		event.Skip()
+
+	def OnGarbageClicked( self, event ):
+		event.Skip()
+
+
+###########################################################################
 ## Class wxRavenDebugConsolePanel
 ###########################################################################
 
@@ -159,13 +238,13 @@ class wxRavenWelcomeTab ( wx.Panel ):
 
 		bSizer9 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_bitmap3 = wx.StaticBitmap( self.imagePanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/logosquare.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_bitmap3 = wx.StaticBitmap( self.imagePanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/avatar_1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer9.Add( self.m_bitmap3, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
 
 		self.m_staticText3 = wx.StaticText( self.imagePanel, wx.ID_ANY, u"Welcome to wxRaven,", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText3.Wrap( -1 )
 
-		self.m_staticText3.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
+		self.m_staticText3.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, wx.EmptyString ) )
 
 		bSizer9.Add( self.m_staticText3, 0, wx.ALL, 5 )
 
@@ -728,6 +807,93 @@ class GeneralSettingPanel ( wx.Panel ):
 
 
 		bSizer132.Add( bSizer13621, 0, wx.EXPAND, 5 )
+
+		self.m_staticline3 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer132.Add( self.m_staticline3, 0, wx.EXPAND |wx.ALL, 5 )
+
+		bSizer621211 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap1811 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/debug_view.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer621211.Add( self.m_bitmap1811, 0, wx.ALL, 5 )
+
+		self.m_staticText36211 = wx.StaticText( self, wx.ID_ANY, u"Logs and Debug :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText36211.Wrap( -1 )
+
+		self.m_staticText36211.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
+
+		bSizer621211.Add( self.m_staticText36211, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+
+		bSizer132.Add( bSizer621211, 0, wx.EXPAND, 5 )
+
+		bSizer136212 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_checkBoxLogSession = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxLogSession.SetValue(True)
+		bSizer136212.Add( self.m_checkBoxLogSession, 0, wx.ALL, 5 )
+
+		self.m_staticText68212 = wx.StaticText( self, wx.ID_ANY, u"Enable Logs", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText68212.Wrap( -1 )
+
+		bSizer136212.Add( self.m_staticText68212, 0, wx.ALL, 5 )
+
+
+		bSizer132.Add( bSizer136212, 0, wx.EXPAND, 5 )
+
+		bSizer1362121 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_checkBoxDebugSession = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxDebugSession.SetValue(True)
+		bSizer1362121.Add( self.m_checkBoxDebugSession, 0, wx.ALL, 5 )
+
+		self.m_staticText682121 = wx.StaticText( self, wx.ID_ANY, u"Enable Debug Log", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText682121.Wrap( -1 )
+
+		bSizer1362121.Add( self.m_staticText682121, 0, wx.ALL, 5 )
+
+
+		bSizer132.Add( bSizer1362121, 0, wx.EXPAND, 5 )
+
+		self.m_staticline31 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer132.Add( self.m_staticline31, 0, wx.EXPAND |wx.ALL, 5 )
+
+		bSizer6212111 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap18111 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/progress_none.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer6212111.Add( self.m_bitmap18111, 0, wx.ALL, 5 )
+
+		self.m_staticText362111 = wx.StaticText( self, wx.ID_ANY, u"Jobs Threads and Performances :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText362111.Wrap( -1 )
+
+		self.m_staticText362111.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
+
+		bSizer6212111.Add( self.m_staticText362111, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+
+		bSizer132.Add( bSizer6212111, 0, wx.EXPAND, 5 )
+
+		bSizer13621211 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap27 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/jobs_running.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer13621211.Add( self.m_bitmap27, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_staticText6821211 = wx.StaticText( self, wx.ID_ANY, u"Max Simultaneous Jobs :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6821211.Wrap( -1 )
+
+		bSizer13621211.Add( self.m_staticText6821211, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_spinJobMax = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 2, 10, 5 )
+		bSizer13621211.Add( self.m_spinJobMax, 0, wx.ALL, 5 )
+
+		self.m_staticText68212111 = wx.StaticText( self, wx.ID_ANY, u"Recomended : 5  ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText68212111.Wrap( -1 )
+
+		self.m_staticText68212111.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
+
+		bSizer13621211.Add( self.m_staticText68212111, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+
+		bSizer132.Add( bSizer13621211, 0, wx.EXPAND, 5 )
 
 
 		self.SetSizer( bSizer132 )

@@ -38,6 +38,9 @@ from ast import literal_eval
 import ast
 #from plugins.P2PMarket import wxRavenP2PMarket_CreateAdvertisingLogic
 
+
+from .jobs import *
+
 class wxRavenPlugin(PluginObject):
     '''
     classdocs
@@ -395,7 +398,9 @@ class wxRavenPlugin(PluginObject):
     
     
     def ApplicationReady(self, evt=None):
-        self.RequestMarketUpdate_T()
+        
+        if self.PLUGIN_SETTINGS['p2p_markets_enable']:
+            self.RequestMarketUpdate_T()
         
         ravencorep=self.parentFrame.GetPlugin("Ravencore")
         _addins = ravencorep.getData("_utxo_manager_views_addons_callbacks") 
@@ -554,25 +559,24 @@ class wxRavenPlugin(PluginObject):
      
     '''
     
-    def RequestMarketTradesHistory_T(self, evt=None):
+    def RequestMarketTradesHistory_T(self, callback=None, evt=None):
         #GetAtomicSessionCache_Trades
         self.setData("_tx_history", {})
-        t=threading.Thread(target=self.__DoRetreiveMarketTradesHistory__)
-        t.start()  
+        #t=threading.Thread(target=self.__DoRetreiveMarketTradesHistory__)
+        #t.start()  
+        
+        #
+        #new job
+    
+        j = Job_TradeHistory(self, viewCallback=callback, safeMode=True)
+        self.parentFrame.NewJob(j)
     
     
-    
-    
-    
+    '''
     def __searchMatchingAdInCache__(self, trade, _cache_list):
         
         
-        '''
-        if not trade.__contains__('transactions'):
-            return None
-        
-        if len(trade['transactions']) == 0:
-        '''
+ 
         _found = False
         _match_ad = None
         _id = None
@@ -608,9 +612,9 @@ class wxRavenPlugin(PluginObject):
         
         
         return (_found, _match_ad, _id)
+    '''    
         
-        
-        
+    '''    
     def __AnalyzeAdStatus__(self, adObject):
         _AnalysisResult = {
             'executed_utxos':[],
@@ -651,11 +655,14 @@ class wxRavenPlugin(PluginObject):
         
         return _AnalysisResult
     
-    
+    '''
     
     
     
     def __DoRetreiveMarketTradesHistory__(self):
+        
+        pass
+        '''
         if self.getData("_tx_history_running")==True:
             return
         
@@ -744,12 +751,6 @@ class wxRavenPlugin(PluginObject):
                     _unresolvedTrade['description'] = f"TRADING {_ad._adAssetQt} {_ad._adAsset}  <-> {_ad._adPrice} {_ad._adPriceAsset}"
                 
                 
-                '''
-                _unresolvedTrade['unresolved'] = 1
-                _unresolvedTrade['order_utxos'] = range(0, len(_ad._adTxDatas))
-                _unresolvedTrade['executed_utxos'] = []
-                _unresolvedTrade['transactions'] = []
-                '''
                     
                 complementData = self.__AnalyzeAdStatus__(_ad)    
                    
@@ -798,22 +799,27 @@ class wxRavenPlugin(PluginObject):
                 #ut._allTabs['Trades History'].UpdateView()
                 wx.CallAfter(ut._allTabs['Trades History'].UpdateView, ())
         
+        '''
+        
+    def RequestMarketUpdate_T(self,callback=None, evt=None ):  
+        #t=threading.Thread(target=self.__DoRefreshAllMarkets__)
+        #t.start()     
+        j = Job_MarketUpdate(self, _specificMarket='', viewCallback=callback, safeMode=True)   
+        self.parentFrame.NewJob(j)
     
-        
-    def RequestMarketUpdate_T(self, evt=None ):  
-        t=threading.Thread(target=self.__DoRefreshAllMarkets__)
-        t.start()        
-        
+    
+    
+    
     def OnNetworkChanged_T(self, networkName=""):  
         if not self.parentFrame._isReady:
             return None 
         
-        
+        '''
         if self.PLUGIN_SETTINGS['p2p_markets_force_network'] == "": 
             t=threading.Thread(target=self.__DoRefreshAllMarkets__)
             t.start()
         
-    
+        '''
     
     
     def __searchInField__(self, fieldname, keywords, itemJson, _caseSensitive=False):
@@ -965,7 +971,10 @@ class wxRavenPlugin(PluginObject):
     
         
     def __DoRefreshAllMarkets__(self, _specificMarket=""):
-        
+        print('__DoRefreshAllMarkets__ DEPRECATED')
+        pass
+    
+        '''
         if self.getData("thread_running") == True:
             return
         
@@ -1067,6 +1076,6 @@ class wxRavenPlugin(PluginObject):
         
         self.setData("thread_running", False)    
             
-        
+        '''
         
         

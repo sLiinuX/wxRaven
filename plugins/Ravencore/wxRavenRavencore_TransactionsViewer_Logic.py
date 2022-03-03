@@ -29,6 +29,8 @@ import datetime
 import os
 import time
 
+from .jobs import *
+
 
 class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
     '''
@@ -173,7 +175,12 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         self._Tab_AssetDecode = self.__SetupDynamicPanel__(wxRaven_Ravencore_TxViewer_Asset_PanelLogic)
         
         
-       
+        self._Tab_VinoutsDecodeDetails.m_sentPanel._listInit = False
+        self._Tab_VinoutsDecodeDetails.m_ReceivedPanel._listInit = False
+        self._Tab_AssetDecode.m_sentPanel1._listInit = False
+        self._Tab_AssetDecode.m_ReceivedPanel1._listInit = False
+        self._Tab_RvnDecode.m_ReceivedPanel._listInit = False
+        self._Tab_RvnDecode.m_sentPanel._listInit = False
         
         
         self.setupInputOutputTable()
@@ -446,13 +453,13 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         self.m_txIdText.SetValue("")
         #print("OnHexTextChanged")
         if self._currentTxHEX  != '':
-            self._currentTxID = ''      
+            self._currentTxID = ''    
         
         self._INPUT_TREAT = False
         
         
-        self.UpdateView()
-    
+        #self.UpdateView()
+        self.RequestDecodeTx()
     
     
     def SetTxId(self, txid):
@@ -476,10 +483,23 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         self._INPUT_TREAT = False
     
     
-        self.UpdateView()
+        #self.UpdateView()
+        self.RequestDecodeTx()
     
     
     
+    
+    def RequestDecodeTx(self):
+        p = self.parent_frame.GetPlugin('Ravencore')
+        
+        if self._currentTxID != '' or  self._currentTxHEX != '':
+            nj = Job_DecodeTx(p, self._currentTxID, self._currentTxHEX, self.UpdateView, safeMode=True)
+            self.parent_frame.NewJob(nj)
+            print("RequestDecodeTx")
+            
+            self._INPUT_TREAT = True
+            self.ClearTx()
+            self._INPUT_TREAT = False
     
     def OnGenerateAtomicSwap(self, evt):
         #
@@ -534,8 +554,8 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
     def UpdateView(self, evt=None):
         
         self.ClearTx()
-        self.UpdateDataFromPluginDatas()
-        
+        #self.UpdateDataFromPluginDatas()
+        self.UpdateFromDatas()
         self.Layout()
         #self.setupPanel()
     
@@ -644,7 +664,18 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         
         self._INPUT_TREAT = False
     
-            
+    
+    
+    
+    def UpdateFromDatas(self):
+        
+        p = self.parent_frame.GetPlugin('Ravencore')
+        self.LastTx = p.getData('_last_tx_decoded')
+        
+        if self.LastTx != None:
+            self.LastDecode = self.LastTx
+            self.ShowTx()   
+            self.ShowDecodeTx() 
             
     
     #Example to show how plugin data are retreived
@@ -657,9 +688,9 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
             #self.LastTx= None
             
             if self._currentTxID  != '':
-                self.LastTx = ravencoin.utils.GetTransaction(self._currentTxID )
+                self.LastTx = ravencoin.utils.GetRawTransaction(self._currentTxID, inspect=True )
                 print("GetTX")
-                print(self.LastTx)
+                #print(self.LastTx)
                 if self.LastTx != None:
                     self.ShowTx()
                     
@@ -685,7 +716,7 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
                 
                 self.LastDecode = ravencoin.utils.DecodeTransaction(self._currentTxHEX )
                 print("DECODE")
-                print(self.LastDecode)
+                #print(self.LastDecode)
                 
                 if self.LastDecode != None:
                     self.ShowDecodeTx()
@@ -695,7 +726,8 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
                     if self.LastTx != None:
                         self.ShowTx()
                     '''
-                    self.LastTx = ravencoin.utils.GetTransaction(self.LastDecode['txid'] )
+                    #self.LastTx = ravencoin.utils.GetTransaction(self.LastDecode['txid'] )
+                    self.LastTx = ravencoin.utils.GetRawTransaction(self.LastDecode['txid'], inspect=True )
                     if self.LastTx != None:
                         self.ShowTx()
                     
@@ -736,7 +768,8 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         listIn.Freeze()
         listOut.Freeze()
         
-        
+        #panelIn._listInit = False
+        #panelOut._listInit = False
         
         
         #
@@ -749,7 +782,7 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         panelIn.cursor = 0
         
         for _vin in self.LastDecode['vin']:
-            print(_vin)
+            #print(_vin)
             
             if _vin.__contains__('txid'):
             
@@ -784,7 +817,10 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         
         panelIn.list= listIn
         panelIn.allIcons = self.allIcons
-        listmix.ColumnSorterMixin.__init__(panelIn, 2)
+        if not panelIn._listInit:
+            listmix.ColumnSorterMixin.__init__(panelIn, 2)
+            panelIn._listInit = True
+            
         listmix.ColumnSorterMixin.SortListItems(panelIn, col=0, ascending=0)
         
         listIn.Thaw()
@@ -843,7 +879,10 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         
         panelOut.list= listOut
         panelOut.allIcons = self.allIcons
-        listmix.ColumnSorterMixin.__init__(panelOut, 4)
+        if not panelOut._listInit:
+            listmix.ColumnSorterMixin.__init__(panelOut, 4)
+            panelOut._listInit = True
+            
         listmix.ColumnSorterMixin.SortListItems(panelOut, col=0, ascending=0)
         
         listOut.Thaw()
@@ -930,7 +969,9 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
             
             panel.list= list
             panel.allIcons = self.allIcons
-            listmix.ColumnSorterMixin.__init__(panel, 2)
+            if not panel._listInit:
+                listmix.ColumnSorterMixin.__init__(panel, 2)
+                panel._listInit = True
             listmix.ColumnSorterMixin.SortListItems(panel, col=1, ascending=0)
         
         list.Thaw()
@@ -955,11 +996,16 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
                     continue
                 
                 
-                index = list.InsertItem(list.GetItemCount(),str(_det['destination']), self.allIcons['asset'] )
+                _dispAddress = str(_det['destination'])
+                if _det.__contains__('address'):
+                    _dispAddress = str(_det['address'])
+                
+                
+                index = list.InsertItem(list.GetItemCount(), _dispAddress, self.allIcons['asset'] )
                 list.SetItem(index,1, str(_det['asset_name']))
                 list.SetItem(index,2, str(_det['amount'].__abs__()))
                 list.SetItemData(index, panel.cursor)
-                panel.itemDataMap[panel.cursor] = ( str(_det['destination'] ),str(_det['asset_name']),str( _det['amount'].__abs__() ) )
+                panel.itemDataMap[panel.cursor] = ( _dispAddress ,str(_det['asset_name']),str( _det['amount'].__abs__() ) )
                                                     
                 panel.cursor = panel.cursor+1
             
@@ -975,7 +1021,9 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
             
             panel.list= list
             panel.allIcons = self.allIcons
-            listmix.ColumnSorterMixin.__init__(panel, 3)
+            if not panel._listInit:
+                listmix.ColumnSorterMixin.__init__(panel, 3)
+                panel._listInit = True
             listmix.ColumnSorterMixin.SortListItems(panel, col=2, ascending=0)
         
         list.Thaw()

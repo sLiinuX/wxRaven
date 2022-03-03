@@ -4,6 +4,7 @@ Created on 10 déc. 2021
 @author: slinux
 '''
 import wx
+import wx.adv
 import wx.aui
 import os.path
 from wx import *
@@ -15,6 +16,8 @@ from wxRavenGUI.view import *
 from wxRavenGUI.application.core import *
 from wxRavenGUI.application.core.wxRessourcesProvider import RessourcesProvider
 from wxRavenGUI.application.wxcustom.CustomUserIO import UserAdvancedMessage
+import sys
+
 
 #
 #
@@ -40,7 +43,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     wxRavenNetworkBarIcon = None
     
     
-    
+    mainApp =  None
     Logs = None
     
     Settings = None
@@ -53,16 +56,20 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     PerspectiveManager = None
     MenusAndTool = None
     
+    JobManager = None
+    
     Ressources = None
     Paths = {}
     
-    def __init__(self, _ProfilePath=''):
+    def __init__(self, _ProfilePath='', mainApp=None):
         
         self.logger = logging.getLogger('wxRaven')
         
         
         wxRavenMainFrame.__init__(self,None)
         self._isReady = False
+        self._Closing = False
+        self.mainApp = mainApp
         
         #splash.Show()
         
@@ -75,6 +82,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
                       'CONFIG' : _ProfilePath + "/config/",
                       'PLUGIN' : _rootPath + "/plugins/",
                       'USERDATA' : _ProfilePath + "/userdata/",
+                      'PROFILE_ROOT' : _ProfilePath ,
             }
         #
         #
@@ -88,6 +96,9 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         # Setting manager will be used to load settings, both for app and plugin.
         self.Settings = SettingsManager(self, configpath=self.Paths['CONFIG'], pluginpath=self.Paths['PLUGIN'])
         self.RessourcesProvider = RessourcesProvider(self.GetPath('RES'), theme="default_style")
+        
+        
+        
         
         
         
@@ -118,6 +129,13 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         self.MenusAndTool = MenuAndToolBarManager(self)
 
         
+        
+        #Job Manager
+        self.JobManager = JobManager(self)
+        self.JobManager.StartJobManager()
+        
+        
+        
         # Plugins management
         self.Plugins = pluginsManager(self.GetPath('PLUGIN'), self, loadPath=False)
         self.Plugins.SetSwConfiguration()
@@ -129,6 +147,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         #self.demoBook()
         
         
+        self.JobManager.RefreshSettings()
         
         #self.MenusAndTool.refreshViewsListMenu()
         #UserAdvancedMessage(self, str(self.Settings.resumeviewonstartup), 'info')
@@ -210,6 +229,32 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     def SetReady(self,readyValue=True):
         self._isReady = readyValue
     
+    
+    #
+    #Main App LOGS save management
+    #
+    
+    
+    def NewJob(self, job):
+        self.JobManager.SubmitNewJob(job)
+    
+    def SetLogging(self, log=False, debug=False):
+        self.logger.info(f'SetLogging L={log} D={debug}')
+        if self.mainApp != None:
+            _currentState = self.mainApp.logEnable
+            
+            if not _currentState and ( log or debug ):
+                self.mainApp.setup_logging(self.GetPath('PROFILE_ROOT'), debug) 
+            else:
+                self.logger.info(f'logger already logging')
+    
+    
+            if _currentState and  not log :
+                self.mainApp.stop_logging()
+                                   
+    
+        else:
+            self.logger.error(f'no mainApp data')
     
     """
     
@@ -416,11 +461,33 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         self.Plugins.CloseAllPlugin()
         self.Destroy()
         del busy
-        
+    
+    
+    
+    def CloseSound(self):
+        if hasattr(sys, 'getwindowsversion') : 
+            _currentPath = os.getcwd()
+            _intropath = _currentPath + f'/res/default_style/sounds/close.wav'
+            try:
+                #playsound(_intropath)
+                intro = wx.adv.Sound(_intropath)
+                intro.Play(wx.adv.SOUND_ASYNC)
+            except Exception as e:
+                pass
+            
+            
+            
     def OnClose(self, event):
+        self._Closing = True
+        
+        x = threading.Thread(target=self.CloseSound, daemon=True)
+        x.start()
         
         
         busy = wx.BusyInfo("One moment please, saving datas...")
+        
+        
+        self.JobManager.StopJobManager()
         
         self.ConnexionManager.SaveCurrentConnexion()
         self.Settings.SaveSettingsToFile()
@@ -436,10 +503,31 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         
         
         self.Plugins.CloseAllPlugin()
-        
         self.Destroy()
         
+        print(threading.enumerate())
+        
+        _allClosed = False
+        _maxTime = 10
+        _t = 0
+        while not _allClosed:
+            _t = _t+1
+            _activeThreads = threading.enumerate()
+            if len(_activeThreads) > 1:
+                _allClosed = False
+                print(f"[{_t}/{_maxTime}] Waiting for active thread : {_activeThreads}")
+            else:
+                _allClosed = True
+            
+            if not _allClosed   : 
+                time.sleep(1)
+            if _t >= _maxTime :
+                print(f"[{_t}/{_maxTime}] Wait timeout.")
+                break
+        
+        
         del busy
+        self.mainApp.app.ExitMainLoop()
         
         #wx.GetApp().ExitMainLoop()
         

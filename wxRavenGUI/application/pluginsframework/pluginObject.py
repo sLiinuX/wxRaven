@@ -134,14 +134,14 @@ class PluginObject(object):
             vName = r['name']
             #self.logger.info(f"updating view {vName}")
             
-            #rView.UpdateView()
+            rView.UpdateView()
             
-            
+            '''
             try:
                 rView.UpdateView()
             except Exception as e:
                 self.logger.info(self.PLUGIN_NAME + " > "+vName+" UpdateView() method failed :" + str(e))
-            
+            '''
     
     def getDefaultFrames(self):
         defaultFrames = [] 

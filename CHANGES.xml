@@ -5,13 +5,13 @@
       <text fontpointsize="14" fontweight="700">wxRaven Changelog</text>
     </paragraph>
     <paragraph alignment="2" parspacingafter="20" parspacingbefore="0">
-      <text fontstyle="93" fontweight="700">" 0.1.3#BUILD-3-DEV"</text>
+      <text fontstyle="93" fontweight="700">" 0.1.3#BUILD-4-DEV"</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman">
       <text></text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman">
-      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">[0.1.3#Build-3] - 2022-02-21</text>
+      <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">[0.1.3#Build-4] - 2022-03-01</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="100" leftsubindent="0">
       <text textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="700" fontunderlined="0" fontface="Times New Roman">Added</text>
@@ -33,6 +33,9 @@
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
       <text fontstyle="93">Code Editor (INDEV)</text>
+    </paragraph>
+    <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
+      <text fontstyle="93">Jobs Manager (Background task)</text>
     </paragraph>
     <paragraph textcolor="#000000" bgcolor="#FFFFFF" fontpointsize="10" fontstyle="90" fontweight="400" fontunderlined="0" fontface="Times New Roman" leftindent="200" leftsubindent="0">
       <text fontstyle="93">...</text>

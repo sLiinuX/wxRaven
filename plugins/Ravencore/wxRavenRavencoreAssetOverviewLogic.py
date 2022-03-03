@@ -6,7 +6,7 @@ Created on 29 déc. 2021
 
 
 from .wxRavenRavencoreDesign import wxRavenAssetDetails_OverviewPanel
-
+from .jobs import AssetNavigator_AssetOwnerJob
 
 
 import wx
@@ -18,6 +18,7 @@ import wx.lib.mixins.listctrl as listmix
 import threading
 
 from wxRavenGUI.application.wxcustom.CustomLoading import *
+from plugins.Ravencore.jobs.AssetNavigator_AssetOwnerJob import Job_AssetNavigator_AssetOwner
 
 
 class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.ColumnSorterMixin):
@@ -52,8 +53,10 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
         self.parent_frame = parentFrame
         self.default_position = position
         self.allIcons = {}
-        
+        self._listInit = False
         self._loadingPanel  = None
+        self._resultOwnerList= None
+        
         self.SetupListOwners()
         
         
@@ -171,17 +174,18 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
         self.ClearResults()
         self.m_listCtrl1.Thaw()
         
-        t=threading.Thread(target=self.DoRequestOwnerList, args=())
-        t.start() 
+        #t=threading.Thread(target=self.DoRequestOwnerList, args=())
+        #t.start() 
+        self.DoRequestOwnerList()
     
     def DoRequestOwnerList(self):
         #self._resultOwnerList = self.parent_frame.getNetwork().listaddressesbyasset(self.assetName)['result']
         #self._resultOwnerList = self.parent_frame.getNetwork().listaddressesbyasset(self.assetName)['result']
-        ravencoin = self.parent_frame.getRvnRPC()
-        self._resultOwnerList = ravencoin.directories.GetAssetOwnerAddressList(self.assetName, detailed=True)
-        
-        
-        wx.CallAfter(self.ShowOwners, (self.assetName))
+        #ravencoin = self.parent_frame.getRvnRPC()
+        #self._resultOwnerList = ravencoin.directories.GetAssetOwnerAddressList(self.assetName, detailed=True)
+        njob = Job_AssetNavigator_AssetOwner(self.parent_frame.GetPlugin("Ravencore"), self.assetName, viewCallback=self.ShowOwners, safeMode=True)
+        self.parent_frame.NewJob(njob)
+        #wx.CallAfter(self.ShowOwners, (self.assetName))
         
     def ShowLoading(self):
         
@@ -200,15 +204,17 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
             self.Layout()
     
     
-    def ShowOwners(self, assetName):
+    def ShowOwners(self, evt=None):
         
         self.ShowLoading()
         
         self.m_listCtrl1.Freeze()
         self.ClearResults()
         
-        
-        
+        self._resultOwnerList  = None
+        asset = self.assetName
+        fulllist = self.parent_frame.GetPlugin("Ravencore").getData('_AssetOwnerList')
+        self._resultOwnerList  = fulllist[asset]
         resultData = {}
         _cursor = 0
         if self._resultOwnerList!= None:
@@ -235,7 +241,10 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
         self.m_ownerCount.SetValue(str(_cursor))
         
         self.itemDataMap = resultData
-        listmix.ColumnSorterMixin.__init__(self, 2)
+        
+        if not self._listInit:
+            listmix.ColumnSorterMixin.__init__(self, 2)
+            self._listInit = True
         
         
         self.HideLoading()

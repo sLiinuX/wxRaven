@@ -248,7 +248,7 @@ class MenuAndToolBarManager(object):
         self.parentframe.m_auiToolBar2.Realize()
         self.parentframe.m_auiViewsShortcutToolbar.Realize()
         
-        self.parentframe.Views.UpdateGUIManager()
+        #self.parentframe.Views.UpdateGUIManager()
     
     def OnContextMenu_ShowNetworkList(self, event):
         #self.logger.info("showConnexionList!")

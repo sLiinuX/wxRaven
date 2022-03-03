@@ -6,6 +6,9 @@ Created on 8 janv. 2022
 import inspect
 import wx
 from .CustomUserIO_Advanced import wxRavenAdvancedMessageDialog, wxRavenUnSavedFileDialog
+import wx.adv
+
+
 
 def UserInfo(parent, err):
     dlg = wx.MessageDialog(parent, f'{err}',
@@ -175,6 +178,37 @@ def ReportRPCResult(parentf, resultObj, _type="info", bypassMessage="", bypassEr
     return res
     
     
-    
+
+
+def UserSystemNotification(parentframe, title, message, _type='info'):
+        sTitle = title
+        sMsg = message
+
+        
+        icons={
+            'info':parentframe.RessourcesProvider.GetIcon('info_icon_45'),
+            'warning':parentframe.RessourcesProvider.GetIcon('warning_icon_45'),
+            'error':parentframe.RessourcesProvider.GetIcon('error_icon_45'),
+            'success':parentframe.RessourcesProvider.GetIcon('success_icon_45')
+            }
+        
+        typesFlag={
+            'info':wx.ICON_INFORMATION,
+            'warning':wx.ICON_INFORMATION,
+            'error':wx.ICON_INFORMATION,
+            'success':wx.ICON_INFORMATION
+            }
+        
+        
+        if not icons.__contains__(_type):
+            _type = 'info'
+
+        nmsg = wx.adv.NotificationMessage(title=sTitle, message=sMsg)
+        nmsg.SetFlags(typesFlag[_type])
+        
+        nmsg.SetIcon(icons[_type])
+        
+        
+        nmsg.Show(timeout=wx.adv.NotificationMessage.Timeout_Auto)    
     
     

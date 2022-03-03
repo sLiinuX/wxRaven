@@ -27,7 +27,7 @@ class wxRavenSplashScreen ( wx.Dialog ):
 
 		bSizer3 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_bitmap1 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/wxraven_splash.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_bitmap1 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/wxraven_splash_galushai.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer3.Add( self.m_bitmap1, 1, wx.ALL|wx.EXPAND, 5 )
 
 		self.m_staticText1 = wx.StaticText( self, wx.ID_ANY, u"Loading WxRaven...", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -64,12 +64,12 @@ class wxRavenSplashScreen ( wx.Dialog ):
 class wxRavenMainFrame ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"wxRaven", pos = wx.DefaultPosition, size = wx.Size( 736,501 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"wxRaven", pos = wx.DefaultPosition, size = wx.Size( 765,501 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.m_mgr = wx.aui.AuiManager()
 		self.m_mgr.SetManagedWindow( self )
-		self.m_mgr.SetFlags(wx.aui.AUI_MGR_ALLOW_ACTIVE_PANE|wx.aui.AUI_MGR_ALLOW_FLOATING|wx.aui.AUI_MGR_DEFAULT)
+		self.m_mgr.SetFlags(wx.aui.AUI_MGR_ALLOW_ACTIVE_PANE|wx.aui.AUI_MGR_ALLOW_FLOATING|wx.aui.AUI_MGR_HINT_FADE|wx.aui.AUI_MGR_TRANSPARENT_DRAG|wx.aui.AUI_MGR_TRANSPARENT_HINT)
 
 		self.wxRavenMenuBar = wx.MenuBar( 0 )
 		self.wxRavenMenuBar_File = wx.Menu()
@@ -182,7 +182,7 @@ class wxRavenMainFrame ( wx.Frame ):
 		self.m_showConsoleLog = self.m_auiToolBar2.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/error_console.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_CHECK, u"Show/Hide Error Log Console", wx.EmptyString, None )
 
 		self.m_auiToolBar2.Realize()
-		self.m_mgr.AddPane( self.m_auiToolBar2, wx.aui.AuiPaneInfo().Name( u"wxRavenToolBar" ).Top().CaptionVisible( False ).CloseButton( False ).PaneBorder( False ).Movable( False ).Dock().Resizable().FloatingSize( wx.DefaultSize ).Row( 0 ).Layer( 10 ).ToolbarPane() )
+		self.m_mgr.AddPane( self.m_auiToolBar2, wx.aui.AuiPaneInfo().Name( u"wxRavenToolBar" ).Top().CaptionVisible( False ).CloseButton( False ).PaneBorder( False ).Movable( False ).Dock().Resizable().FloatingSize( wx.DefaultSize ).BottomDockable( False ).LeftDockable( False ).RightDockable( False ).Row( 0 ).Layer( 10 ).ToolbarPane() )
 
 		self.m_auiViewsShortcutToolbar = wx.aui.AuiToolBar( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.aui.AUI_TB_HORZ_LAYOUT )
 		self.m_staticText5 = wx.StaticText( self.m_auiViewsShortcutToolbar, wx.ID_ANY, u"wxRaven ", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -202,7 +202,7 @@ class wxRavenMainFrame ( wx.Frame ):
 
 
 		self.m_auiViewsShortcutToolbar.Realize()
-		self.m_mgr.AddPane( self.m_auiViewsShortcutToolbar, wx.aui.AuiPaneInfo().Name( u"ViewsShortcutToolbar" ).Top().Caption( u"ViewsShortcutToolbar" ).PinButton( True ).Dock().Resizable().FloatingSize( wx.DefaultSize ).Layer( 10 ).ToolbarPane() )
+		self.m_mgr.AddPane( self.m_auiViewsShortcutToolbar, wx.aui.AuiPaneInfo().Name( u"ViewsShortcutToolbar" ).Top().Caption( u"ViewsShortcutToolbar" ).PinButton( True ).Dock().Resizable().FloatingSize( wx.DefaultSize ).BottomDockable( False ).LeftDockable( False ).RightDockable( False ).Layer( 10 ).ToolbarPane() )
 
 		self.rpcConnexions_dropdown_menu = wx.Menu()
 		self.Bind( wx.EVT_RIGHT_DOWN, self.wxRavenMainFrameOnContextMenu )
@@ -297,10 +297,10 @@ class wxRavenAbout ( wx.Dialog ):
 
 		bSizer8 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_bitmap2 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/wxraven_splash.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+		self.m_bitmap2 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/wxraven_splash_galushai.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
 		bSizer8.Add( self.m_bitmap2, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, u"WxRaven Integrated Raven Environement - Work In Progress version", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, u"WxRaven Integrated Raven Environement - 0.x.x - Galushai", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText3.Wrap( -1 )
 
 		self.m_staticText3.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, wx.EmptyString ) )

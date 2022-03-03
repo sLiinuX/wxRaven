@@ -64,7 +64,7 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
         
         #self.FILTER_STATUS = ''
         #self.FILTER_TEXT = ''
-        
+        self._listInit = False
         
         self._datacache = {}
         self._loadingPanel = None
@@ -137,7 +137,7 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
     def DoRequestUpdateHistory(self, evt=None):
         myPlugin = self.parent_frame.GetPlugin('P2PMarket')
         
-        myPlugin.RequestMarketTradesHistory_T()
+        myPlugin.RequestMarketTradesHistory_T(callback=self.UpdateView)
         self.ShowLoading()
         
     
@@ -413,7 +413,9 @@ class wxRavenP2PMarket__Ravencore_UTXOManager_TradesHistory_ViewLogic(wxRavenP2P
             self.m_listCtrl1.SetColumnWidth(6, 75)#wx.LIST_AUTOSIZE)
             self.m_listCtrl1.SetColumnWidth(7, wx.LIST_AUTOSIZE)
             #self.m_listCtrl1.itemDataMap = self._datacache
-            listmix.ColumnSorterMixin.__init__(self, 8)
+            if not self._listInit:
+                listmix.ColumnSorterMixin.__init__(self, 8)
+                self._listInit = True
                   
             
                 

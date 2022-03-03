@@ -45,6 +45,13 @@ __wxraven_configurations_icons__ = {
     
     }
 
+__wxraven_configurations_logos__ = {
+    
+    'wxRaven : Standard Edition': 'avatar_4',
+    'wxRaven : NFT Artist Edition':'avatar_2',
+    'wxRaven : Developer/Server Edition' : 'avatar_3'
+    
+    }
 
 __wxraven_configurations_predefined__ = {
     

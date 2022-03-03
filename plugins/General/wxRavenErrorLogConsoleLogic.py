@@ -61,6 +61,8 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         self.itemDataMap = {}
         self.allIcons = { }
         self.message_type_mapping = {}
+        self._listInit = False
+        
         self.InitBasicMapping()
         self.InitPlugingAndVariousMapping()
         
@@ -153,95 +155,141 @@ class RavenErrorLogConsole(wxRavenErrorLogConsolePanel, listmix.ColumnSorterMixi
         self.itemDataMap = {}
          
     
+    
+    '''
+    
+    Virtualization Update
+    
+    '''
+    def UpdateList(self, evt=None):   
+        self.itemDataMap = {}
+        self.cursor = 0
+        
+        
+        #
+        # TO DO : GENERATE THE LIST
+        #
+        
+        
+        
+        self.m_listCtrl1.SetItemCount(len(self.itemDataMap))
+        self.m_listCtrl1.Refresh()
+        
+        
+        
+    def OnGetItemText(self, item, col):
+        #return "Item %d, column %d" % (item, col)
+        #print(f'OnGetItemText {item} {col}')
+        return self.itemDataMap[item][col]
+
+    def OnGetItemImage(self, item):
+        _datas = self._datacache[item]
+        _icon = self.allIcons['info']
+        if self.allIcons.__contains__(_datas[0].lower()):
+            _icon= self.allIcons[_datas[0].lower()]
+        return _icon
+
+
+    def OnGetItemAttr(self, item):
+        return None
+    
+    
+    
+    
+    
     def UpdateView(self):
         
         
         #print("RavenErrorLogConsole Update !")
-        
-        _allLogs = self.parent_frame.GetPluginData("General","allLogs").copy()
-        
-        self.m_listCtrl1.Freeze()
-        
-        _currentViewCursor = self._logCurrentCursor
-        #self.itemDataMap = {}
-        items = _allLogs.items()
-        for key, data in items:
-            #print(str(key) + " VS" + str(_currentViewCursor) )
-            if key>_currentViewCursor:
-                #print("newrow")
-                
-                
-                _icon = self.allIcons['info']
-                
-                
-                _type=self.__getMessageTypeFromMapping__(data[0])
-                #print(f"{data[0]} ==  {_type}")
-                #print(_type)
-                #print(self._display)                
-                
-                _foundInFilter=False
-                
-                if _type in self._display:
-                    _foundInFilter = True
-                """
-                for _t in  self._display:
-                    print(f"cehck display {_t}")    
-                    if _type.__contains__(_t):
+        try:
+            _allLogs = self.parent_frame.GetPluginData("General","allLogs").copy()
+            
+            self.m_listCtrl1.Freeze()
+            
+            _currentViewCursor = self._logCurrentCursor
+            #self.itemDataMap = {}
+            items = _allLogs.items()
+            for key, data in items:
+                #print(str(key) + " VS" + str(_currentViewCursor) )
+                if key>_currentViewCursor:
+                    #print("newrow")
+                    
+                    
+                    _icon = self.allIcons['info']
+                    
+                    
+                    _type=self.__getMessageTypeFromMapping__(data[0])
+                    #print(f"{data[0]} ==  {_type}")
+                    #print(_type)
+                    #print(self._display)                
+                    
+                    _foundInFilter=False
+                    
+                    if _type in self._display:
+                        _foundInFilter = True
+                    """
+                    for _t in  self._display:
+                        print(f"cehck display {_t}")    
+                        if _type.__contains__(_t):
+                            
+                            _foundInFilter=True
+                    """
+                    
+                    
+                    #if not _foundInFilter:
+                        #pass
+                        #print(f"not found")     
+                        #continue
                         
-                        _foundInFilter=True
-                """
-                
-                
-                #if not _foundInFilter:
-                    #pass
-                    #print(f"not found")     
-                    #continue
                     
-                
-                
-                if self.allIcons.__contains__(data[0].lower()):
-                    _icon= self.allIcons[data[0].lower()]
-                
-                
-                
-                if _foundInFilter:
-                
-                    index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(), data[1], _icon )
                     
-                    #item = self.m_listCtrl1.GetItem(index)
-                    #item.SetColumn(1)
-                    #item.SetText('John')
-                    self.m_listCtrl1.SetItem(index,1, data[2])
-                    self.m_listCtrl1.SetItem(index,2, data[3])
-                    #item1.SetColumn(1)
-                    #self.m_listCtrl1.SetItem(item)
-                    self.m_listCtrl1.SetItemData(index, _currentViewCursor)
-                
-                self.itemDataMap[_currentViewCursor] = (str(data[1]), str(data[2]), str(data[3]) )
+                    if self.allIcons.__contains__(data[0].lower()):
+                        _icon= self.allIcons[data[0].lower()]
                     
-                
-                _currentViewCursor = _currentViewCursor +1
-          
-        self._logCurrentCursor = _currentViewCursor
-        
-        
-        self.m_listCtrl1.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        self.m_listCtrl1.SetColumnWidth(1, 300)
-        self.m_listCtrl1.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-        listmix.ColumnSorterMixin.__init__(self, 3)
-        
-        listmix.ColumnSorterMixin.SortListItems(self, col=2, ascending=0)
-        
-        self.m_listCtrl1.Thaw()
-        
-        
-        self.RefreshToolbarState()
-        
-        
-        
-        self.SetAutoLayout(True)
-        self.Layout()
-        
+                    
+                    
+                    if _foundInFilter:
+                    
+                        index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(), data[1], _icon )
+                        
+                        #item = self.m_listCtrl1.GetItem(index)
+                        #item.SetColumn(1)
+                        #item.SetText('John')
+                        self.m_listCtrl1.SetItem(index,1, data[2])
+                        self.m_listCtrl1.SetItem(index,2, data[3])
+                        #item1.SetColumn(1)
+                        #self.m_listCtrl1.SetItem(item)
+                        self.m_listCtrl1.SetItemData(index, _currentViewCursor)
+                    
+                    self.itemDataMap[_currentViewCursor] = (str(data[1]), str(data[2]), str(data[3]) )
+                        
+                    
+                    _currentViewCursor = _currentViewCursor +1
+              
+            self._logCurrentCursor = _currentViewCursor
+            
+            
+            self.m_listCtrl1.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+            self.m_listCtrl1.SetColumnWidth(1, 300)
+            self.m_listCtrl1.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+            
+            if not self._listInit:
+                listmix.ColumnSorterMixin.__init__(self, 3)
+                self._listInit = True
+            
+            listmix.ColumnSorterMixin.SortListItems(self, col=2, ascending=0)
+            
+            self.m_listCtrl1.Thaw()
+            
+            
+            self.RefreshToolbarState()
+            
+            
+            
+            self.SetAutoLayout(True)
+            self.Layout()
+        except Exception as e:
+            pass
         
     
     

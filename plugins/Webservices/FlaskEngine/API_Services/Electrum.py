@@ -35,6 +35,7 @@ class ElectrumView(wxCustomFlaskView):
         #
         # CALL HERE THE RPC CLIENT EQUIVALENT METHOD
         # 
+        command = args.get('command')
         '''
         command = args.get('command')
         network = self.daemon.getNetwork()

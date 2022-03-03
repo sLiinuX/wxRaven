@@ -24,6 +24,9 @@ from .pluginSettings import *
 from .wxRavenRavencore_TransactionsViewer_Logic import * 
 from .wxRavenRavencore_UTXOManagerLogic import *
 from .wxRaven_Ravencore_AssetOwnerExporterLogic import * 
+
+from .wxRavenRavencore_AddressViewer_Logic import * 
+
 #import the plugin setting panels, from another file to be more simple
 #from .pluginSettings import MyTutorialSettingPanel_WithLogic
 import json
@@ -34,6 +37,7 @@ from .wxRavenRavencoreAssetNavigatorLogic import *
 
 from .wxRavenRavencoreAssetIssuerLogic import *
 from wxRavenGUI.application.wxcustom import *
+from plugins.Ravencore.jobs import *
 
 try:
     import pyperclip
@@ -43,6 +47,9 @@ except ImportError:
     
 from datetime import datetime
 
+
+import inspect
+from .jobs import *
 
 
 class wxRavenPlugin(PluginObject):
@@ -164,6 +171,20 @@ class wxRavenPlugin(PluginObject):
                      'skip_save': True,
                      }, 
                     
+                    
+                    
+                    {
+                     'viewid':'Address Viewer', 
+                     'name':'Address Viewer', 
+                     'title':'Address Viewer', 
+                     'position':'main', 
+                     'icon':self.RessourcesProvider.GetImage('inspect_address'), 
+                     'class': wxRaven_Ravencore_AddressViewerLogic ,
+                     'default':False,
+                     'multipleViewAllowed':True,
+                     
+                     }, 
+                    
                     {
                      'viewid':'Asset Owner Exporter', 
                      'name':'Asset Owner Exporter', 
@@ -235,7 +256,7 @@ class wxRavenPlugin(PluginObject):
                 'filtertype' : False,
                 'filtertypelist' : [],
                 'ipfsgateway_default' : 'https://wxraven.link/ipfs/',
-                'ipfsgateway_providers':['https://wxraven.link/ipfs/','https://wxraven.link/ipfs2/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'https://ravencoinipfs-gateway.com/ipfs/'],
+                'ipfsgateway_providers':['https://wxraven.link/ipfs/','https://wxraven.link/ipfs2/','https://ipfs.cryptide.ca/ipfs/','https://gateway.ravenclause.com/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'https://ravencoinipfs-gateway.com/ipfs/'],
                 
                 'bookmark_list':['My Assets'],
                 'navigation_use_cache' : True,
@@ -296,12 +317,14 @@ class wxRavenPlugin(PluginObject):
         self.setData("_LastSearch", "")
         self.setData("_AssetSearchResult", {})
         
+        self.setData('_AssetOwnerList', {})
+        
         
         self.setData("_AssetLibraryList", {'My Assets':None})
         self.setData("_CurrentLibrary", 'My Assets')
         
         self.setData("_AllUTXOs", {'RVN':[], 'ASSETS':[]})
-        
+        self.setData("_AllUTXOs_running", False)
         
         self.setData("_tx_history", {}) 
         self.setData("_tx_history_category", '') 
@@ -313,7 +336,12 @@ class wxRavenPlugin(PluginObject):
         self.setData("_utxo_manager_views_addons_callbacks", []) 
         
         
+        self.setData("_last_tx_decoded", None) 
         
+        self.setData("_address_viewer_running", False) 
+        self.setData("_address_viewer_current_address_text", '') 
+        self.setData("_address_viewer_datas_utxo", {}) 
+        self.setData("_address_viewer_datas_tx_history", {}) 
         #
         # Plugin can Register on callbacks like Connexion change in this case, it will start a thread to get datas
         #
@@ -391,10 +419,14 @@ class wxRavenPlugin(PluginObject):
      
     '''
         
-    def OnSearchRequested_T(self, keyword="", limit=50, onlyMain=False, openViewAfter=False):    
-        t=threading.Thread(target=self.OnUpdatePluginDatas_SEARCH, args=(keyword,limit, onlyMain))
-        t.start()     
+    def OnSearchRequested_T(self, keyword="", limit=50, onlyMain=False, callback=None, openViewAfter=False):    
+        #t=threading.Thread(target=self.OnUpdatePluginDatas_SEARCH, args=(keyword,limit, onlyMain))
+        #t.start()     
         
+        #Job_AssetNavigator_Explore
+        
+        j = Job_AssetNavigator_Search(self, keyword=keyword,limit=limit,onlyMain=onlyMain, viewCallback=callback, safeMode=True)
+        self.parentFrame.NewJob(j)
         
         if openViewAfter:
             _newView = self.parentFrame.Views.OpenView("Asset Search", "Ravencore", True)
@@ -415,13 +447,14 @@ class wxRavenPlugin(PluginObject):
             return None 
         
         
-        self.OnUTXORequested_T()
+        #self.OnUTXORequested_T()
         
         
     def OnUpdatePluginDatas_SEARCH(self, keyword="", limit=50, onlyMain=False):
-        
+        print('OnUpdatePluginDatas_SEARCH === SHOULD BE REPLACED')
         #self.setData("myPluginData", {})
         #self.setData("myPluginData2", False)
+        '''
         _AssetSearchResult = {}
         #try:
         try:
@@ -458,18 +491,20 @@ class wxRavenPlugin(PluginObject):
         except Exception as e:
             self.RaisePluginLog( "Unable to search asset :"+ str(e), type="error")
     
+        '''
     
     
     
-    
-    def OnNavigateRequested_T(self, library=""):    
-        self.setData("_CurrentLibrary", library)
-        t=threading.Thread(target=self.OnUpdatePluginDatas_NAVIGATE, args=(library,))
-        t.start() 
+    def OnNavigateRequested_T(self, lib="", callback=None):    
+        self.setData("_CurrentLibrary", lib)
+        #t=threading.Thread(target=self.OnUpdatePluginDatas_NAVIGATE, args=(library,))
+        #t.start() 
+        j = Job_AssetNavigator_Explore(self,library=lib, viewCallback=callback, safeMode=True)
+        self.parentFrame.NewJob(j)
     
     def OnUpdatePluginDatas_NAVIGATE(self, library=""):
-        
-        
+        print('OnUpdatePluginDatas_HISTORY === SHOULD BE REPLACED')
+        '''
         if library == "":
             library = "My Assets"
             
@@ -517,6 +552,7 @@ class wxRavenPlugin(PluginObject):
         wx.CallAfter(self.UpdateActiveViews, ())
         
         #self.RaisePluginLog( "Unable to explore asset '"+keyword+"' :"+ str(e), type="error")
+        '''
     
     
     
@@ -528,16 +564,18 @@ class wxRavenPlugin(PluginObject):
     
     
     
-    
-    def OnHISTORYRequested_T(self):
+    def OnHISTORYRequested_T(self,callback=None):
         self.setData("_tx_history", {})
-        t=threading.Thread(target=self.OnUpdatePluginDatas_HISTORY, args=())
-        t.start() 
+        #t=threading.Thread(target=self.OnUpdatePluginDatas_HISTORY, args=())
+        #t.start()  
+        j = Job_WalletHistory(self, viewCallback=callback, safeMode=True)
+        self.parentFrame.NewJob(j)
     
     def OnUpdatePluginDatas_HISTORY(self, library=""):
-        print('OnUpdatePluginDatas_HISTORY')
+        print('OnUpdatePluginDatas_HISTORY === SHOULD BE REPLACED')
+        #print('OnUpdatePluginDatas_HISTORY')
         
-        
+        '''
         ravencoin = self.parentFrame.getRvnRPC()
         _DatasHistory = { }
         #if True:
@@ -565,6 +603,7 @@ class wxRavenPlugin(PluginObject):
         self.setData("_tx_history", _DatasHistory)
         #print(f"SAVEDATA ")
     
+        '''
     
     
     
@@ -578,12 +617,25 @@ class wxRavenPlugin(PluginObject):
     
     
     
-    def OnUTXORequested_T(self):
+    
+    def OnUTXORequested_T(self, callback=None):
         self.setData("_AllUTXOs", {'RVN':[], 'ASSETS':[]})
-        t=threading.Thread(target=self.OnUpdatePluginDatas_UTXO, args=())
-        t.start() 
+        #t=threading.Thread(target=self.OnUpdatePluginDatas_UTXO, args=())
+        #t.start() 
+        
+        j = Job_WalletUTXO(self, viewCallback=callback, safeMode=True)
+        self.parentFrame.NewJob(j)
+        
     
     def OnUpdatePluginDatas_UTXO(self, library=""):
+        pass
+        print('OnUpdatePluginDatas_UTXO === SHOULD BE REPLACED')
+        '''
+        if self.getData("_AllUTXOs_running")==True:
+            return 
+        
+        
+        self.setData("_AllUTXOs_running", True)
         print('OnUpdatePluginDatas_UTXO')
         
         
@@ -608,9 +660,182 @@ class wxRavenPlugin(PluginObject):
         except Exception as e:
             self.RaisePluginLog( "Unable to update UTXO List : "+ str(e), type="error")
     
-        
+        self.setData("_AllUTXOs_running", False)
         self.setData("_AllUTXOs", _DatasUtxo)
         #print(f"SAVEDATA ")
+        '''
+        
+     
+     
+     
+     
+     
+     
+     
+    #
+    #
+    #AddressScan
+    #    
+    #
+        
+        
+        
+    def OnAddressScanRequest_T(self):
+        print(str(inspect.stack()[0][0].f_code.co_name))
+        print(str(inspect.stack()[1][0].f_code.co_name))
+        #print(str(inspect.stack()[2][0].f_code.co_name))
+        print('OnAddressScanRequest_T === SHOULD BE REPLACED')
+        #self.OnAddressUTXORequested_T()
+        #self.OnAddressHISTORYRequested_T()
+        
+    
+    
+    
+        
+    def OnAddressUTXORequested_T(self, callback=None):   
+        self.setData("_address_viewer_datas_utxo", {'RVN':[],'ASSETS':[] }) 
+        
+        
+        j = Job_AddressUTXO(self, viewCallback=callback, safeMode=True)
+        self.parentFrame.NewJob(j)
+        #t=threading.Thread(target=self.OnUpdatePluginAddressDatas_UTXO, args=())
+        #t.start() 
+    
+    
+    #
+    # Replaced by a JOB
+    #
+    def OnUpdatePluginAddressDatas_UTXO(self, library=""):
+        pass
+        print('OnUpdatePluginAddressDatas_UTXO === SHOULD BE REPLACED')
+        '''
+        _add = self.getData('_address_viewer_current_address_text') 
+        print(f'OnUpdatePluginAddressDatas_UTXO {_add}')
+        
+        
+        ravencoin = self.parentFrame.getRvnRPC()
+        _DatasUtxo = {'RVN':[],'ASSETS':[] }
+        if True:
+        #try:
+            
+            if _add == "":
+                return
+            
+            _addressList = _add.split(',')
+            
+            
+            
+            _listRaw = ravencoin.directories.GetAddressUnspentList( _addressList, asset="RVN", _excludeAsset='')
+            _DatasUtxo = self.getData('_address_viewer_datas_utxo')
+            _DatasUtxo['RVN'] = _listRaw
+            
+            
+            _ListAsset = ravencoin.directories.GetAddressUnspentList(_addressList, asset='*', _excludeAsset='RVN')
+            _DatasUtxo['ASSETS'] = _ListAsset
+            
+            #print(f"_DatasUtxo {_DatasUtxo['ASSETS']}")
+            wx.CallAfter(self.UpdateActiveViews, ())
+    
+    
+        
+    
+        #except Exception as e:
+        #    self.RaisePluginLog( "Unable to update address UTXO List : "+ str(e), type="error")
+    
+        
+        self.setData("_address_viewer_datas_utxo", _DatasUtxo)
+        '''
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    
+    def OnAddressHISTORYRequested_T(self, callback=None):
+        
+        self.setData("_address_viewer_datas_tx_history", {})
+        j = Job_AddressInspection(self, viewCallback=callback, safeMode=True)
+        self.parentFrame.NewJob(j)
+        #self.setData("_address_viewer_datas_tx_history", {})
+        #t=threading.Thread(target=self.OnUpdatePluginAddressDatas_HISTORY, args=())
+        #t.start() 
+    
+    
+    #
+    # Replaced by a JOB
+    #
+    def OnUpdatePluginAddressDatas_HISTORY(self, library=""):
+        pass
+        print('OnUpdatePluginAddressDatas_UTXO === SHOULD BE REPLACED')
+        
+        
+        '''
+        
+        
+        if self.getData("_address_viewer_running") ==True:
+            return 
+        print('OnUpdatePluginDatas_HISTORY')
+        
+        _add = self.getData('_address_viewer_current_address_text') 
+        ravencoin = self.parentFrame.getRvnRPC()
+        _DatasHistory = []
+        
+        self.setData("_address_viewer_running", True) 
+        
+        #if True:
+        if True:
+        #try:
+            
+            if _add == "":
+                return
+            
+            _addressList = _add.split(',')
+            #_categorie = self.getData("_tx_history_category") 
+            #_start_date = self.getData("_tx_history_start") 
+            #_stop_date = self.getData("_tx_history_stop") 
+            #_filter_addresses = self.getData("_tx_history_address_filter") 
+
+            _DatasHistoryList = ravencoin.directories.GetAddressTransactionList(_addressList, _fullScan=False)
+            _cursor = 0
+            _max = len(_DatasHistoryList)
+            
+            for _item in _DatasHistoryList:
+                #print(f"Inspecting Transactions ({_cursor} / {_max}0")
+                
+                _txInspected = ravencoin.utils.GetAndScanRawTransaction(_item, _addressList)
+                _DatasHistory.append(_txInspected)
+            
+                _cursor = _cursor+1
+               
+            
+            #print(_DatasHistory)
+            #_ListAsset = ravencoin.asset.GetAssetUnspentList(assetname='', _fullDatas=True, _includeLocked=True)
+            #_DatasUtxo['ASSETS'] = _ListAsset
+            
+            #print(f"_DatasUtxo {_DatasUtxo['ASSETS']}")
+            #wx.CallAfter(self.UpdateActiveViews, ())
+
+        #except Exception as e:
+        #    self.RaisePluginLog( "Unable to update address transaction history List : "+ str(e), type="error")
+    
+        self.setData("_address_viewer_running", False)
+        self.setData("_address_viewer_datas_tx_history", _DatasHistory)
+    
+        '''
+    
+    
+    
+    
+    
+        
+        
+        
     #
     # Views caller and quickwin
     #

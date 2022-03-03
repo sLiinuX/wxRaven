@@ -19,3 +19,6 @@ from wxRavenGUI.application.core.wxSettingsManager import *
 from wxRavenGUI.application.core.wxViewsManager import *
 
 from wxRavenGUI.application.wxRavenSplashScreen import *
+
+
+from .wxJobManager import *

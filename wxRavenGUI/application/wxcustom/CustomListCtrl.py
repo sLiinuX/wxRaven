@@ -31,6 +31,34 @@ class wxRavenListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         listmix.ListCtrlAutoWidthMixin.__init__(self)
         
         
+class wxRavenVirtualListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
+    def __init__(self, parent, ID=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.LC_REPORT|wx.LC_VIRTUAL|wx.LC_HRULES|wx.LC_VRULES):
+        wx.ListCtrl.__init__(self, parent, ID, pos=wx.DefaultPosition, size=size, style=style)
+        listmix.ListCtrlAutoWidthMixin.__init__(self)
+        self._parentPanel = parent
+        
+    def OnGetItemText(self, item, col):
+        return self._parentPanel.OnGetItemText(item, col)
+        #print(f'OnGetItemText {item} {col}')
+        #return self.itemDataMap[item][col]
+
+    def OnGetItemImage(self, item):
+        return self._parentPanel.OnGetItemImage(item)
+        #_datas = self._datacache[item]
+        #_icon = self.allIcons[_datas.getStatus().lower()]
+        #return _icon
+        '''
+        if item % 3 == 0:
+            return self.idx1
+        else:
+            return self.idx2
+            
+        '''
+
+    def OnGetItemAttr(self, item):
+        return self._parentPanel.OnGetItemAttr(item)
+        
+        
 class wxRavenListCtrlPanel ( wx.Panel,listmix.ColumnSorterMixin ):
     
     def __init__( self, parent , id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 222,103 ), style = wx.TAB_TRAVERSAL):

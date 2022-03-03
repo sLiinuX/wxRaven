@@ -130,7 +130,7 @@ class RavencoreUTXORightclickPopupMenu(object):
     def forceRefreshUtxo(self, evt=None):
         myplugin = self.parent_frame.GetPlugin('Ravencore') 
         #wx.CallAfter(self.parentBinding.UpdateView, ())  
-        myplugin.OnUTXORequested_T()
+        myplugin.OnUTXORequested_T(self.parentBinding.UpdateView)
         
             
     def menuItemAction_ShowTx(self, event):

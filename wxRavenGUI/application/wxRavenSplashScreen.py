@@ -12,6 +12,10 @@ from plugins.ProfileManager.wxRaven_ProfileManager_ProfileSelector import wxRave
 
 import wx
 import wxRavenGUI.application
+import logging
+import os
+
+
 
 class splashScreen(wxRavenSplashScreen):
     
@@ -74,9 +78,14 @@ class SplashScreenMgr():
         
         self._profile = profile
         
+        
+        
+        
     
         
     def Show(self):
+        
+        
         self.sc.Show(show=1)
         
         
@@ -86,7 +95,7 @@ class SplashScreenMgr():
         
         
     def InitParentFrame(self, profilePath =''):
-        x  =  wxRavenGUI.application.wxRavenApp.wxRavenAppMainFrame(_ProfilePath = profilePath)
+        x  =  wxRavenGUI.application.wxRavenApp.wxRavenAppMainFrame(_ProfilePath = profilePath, mainApp=self.parentObj)
         self.parentObj.appmainframe  =  x
         self.parentframe = x
         return self.parentObj.appmainframe
@@ -133,6 +142,9 @@ class SplashScreenMgr():
                     
                     print(f"Profile Selector Returned = {self._profile}")
                 
+                
+                
+                
                 print(f"Starting Logs in = {self._profile}")
                 print(f"Do Start Result = {self.doStart}")
                 #
@@ -142,9 +154,28 @@ class SplashScreenMgr():
                 self.parentObj.setup_logging(forcePath=self._profile)
                 
                 
+                
+                
+                
+                
                 if self.doStart:
                     print(f"Profile = {self._profile}")
                     self.__InitializeApplication__(self._profile)
+                    
+                    
+                    _log_mode = self.parentframe.GetPluginSetting("General", 'log_mode')
+                    _debug_mode = self.parentframe.GetPluginSetting("General", 'debug_mode')
+                    logging.info(f"Application Started, changing log configuration log_mode={_log_mode} , debug_mode= {_debug_mode}")
+                    
+                    self.parentObj.stop_logging()
+                    if _log_mode:
+                        self.parentObj.setup_logging(forcePath=self._profile, _debugMode=_debug_mode)
+                    
+                    
+                    
+                    
+                    
+                    
                     
                 else:
                     self.doStart=False

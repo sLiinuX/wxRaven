@@ -93,7 +93,7 @@ class wxRavenDebugConsole(wxRavenDebugConsolePanel):
     
     
     def waitApplicationReady(self):
-        t=threading.Thread(target=self.__waitLoop_T__, args=(self.UpdateView,))
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.UpdateView,), daemon=True)
         t.start()
         
         

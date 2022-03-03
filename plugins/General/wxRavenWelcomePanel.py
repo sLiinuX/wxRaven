@@ -14,7 +14,7 @@ import os
 
 import wx.lib.scrolledpanel
 
-
+from plugins.configurations import __wxraven_configurations_logos__
 
 class wxRavenWelcomeTabLogic(wxRavenWelcomeTab):
     '''
@@ -59,6 +59,12 @@ class wxRavenWelcomeTabLogic(wxRavenWelcomeTab):
         ROOT_PATH = parentFrame.Paths['ROOT'] + "/CHANGES.xml"
         print(ROOT_PATH)
         self.m_richText1.LoadFile(ROOT_PATH,2)
+        
+        
+        
+        configImage = __wxraven_configurations_logos__[parentFrame.GetPluginSetting('General', 'sw_configuration')]
+        self.m_bitmap3.SetBitmap(self.parent_frame.RessourcesProvider.GetImage(configImage))
+        
         #
         """
         pause_button = buts.GenBitmapTextButton(self, -1, bitmap=self.parent_frame.RessourcesProvider.GetImage("search_45"), label= "Search")

@@ -15,6 +15,9 @@ import wx.aui
 
 import logging
 
+
+from .jobs import *
+
 class ViewsManager(object):
     '''
     classdocs
@@ -73,14 +76,19 @@ class ViewsManager(object):
         wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
         wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())
         
+        self.UpdateGUIManager()
+        
         
         
     def OnAuiPaneActivated(self, evt):
-        self.logger.info("OnAuiPaneActivated in view man") 
-        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())    
-        wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())      
+        self.logger.info("OnAuiPaneActivated in view man : tweaked version in test") 
+        p = self.parentframe.GetPlugin('General')
+        j = Job_RefreshGUI(p, viewCallback=None, safeMode=True)
+        self.parentframe.NewJob(j)
+        #wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())    
+        #wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())      
         
-    
+        #self.UpdateGUIManager()
     
     
     
@@ -355,7 +363,7 @@ class ViewsManager(object):
     
                 
                 
-    def UpdateGUIManager(self):
+    def UpdateGUIManager(self, evt=None):
         
         self.parentframe.m_mgr.GetPane("wxRavenToolBar").window.Realize()
         self.parentframe.m_mgr.Update()

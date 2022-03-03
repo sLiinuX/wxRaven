@@ -30,7 +30,7 @@ class wxRavenApplicationSettingPanel(PluginSettingsPanelObject):
         self.parentFrame = parentFrame
         parentFrame.RessourcesProvider.ApplyThemeOnPanel(_panel)
         PluginSettingsPanelObject.__init__(self,_panel, parentFrame, pluginName)
-    
+        self._parent = parent
         self._Panel = _panel
         self._panel = _panel
         
@@ -168,6 +168,11 @@ class wxRavenGeneralSettingPanel(PluginSettingsPanelObject):
         self._Panel.m_checkBoxResume.Bind( wx.EVT_CHECKBOX, self.OnChanged )
         self._Panel.m_checkBoxPurgeOnClose.Bind( wx.EVT_CHECKBOX, self.OnChanged )
         self._Panel.m_checkBoxSaveSession.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        self._Panel.m_spinJobMax.Bind( wx.EVT_SPINCTRL, self.OnChanged )
+        
+        self._parent = parent
+        self._Panel = _panel
+        self._panel = _panel
     #
     #
     # method to be called on close and apply
@@ -180,7 +185,13 @@ class wxRavenGeneralSettingPanel(PluginSettingsPanelObject):
         myPlugin.PLUGIN_SETTINGS['show_welcome'] = not self._Panel.m_checkBoxWelcome.GetValue()
         
         myPlugin.PLUGIN_SETTINGS['purge_on_close'] = not self._Panel.m_checkBoxPurgeOnClose.GetValue()
+        
+        
+        myPlugin.PLUGIN_SETTINGS['log_mode'] =  self._Panel.m_checkBoxLogSession.GetValue()
+        myPlugin.PLUGIN_SETTINGS['debug_mode'] =  self._Panel.m_checkBoxDebugSession.GetValue()
     
+        myPlugin.PLUGIN_SETTINGS['max_running_jobs'] =  self._Panel.m_spinJobMax.GetValue()
+        
     
         self.parentFrame.PerspectiveManager.ToggleResumeViewSettings(self._Panel.m_checkBoxResume.GetValue())
         self.parentFrame.PerspectiveManager.ToggleSaveViewSettings(self._Panel.m_checkBoxSaveSession.GetValue())
@@ -204,13 +215,24 @@ class wxRavenGeneralSettingPanel(PluginSettingsPanelObject):
         
         
         save_on_close= myPlugin.PLUGIN_SETTINGS['save_on_close']
-        self._Panel.m_checkBoxSaveSession.SetValue(save_on_close)    
+        self._Panel.m_checkBoxSaveSession.SetValue(save_on_close)  
         
+        
+        log_mode= myPlugin.PLUGIN_SETTINGS['log_mode']
+        self._Panel.m_checkBoxLogSession.SetValue(log_mode)  
+        
+        
+        save_on_close= myPlugin.PLUGIN_SETTINGS['debug_mode']
+        self._Panel.m_checkBoxDebugSession.SetValue(save_on_close)  
+        
+          
+        max_running_jobs = myPlugin.PLUGIN_SETTINGS['max_running_jobs'] 
+        self._Panel.m_spinJobMax.SetValue(max_running_jobs)
         
         self._Panel.m_checkBoxResume.SetValue(self.parentFrame.Settings.resumeviewonstartup )   
        
-    
-        
+        self._Panel.Layout()  
+        self._parent.Layout()  
          
         
     

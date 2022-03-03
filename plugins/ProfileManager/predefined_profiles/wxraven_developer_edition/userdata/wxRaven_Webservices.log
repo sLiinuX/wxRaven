@@ -1,0 +1,76 @@
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:194] INFO Initialize plugin list from /home/slinux/eclipse-workspace/wxRavenGUI/plugins//Webservices/FlaskEngine/API_Services/
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.P2PMarket.<ALLCLASSES>
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate P2PMarketView
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.WebAdmininistration.<ALLCLASSES>
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate WebAdmininistrationView
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.RPC.<ALLCLASSES>
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate RPCView
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.Electrum.<ALLCLASSES>
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate ElectrumView
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:206] ERROR Unknown type /home/slinux/eclipse-workspace/wxRavenGUI/plugins//Webservices/FlaskEngine/API_Services/__pycache__
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.Assets.<ALLCLASSES>
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate AssetsView
+03/02/2022 17:59:30 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 17:59:30 wxRaven_Webservices_FlaskDaemon.py[line:180] INFO StartWebService JSON on the network ''
+03/02/2022 17:59:58 wxRaven_Webservices_FlaskDaemon.py[line:80] INFO ws_home
+03/02/2022 18:00:23 wxRaven_Webservices_FlaskDaemon.py[line:180] INFO StartWebService JSON on the network ''
+03/02/2022 18:00:50 wxRaven_Webservices_FlaskDaemon.py[line:80] INFO ws_home
+03/02/2022 18:10:14 wxRaven_Webservices_FlaskDaemon.py[line:80] INFO ws_home
+03/02/2022 18:10:15 wxRaven_Webservices_FlaskDaemon.py[line:80] INFO ws_home
+03/02/2022 18:10:17 wxRaven_Webservices_FlaskDaemon.py[line:80] INFO ws_home
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:194] INFO Initialize plugin list from /home/slinux/eclipse-workspace/wxRavenGUI/plugins//Webservices/FlaskEngine/API_Services/
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.P2PMarket.<ALLCLASSES>
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate P2PMarketView
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.WebAdmininistration.<ALLCLASSES>
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate WebAdmininistrationView
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.RPC.<ALLCLASSES>
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate RPCView
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.Electrum.<ALLCLASSES>
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate ElectrumView
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:206] ERROR Unknown type /home/slinux/eclipse-workspace/wxRavenGUI/plugins//Webservices/FlaskEngine/API_Services/__pycache__
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:224] INFO Trying to load plugins.Webservices.FlaskEngine.API_Services.Assets.<ALLCLASSES>
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:229] INFO Trying to instanciate AssetsView
+03/02/2022 18:12:06 wxFlaskCustomView.py[line:153] INFO Admin Token Detected j7W0-GrKjVopMsalGDx1hQ !
+03/02/2022 18:12:06 wxRaven_Webservices_FlaskDaemon.py[line:180] INFO StartWebService JSON on the network 'testnet_localhost'

@@ -65,6 +65,11 @@ class RavencoreUTXOHistoryRightclickPopupMenu(object):
         self.parentBinding.Bind(wx.EVT_MENU, self.menuItemAction_ShowTx, id=nid)
         
         
+        
+        
+        
+        
+        
 
         # Popup the menu.  If an item is selected then its handler
         # will be called before PopupMenu returns.

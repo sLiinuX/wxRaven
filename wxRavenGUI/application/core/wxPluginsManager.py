@@ -83,14 +83,15 @@ class pluginsManager(object):
                 
                 
     def RestorePluginsDatas(self, datas):
-        pass
+        
     
         for p in datas:
-            pinst = self.plugins[p]
+            
             try:
+                pinst = self.plugins[p]
                 pinst.LoadPluginFrames(datas[p])
             except Exception as e:
-                self.logger.error("RestorePluginsDatas() " + str(e))
+                self.logger.error("RestorePluginsDatas() Unable to find plugin : " + str(e))
     
     def RaisePluginError(self, message):
         try:

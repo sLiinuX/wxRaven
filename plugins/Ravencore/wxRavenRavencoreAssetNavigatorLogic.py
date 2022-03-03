@@ -13,6 +13,7 @@ import webbrowser
 from .wxRavenRavencoreHTMLviewer import *
 from libs.RVNpyRPC import _asset as assetLib
 from libs.RVNpyRPC import AssetTreeObj
+from _cffi_backend import callback
 
 try:
     import pyperclip
@@ -79,6 +80,9 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         self.allIcons = {}
         
         
+        self.panelsCache = {}
+        
+        
         self.navigatorToolboxPanel.Hide()
         self.treeExplorerToolboxPanel.Hide()
         
@@ -116,6 +120,11 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         
         
         self.__initPluginSettingsOptions__()
+        
+        
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.AssetDetailsContainerPanel.SetSizer(sizer)
+        
         
         _icons = {
             'person':parentFrame.RessourcesProvider.GetImage('person')  ,
@@ -171,33 +180,58 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         toplabel = self.wxTree._currentText 
         self.m_staticText2.SetLabel(toplabel) 
         
-        
-        _cdata = self.wxTree._currentData
-        #print(_cdata)
-        _url = ""
-        if _cdata != None:
-            _ipfsgateway_default = self.parent_frame.GetPluginSetting("Ravencore","ipfsgateway_default")
+        try:
+            _cdata = self.wxTree._currentData
+            print(_cdata['name'])
+            _url = ""
+            if _cdata != None:
+                _ipfsgateway_default = self.parent_frame.GetPluginSetting("Ravencore","ipfsgateway_default")
+                
+                
+                if _cdata.__contains__('has_ipfs'):
+                    if _cdata['has_ipfs'] and _cdata.__contains__('ipfs_hash'):
+                        _url = _ipfsgateway_default  +_cdata['ipfs_hash']
             
             
-            if _cdata.__contains__('has_ipfs'):
-                if _cdata['has_ipfs']:
-                    _url = _ipfsgateway_default  +_cdata['ipfs_hash']
-        
-        if self._tempDisplayPanel == None:
-            self._tempDisplayPanel = wxRavenAssetOverviewPanel(self.AssetDetailsContainerPanel, self.parent_frame)
-            sizer = wx.BoxSizer(wx.VERTICAL)
-            sizer.Add(self._tempDisplayPanel , 1, wx.EXPAND|wx.ALL, 0)
-            self.AssetDetailsContainerPanel.SetSizer(sizer)
-        
-            self._tempDisplayPanel.Show()
+            _panel = None
+            sizer = self.AssetDetailsContainerPanel.GetSizer()
             
             
+            if self._tempDisplayPanel != None:
+                self._tempDisplayPanel.Hide()
             
-        self._tempDisplayPanel.DisplayAsset(self.wxTree._currentData, _url)
-            #wxRavenAssetOverviewPanel
-        self.checkToolbars()
-        self.Layout()
-    
+            if self.panelsCache.__contains__(_cdata['name']):
+                _panel = self.panelsCache[_cdata['name']]
+            
+            else:
+                
+                _panel  = wxRavenAssetOverviewPanel(self.AssetDetailsContainerPanel, self.parent_frame)
+                #sizer = wx.BoxSizer(wx.VERTICAL)
+                sizer.Add(_panel , 1, wx.EXPAND|wx.ALL, 0)
+                _panel.DisplayAsset(self.wxTree._currentData, _url)
+            '''
+            if self._tempDisplayPanel == None:
+                self._tempDisplayPanel = wxRavenAssetOverviewPanel(self.AssetDetailsContainerPanel, self.parent_frame)
+                sizer = wx.BoxSizer(wx.VERTICAL)
+                sizer.Add(self._tempDisplayPanel , 1, wx.EXPAND|wx.ALL, 0)
+                self.AssetDetailsContainerPanel.SetSizer(sizer)
+            
+                self._tempDisplayPanel.Show()
+                
+            '''    
+                
+                
+            self._tempDisplayPanel = _panel    
+            self._tempDisplayPanel.Show()    
+            #self._tempDisplayPanel.DisplayAsset(self.wxTree._currentData, _url)
+            self.panelsCache[_cdata['name']] = self._tempDisplayPanel
+            
+            
+                #wxRavenAssetOverviewPanel
+            self.checkToolbars()
+            self.Layout()
+        except Exception as e:
+            pass
     
     
     
@@ -389,7 +423,7 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         _listOfLibs[_curLibData] = None
         _p = self.parent_frame.GetPlugin("Ravencore")
         _p.setData("_AssetLibraryList", _listOfLibs)
-        _p.OnNavigateRequested_T(_curLibData)
+        _p.OnNavigateRequested_T(_curLibData, self.UpdateView)
         
         self.ShowLoading()
     
@@ -416,7 +450,7 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         _p = self.parent_frame.GetPlugin("Ravencore")
         
         _p.setData("_CurrentLibrary", _libname)
-        _p.OnNavigateRequested_T(_libname)
+        _p.OnNavigateRequested_T(_libname, callback=self.UpdateView)
         
         self.ShowLoading()
         #if event.GetString() == 'one':
@@ -496,7 +530,7 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         
         
     #Override the UpdateView method to define what happen when plugin call UpdateViews()        
-    def UpdateView(self):
+    def UpdateView(self, evt=None):
         
         self.UpdateDataFromPluginDatas()
 

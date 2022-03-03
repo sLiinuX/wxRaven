@@ -12,7 +12,6 @@ Created on 3 janv. 2022
 #
 #
 
-
 import json
 import wx
 import wx.xrc
@@ -29,6 +28,8 @@ import wx.html2
 import wx.aui
 import wx.py
 import random
+
+from wx.adv import TaskBarIcon as TaskBarIcon
 
 try: 
     import wx.msw

@@ -67,6 +67,7 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         self._currentMarket = ""
         
         self._datacache = {}
+        self._listInit = False
         parentFrame.RessourcesProvider.ApplyThemeOnPanel(self)
         
         
@@ -208,7 +209,7 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         
     def OnFeelLuck(self, event):
         myPlugin = self.parent_frame.GetPlugin('P2PMarket')
-        myPlugin.RequestMarketUpdate_T()
+        myPlugin.RequestMarketUpdate_T(self.UpdateView)
         self.ShowLoading()
     
     def OnKaw(self, event):
@@ -498,8 +499,9 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
         self.m_listCtrl1.SetColumnWidth(8, 20)
         
         self.m_listCtrl1.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        listmix.ColumnSorterMixin.__init__(self, 9)    
-        
+        if not self._listInit:
+            listmix.ColumnSorterMixin.__init__(self, 9)    
+            self._listInit = True
  
         self.m_listCtrl1.Thaw()
             

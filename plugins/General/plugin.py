@@ -14,6 +14,7 @@ from .wxRavenDebugConsoleLogic import *
 from .wxRavenErrorLogConsoleLogic import *
 from .wxNotebookToolbox import *
 from .pluginSettings import *
+from .wxRaven_JobManager_ConsoleLogic import *
 
 from .wxRavenWelcomePanel import wxRavenWelcomeTabLogic
 from .wxRaven_WebBrowser import *
@@ -42,6 +43,17 @@ class wxRavenPlugin(PluginObject):
                      'position':'mgr', 
                      'icon':  self.RessourcesProvider.GetImage('error_console'), 
                      'class': RavenErrorLogConsole ,
+                     'default':True,
+                     'multipleViewAllowed':False
+                     },
+                    
+                     {
+                     'viewid':'Job Manager Console', 
+                     'name':'Job Manager Console', 
+                     'title':'Job Manager Console', 
+                     'position':'mgr', 
+                     'icon':  self.RessourcesProvider.GetImage('pview'), 
+                     'class': wxRaven_JobManager_Console_Logic ,
                      'default':True,
                      'multipleViewAllowed':False
                      },
@@ -111,11 +123,13 @@ class wxRavenPlugin(PluginObject):
                 'last_network':'mainnet_localhost',
                 'disable_plugins' :[],
                 'quick_links' :[],
-                'debug_out' :'stderr',
                 'show_disclaimer':True,
                 'show_welcome':True,
                 'purge_on_close':True,
                 'save_on_close':True,
+                'max_running_jobs':5,
+                'log_mode':True,
+                'debug_mode':True,
                 
                 'sw_configuration':'wxRaven : Developer/Server Edition',
                 
@@ -227,7 +241,7 @@ class wxRavenPlugin(PluginObject):
     
     
     def waitApplicationReady(self):
-        t=threading.Thread(target=self.__waitLoop_T__, args=(self.__applicationReady__,))
+        t=threading.Thread(target=self.__waitLoop_T__, args=(self.__applicationReady__,),  daemon=True)
         t.start()
         
         
@@ -361,7 +375,7 @@ class wxRavenPlugin(PluginObject):
         if not self.parentFrame._isReady:
             return
         
-        t=threading.Thread(target=self.OnNetworkChanged)
+        t=threading.Thread(target=self.OnNetworkChanged, daemon=True)
         t.start()
         
         

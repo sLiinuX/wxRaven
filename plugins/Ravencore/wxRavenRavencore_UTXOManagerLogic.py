@@ -271,6 +271,7 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
         self.itemDataMap = {}
         self._datacache = {}
         self._loadingPanel = None
+        self._listInit = False
         #This is to add the view in the appropriate place using the mainapp to do so
         #
         #The only exception is when the pannel itself is called by the plugin or another view 
@@ -320,7 +321,7 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
     
     def DoRequestUpdateUTXO(self, evt=None):
         myPlugin = self.parent_frame.GetPlugin('Ravencore')
-        myPlugin.OnUTXORequested_T()
+        myPlugin.OnUTXORequested_T(self.UpdateView)
         self.ShowLoading()
     
     
@@ -432,7 +433,17 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
             
             for row in _listRaw:
                 #print(row)
-                _locked = row['locked']
+                
+                if not row.__contains__('amount'):
+                    print(f"anormal row result without amount : {row}")
+                    continue
+                
+                
+                
+                _locked = False
+                if row.__contains__('locked'):
+                    _locked = row['locked']
+                
                 _icon = "rvn"
                 if _filterTYPEValue == 'ASSETS':
                     _icon = "asset"
@@ -440,7 +451,7 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
                 _firstCol = 'No'
                 if _locked:
                     _icon = "locked"
-                    _firstCol = 'Yes'
+                    _firstCol = "Yes"
                     
                     
                 if   not _showLocked and   _locked:
@@ -462,7 +473,9 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
                         continue
                 
                 
-                _ac = str(row['account']) if row.__contains__('account') else ""
+                _ac = str(row['account']) if row.__contains__('account') else "N/A"
+                if _ac == '':
+                    _ac = "N/A"
                 
                 if _filterText!= '':
                     _foundinfields=False
@@ -485,25 +498,26 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
                         
                     
                 #print(row)
-                index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(),_firstCol, self.allIcons[_icon] )
+                index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(),str(_cursor), self.allIcons[_icon] )
                 
                 
                 #_ac = str(row['account']) if row.__contains__('account') else ""
+                self.m_listCtrl1.SetItem(index,1, str(_firstCol))
+                self.m_listCtrl1.SetItem(index,2, str(row['amount']))
                 
-                self.m_listCtrl1.SetItem(index,1, str(row['amount']))
                 
-                
-                self.m_listCtrl1.SetItem(index,2, str(_ac) )
-                self.m_listCtrl1.SetItem(index,3, str(row['address']))
-                self.m_listCtrl1.SetItem(index,4, str(row['confirmations']))
-                self.m_listCtrl1.SetItem(index,5, str(row['txid']))
-                self.m_listCtrl1.SetItem(index,6, str(row['vout']))
+                self.m_listCtrl1.SetItem(index,3, str(_ac) )
+                self.m_listCtrl1.SetItem(index,4, str(row['address']))
+                self.m_listCtrl1.SetItem(index,5, str(row['confirmations']))
+                self.m_listCtrl1.SetItem(index,6, str(row['txid']))
+                self.m_listCtrl1.SetItem(index,7, str(row['vout']))
                 
                 self.m_listCtrl1.SetItemData(index, _cursor)
                 
                 self._datacache[_cursor] = row
-                self.itemDataMap[_cursor] = (str(_firstCol), float(row['amount']), str(_ac), str(row['address']) ,int(row['confirmations']), str(row['txid']),int(row['vout']) )
-                    
+                self.itemDataMap[_cursor] = (int(_cursor), str(_firstCol), float(row['amount']), str(_ac), str(row['address']) ,int(row['confirmations']), str(row['txid']),int(row['vout']) )
+                #self.itemDataMap[_cursor] = ( int(_cursor), str(_firstCol) , str(row['amount']), str(_ac), str(row['address']) ,str(row['confirmations']), str(row['txid']),str(row['vout']))
+                   
                     
                 _cursor= _cursor + 1
         
@@ -512,12 +526,15 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
             self.m_listCtrl1.SetColumnWidth(1, wx.LIST_AUTOSIZE)
             self.m_listCtrl1.SetColumnWidth(2, wx.LIST_AUTOSIZE)
             self.m_listCtrl1.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+            self.m_listCtrl1.SetColumnWidth(4, wx.LIST_AUTOSIZE)
             self.m_listCtrl1.SetColumnWidth(5, wx.LIST_AUTOSIZE)
-            self.m_listCtrl1.SetColumnWidth(6, 25)
+            self.m_listCtrl1.SetColumnWidth(6, wx.LIST_AUTOSIZE)
+            self.m_listCtrl1.SetColumnWidth(7, 25)
             
             #self.m_listCtrl1.itemDataMap = self._datacache
-            listmix.ColumnSorterMixin.__init__(self, 7)
-                  
+            if not self._listInit:
+                listmix.ColumnSorterMixin.__init__(self, 8)
+                self._listInit = True
             
                 
                 
@@ -554,6 +571,7 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
         
     # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
     def GetListCtrl(self):
+        print(f"UTXO RAVEN GetListCtrl")
         return self.m_listCtrl1
     
     # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
@@ -584,32 +602,36 @@ class wxRavenRavencore_UTXOManager_RVN_ViewLogic(wxRaven_RavencoreUTXOManager_RV
         info.Mask = wx.LIST_MASK_TEXT | wx.LIST_MASK_IMAGE | wx.LIST_MASK_FORMAT
         info.Image = -1
         info.Align = 0
-        info.Text = "Locked"
+        info.Text = "ID"
         self.m_listCtrl1.InsertColumn(0, info)
+        
+        info.Align = 0
+        info.Text = "Locked"
+        self.m_listCtrl1.InsertColumn(1, info)
 
         info.Align = 0#wx.LIST_FORMAT_RIGHT
         info.Text = "Amount"
-        self.m_listCtrl1.InsertColumn(1, info)
+        self.m_listCtrl1.InsertColumn(2, info)
 
         info.Align = 0
         info.Text = "Account"
-        self.m_listCtrl1.InsertColumn(2, info)
-        
-        info.Align = 0
-        info.Text = "Address"
         self.m_listCtrl1.InsertColumn(3, info)
         
         info.Align = 0
-        info.Text = "Confirmations"
+        info.Text = "Address"
         self.m_listCtrl1.InsertColumn(4, info)
         
         info.Align = 0
-        info.Text = "Txid"
+        info.Text = "Confirmations"
         self.m_listCtrl1.InsertColumn(5, info)
+        
+        info.Align = 0
+        info.Text = "Txid"
+        self.m_listCtrl1.InsertColumn(6, info)
         
         info.Align = wx.LIST_FORMAT_RIGHT
         info.Text = "Vout"
-        self.m_listCtrl1.InsertColumn(6, info)
+        self.m_listCtrl1.InsertColumn(7, info)
         
         
         
@@ -761,6 +783,8 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         
         self._datacache = {}
         self._loadingPanel = None
+        self._listInit = False
+        
         #This is to add the view in the appropriate place using the mainapp to do so
         #
         #The only exception is when the pannel itself is called by the plugin or another view 
@@ -830,7 +854,7 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
     def DoRequestUpdateHistory(self, evt=None):
         myPlugin = self.parent_frame.GetPlugin('Ravencore')
         
-        myPlugin.OnHISTORYRequested_T()
+        myPlugin.OnHISTORYRequested_T(self.UpdateView)
         self.ShowLoading()
         
     
@@ -1083,7 +1107,10 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
             self.m_listCtrl1.SetColumnWidth(6, wx.LIST_AUTOSIZE)
             self.m_listCtrl1.SetColumnWidth(7, wx.LIST_AUTOSIZE)
             #self.m_listCtrl1.itemDataMap = self._datacache
-            listmix.ColumnSorterMixin.__init__(self, 8)
+            
+            if not self._listInit:
+                listmix.ColumnSorterMixin.__init__(self, 8)
+                self._listInit = True
                   
             
                 
@@ -1128,6 +1155,7 @@ class wxRavenRavencore_UTXOManager_HISTORY_ViewLogic(wxRaven_RavencoreUTXOManage
         
     # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
     def GetListCtrl(self):
+        print(f"HISTORY RAVEN GetListCtrl")
         return self.m_listCtrl1
     
     # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
