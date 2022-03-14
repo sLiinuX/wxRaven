@@ -103,7 +103,7 @@ class wxRavenMainApp(object):
         
         
         if _debugMode:
-            logging.basicConfig(filename=self.debugpath, level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+            logging.basicConfig(filename=self.debugpath, level=logging.DEBUG, format=f'%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(name)s %(threadName)s : %(message)s')
 
         
         
@@ -132,6 +132,9 @@ class wxRavenMainApp(object):
         if self.logger !=None:
             self.logger.removeHandler(self.console)
             self.logger.removeHandler(self.handler)
+            #remove internal loggin handlers.
+            for handler in logging.root.handlers[:]:
+                logging.root.removeHandler(handler)
         
         self.logEnable = False
 

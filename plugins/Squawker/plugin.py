@@ -45,7 +45,7 @@ class wxRavenPlugin(PluginObject):
 
         self.ALLOW_MULTIPLE_VIEWS_INSTANCE = False
         self.parentFrame = parentFrame
-        self.parentFrame.ConnexionManager.RegisterOnConnexionChanged(self.OnNetworkChanged_T)
+        #self.parentFrame.ConnexionManager.RegisterOnConnexionChanged(self.OnNetworkChanged_T)
         
         #self.LoadPluginFrames()
         

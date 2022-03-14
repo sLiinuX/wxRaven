@@ -51,6 +51,9 @@ class PluginObject(object):
     
     PLUGIN_BACKGROUNDS_THREADS = []
     
+    
+    PLUGIN_JOBS = []
+    
     _stop = False
     #parentFrame = None
     position = None
@@ -81,6 +84,7 @@ class PluginObject(object):
         
         
         self.PLUGIN_SETTINGS_GUI = []
+        self.PLUGIN_JOBS = []
         
         
         
@@ -343,7 +347,7 @@ class PluginObject(object):
             
             #self.logger.info(self.PLUGIN_NAME+" load+1  " + str(self.VIEWS_INSTANCES) )
             
-            wx.CallAfter(self.parentFrame.MenusAndTool.refreshViewsListMenu, ())
+            wx.CallAfter(self.parentFrame.Views.__refreshGUI_Job__, ())
         
         else:
             
@@ -436,6 +440,12 @@ class PluginObject(object):
     def getViews(self):
         return self.PLUGINS_VIEWS
     
+    
+    def registerJob(self, jobClass):
+        self.PLUGIN_JOBS.append(jobClass)
+    
+    def getAvailableJobs(self):
+        return self.PLUGIN_JOBS.copy()
     
     """
     

@@ -13,3 +13,7 @@ from .UTXOManager_WalletUTXOJob import *
 from .AssetNavigator_NavigateAssetJob import *
 from .AssetSearch_SeachJob import *
 from .TransactionViewer_DecodeJob import *
+
+from .AssetNavigator_AssetOwnerJob import *
+
+from .AddressViewer_AddressAdvancedInspectionJob import *

@@ -2509,14 +2509,47 @@ class wxRaven_Ravencore_AddressViewer ( wx.Panel ):
 		self.m_searchCtrl3.ShowCancelButton( False )
 		bSizer111.Add( self.m_searchCtrl3, 1, wx.ALL, 5 )
 
-		self.m_checkBox10 = wx.CheckBox( self, wx.ID_ANY, u"Full Scan", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer111.Add( self.m_checkBox10, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-
 		self.m_button4 = wx.Button( self, wx.ID_ANY, u"Scan", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer111.Add( self.m_button4, 0, wx.ALL, 5 )
 
+		self.m_bmToggleOptions = wx.BitmapToggleButton( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/wizard-prefs.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+
+		self.m_bmToggleOptions.SetBitmap( wx.Bitmap( u"res/default_style/normal/wizard-prefs.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer111.Add( self.m_bmToggleOptions, 0, wx.ALL, 5 )
+
 
 		bSizer110.Add( bSizer111, 0, wx.EXPAND, 5 )
+
+		bSizer203 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_optionsPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer204 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap92 = wx.StaticBitmap( self.m_optionsPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/privacy_compromised_1.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer204.Add( self.m_bitmap92, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_checkBoxIdentifyCompromisedAddresses = wx.CheckBox( self.m_optionsPanel, wx.ID_ANY, u"Identify compromised addresses", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer204.Add( self.m_checkBoxIdentifyCompromisedAddresses, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_bitmap93 = wx.StaticBitmap( self.m_optionsPanel, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/iterations_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer204.Add( self.m_bitmap93, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_staticText92 = wx.StaticText( self.m_optionsPanel, wx.ID_ANY, u"Depth :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText92.Wrap( -1 )
+
+		bSizer204.Add( self.m_staticText92, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_addressesPassesCount = wx.SpinCtrl( self.m_optionsPanel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 1, 1000, 1 )
+		bSizer204.Add( self.m_addressesPassesCount, 0, wx.ALL, 5 )
+
+
+		self.m_optionsPanel.SetSizer( bSizer204 )
+		self.m_optionsPanel.Layout()
+		bSizer204.Fit( self.m_optionsPanel )
+		bSizer203.Add( self.m_optionsPanel, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+		bSizer110.Add( bSizer203, 0, wx.EXPAND, 5 )
 
 		bSizer115 = wx.BoxSizer( wx.VERTICAL )
 
@@ -2531,8 +2564,26 @@ class wxRaven_Ravencore_AddressViewer ( wx.Panel ):
 		self.SetSizer( bSizer110 )
 		self.Layout()
 
+		# Connect Events
+		self.m_bmToggleOptions.Bind( wx.EVT_TOGGLEBUTTON, self.OnOptionToggle )
+		self.m_checkBoxIdentifyCompromisedAddresses.Bind( wx.EVT_CHECKBOX, self.OnOptionsChanged )
+		self.m_addressesPassesCount.Bind( wx.EVT_SPINCTRL, self.OnOptionsChanged )
+		self.m_addressesPassesCount.Bind( wx.EVT_TEXT, self.OnOptionsChanged )
+		self.m_addressesPassesCount.Bind( wx.EVT_TEXT_ENTER, self.OnOptionsChanged )
+
 	def __del__( self ):
 		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def OnOptionToggle( self, event ):
+		event.Skip()
+
+	def OnOptionsChanged( self, event ):
+		event.Skip()
+
+
+
 
 
 ###########################################################################

@@ -554,9 +554,15 @@ class ShellDocumentationHelper(wxRavenShellDocumentation):
                 #print(_cmd)
                 
                 
-                if filterSearch != "" and not _cmd.__contains__(filterSearch):
-                    continue
-                
+                if filterSearch != "" :
+                    if  not filterSearch.__contains__('*')  and (not _cmd.__contains__(filterSearch) ) :
+                        continue
+                    elif filterSearch.__contains__('*') :
+                        _replaceStr = filterSearch.replace('*', '')
+                        if (not _cmd.__contains__(_replaceStr) and not _CmdList[_cmd].__contains__(_replaceStr)  ) :
+                            continue
+                    
+                    
                 _commandeHelperPanel = ShellCommandDescriberPanel(self.m_customControl2, _CmdList[_cmd])
                 self.m_customControl2.AddPage(_commandeHelperPanel, _cmd, imageId=self.defaultIcon)
                 

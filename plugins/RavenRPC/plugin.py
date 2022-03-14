@@ -21,6 +21,8 @@ from .wxRaven_CodeEditor_FileObj import wxRaven_CodeEditor_File
 from .wxRaven_CodeFileBrowserLogic import *
 from plugins.RavenRPC import wxRaven_CodeEditor_FileObj
 
+from .wxRaven_JSON_Viewer_Logic import wxRaven_JSON_ViewerLogic
+
 import shutil
 
 
@@ -54,7 +56,7 @@ class wxRavenPlugin(PluginObject):
                      'name':'RavenRPC Advanced Shell', 
                      'title':'RavenRPC Advanced Shell', 
                      'position':position, 
-                     'icon':wx.Bitmap( u"res/default_style/normal/shell_adv.png", wx.BITMAP_TYPE_ANY ), 
+                     'icon':self.RessourcesProvider.GetImage('shell_adv'), 
                      'class': shellAdvancedPanel ,
                      'default':False,
                      'multipleViewAllowed':True
@@ -65,7 +67,7 @@ class wxRavenPlugin(PluginObject):
                      'name':'RPC Documentation Helper', 
                      'title':'RPC Documentation Helper', 
                      'position':'main', 
-                     'icon':wx.Bitmap( u"res/default_style/normal/bookmarks_view.png", wx.BITMAP_TYPE_ANY ), 
+                     'icon':self.RessourcesProvider.GetImage('bookmarks_view'), 
                      'class': ShellDocumentationHelper ,
                      'default':False,
                      'multipleViewAllowed':True
@@ -78,7 +80,7 @@ class wxRavenPlugin(PluginObject):
                      'name':'Code Editor', 
                      'title':'Code Editor', 
                      'position':'main', 
-                     'icon':wx.Bitmap( u"res/default_style/normal/python_editor.png", wx.BITMAP_TYPE_ANY ), 
+                     'icon':self.RessourcesProvider.GetImage('python_editor') , 
                      'class': wxRavenRavenRPC_CodeEditorLogic ,
                      'default':False,
                      'multipleViewAllowed':False
@@ -91,8 +93,21 @@ class wxRavenPlugin(PluginObject):
                      'name':'Source Code Browser', 
                      'title':'Source Code Browser', 
                      'position':'main', 
-                     'icon':wx.Bitmap( u"res/default_style/normal/folder_python_browser.png", wx.BITMAP_TYPE_ANY ), 
+                     'icon':self.RessourcesProvider.GetImage('folder_python_browser'), 
                      'class': wxRaven_General_CodeBrowserLogic ,
+                     'default':False,
+                     'multipleViewAllowed':False
+                     }
+                     
+                     ,
+                    
+                     {
+                     'viewid':'JSON Viewer', 
+                     'name':'JSON Viewer', 
+                     'title':'JSON Viewer', 
+                     'position':'main', 
+                     'icon':self.RessourcesProvider.GetImage('json_file_icon') , 
+                     'class': wxRaven_JSON_ViewerLogic ,
                      'default':False,
                      'multipleViewAllowed':False
                      }
@@ -219,13 +234,13 @@ class wxRavenPlugin(PluginObject):
         _newView = self.parentFrame.Views.OpenView("Code Editor", "RavenRPC", open)
         
         print(_newView)
-        if _newView == None:
+        if _newView != None:
             _vi = self.parentFrame.Views.SearchViewInstance("Code Editor")
             _newView = _vi
             
             
-        if filename!= '':
-            self.logger.info(f'LoadFileCodePagePanel : {filename}')
+        if _newView != None and filename!= '':
+            self.logger.info(f'LoadFileCodePagePanel view {_newView} : {filename}')
             _newView['instance'].LoadFileCodePagePanel(filename)
             
             

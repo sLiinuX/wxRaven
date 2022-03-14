@@ -519,7 +519,12 @@ class wxRavenP2PMarket_MarketPlaceListingWithLogic(wxRavenP2PMarket_MarketPlaceL
                     
             item = marketDatas[itemIndex]
             
-            
+            if not isinstance(item, RavencoinP2PMarketPlaceAd):
+                
+                _nitem=RavencoinP2PMarketPlaceAd()
+                _nitem.Load_JSON(item)
+                
+                item = _nitem
             
             if item.GetType() not in _displayTypes:
                 continue

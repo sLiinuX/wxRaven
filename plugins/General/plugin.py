@@ -22,6 +22,15 @@ from .wxRaven_WebBrowser import *
 #import libs.wxRaven_Flask_WebserviceClient
 from libs.wxRaven_Webservices.wxRaven_Flask_Webservice import wxRaven_Flask_WebserviceClient
 
+
+
+from wxRavenGUI.application.core.jobs import *
+
+from .wxRaven_General_AboutConnexionLogic import wxRaven_General_AboutConnexion_Logic
+from .wxRaven_General_RelaySessionTokenManagementLogic import wxRaven_General_RelaySessionTokenManagement_Logic
+from .wxRaven_General_TxStandbyLogic import wxRaven_General_TxStandby_Logic
+
+
 class wxRavenPlugin(PluginObject):
     
     
@@ -107,8 +116,58 @@ class wxRavenPlugin(PluginObject):
                      'icon':   self.RessourcesProvider.GetImage('internal_browser') , 
                      'class': wxRaven_WebBrowserLogic ,
                      'default':False,
+                     'multipleViewAllowed':True,
+                     'isArea':False,
+                     
+                     },
+                     
+                     
+                     
+                     {
+                     'viewid':'About Connexions', 
+                     'name':'About Connexions', 
+                     'title':'About Connexions', 
+                     'position':'dialog', 
+                     'icon':   self.RessourcesProvider.GetImage('connexion_speed') , 
+                     'class': wxRaven_General_AboutConnexion_Logic ,
+                     'default':False,
                      'multipleViewAllowed':False,
                      'isArea':False,
+                     'toolbar_shortcut': False,
+                     'hidden_view': True,
+                     'skip_save': True,
+                     
+                     },
+                     
+                      {
+                     'viewid':'Relay Session Token Management', 
+                     'name':'Relay Session Token Management', 
+                     'title':'Relay Session Token Management', 
+                     'position':'dialog', 
+                     'icon':   self.RessourcesProvider.GetImage('help_view') , 
+                     'class': wxRaven_General_RelaySessionTokenManagement_Logic ,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'isArea':False,
+                     'toolbar_shortcut': False,
+                     'hidden_view': True,
+                     'skip_save': True,
+                     
+                     },
+                      
+                       {
+                     'viewid':'Transaction Standby Dialog', 
+                     'name':'Transaction Standby Dialog', 
+                     'title':'Transaction Standby Dialog', 
+                     'position':'dialog', 
+                     'icon':   self.RessourcesProvider.GetImage('credit_card') , 
+                     'class': wxRaven_General_TxStandby_Logic ,
+                     'default':False,
+                     'multipleViewAllowed':False,
+                     'isArea':False,
+                     'toolbar_shortcut': False,
+                     'hidden_view': True,
+                     'skip_save': True,
                      
                      },
                     
@@ -129,7 +188,9 @@ class wxRavenPlugin(PluginObject):
                 'save_on_close':True,
                 'max_running_jobs':5,
                 'log_mode':True,
-                'debug_mode':True,
+                'debug_mode':False,
+                
+                'open_url_with_webbrowser':None,
                 
                 'sw_configuration':'wxRaven : Developer/Server Edition',
                 
@@ -140,10 +201,31 @@ class wxRavenPlugin(PluginObject):
                 
                 
                 'webservices_relays':{
-                    'wxRaven_Relay1_HTTPS':'https://wxraven.link/relay/',
-                    'wxRaven_Relay1_HTTP':'wx:wx@relay.wxraven.link:9090'
+                    'wxRaven_Relay1_HTTPS':'https://wxraven.link/relay/'
                     },
+                
+                'use_remote_jobs':True,
+                'authorize_remote_jobs':False,
+                
+                'relay_user_session_token':True,
+                'relay_private_session_key':False,
+                'relay_private_session_key_value':'',
+                
             }
+        
+        
+        
+        #'relay_use_tokens':True,
+        #        'relay_private_tokens':'',
+        
+        
+        '''
+        #NOT REGISTERED AS NO USAGE REMOTE
+        self.registerJob(Job_DisplayRejectJob)
+        self.registerJob(Job_RefreshGUI)
+        self.registerJob(Job_RemoteJob)
+        
+        '''
         
         
         
@@ -228,6 +310,7 @@ class wxRavenPlugin(PluginObject):
         self.parentFrame.ConnexionManager.RegisterOnConnexionChanged(self.OnNetworkChanged_T)
         
         self.setData("allLogs", {})
+        self.setData("_RejectedJobList",[])
         self.setData("_cursor",0)
         self.setData("_errorPushed",False)
         
@@ -324,6 +407,18 @@ class wxRavenPlugin(PluginObject):
                 #newCon = Ravencoin(username=_loginPwd[0], password=_loginPwd[1],host=_hostPort[0],port=_hostPort[1])
                 newCon = wxRaven_Flask_WebserviceClient(ip=_host, port=_port)
                 
+                _useToken =  self.PLUGIN_SETTINGS['relay_user_session_token']
+                relay_private_session_key = self.PLUGIN_SETTINGS["relay_private_session_key"]
+                relay_private_session_key_value = self.PLUGIN_SETTINGS["relay_private_session_key_value"]
+                
+                try:
+                    if _useToken:
+                        if not relay_private_session_key:
+                            newCon.__RequestSessionToken__()
+                        else:
+                            newCon.__SetSessionToken__(relay_private_session_key_value)
+                except Exception as e:
+                    self.logger.warning('unable to get a token from webservice')
                 self.parentFrame.ConnexionManager.rpc_connectors[conName] = newCon
     
     
@@ -332,6 +427,70 @@ class wxRavenPlugin(PluginObject):
     '''
     
     
+    def OpenUrl(self, _url):
+        
+        _inWebBrowser=False
+        if self.PLUGIN_SETTINGS['open_url_with_webbrowser'] == None :
+            _inWebBrowser = UserQuestion(self.parentFrame, "Open the url in external webbrowser ?\nInternal Webview require to install some aditionals components and may not be compatible with all websites.")   
+            
+            
+            
+        if _inWebBrowser:
+            rvcoreplugin = self.parentFrame.GetPlugin('Ravencore')
+            rvcoreplugin.OpeninWebBrowser(_url)
+            
+        else:
+            self.OpenInternalUrl(_url)
+            pass
+    
+    
+    def OpenInternalUrl(self, ItemURL):
+        #wx.Log.SetActiveTarget(wx.LogStderr())
+        
+        #_PreviewWindow = self.getData("_PreviewWindow")
+        _newView = self.LoadView(self.SearchPluginView("WebBrowser"), "main",)
+        _newView.OpenUrl(ItemURL)
+        
+    
+    
+    
+    
+    
+    def OpenTxStandbyDialog(self, jobInstance=None, jobDatas=None):
+        _v= self.parentFrame.Views.OpenView("Transaction Standby Dialog", createIfNull=True)
+        _d = self.parentFrame.Views.SearchDialog("Transaction Standby Dialog")
+        self.setData('_lastTxDialog', _d)
+        
+        if jobInstance != None:
+            jobInstance._txDialog = _d
+            
+        if jobDatas != None:
+            _d._Panel.__SetDatas__(jobDatas)
+            
+        #print(_v)
+        #print(_d)
+        return _d
+    
+    def OpenAboutConnexion(self):
+        #wx.Log.SetActiveTarget(wx.LogStderr())
+        #_PreviewWindow = self.getData("_PreviewWindow")
+        #_newView = self.LoadView(self.SearchPluginView("About Connexion"), "dialog",)
+        #_newView = self.parentFrame.Views.OpenView("About Connexion", "General", True)
+        self.parentFrame.Views.OpenView("About Connexions", createIfNull=True)
+        '''
+        if isinstance(_newView, dict):
+            _newView = self.parentFrame.Views.SearchDialog("About Connexion")
+        print(_newView)
+        _newView.Show()
+        '''
+    
+    
+    def OpenRelaySessionTokenManagement(self):
+        #wx.Log.SetActiveTarget(wx.LogStderr())
+        #_PreviewWindow = self.getData("_PreviewWindow")
+        #_newView = self.LoadView(self.SearchPluginView("About Connexion"), "dialog",)
+        #_newView = self.parentFrame.Views.OpenView("About Connexion", "General", True)
+        self.parentFrame.Views.OpenView("Relay Session Token Management", createIfNull=True)
     
     
     
@@ -358,10 +517,19 @@ class wxRavenPlugin(PluginObject):
         return self.GetFavoriteAddress('favorite_change_addresses', network)
     
     
+    def SetUserTokenSettingsAndEnableOption(self, key):
+        self.PLUGIN_SETTINGS["relay_private_session_key"] = True
+        self.PLUGIN_SETTINGS["relay_private_session_key_value"] = key
+        
+        for _c in self.parentFrame.ConnexionManager.getAllConnexions():
+            if self.parentFrame.getNetworkType(_c) == "WS-RPC":
+                self.parentFrame.ConnexionManager.rpc_connectors[_c].__SetSessionToken__(key)
+        
+        #if self.w
     
     
-    
-    
+    def GetUserTokenSettings(self):
+        return self.PLUGIN_SETTINGS["relay_private_session_key"], self.PLUGIN_SETTINGS["relay_private_session_key_value"]
     
     
         
@@ -369,6 +537,10 @@ class wxRavenPlugin(PluginObject):
     
     Plugin Triggers for data update , DO NOT CALL WX UPDATE OUT OUF wx.CallAfter(cb, param)
     '''
+  
+  
+
+  
   
         
     def OnNetworkChanged_T(self, networkName=""):    

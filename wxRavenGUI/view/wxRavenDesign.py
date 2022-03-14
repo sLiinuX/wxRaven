@@ -79,6 +79,24 @@ class wxRavenMainFrame ( wx.Frame ):
 
 		self.wxRavenMenuBar.Append( self.wxRavenMenuBar_File, u"File" )
 
+		self.wxRavenMenuBar_Connexion = wx.Menu()
+		self.wxRavenMenuBar_Connexion_About = wx.MenuItem( self.wxRavenMenuBar_Connexion, wx.ID_ANY, u"About Connexions", wx.EmptyString, wx.ITEM_NORMAL )
+		self.wxRavenMenuBar_Connexion_About.SetBitmap( wx.Bitmap( u"res/default_style/normal/connexion_speed.png", wx.BITMAP_TYPE_ANY ) )
+		self.wxRavenMenuBar_Connexion.Append( self.wxRavenMenuBar_Connexion_About )
+
+		self.wxRavenMenuBar_Connexion_Relaysubmenu = wx.Menu()
+		self.wxRavenMenuBar_Connexion_Relay_SessionInfos = wx.MenuItem( self.wxRavenMenuBar_Connexion_Relaysubmenu, wx.ID_ANY, u"Session Token Management", wx.EmptyString, wx.ITEM_NORMAL )
+		self.wxRavenMenuBar_Connexion_Relay_SessionInfos.SetBitmap( wx.Bitmap( u"res/default_style/normal/help_view.png", wx.BITMAP_TYPE_ANY ) )
+		self.wxRavenMenuBar_Connexion_Relaysubmenu.Append( self.wxRavenMenuBar_Connexion_Relay_SessionInfos )
+
+		self.wxRavenMenuBar_Connexion_Relay_RequestPrivateToken = wx.MenuItem( self.wxRavenMenuBar_Connexion_Relaysubmenu, wx.ID_ANY, u"Request Private Session Token (DEMO)", wx.EmptyString, wx.ITEM_NORMAL )
+		self.wxRavenMenuBar_Connexion_Relay_RequestPrivateToken.SetBitmap( wx.Bitmap( u"res/default_style/normal/lock_key.png", wx.BITMAP_TYPE_ANY ) )
+		self.wxRavenMenuBar_Connexion_Relaysubmenu.Append( self.wxRavenMenuBar_Connexion_Relay_RequestPrivateToken )
+
+		self.wxRavenMenuBar_Connexion.AppendSubMenu( self.wxRavenMenuBar_Connexion_Relaysubmenu, u"wxRaven Relay" )
+
+		self.wxRavenMenuBar.Append( self.wxRavenMenuBar_Connexion, u"Connexions" )
+
 		self.wxRavenMenuBar_Edit = wx.Menu()
 		self.wxRavenMenuBar.Append( self.wxRavenMenuBar_Edit, u"Edit" )
 
@@ -137,6 +155,9 @@ class wxRavenMainFrame ( wx.Frame ):
 		self.wxRavenMenuBar_Window.AppendSubMenu( self.wxRavenMenuBar_Window_Perspectives, u"Perspectives" )
 
 		self.wxRavenMenuBar.Append( self.wxRavenMenuBar_Window, u"Window" )
+
+		self.wxRavenMenuBar_Links = wx.Menu()
+		self.wxRavenMenuBar.Append( self.wxRavenMenuBar_Links, u"Links" )
 
 		self.wxRavenMenuBar_Help = wx.Menu()
 		self.wxRavenMenuBar_Help_WidgetInspector = wx.MenuItem( self.wxRavenMenuBar_Help, wx.ID_ANY, u"Open &Widget Inspector\tF6", wx.EmptyString, wx.ITEM_NORMAL )

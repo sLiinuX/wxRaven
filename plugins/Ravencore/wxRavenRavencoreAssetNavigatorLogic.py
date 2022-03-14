@@ -4,6 +4,17 @@ Created on 24 déc. 2021
 @author: slinux
 '''
 
+"""
+class DictObj:
+    def __init__(self, in_dict:dict):
+        assert isinstance(in_dict, dict)
+        for key, val in in_dict.items():
+            if isinstance(val, (list, tuple)):
+                setattr(self, key, [DictObj(x) if isinstance(x, dict) else x for x in val])
+            else:
+                setattr(self, key, DictObj(val) if isinstance(val, dict) else val)
+
+"""
 
 from .wxRavenRavencoreDesign import *
 
@@ -231,7 +242,7 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
             self.checkToolbars()
             self.Layout()
         except Exception as e:
-            pass
+            logging.exception(e)
     
     
     
@@ -569,6 +580,10 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
     def LoadTree(self, parentTreeObj,libObj):   
         _dummyData = {} 
         
+        if isinstance(libObj, dict) :
+            print(f"DICT INSTANCE {libObj}")
+            libObj = AssetTreeObj.from_json(libObj)
+        
         _icon  = "asset"
         if libObj._isVirtual:
             _icon = "asset_virtual"
@@ -588,6 +603,12 @@ class RavencoreAssetNavigator(wxRavenAssetNavigator):
         self.wxTree._tree.Freeze()
         
         self.wxTree._tree.DeleteAllItems()
+        
+        if isinstance(libObj, dict) :
+            print(f"DICT INSTANCE {libObj}")
+            libObj = AssetTreeObj.from_json(libObj)
+        
+        
         
         _dummyData = {}
         _icon = "asset"

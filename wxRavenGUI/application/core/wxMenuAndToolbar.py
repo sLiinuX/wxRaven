@@ -15,6 +15,9 @@ import webbrowser
 
 
 from wxRavenGUI.view import *
+from libs.RVNComunity import __RVN_COMMUNITY_TOPICS_MAPPING__
+
+from wxRavenGUI.application.wxcustom import *
 
 
 class MenuAndToolBarManager(object):
@@ -42,14 +45,18 @@ class MenuAndToolBarManager(object):
         
         
         self._pluginsToolbars = {}
-    
-    
+        
+        
+        self.popupIDS = {}
+        self.popupMAP = {}
+        self.popupCount= 1
     
         self.statusBarErrorPushed = False
     
     
     
         self.waitApplicationReady()
+        
     
     
     
@@ -72,6 +79,8 @@ class MenuAndToolBarManager(object):
         self.logger.info("__PostReadyLoader__")
         self.InitPluginsShortcutToolbars()
         self.refreshPerspectiveListMenu()
+        
+        self.RefreshLinksListMenu()
         
     
     
@@ -142,7 +151,7 @@ class MenuAndToolBarManager(object):
         self.parentframe.wxRavenStatusBarIcon=None
         self.parentframe.wxRavenStatusBarLeftIcon=None
         
-        self.parentframe.wxRavenStatusBar.SetFieldsCount( 3, [-3,150,32])
+        self.parentframe.wxRavenStatusBar.SetFieldsCount( 3, [-3,250,32])
         self.parentframe.wxRavenStatusBar.SetStatusText("welcome to wxRaven", 0)
         self.parentframe.wxRavenStatusBar.Bind(wx.EVT_SIZE, self.OnSizeSB)
         
@@ -201,7 +210,13 @@ class MenuAndToolBarManager(object):
         if networkName == '':
             networkName= self.parentframe.ConnexionManager.getCurrent()
         
-        self.parentframe.wxRavenStatusBar.SetStatusText(networkName, 1)
+        #_type = 'RPC'
+        _type = self.parentframe.ConnexionManager.getConnexionType(networkName)
+        
+        
+        _textBar = f'[{_type}] : {networkName}'
+        
+        self.parentframe.wxRavenStatusBar.SetStatusText(_textBar, 1)
         
         #self.logger.info("test")
         
@@ -390,7 +405,8 @@ class MenuAndToolBarManager(object):
                 self.parentframe.m_mgr.ClosePane(_pan)
             
         
-        self.parentframe.Views.UpdateGUIManager()
+        #self.parentframe.Views.UpdateGUIManager()
+        self.parentframe.Views.__refreshGUI_Job__()
     
     def OnShowNewViewDialog(self,evt):
         self.parentframe.Views.ShowAddViewDialog()
@@ -452,7 +468,8 @@ class MenuAndToolBarManager(object):
     
     def InitPluginsShortcutToolbars(self, evt=None):
         self.__Load__Plugins__Toolbars__()
-        self.parentframe.Views.UpdateGUIManager()
+        #self.parentframe.Views.UpdateGUIManager()
+        self.parentframe.Views.__refreshGUI_Job__()
     
     def OnShowAboutDialogClicked(self, evt):
         self.OnAboutWxRaven(evt)
@@ -607,7 +624,8 @@ class MenuAndToolBarManager(object):
         
         _p = self.parentframe.GetPlugin('General')
         _p.PLUGIN_SETTINGS['quick_links'] = _settingsShortcut
-        self.parentframe.Views.UpdateGUIManager()
+        #self.parentframe.Views.UpdateGUIManager()
+        self.parentframe.Views.__refreshGUI_Job__()
     
     def OnPluginToolbarItemClick(self, evt):
         #
@@ -635,6 +653,70 @@ class MenuAndToolBarManager(object):
     MNenu bar
     
     """
+    
+    
+    def __ProceedLinkMenuTopic__(self, topicname, topicDatas,_topicIcon ):
+        
+        #print(f'__ProceedLinkMenuTopic__ : {topicname} {topicDatas}')
+        
+        _topic_menu = wx.Menu()
+        _topic_menu_item = self.parentframe.wxRavenMenuBar_Links.AppendSubMenu(_topic_menu, topicname)
+        
+        
+        
+        #_topicIcon = self.parentframe.RessourcesProvider.GetTopicImage('webresources16')
+        
+        
+        _topic_menu_item.SetBitmap(_topicIcon)
+        pptext = f"popupID" 
+        
+        ppcount = self.popupCount
+        for _key in topicDatas:
+            _url = topicDatas[_key]
+            
+            popupID = wx.NewId()
+            _pp = pptext + str(ppcount)
+            self.popupIDS[_pp] = popupID
+            self.popupMAP[popupID] = _url
+            self.parentframe.Bind(wx.EVT_MENU, self.OnLinkMenuItemClicked, id=popupID)
+            
+            _i = _topic_menu.Append(self.popupIDS[_pp], f"{_key}")
+            if _i != None:
+                _i.SetBitmap(self.parentframe.RessourcesProvider.GetImage('browser'))
+                #ppcount= ppcount+1
+            
+            
+            ppcount= ppcount+1
+        
+        self.popupCount = ppcount
+   
+    def OnLinkMenuItemClicked(self, evt):
+        #_data= self._data
+        _url=str(self.popupMAP[evt.GetId()])
+        gplugin = self.parentframe.GetPlugin('General')
+        gplugin.OpenUrl(_url)
+        #OpenUrl
+        
+    
+    def RefreshLinksListMenu(self):
+        _list = {}
+        #if True:
+        try:
+            from libs.RVNComunity import __RVN_COMMUNITY_DEFAULT_LINKS__
+            _list = __RVN_COMMUNITY_DEFAULT_LINKS__
+            _icons = __RVN_COMMUNITY_TOPICS_MAPPING__
+            
+            for _topic in _list:
+                
+                _topicIcon = self.parentframe.RessourcesProvider.GetTopicImage(_icons[_topic])
+                
+                self.__ProceedLinkMenuTopic__(_topic, _list[_topic], _topicIcon)
+            
+            
+        except Exception as e:
+            #self.logger.info(" > refreshViewsListMenu " + str(e))
+            self.RaiseMenuAndToolLog("Unable to refresh Links list menu : "+ str(e), "error")
+    
     
     def purgePerspectiveListMenu(self):
         self.purgeViewsListMenu(self.parentframe.wxRavenMenuBar_Window_Perspectives_OpenPerspectives)
@@ -872,7 +954,39 @@ class MenuAndToolBarManager(object):
         if _p != None:
             _p.QuickWalletUnlockRequest()
         
+    def OnAboutConnexionClicked(self,evt):
+        #print('yyy')
+        _p = self.parentframe.GetPlugin('General')
+        if _p != None:
+            _p.OpenAboutConnexion()
+            
+    def OnOpenRelaySessionTokenManagementClicked(self,evt):
+        #print('yyy')
+        _p = self.parentframe.GetPlugin('General')
+        if _p != None:
+            _p.OpenRelaySessionTokenManagement()        
     
+    
+    
+    def OnPrivateUserSessionTokenRequestClicked(self,evt):
+        #print('yyy')
+        
+        if UserQuestion(self.parentframe, "Request a private token for webservice ?"):
+            _p = self.parentframe.GetPlugin('General')
+            _eK, eV = _p.GetUserTokenSettings()
+            
+            if _eK == True and eV!=None:
+                UserAdvancedMessage(self.parentframe, 'A Private Session Token has been detected in your settings, it will be erased.', 'warning', f'{eV}')
+            
+            
+            if _p != None:
+                njob = self.parentframe.JobManager.CreateJob('General', 'Job_CreatePrivateWsTokenRemoteJob_ClientRequest' , 'plugins.Webservices.jobs.RemoteJobs_CreatePrivateToken' , _jobparams={}, _localJob=True)
+                self.parentframe.NewJob( njob)
+                
+                
+                #Job_CreatePrivateWsTokenRemoteJob_ClientRequest
+            #_p.OpenRelaySessionTokenManagement()               
+            
     
     def setupMenuBar(self):
         
@@ -886,7 +1000,6 @@ class MenuAndToolBarManager(object):
         index=self.parentframe.wxRavenMenuBar_Window.FindItem("Perspectives")
         self.parentframe.wxRavenMenuBar_Window.FindItemById(index).SetBitmap( self.parentframe.RessourcesProvider.GetImage('perspective_default'))
         #res\default_style\normal\default_persp.png
-        
         
         
         
@@ -908,8 +1021,18 @@ class MenuAndToolBarManager(object):
     
         self.parentframe.Bind( wx.EVT_MENU, self.OnQuickUnlockClicked, id = self.parentframe.wxRavenMenuBar_Wallet_Unlock.GetId() )
         
+        
+        
+        self.parentframe.Bind( wx.EVT_MENU, self.OnAboutConnexionClicked, id = self.parentframe.wxRavenMenuBar_Connexion_About.GetId() )
+        self.parentframe.Bind( wx.EVT_MENU, self.OnOpenRelaySessionTokenManagementClicked, id = self.parentframe.wxRavenMenuBar_Connexion_Relay_SessionInfos.GetId() )
+        self.parentframe.Bind( wx.EVT_MENU, self.OnPrivateUserSessionTokenRequestClicked, id = self.parentframe.wxRavenMenuBar_Connexion_Relay_RequestPrivateToken.GetId() )
+        
     
-    
+        
+        index=self.parentframe.wxRavenMenuBar_Connexion.FindItem("wxRaven Relay")
+        #self.parentframe.RessourcesProvider.GetImage('dialog_default')
+        self.parentframe.wxRavenMenuBar_Connexion.FindItemById(index).SetBitmap(self.parentframe.RessourcesProvider.GetImage('connexion_speed_2'))
+        
     
         
     

@@ -170,6 +170,10 @@ class wxRavenGeneralSettingPanel(PluginSettingsPanelObject):
         self._Panel.m_checkBoxSaveSession.Bind( wx.EVT_CHECKBOX, self.OnChanged )
         self._Panel.m_spinJobMax.Bind( wx.EVT_SPINCTRL, self.OnChanged )
         
+        self._Panel.m_UseRemoteJob.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        self._Panel.m_AllowRemoteJobs.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        
+        
         self._parent = parent
         self._Panel = _panel
         self._panel = _panel
@@ -191,6 +195,10 @@ class wxRavenGeneralSettingPanel(PluginSettingsPanelObject):
         myPlugin.PLUGIN_SETTINGS['debug_mode'] =  self._Panel.m_checkBoxDebugSession.GetValue()
     
         myPlugin.PLUGIN_SETTINGS['max_running_jobs'] =  self._Panel.m_spinJobMax.GetValue()
+        
+        
+        myPlugin.PLUGIN_SETTINGS['authorize_remote_jobs']  =  self._Panel.m_AllowRemoteJobs.GetValue()
+        myPlugin.PLUGIN_SETTINGS['use_remote_jobs']  =  self._Panel.m_UseRemoteJob.GetValue()
         
     
         self.parentFrame.PerspectiveManager.ToggleResumeViewSettings(self._Panel.m_checkBoxResume.GetValue())
@@ -222,12 +230,22 @@ class wxRavenGeneralSettingPanel(PluginSettingsPanelObject):
         self._Panel.m_checkBoxLogSession.SetValue(log_mode)  
         
         
-        save_on_close= myPlugin.PLUGIN_SETTINGS['debug_mode']
-        self._Panel.m_checkBoxDebugSession.SetValue(save_on_close)  
+        debug_mode= myPlugin.PLUGIN_SETTINGS['debug_mode']
+        self._Panel.m_checkBoxDebugSession.SetValue(debug_mode)  
         
           
         max_running_jobs = myPlugin.PLUGIN_SETTINGS['max_running_jobs'] 
         self._Panel.m_spinJobMax.SetValue(max_running_jobs)
+        
+        
+        
+        use_remote_jobs = myPlugin.PLUGIN_SETTINGS['use_remote_jobs'] 
+        self._Panel.m_UseRemoteJob.SetValue(use_remote_jobs)
+        
+        authorize_remote_jobs = myPlugin.PLUGIN_SETTINGS['authorize_remote_jobs'] 
+        self._Panel.m_AllowRemoteJobs.SetValue(authorize_remote_jobs)
+        
+        
         
         self._Panel.m_checkBoxResume.SetValue(self.parentFrame.Settings.resumeviewonstartup )   
        
@@ -390,6 +408,13 @@ class wxRavenConnexionRelaysSettings_SettingLogic(PluginSettingsPanelObject):
         
         _Panel.Bind( wx.EVT_BUTTON, self.OnAddProvider,id = _Panel.bookmark_addbt.GetId()  )
         _Panel.Bind( wx.EVT_BUTTON, self.OnRemoveProvider,id = _Panel.bookmark_rembt.GetId()  )
+        
+        
+        self._Panel.m_checkNoPublicAuth.Bind(wx.EVT_CHECKBOX, self.OnChanged)
+        self._Panel.m_checkPrivateAuth.Bind(wx.EVT_CHECKBOX, self.OnChanged)
+        self._Panel.m_textUserSessionToken.Bind(wx.EVT_TEXT, self.OnChanged)
+        
+        
      
         self.Layout()
     #
@@ -425,6 +450,12 @@ class wxRavenConnexionRelaysSettings_SettingLogic(PluginSettingsPanelObject):
             
             
         
+        myPlugin.PLUGIN_SETTINGS['relay_user_session_token'] = not self._Panel.m_checkNoPublicAuth.GetValue()
+        
+        myPlugin.PLUGIN_SETTINGS['relay_private_session_key'] = self._Panel.m_checkPrivateAuth.GetValue()
+        
+        myPlugin.PLUGIN_SETTINGS['relay_private_session_key_value'] = not self._Panel.m_textUserSessionToken.GetValue()
+        
         
         #default =    allProviders[0] 
         #Settings
@@ -450,6 +481,21 @@ class wxRavenConnexionRelaysSettings_SettingLogic(PluginSettingsPanelObject):
             _dispArray.append(strCon)
         if len(_dispArray)>0:
             self._Panel.bookmark_list.InsertItems(_dispArray, 0)
+            
+            
+            
+        relay_user_session_token = not myPlugin.PLUGIN_SETTINGS['relay_user_session_token']
+        self._Panel.m_checkNoPublicAuth.SetValue(relay_user_session_token)   
+        
+        relay_private_session_key = myPlugin.PLUGIN_SETTINGS['relay_private_session_key']
+        self._Panel.m_checkPrivateAuth.SetValue(relay_private_session_key)   
+        
+        relay_private_session_key_value = myPlugin.PLUGIN_SETTINGS['relay_private_session_key_value']
+        self._Panel.m_textUserSessionToken.SetValue(relay_private_session_key_value)   
+        
+        
+        #if not relay_private_session_key:
+        #    self._Panel.m_textUserSessionToken.Enable(False)
         
         #print("LoadPanelSettings")     
         

@@ -18,12 +18,13 @@ class Job_WalletHistory(Job):
         '''
         Job.__init__(self, plugin.parentFrame, plugin, viewCallback, safeMode)
         self.jobName = f"Wallet Transaction History"        #self._run_safe = True
-        self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
+        self.jobId = f"{self.jobName} - {self.getNetworkName()}"
         #self._run_safe = False
         
         
     def JobProcess(self):
-        ravencoin = self.parentFrame.getRvnRPC()
+        #ravencoin = self.parentFrame.getRvnRPC()
+        ravencoin = self.getNetworkRavencoin()
         _DatasHistory = { }
         #if True:
         #if True:

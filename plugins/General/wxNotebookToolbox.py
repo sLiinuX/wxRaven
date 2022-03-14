@@ -54,7 +54,7 @@ class RavenNotebookToolbox(wxNotebookToolbar):
         label = self.m_auinotebook1.GetPageText(index)
         #print("view instance to delete !")
         self.parent_frame.Plugins.DeleteViewInstance(label)
-        wx.CallAfter(self.parent_frame.MenusAndTool.refreshViewsListMenu, ())
+        wx.CallAfter(self.parent_frame.Views.__refreshGUI_Job__, ())
         event.Skip()
   
         

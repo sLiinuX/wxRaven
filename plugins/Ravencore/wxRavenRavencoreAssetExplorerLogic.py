@@ -294,7 +294,16 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
                 #print(_assetDatas)
                 if not _skipAsset:
                     index = self.m_listCtrl1.InsertItem(self.m_listCtrl1.GetItemCount(),_assetDatas['name'], self.allIcons['asset'] )
-                    self.m_listCtrl1.SetItem(index,1, str(_assetDatas['type'].value))
+                    
+                    _type = ''
+                    
+                    try:
+                        _type = str(_assetDatas['type'].value)
+                    except Exception as e:
+                        _type = str(_assetDatas['type'])
+                        
+                        
+                    self.m_listCtrl1.SetItem(index,1,_type )
                     self.m_listCtrl1.SetItem(index,2, str(_assetDatas['amount']))
                     
                     #self.m_listCtrl1.SetItem(index,3, str(_assetDatas['block_height']))
@@ -311,7 +320,7 @@ class RavencoreAssetExplorer(wxRavenAssetExplorer, listmix.ColumnSorterMixin):
                         
                     self.m_listCtrl1.SetItemData(index, _cursor)
                     self._datacache[_cursor] = _assetDatas
-                    self.itemDataMap[_cursor] = (str(_assetDatas['name']), str(_assetDatas['type']), float(_assetDatas['amount']), str(_assetDatas['datetime']) ,str(_variousText))
+                    self.itemDataMap[_cursor] = (str(_assetDatas['name']), str(_type), float(_assetDatas['amount']), str(_assetDatas['datetime']) ,str(_variousText))
                     
                     
                     _cursor= _cursor + 1

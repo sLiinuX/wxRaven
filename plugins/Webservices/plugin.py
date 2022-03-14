@@ -23,7 +23,7 @@ Each plugin must have a plugin.py file which declare a class wxRavenPlugin(Plugi
 from wxRavenGUI.application.pluginsframework import *
 #import the design of your plugin made in FormBuilder
 from .wxRaven_Webservices_ServiceManager import wxRaven_Webservices_BackgroundServiceManager
-from .pluginSettings import wxRaven_Webservices_SettingsPanelLogic
+from .pluginSettings import wxRaven_Webservices_SettingsPanelLogic, wxRaven_Webservices_RemoteJobs_SettingsPanelLogic
 #used for long datas requests
 import threading
 import time
@@ -107,6 +107,8 @@ class wxRavenPlugin(PluginObject):
                 
                 'webservice_force_network' : '',
                 'webservice_exclude_services' : [],
+                'webservice_exclude_remotejobs' : [],
+                'webservice_exclude_remotejobs_redirection':'plugins.Webservices.jobs.RemoteJobs_NotAllowedJob.Job_NotAllowedRemoteJob'
                 
             }
         
@@ -120,9 +122,18 @@ class wxRavenPlugin(PluginObject):
         self.PLUGIN_SETTINGS_GUI = []
         
         _prefIcon = self.RessourcesProvider.GetImage('connexion_share_1')
-        _MyTutorialSettingPanel_WithLogic = PluginSettingsTreeObject("Webservice", _prefIcon, classPanel=wxRaven_Webservices_SettingsPanelLogic, _childs=None)
-        self.PLUGIN_SETTINGS_GUI.append(_MyTutorialSettingPanel_WithLogic)
+        _MyTutorialSettingPanel_WithLogic = PluginSettingsTreeObject("Webservices", _prefIcon, classPanel=wxRaven_Webservices_SettingsPanelLogic, _childs=None)
         
+        
+        
+        _Icon = self.RessourcesProvider.GetImage('job_remote_icon')
+        _bmrkPannel = PluginSettingsTreeObject("Remote Jobs", _Icon, classPanel=wxRaven_Webservices_RemoteJobs_SettingsPanelLogic, _childs=None)
+        
+        
+        _MyTutorialSettingPanel_WithLogic._childs.append(_bmrkPannel)
+        
+        
+        self.PLUGIN_SETTINGS_GUI.append(_MyTutorialSettingPanel_WithLogic)
         
         
         
@@ -132,6 +143,7 @@ class wxRavenPlugin(PluginObject):
         #         it also allow to request those big datas through thread and call update after
         #
         self.setData("webservicebackgroundManager", None)
+        self.setData("webservice_daemon_instance", None)
         self.setData("_status", "STOPPED")
         self.backgroundService = None
         #self.setData("myPluginData2", False)
@@ -234,6 +246,16 @@ class wxRavenPlugin(PluginObject):
                 
                 
         return serviceList
+    
+    
+    
+    def GetWebserviceDaemonInstance(self):
+        return self.getData( "webservice_daemon_instance")
+    
+    
+    
+    
+    
     """
     
     Plugins setting management

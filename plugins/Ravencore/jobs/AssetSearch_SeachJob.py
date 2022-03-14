@@ -29,9 +29,14 @@ class Job_AssetNavigator_Search(Job):
         self.onlyMain = onlyMain 
         
         
+        self.addExportParam('keyword') 
+        self.addExportParam('limit') 
+        self.addExportParam('onlyMain') 
+        
+        self.setAllowRemoteExecution(True)
         
         self.jobName = f"Search Asset {keyword}"        #self._run_safe = True
-        self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
+        self.jobId = f"{self.jobName} - {self.getNetworkName()}"
         
         
     def JobProcess(self):
@@ -60,9 +65,10 @@ class Job_AssetNavigator_Search(Job):
             _SkipChars = []
             if onlyMain:
                 _SkipChars = ['#', "/", '$']
+            #ravencoin = self.parentFrame.getRvnRPC()
+            ravencoin = self.getNetworkRavencoin()
             
-            
-            _AssetSearchResult = self.parentFrame.getRvnRPC().asset.SearchAsset(AssetName=keyword,limit=limit,datetime=True, skipChars=_SkipChars ) 
+            _AssetSearchResult = ravencoin.asset.SearchAsset(AssetName=keyword,limit=limit,datetime=True, skipChars=_SkipChars ) 
             #myPluginData = self.parentFrame.ConnexionManager.getAllConnexions()
             #myPluginData2 = self.parentFrame.ConnexionManager.getCurrent()
             

@@ -21,10 +21,12 @@ class Job_RefreshGUI(Job):
         Job.__init__(self, plugin.parentFrame, plugin, viewCallback, safeMode)
         
         self.jobName = f"RefreshGUI"
-        self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
+        self.jobId = f"{self.jobName} - {self.getNetworkName()}"
         self.setExpiration(5)
-        self.setDelays(2, 0)
+        self.setDelays(3, 0)
         self.setNotification(False)
+        self.addNetworkCompatibility('WS-RPC')
+        self.addNetworkCompatibility('SQL')
     
     def JobProcess(self):
         

@@ -96,7 +96,16 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
                 self.m_assetIPFStext.SetValue(assetData['ipfs_hash'])
             else:
                 self.m_assetIPFStext.SetValue("n/a")
-            self.m_assetTypeText.SetValue(assetData['type'].value)
+                
+                
+            _type = ''
+                    
+            try:
+                _type = str(assetData['type'].value)
+            except Exception as e:
+                _type = str(assetData['type'])    
+                
+            self.m_assetTypeText.SetValue(_type)
             
             
             if assetData.__contains__('amount'):
@@ -325,7 +334,7 @@ class wxRavenAssetOverviewPanel(wxRavenAssetDetails_OverviewPanel, listmix.Colum
             rvnLogo = self.parent_frame.RessourcesProvider.GetImage('ravencoin')
             
             
-            logo_display = Image.open(os.getcwd()+'/res/default_style/normal/ravencoin.png')
+            logo_display = Image.open(self.parent_frame.GetPath("ROOT")+'/res/default_style/normal/ravencoin.png')
             #logo_display.thumbnail((60, 60))
             #logo_display = PILutils.PilImageFromWxBitmap(rvnLogo, True, False)
             #logo_display  = self.imagetopil(rvnLogo.ConvertToImage())

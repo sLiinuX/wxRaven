@@ -11,14 +11,17 @@ import os
 import importlib
 import functools
 from flask import redirect, url_for
-
+import math
 from .API_Services import P2PMarket
+import time
+import json, sys
+from threading import Thread, Lock
+import pickle
 
 
 session = []
 
-
-
+_CONST_MB_SIZE_BYTE = 1048576
 
 
 class wxRaven_Webservices_FlaskDaemon(object):
@@ -44,7 +47,7 @@ class wxRaven_Webservices_FlaskDaemon(object):
     
     
 
-    def __init__(self,parentFrame, ip='127.0.0.1', port=5000, LogFile='wxRaven_Webservices.log',  forceNetwork='', adminToken='', _exlcude_service_list=[]):
+    def __init__(self,parentFrame, ip='127.0.0.1', port=5000, LogFile='wxRaven_Webservices.log',  forceNetwork='', adminToken='', _exlcude_service_list=[], _options={}):
         '''
         Constructor
         '''
@@ -61,23 +64,76 @@ class wxRaven_Webservices_FlaskDaemon(object):
         self.excludeServices = _exlcude_service_list
         self.activeServices = []
         
+        self._lock = Lock()
+        
+        self._startedTime = time.time()
+        self._lifeTime = 0
+        
+        self.jobFactory = None
+        
+        
+        
+        
+        
+        
+        
+        #
+        # Default Options (but just as declarator, the settings are in server_config.json
+        #
+        
+        self.max_query_size_mb_anonymous = 512000#_CONST_MB_SIZE_BYTE * 3 #10 Mo
+        self.max_query_size_mb_user = _CONST_MB_SIZE_BYTE * 10
+        self.max_query_size_mb_admin = _CONST_MB_SIZE_BYTE * 1000
+        
+        self.limit_all_json_results = False
+        self.limit_jobs_results = True
+        
+        self.rvn_to_mb_credit = 104857600
+        
+        
+        self.service_description = ''
+        
+        #
+        # Path
+        #
+        #
+        
+        
+        
         self.routes = {}
+        self.API_Root_Path = parentFrame.GetPath("PLUGIN") + '/Webservices/'
+        self.API_Configuration_File = parentFrame.GetPath("PLUGIN") + '/Webservices/server_configuration.json'
+        self.API_Tokens_Cache_File = parentFrame.GetPath("PLUGIN") + '/Webservices/server_tokens.tokens'
         
         self.API_Services_Path = parentFrame.GetPath("PLUGIN") + '/Webservices/FlaskEngine/API_Services/'
         self.LogFile = LogFile
         
-        
         self.setup_logging()
         self.logger = logging.getLogger('wxRaven-Webservices')
-        
-        #logging.basicConfig(filename='record.log', level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
-
+        #logging.basicConfig(filename='record.log', level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s'
         self.app.logger = self.logger
+        
+        
+        
+        #
+        # Overwritting the Server settings from the JSON
+        #
+        #
+        self.__ApplyServerConfigurationJSON__()
+        self.__LoadCache__()
+        
+        
+        
+        
+        
+        
+        
         
         
         @self.app.route('/', methods=['GET'])   
         def ws_home():
-            self.logger.info("ws_home")
+            #self.logger.info("ws_home")
+            self.__UpdateWsInfos__()
             return jsonify(self.returnJSON(self._wsInfos))
         
         '''
@@ -165,21 +221,130 @@ class wxRaven_Webservices_FlaskDaemon(object):
     
     def getAdminToken(self):
         return self.admintoken
-      
+    
+    
+    def getRavencoin(self):  
+        return self.wxRavenInstance.getRvnRPC(self.forceNetwork)
+    
+    
+    
+    
+    '''
+    User and token management
+    
+    '''
+    
+    def __CreditUserToken__(self, token, rvn_amount, asset_amount=0.0):
+        self.logger.info(f'__CreditUserToken {token} with {rvn_amount} RVN and {asset_amount} AIRDROP')
+        _curentSize = self.__GetTokenSize__(token)
+        
+        _newCreditSize = self.rvn_to_mb_credit * rvn_amount
+        self.__SaveUserToken__(token, _newCreditSize)
+        
+        return self.convert_size(_newCreditSize)
+        
+    
+    
+    def __GetTokenSize__(self, token):
+        
+        _allTk  = self.__GetUserTokens__()
+        _size = self.max_query_size_mb_anonymous
+        for _r in _allTk:
+            
+            if _r['token'] == token:
+                _size = _r['size']
+                break
                 
+        return _size
+    
+    
+    
+    def __GetUserTokens__(self):
+        self.logger.info(f"__GetUserTokens__ {self.usertoken}")
+        return self.usertoken.copy()
+    
+    
+    
+    
+    def __SaveUserToken__(self, token, size):
+        self._lock.acquire()
+        self.logger.info(f"__SaveUserToken__ {self.usertoken}")
+        
+        _toremoveRow= None
+        for _row in self.usertoken:
+            if _row['token'] == token:
+                self.logger.info(f"__SaveUserToken__ TOKEN EXIST {self.usertoken}")
+                _toremoveRow = _row
+                break
+                
+        if _toremoveRow != None:
+            self.usertoken.remove(_row)
+        
+        
+        self.usertoken.append({'token':token, 'size':size})
+        self.__saveCache__()
+        self._lock.release()
+        
+        
+    def __saveCache__(self):
+        try:
+            self.logger.info("Webservice Save Token Cache")
+            print(self.usertoken )
+            pickle.dump( self.usertoken , open(self.API_Tokens_Cache_File, "wb" ) )
+        except Exception as e:
+            self.logger.error(e) 
+    
+    def __LoadCache__(self):
+        result = []
+        try:
+            self.logger.info("Webservice Load Token Cache")
+            self.usertoken  = pickle.load( open( self.API_Tokens_Cache_File, "rb" ) )
+            
+            
+            
+            
+        except Exception as e:
+            self.logger.error(e) 
+        
+        return result    
+        
+    
+            
     '''
         
     API Low Level and Basic STUFF 
        
     '''
     
+    def __mb_to_bytes__(self, mb):
+        return mb*_CONST_MB_SIZE_BYTE
     
+    def convert_size(self,size_bytes):
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return "%s %s" % (s, size_name[i])  
     
     
     def StartWebService(self):
         self.logger.info(f"StartWebService JSON on the network '{self.forceNetwork}'")
         self.app.run(host=self.ip, port=self.port, debug=True, use_reloader=False)
         
+    
+    def __ApplyServerConfigurationJSON__(self):
+        with open(self.API_Configuration_File, 'r') as f:
+            data = json.load(f)
+            
+            
+            for _key in data:
+                _val = data[_key]
+                try:
+                    setattr(self, _key, _val)
+                except Exception as e:
+                    self.logger.error(f"Unknown Serverconfiguration Option : {_key}")
     
     
     def StopWebService(self):    
@@ -238,8 +403,45 @@ class wxRaven_Webservices_FlaskDaemon(object):
                 #head, tail = os.path.split(f)
     
     
+    
+    #
+    # WSServices Function
+    #
+    #
+    
+    
+    def __RegisterJobFactory__(self, obj):
+        self.jobFactory = obj
+    
+    def __RemoteJobFactory__(self):
+        return self.jobFactory 
+    
+    
+    #
+    #
+    # Service function
+    #
+    #
+    
+    
+    def __WsTokenServiceActive__(self):
+        return 'WebserviceUserTokenProvider' in self.activeServices
+        
+    def __WsJobsServiceActive__(self):
+        return 'RemoteJobs' in self.activeServices
+    
+    
     def __UpdateWsInfos__(self):
+        self._wsInfos['service_description'] = self.service_description
         self._wsInfos['active_services'] = self.activeServices
+        self._wsInfos['WebserviceUserTokenProvider'] = self.__WsTokenServiceActive__()
+        self._wsInfos['RemoteJobs'] = self.__WsJobsServiceActive__()
+        self._wsInfos['start_time'] = self._startedTime
+        ts= time.time()
+        self._lifeTime = ts - self._startedTime
+        self._wsInfos['live_time'] = self._lifeTime 
+        self._wsInfos['timestamp'] = ts
+        self._wsInfos['rvn_network_restrictions'] = self.forceNetwork
         
     
     def __LoadPluginModule__(self, full_class_string):
@@ -279,15 +481,27 @@ class wxRaven_Webservices_FlaskDaemon(object):
         else:
             return False    
     '''    
+         
+         
+    '''     
+    def EvaluateReturnDatas(self, returnDatas):
+        returnDatasStr_Size =   sys.getsizeof(str(returnDatas))
+        csize = self.convert_size(returnDatas)   
+    '''     
+         
+    
+    def GetJSONResultSize(self,returnDatas ):
+        returnDatasStr_Size =   sys.getsizeof(str(returnDatas))
+        return returnDatasStr_Size
+    
                 
     def returnNoneJSON(self):
         _JSON_RPC_Result = {'result': None}
         return _JSON_RPC_Result
     
-    
-    
     def returnJSON(self, result, error=None):
-        _JSON_RPC_Result = {'result': result, 'error':error}
+        _JSON_RPC_Result = {'result': result, 'error':error} 
+        #if self.limit_all_json_results:
         return _JSON_RPC_Result
     
     

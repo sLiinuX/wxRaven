@@ -11,6 +11,7 @@ import wx
 import wx.xrc
 import wx.aui
 import wx.stc
+import wx.dataview
 
 ###########################################################################
 ## Class wxRavenShellPanel
@@ -405,7 +406,7 @@ class wxRaven_General_CodeBrowser ( wx.Panel ):
 
 		bSizer17 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_pythonSourceCodeExplorer = wx.GenericDirCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.DIRCTRL_3D_INTERNAL|wx.DIRCTRL_SHOW_FILTERS|wx.SUNKEN_BORDER, u"Python source (*.py)|*.py|All files (*.*)|*.*", 0 )
+		self.m_pythonSourceCodeExplorer = wx.GenericDirCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.DIRCTRL_3D_INTERNAL|wx.DIRCTRL_SHOW_FILTERS|wx.SUNKEN_BORDER, u"Python source (*.py)|*.py|JSON files (*.json)|*.json|All files (*.*)|*.*", 0 )
 
 		self.m_pythonSourceCodeExplorer.ShowHidden( False )
 		bSizer17.Add( self.m_pythonSourceCodeExplorer, 1, wx.EXPAND |wx.ALL, 0 )
@@ -419,5 +420,173 @@ class wxRaven_General_CodeBrowser ( wx.Panel ):
 
 	def __del__( self ):
 		pass
+
+
+###########################################################################
+## Class wxRaven_General_JSONViewer
+###########################################################################
+
+class wxRaven_General_JSONViewer ( wx.Panel ):
+
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,391 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		bSizer18 = wx.BoxSizer( wx.VERTICAL )
+
+		bSizer22 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap2 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/json_file_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer22.Add( self.m_bitmap2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_staticText4 = wx.StaticText( self, wx.ID_ANY, u"Select a Source :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText4.Wrap( -1 )
+
+		self.m_staticText4.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, wx.EmptyString ) )
+
+		bSizer22.Add( self.m_staticText4, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		m_choice1Choices = [ u"URL", u"File", u"Jobs", u"RAW" ]
+		self.m_choice1 = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choice1Choices, 0 )
+		self.m_choice1.SetSelection( 2 )
+		bSizer22.Add( self.m_choice1, 1, wx.ALL, 5 )
+
+
+		bSizer18.Add( bSizer22, 0, wx.EXPAND, 5 )
+
+		bSizer19 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_optionpanel_url = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer21 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_textCtrl3 = wx.TextCtrl( self.m_optionpanel_url, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer21.Add( self.m_textCtrl3, 4, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_Proceed = wx.Button( self.m_optionpanel_url, wx.ID_ANY, u"Load URL", wx.DefaultPosition, wx.DefaultSize, 0 )
+
+		self.m_Proceed.SetBitmap( wx.Bitmap( u"res/default_style/normal/raven_ipfs.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer21.Add( self.m_Proceed, 1, wx.ALL, 5 )
+
+
+		self.m_optionpanel_url.SetSizer( bSizer21 )
+		self.m_optionpanel_url.Layout()
+		bSizer21.Fit( self.m_optionpanel_url )
+		bSizer19.Add( self.m_optionpanel_url, 1, wx.EXPAND |wx.ALL, 1 )
+
+
+		bSizer18.Add( bSizer19, 0, wx.EXPAND, 5 )
+
+		bSizer191 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_optionpanel_file = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer211 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_filePicker1 = wx.FilePickerCtrl( self.m_optionpanel_file, wx.ID_ANY, wx.EmptyString, u"Select a file", u"JSON File (*.json)|*.json|All files (*.*)|*.*", wx.DefaultPosition, wx.DefaultSize, wx.FLP_DEFAULT_STYLE|wx.FLP_FILE_MUST_EXIST|wx.FLP_OPEN )
+		bSizer211.Add( self.m_filePicker1, 1, wx.ALL, 5 )
+
+
+		self.m_optionpanel_file.SetSizer( bSizer211 )
+		self.m_optionpanel_file.Layout()
+		bSizer211.Fit( self.m_optionpanel_file )
+		bSizer191.Add( self.m_optionpanel_file, 1, wx.EXPAND |wx.ALL, 1 )
+
+
+		bSizer18.Add( bSizer191, 0, wx.EXPAND, 5 )
+
+		bSizer1911 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_optionpanel_jobs = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer2111 = wx.BoxSizer( wx.HORIZONTAL )
+
+		m_choice_jobChoices = []
+		self.m_choice_job = wx.Choice( self.m_optionpanel_jobs, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choice_jobChoices, 0 )
+		self.m_choice_job.SetSelection( 0 )
+		bSizer2111.Add( self.m_choice_job, 1, wx.ALL, 5 )
+
+		self.m_bpButtonRefreshJobs = wx.BitmapButton( self.m_optionpanel_jobs, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+
+		self.m_bpButtonRefreshJobs.SetBitmap( wx.Bitmap( u"res/default_style/normal/refresh.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer2111.Add( self.m_bpButtonRefreshJobs, 0, wx.ALL, 5 )
+
+
+		self.m_optionpanel_jobs.SetSizer( bSizer2111 )
+		self.m_optionpanel_jobs.Layout()
+		bSizer2111.Fit( self.m_optionpanel_jobs )
+		bSizer1911.Add( self.m_optionpanel_jobs, 1, wx.EXPAND |wx.ALL, 1 )
+
+
+		bSizer18.Add( bSizer1911, 0, wx.EXPAND, 5 )
+
+		bSizer19111 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_optionpanel_raw = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer21111 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_textCtrl6 = wx.TextCtrl( self.m_optionpanel_raw, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
+		bSizer21111.Add( self.m_textCtrl6, 1, wx.ALL, 5 )
+
+		self.m_bpButtonPaste = wx.BitmapButton( self.m_optionpanel_raw, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+
+		self.m_bpButtonPaste.SetBitmap( wx.Bitmap( u"res/default_style/normal/paste_edit.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer21111.Add( self.m_bpButtonPaste, 0, wx.ALL, 5 )
+
+
+		self.m_optionpanel_raw.SetSizer( bSizer21111 )
+		self.m_optionpanel_raw.Layout()
+		bSizer21111.Fit( self.m_optionpanel_raw )
+		bSizer19111.Add( self.m_optionpanel_raw, 1, wx.EXPAND |wx.ALL, 1 )
+
+
+		bSizer18.Add( bSizer19111, 0, wx.EXPAND, 5 )
+
+		bSizer20 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_treeListCtrl1 = wx.dataview.TreeListCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.TL_DEFAULT_STYLE )
+		self.m_treeListCtrl1.AppendColumn( u"StructureColumn", wx.COL_WIDTH_AUTOSIZE, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
+		self.m_treeListCtrl1.AppendColumn( u"TypeColumn", wx.COL_WIDTH_DEFAULT, wx.ALIGN_LEFT, wx.COL_RESIZABLE )
+		self.m_treeListCtrl1.AppendColumn( u"SizeColumn", wx.COL_WIDTH_AUTOSIZE, wx.ALIGN_RIGHT, wx.COL_RESIZABLE )
+
+		bSizer20.Add( self.m_treeListCtrl1, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+		bSizer18.Add( bSizer20, 1, wx.EXPAND, 5 )
+
+
+		self.SetSizer( bSizer18 )
+		self.Layout()
+
+		# Connect Events
+		self.m_choice1.Bind( wx.EVT_CHOICE, self.OnInputSourceChanged )
+		self.m_Proceed.Bind( wx.EVT_BUTTON, self.OnLoadURLClicked )
+		self.m_filePicker1.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChanged )
+		self.m_choice_job.Bind( wx.EVT_CHOICE, self.OnJobSelected )
+		self.m_bpButtonRefreshJobs.Bind( wx.EVT_BUTTON, self.OnRefreshJobList )
+		self.m_textCtrl6.Bind( wx.EVT_TEXT, self.OnRawTextChanged )
+		self.m_bpButtonPaste.Bind( wx.EVT_BUTTON, self.OnPasteRawClicked )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def OnInputSourceChanged( self, event ):
+		event.Skip()
+
+	def OnLoadURLClicked( self, event ):
+		event.Skip()
+
+	def OnFileChanged( self, event ):
+		event.Skip()
+
+	def OnJobSelected( self, event ):
+		event.Skip()
+
+	def OnRefreshJobList( self, event ):
+		event.Skip()
+
+	def OnRawTextChanged( self, event ):
+		event.Skip()
+
+	def OnPasteRawClicked( self, event ):
+		event.Skip()
 
 

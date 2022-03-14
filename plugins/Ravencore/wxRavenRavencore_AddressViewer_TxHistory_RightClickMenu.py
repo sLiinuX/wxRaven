@@ -120,8 +120,9 @@ class wxRavenRavencore_UTXOManager_TxHistoryRightClickMenuLogic(object):
                 
                 
                 _i = _tx_menu.Append(self.popupIDS[_pp], f"{_menuLabel}")
-                _i.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('mail_icon'))
-                ppcount= ppcount+1
+                if _i != None:
+                    _i.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('mail_icon'))
+                    ppcount= ppcount+1
             
             if ppcount == 0:
                 _tx_menu_item.Enable(False)
@@ -156,8 +157,9 @@ class wxRavenRavencore_UTXOManager_TxHistoryRightClickMenuLogic(object):
                 
                 
                 _i = _tx_menu.Append(self.popupIDS[_pp], f"{_menuLabel}")
-                _i.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('mail_icon'))
-                ppcount= ppcount+1
+                if _i != None:
+                    _i.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('mail_icon'))
+                    ppcount= ppcount+1
             
             if ppcount == 0:
                 _tx_menu_item.Enable(False)

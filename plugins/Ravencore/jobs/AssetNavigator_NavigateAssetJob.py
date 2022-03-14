@@ -24,7 +24,21 @@ class Job_AssetNavigator_Explore(Job):
         self.library = library    
         Job.__init__(self, plugin.parentFrame, plugin, viewCallback, safeMode)
         self.jobName = f"Navigate Asset {library}"        #self._run_safe = True
-        self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
+        self.jobId = f"{self.jobName} - {self.getNetworkName()}"
+        
+        
+        self._virtualReorganizationButtonState = plugin.PLUGIN_SETTINGS['tree_display_virtual_sort']
+        self._organizeByMainAssetButtonState  = plugin.PLUGIN_SETTINGS['tree_display_regroupby_main']
+        
+        
+        self.addExportParam('library') 
+        self.addExportParam('_virtualReorganizationButtonState') 
+        self.addExportParam('_organizeByMainAssetButtonState') 
+        
+        self.setAllowRemoteExecution(True)
+        if self.library == "My Assets":
+            self.setAllowRemoteExecution(False)
+        
         
         
     def JobProcess(self):
@@ -37,10 +51,12 @@ class Job_AssetNavigator_Explore(Job):
         
         navigation_use_cache = self.plugin.PLUGIN_SETTINGS['navigation_use_cache']
         
-        _virtualReorganizationButtonState = self.plugin.PLUGIN_SETTINGS['tree_display_virtual_sort']
-        _organizeByMainAssetButtonState  = self.plugin.PLUGIN_SETTINGS['tree_display_regroupby_main']
         
+        _virtualReorganizationButtonState = self._virtualReorganizationButtonState
+        _organizeByMainAssetButtonState = self._organizeByMainAssetButtonState
         
+        #ravencoin = self.parentFrame.getRvnRPC()
+        ravencoin = self.getNetworkRavencoin()
         
         
         if navigation_use_cache:
@@ -53,11 +69,11 @@ class Job_AssetNavigator_Explore(Job):
         try:
             self.setProgress(f'Exploring...')
             if library == "My Assets":
-                _resultData = self.parentFrame.getRvnRPC().asset.ExploreWalletAsset(OrganizeByMainAsset=_organizeByMainAssetButtonState)
+                _resultData = ravencoin.asset.ExploreWalletAsset(OrganizeByMainAsset=_organizeByMainAssetButtonState)
                 _allLibs[library] = _resultData
                
             else:
-                _resultData = self.parentFrame.getRvnRPC().asset.ExploreAsset(library, _limit=99999, _skipchars=[])
+                _resultData = ravencoin.asset.ExploreAsset(library, _limit=99999, _skipchars=[])
                 
                 
                 if _virtualReorganizationButtonState:

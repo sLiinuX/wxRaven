@@ -99,9 +99,18 @@ class wxRaven_WebBrowserLogic(wxRavenWebBrowser):
             
             
             
-            
+    def UpdateView(self, evt=None):
+        pass        
             
     def GetUrl(self, evt):
         url = self.m_textCtrlURL.GetValue()     
         self.wv.LoadURL(url)  
+        
+        
+    def OpenUrl(self, url_text, _writeInAddress=True):
+        if _writeInAddress:
+            self.m_textCtrlURL.SetValue(url_text)
+        
+        self.wv.LoadURL(url_text)  
+        
           

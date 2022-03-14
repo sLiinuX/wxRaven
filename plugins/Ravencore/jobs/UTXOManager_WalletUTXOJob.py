@@ -19,19 +19,20 @@ class Job_WalletUTXO(Job):
         '''
         Job.__init__(self, plugin.parentFrame, plugin, viewCallback, safeMode)
         self.jobName = f"Wallet UTXOs"        #self._run_safe = True
-        self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
+        self.jobId = f"{self.jobName} - {self.getNetworkName()}"
         
         
     def JobProcess(self):
         
         
         
-        ravencoin = self.parentFrame.getRvnRPC()
+        #ravencoin = self.parentFrame.getRvnRPC()
+        ravencoin = self.getNetworkRavencoin()
         _DatasUtxo = {'RVN':[],'ASSETS':[] }
         self.setMax(2)
         
         
-        ravencoin = self.parentFrame.getRvnRPC()
+        #ravencoin = self.parentFrame.getRvnRPC()
         
         try:
             

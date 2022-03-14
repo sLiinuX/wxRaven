@@ -28,6 +28,9 @@ import wx.html2
 import wx.aui
 import wx.py
 import random
+import math
+import uuid    #use for the relay connexion to get unique id
+
 
 from wx.adv import TaskBarIcon as TaskBarIcon
 

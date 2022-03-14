@@ -19,7 +19,7 @@ from .wxRavenRavencore_AddressViewer_TxHistory_RightClickMenu import *
 
 
 from .jobs import *
-from plugins.Ravencore.jobs.AddressViewer_AddressUTXOJob import Job_AddressUTXO
+
 
 class wxRaven_Ravencore_AddressViewerLogic(wxRaven_Ravencore_AddressViewer):
     '''
@@ -59,7 +59,8 @@ class wxRaven_Ravencore_AddressViewerLogic(wxRaven_Ravencore_AddressViewer):
         self.parent_frame = parentFrame
         self.default_position = position
         self._allTabs= {}
-        
+        self.m_optionsPanel.Hide()
+        self.m_addressesPassesCount.Enable(False)
         #This is to add the view in the appropriate place using the mainapp to do so
         #
         #The only exception is when the pannel itself is called by the plugin or another view 
@@ -95,6 +96,45 @@ class wxRaven_Ravencore_AddressViewerLogic(wxRaven_Ravencore_AddressViewer):
     
     
     
+    
+    
+    def OnOptionToggle(self, evt):
+        if self.m_bmToggleOptions.GetValue():
+            self.m_optionsPanel.Show()
+        else:
+            self.m_optionsPanel.Hide()
+        self.Layout()
+    
+    
+    def OnOptionsChanged(self, evt):
+        ravencorep = self.parent_frame.GetPlugin("Ravencore")
+        
+        
+        _address_viewer_check_inputs = self.m_checkBoxIdentifyCompromisedAddresses.GetValue()
+        _address_viewer_advanced_mode = False
+        
+        _address_viewer_check_iterations = 1
+        
+        if _address_viewer_check_inputs:
+            _address_viewer_advanced_mode = True
+            
+            _address_viewer_check_iterations = self.m_addressesPassesCount.GetValue()
+        
+        
+        ravencorep.setData("_address_viewer_advanced_mode", _address_viewer_advanced_mode) 
+        ravencorep.setData("_address_viewer_check_inputs", _address_viewer_check_inputs) 
+        ravencorep.setData("_address_viewer_check_iterations", _address_viewer_check_iterations) 
+    
+    
+        if _address_viewer_advanced_mode:
+            self.m_addressesPassesCount.Enable(True)
+    
+        else:
+            self.m_addressesPassesCount.Enable(False)
+    
+    
+    
+    
     def DoRequestAddressScan(self, evt):
         
         
@@ -111,10 +151,22 @@ class wxRaven_Ravencore_AddressViewerLogic(wxRaven_Ravencore_AddressViewer):
         ravencorep.OnAddressUTXORequested_T()
         '''
         
-        ScanJob = AddressViewer_AddressInspectionJob.Job_AddressInspection(ravencorep, self._allTabs["Address Transactions History"].UpdateView , safeMode=True)
-        UTXOJob = Job_AddressUTXO(ravencorep, self._allTabs["Address UTXO's"].UpdateView, safeMode=True)
-        self.parent_frame.NewJob(UTXOJob)
-        self.parent_frame.NewJob(ScanJob)
+        
+        _address_viewer_advanced_mode = ravencorep.getData("_address_viewer_advanced_mode") 
+        
+        
+        if not _address_viewer_advanced_mode:
+            print('DoRequestAddressScan : SIMPLE mode')
+            ScanJob = Job_AddressInspection(ravencorep, self._allTabs["Address Transactions History"].UpdateView , safeMode=True)
+            UTXOJob = Job_AddressUTXO(ravencorep, self._allTabs["Address UTXO's"].UpdateView, safeMode=True)
+            self.parent_frame.NewJob(UTXOJob)
+            self.parent_frame.NewJob(ScanJob)
+            
+        else:
+            print('DoRequestAddressScan : ADV mode')
+            ScanJob = Job_AddressInspectionAdvanced(ravencorep, self._allTabs["Address Transactions History"].UpdateView , safeMode=True)
+            
+            self.parent_frame.NewJob(ScanJob)
         
         
         
@@ -568,7 +620,7 @@ class wxRaven_Ravencore_AddressViewer_UTXO_ViewLogic(wxRaven_Ravencore_AddressVi
         
         
         
-        #print('UpdateDataFromPluginDatas')
+        print(f'UpdateDataFromPluginDatas {self.view_base_name}')
         self.ShowLoading()
         self.m_listCtrl1.Freeze()
         self.ClearResults()

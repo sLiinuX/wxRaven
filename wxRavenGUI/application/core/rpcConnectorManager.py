@@ -311,6 +311,76 @@ class RvnRPC_ConnectorManager(object):
         if self.rpc_connectors.__contains__(connexionName):
             return self.rpc_connectors[connexionName]
         return None
+    
+    
+    def getConnexionType(self, connexionName):
+        if self.rpc_connectors.__contains__(connexionName):
+            return self.rpc_connectors[connexionName]._type
+    
+    
+    def getConnexionScheme(self, connexionName):
+        if self.rpc_connectors.__contains__(connexionName):
+            _type= self.rpc_connectors[connexionName]._type
+            _secure='None'
+            _local = False
+            _relay = False
+            _url = self.rpc_connectors[connexionName].rpc_url()
+            _pic = 'connexion_use_remote_s'
+            _title = f'{connexionName} ({_type})'
+            _desc = ""
+            if _url.__contains__('https'):
+                _secure = True
+                _local = False
+            
+            if _url.__contains__('127.0.0.1'):
+                _local = True
+                _pic = 'connexion_use_local_s'
+                
+            
+            
+            if _url.__contains__('8766'):
+                _relay = False
+            
+            if _url.__contains__('9090'):
+                _relay = True
+                _pic = 'connexion_use_relay_s'
+                _secure = False
+            
+            
+            if _url.__contains__('wxraven.link') :
+                _local = False
+                _relay = True
+                _pic = 'connexion_use_relay_s'
+            
+            #_schemePicture = self.parentObjSynch.RessourcesProvider.GetImage(_pic)
+            
+            _trgStr = 'local'
+            if not _local:
+                _trgStr = 'remote'
+            
+            if _relay:
+                _desc = f"Connexion to a {_trgStr} relay that retreive datas on the blockchain for you.\n"
+                _desc = _desc + 'In order to provide the best performance to all wxRaven Users, The connexion and functionalities may be limited.'
+            else:
+                _desc = f"Connexion to a {_trgStr} ravencore that retreive datas on the blockchain for you.\n"
+                _desc = 'If you are having issues to connect, verify ravencore settings and password (see user manual)\n'
+                if not _local:
+                    _desc = _desc + 'Non-local connexion are at risk, specially only HTTP-RPC only, Make sure that you are using a secure connexion to reach this wallet using SSH and Tunnelings'
+            
+            
+            
+            return {
+                'name':connexionName,
+                'title':_title,
+                'type':_type,
+                'secure':_secure,
+                'local':_local,
+                'relay':_relay,
+                'url':_url,
+                'scheme':_pic,
+                'desc':_desc,
+                }    
+                
         
     def getAllConnexions(self):
         return self.rpc_connectors

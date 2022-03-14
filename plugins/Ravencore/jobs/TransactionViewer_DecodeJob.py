@@ -31,9 +31,14 @@ class Job_DecodeTx(Job):
             self.jobName = f"Decode TX : <HEX>"
         
         if txid != '':    
-            self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
+            self.jobId = f"{self.jobName} - {self.getNetworkName()}"
         else:
             self.jobId = f"{self.hex} - {self.parentFrame.ConnexionManager.getCurrent()}"
+            
+        
+        self.setAllowRemoteExecution(True)
+        self.addExportParam('txid') 
+        self.addExportParam('hex') 
         #self._run_safe = True
         
         
@@ -44,7 +49,8 @@ class Job_DecodeTx(Job):
         _txDatas = None
         try:
             #self.parentFrame
-            ravencoin = self.parentFrame.getRvnRPC()
+            #ravencoin = self.parentFrame.getRvnRPC()
+            ravencoin = self.getNetworkRavencoin()
             
             
             if self.txid != '':

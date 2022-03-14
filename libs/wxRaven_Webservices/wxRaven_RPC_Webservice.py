@@ -29,7 +29,7 @@ class wxRaven_RPC_WebserviceClient(object):
     _ip='0.0.0.0'
     _port=1234
     _url = ""
-    
+    _type="WS-XMLRPC"
     _client = None
     
     def __init__(self, ip="relay.wxraven.link", port=9090, useHTTPS=False):

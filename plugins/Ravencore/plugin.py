@@ -38,7 +38,15 @@ from .wxRavenRavencoreAssetNavigatorLogic import *
 from .wxRavenRavencoreAssetIssuerLogic import *
 from wxRavenGUI.application.wxcustom import *
 from plugins.Ravencore.jobs import *
-
+'''
+from plugins.Ravencore.jobs.AddressViewer_AddressUTXOJob import Job_AddressUTXO
+from plugins.Ravencore.jobs.AssetNavigator_AssetOwnerJob import Job_AssetNavigator_AssetOwner
+from plugins.Ravencore.jobs.AssetNavigator_NavigateAssetJob import Job_AssetNavigator_Explore
+from plugins.Ravencore.jobs.AssetSearch_SeachJob import Job_AssetNavigator_Search
+from plugins.Ravencore.jobs.TransactionViewer_DecodeJob import Job_DecodeTx
+from plugins.Ravencore.jobs.UTXOManager_TransactionHistory import Job_WalletHistory
+from plugins.Ravencore.jobs.UTXOManager_WalletUTXOJob import Job_WalletUTXO
+'''
 try:
     import pyperclip
 except ImportError:
@@ -269,6 +277,22 @@ class wxRavenPlugin(PluginObject):
         
         
         
+        
+        
+        
+        self.registerJob(Job_AddressInspectionAdvanced)
+        self.registerJob(Job_AddressInspection)
+        
+        self.registerJob(Job_AddressUTXO)
+        self.registerJob(Job_AssetNavigator_AssetOwner)
+        self.registerJob(Job_AssetNavigator_Explore)
+        self.registerJob(Job_AssetNavigator_Search)
+        self.registerJob(Job_DecodeTx)
+        self.registerJob(Job_WalletHistory)
+        self.registerJob(Job_WalletUTXO)
+        
+        
+        
         #
         # Lets put some setting pannels from pluginsetting file (to define as well)
         #
@@ -340,6 +364,11 @@ class wxRavenPlugin(PluginObject):
         
         self.setData("_address_viewer_running", False) 
         self.setData("_address_viewer_current_address_text", '') 
+        
+        self.setData("_address_viewer_advanced_mode", False) 
+        self.setData("_address_viewer_check_inputs", False) 
+        self.setData("_address_viewer_check_iterations", 1) 
+        
         self.setData("_address_viewer_datas_utxo", {}) 
         self.setData("_address_viewer_datas_tx_history", {}) 
         #

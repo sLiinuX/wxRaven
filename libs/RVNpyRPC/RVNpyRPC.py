@@ -15,7 +15,7 @@ from libs.jsonrpcclient.requests import Request
 from jsonrpcclient import parse, request
 
 import logging
-
+import time
 
 class Ravencoin:
     def __init__(self, username, password, host='localhost', port=8766):
@@ -24,10 +24,26 @@ class Ravencoin:
         self.host = host
         self.port = port
         self.id = 0 
-    
+        self._type='RPC'
+        
     
     def rpc_url(self):
         return "http://{}:{}@{}:{}".format(self.username, self.password, self.host, self.port)
+    
+    
+    def rpc_status(self):
+        return {'error':None,
+                'result': {
+                        "live_time": -1, 
+                        "name": "Ravencoin_Python_RPC_Client", 
+                        "start_time": -1, 
+                        "timestamp": time.time(), 
+                        "version": 0.1,
+                        "description": 'A basic wrapper for Ravencoin RPC Call'
+                    }
+
+            }
+    
     
     def __getattr__(self, name):
         if name.startswith('__') and name.endswith('__'):
@@ -90,6 +106,8 @@ from ._utils import *
 from ._P2PmarketPlace import *
 from ._atomicSwap import *
 from ._network import * 
+from ._accounts import *
+from ._JobsUtils import *
 
 try: 
     from ._directories import *
@@ -113,8 +131,8 @@ class RavenpyRPC(object):
     atomicswap = None
     network = None
     directories = None
-    
-    
+    accounts = None
+    JobsUtils = None
     
     __userdata_path__ = ''
 
@@ -139,6 +157,10 @@ class RavenpyRPC(object):
         self.p2pmarket = RVNpyRPC_P2P_Marketplace(connexion, self)
         self.atomicswap = RVNpyRPC_AtomicSwap(connexion, self)
         self.network = RVNpyRPC_Network(connexion, self)
+        self.accounts = RVNpyRPC_Accounts(connexion, self)
+        self.JobsUtils = RVNpyRPC_JobsUtils(connexion, self)
+        
+        
         
         try:
             self.directories = RVNpyRPC_Directories(connexion, self)

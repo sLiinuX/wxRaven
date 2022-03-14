@@ -6,13 +6,14 @@ Created on 20 déc. 2021
 import datetime
 import logging
 from datetime import date, datetime as dt
-
+from ._addressesDatamining import *
 
 class RVNpyRPC_Utils():
     '''
     classdocs
     '''
     RPCconnexion = None
+    AddressesDatamining = None
     
     def __init__(self,connexion, parent):
         '''
@@ -22,6 +23,8 @@ class RVNpyRPC_Utils():
         self.RPCconnexion = connexion
         self.RVNpyRPC = parent
         self.logger = logging.getLogger('wxRaven')
+        self.AddressesDatamining = AddressesDataMining(connexion, parent)
+        
     """
     
     End user and sys, return direct usable datas most of the time
@@ -401,6 +404,8 @@ class RVNpyRPC_Utils():
                         _result['blocktime'] = datasRes['result']['blocktime']
                         _result['time'] = datasRes['result']['blocktime']
                         _result['hex'] = _hex
+                        _result['confirmations'] = datasRes['result']['confirmations']
+                        _result['blockhash'] = datasRes['result']['blockhash']
             
                     else:
                         self.logger.error(f"GetRawTransaction() _dataDecode none.")    

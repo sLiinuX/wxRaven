@@ -65,8 +65,12 @@ class wxRavenTreeView(object):
             _viewIconIdx     = self.il.Add(_image)
             self._imagesListReference[_name] = _viewIconIdx 
         
-        
-    
+    def getImage(self, _name):    
+        if self._imagesListReference.__contains__(_name):
+            return self._imagesListReference[_name]
+        else:
+            return None
+            
     
     
     def addItem(self, parentItem, text, data, iconname_normal=None, iconname_expanded=None ):

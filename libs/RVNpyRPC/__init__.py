@@ -14,7 +14,8 @@ from ._network import *
 
 from ._P2PmarketPlace import *
 from ._atomicSwap import *
-
+from ._accounts import *
+from ._JobsUtils import *
 
 try: 
     from ._directories import *

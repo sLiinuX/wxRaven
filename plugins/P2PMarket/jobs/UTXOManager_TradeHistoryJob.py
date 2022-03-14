@@ -22,8 +22,9 @@ class Job_TradeHistory(Job):
         
         
         self.jobName = f"Trade History"
-        self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
-    
+        self.jobId = f"{self.jobName} - {self.getNetworkName()}"
+        
+        
     
     def JobProcess(self):
         #getting market network

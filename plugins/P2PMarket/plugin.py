@@ -261,6 +261,15 @@ class wxRavenPlugin(PluginObject):
         
         
         
+        
+        
+        
+        self.registerJob(Job_MarketUpdate)
+        self.registerJob(Job_TradeHistory)
+        
+        
+        
+        
         #
         # Lets put some setting pannels from pluginsetting file (to define as well)
         #

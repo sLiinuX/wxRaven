@@ -22,7 +22,7 @@ class AssetsView(wxCustomFlaskView):
     @route('/v1/assets/listassets/<assetname>') 
     def listassets(self, assetname):
         network = self.wxRavenInstance.getNetwork()
-        result = network.listassets(assetname ,True,500, 0)
+        result = network.listassets(assetname ,True,100, 0)
         return jsonify(result)
     '''
         p2pMarketPlugins = self.wxRavenInstance.GetPlugin('P2PMarket')

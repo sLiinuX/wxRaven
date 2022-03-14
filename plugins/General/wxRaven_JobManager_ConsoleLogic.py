@@ -108,29 +108,50 @@ class wxRaven_JobManager_Console_Logic(wxRavenJobManagerConsole, listmix.ColumnS
     """
     def OnStopCurrent(self, evt):
         
-        '''
+        
         UserAdvancedMessage(self.parent_frame, "Not Implemented", "warning")
-        '''
-        self.UpdateDatasFromManager()
+        
+        #self.UpdateDatasFromManager()
     
     def OnGarbageClicked(self, evt):
         
-        if UserQuestion(self.parent_frame, f"Purge {self.currentJob.jobName} and send to garbage ?\nJobs result will become unusable."):
-            self.parent_frame.JobManager.PurgeCompleteJob(self.currentJob)
-            self.UpdateView()
-            
+        if self.currentJob != None:
+        
+            if UserQuestion(self.parent_frame, f"Purge {self.currentJob.jobName} and send to garbage ?\nJobs result will become unusable."):
+                if not self.parent_frame.JobManager.PurgeCompleteJob(self.currentJob):
+                    self.parent_frame.JobManager.PurgeCanceledJob(self.currentJob)
+                self.UpdateView()
+    
+    
+    def OnGarbageErrorsClicked(self, evt):
+        
+        
+        if UserQuestion(self.parent_frame, f"Purge all errors and send to garbage ?"):
+            self.parent_frame.JobManager.PurgeCanceledJob()
+            self.UpdateView()    
+                
+                
+    def OnGarbageDonesClicked(self, evt):
+        
+
+        
+        if UserQuestion(self.parent_frame, f"Purge all job done and send to garbage ?\nJobs result will become unusable."):
+            self.parent_frame.JobManager.PurgeCompleteJob()
+            self.UpdateView()      
     
     def OnItemSelected(self, evt):
         print(f"current event  {evt.Index}")
         self._currentItem = evt.Index
-        self._currentItem = self.m_listCtrl1.GetItemData(evt.Index)
+        #self._currentItem = self.m_listCtrl1.GetItemData(evt.Index)
         print(f"_currentItem  {self._currentItem}")
         itemData = self._datacache[self._currentItem]
         
         self.currentJob = itemData
+        
+        
         #if self.currentJob.getStatus() not in ['done', 'stopped', 'error']:
             #m_stopSelected.Enable(False)
-        print(f"{itemData}")
+        print(f"{self.currentJob._jobUniqueId} : {itemData}")
     
     def InitBasicMapping(self):
         self.message_type_mapping['info'] = 'info'
@@ -187,8 +208,16 @@ class wxRaven_JobManager_Console_Logic(wxRavenJobManagerConsole, listmix.ColumnS
     
     def __updateItemDataFromList__(self, listdata):
         for j in listdata.copy():
+            
             _icon = self.allIcons[j.getStatus().lower()]
-            _jobName = j.jobName
+            
+            _prefix = ''
+            if j._jobFromRemote:
+                _prefix = 'R'
+            
+            _jobName = f'[{_prefix}'+str(j._jobNumber).zfill(4)+'] ' + j.jobName
+            
+            
             
             self.itemDataMap[self.cursor ] = (str(_jobName), str(j.getStatus()), str(j._jobDetailedProgress) )
             self._datacache[self.cursor] = j    
@@ -270,9 +299,9 @@ class wxRaven_JobManager_Console_Logic(wxRavenJobManagerConsole, listmix.ColumnS
             self.__updateItemDataFromList__(jmgr._canceled_list)
         
         
-        if not self._listInit:
-            listmix.ColumnSorterMixin.__init__(self, 3)
-            self._listInit = True
+        #if not self._listInit:
+        #    listmix.ColumnSorterMixin.__init__(self, 3)
+        #    self._listInit = True
         
         self.m_listCtrl1.SetItemCount(len(self.itemDataMap))
         self.m_listCtrl1.Refresh()
@@ -290,11 +319,22 @@ class wxRaven_JobManager_Console_Logic(wxRavenJobManagerConsole, listmix.ColumnS
      
      
     def UpdateView(self, evt=None): 
+        
+        #self.logger.info(f'UpdateView called.')
+        #self.logger.info(str(inspect.stack()[0][0].f_code.co_name))
+        #self.logger.info(str(inspect.stack()[1][0].f_code.co_name))
+        #self.logger.info(str(inspect.stack()[2][0].f_code.co_name))
         if self.parent_frame._Closing or not self.parent_frame._isReady : 
             #self.logger.info(f'UpdateView Closing Request Detected.')
             return
         self.CheckRegistered() 
         self.UpdateDatasFromManager() 
+        '''
+        self.m_listCtrl1.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+        self.m_listCtrl1.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+        self.m_listCtrl1.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+        
+        '''
     
     def UpdateViewOLD(self, evt=None):
         if self.parent_frame._Closing or not self.parent_frame._isReady : 
@@ -510,7 +550,7 @@ class wxRaven_JobManager_Console_Logic(wxRavenJobManagerConsole, listmix.ColumnS
         
         self.m_listCtrl1.SetColumnWidth(0, 200)
         self.m_listCtrl1.SetColumnWidth(1, 100)
-        self.m_listCtrl1.SetColumnWidth(2, 50)
+        self.m_listCtrl1.SetColumnWidth(2, 100)
         
         
         self.il = wx.ImageList(16, 16)

@@ -112,7 +112,11 @@ class wxRavenJobManagerConsole ( wx.Panel ):
 
 		self.m_stopSelected = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/nav_stop.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
 
-		self.m_ClearAllDone = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/garbarge_icon.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
+		self.m_ClearOne = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/garbarge_icon.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
+
+		self.m_ClearErrors = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/garbage_errors.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
+
+		self.m_ClearDone = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/garbage_done.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
 
 		self.m_tool5 = self.m_auiToolBar1.AddTool( wx.ID_ANY, u"tool", wx.Bitmap( u"res/default_style/normal/view_menu.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None )
 
@@ -136,7 +140,9 @@ class wxRavenJobManagerConsole ( wx.Panel ):
 		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showProgress.GetId() )
 		self.Bind( wx.EVT_TOOL, self.OnViewOptionsChanged, id = self.m_showErrors.GetId() )
 		self.Bind( wx.EVT_TOOL, self.OnStopCurrent, id = self.m_stopSelected.GetId() )
-		self.Bind( wx.EVT_TOOL, self.OnGarbageClicked, id = self.m_ClearAllDone.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnGarbageClicked, id = self.m_ClearOne.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnGarbageErrorsClicked, id = self.m_ClearErrors.GetId() )
+		self.Bind( wx.EVT_TOOL, self.OnGarbageDonesClicked, id = self.m_ClearDone.GetId() )
 
 	def __del__( self ):
 		pass
@@ -162,6 +168,12 @@ class wxRavenJobManagerConsole ( wx.Panel ):
 		event.Skip()
 
 	def OnGarbageClicked( self, event ):
+		event.Skip()
+
+	def OnGarbageErrorsClicked( self, event ):
+		event.Skip()
+
+	def OnGarbageDonesClicked( self, event ):
 		event.Skip()
 
 
@@ -874,16 +886,13 @@ class GeneralSettingPanel ( wx.Panel ):
 
 		bSizer13621211 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_bitmap27 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/jobs_running.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer13621211.Add( self.m_bitmap27, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		self.m_spinJobMax = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 2, 10, 5 )
+		bSizer13621211.Add( self.m_spinJobMax, 0, wx.ALL, 5 )
 
-		self.m_staticText6821211 = wx.StaticText( self, wx.ID_ANY, u"Max Simultaneous Jobs :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6821211 = wx.StaticText( self, wx.ID_ANY, u"Max Simultaneous Jobs", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText6821211.Wrap( -1 )
 
 		bSizer13621211.Add( self.m_staticText6821211, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-
-		self.m_spinJobMax = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 2, 10, 5 )
-		bSizer13621211.Add( self.m_spinJobMax, 0, wx.ALL, 5 )
 
 		self.m_staticText68212111 = wx.StaticText( self, wx.ID_ANY, u"Recomended : 5  ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText68212111.Wrap( -1 )
@@ -894,6 +903,37 @@ class GeneralSettingPanel ( wx.Panel ):
 
 
 		bSizer132.Add( bSizer13621211, 0, wx.EXPAND, 5 )
+
+		bSizer13621212 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_AllowRemoteJobs = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer13621212.Add( self.m_AllowRemoteJobs, 0, wx.ALL, 5 )
+
+		self.m_staticText6821212 = wx.StaticText( self, wx.ID_ANY, u"Authorize JobManager to proceed Received Remote Jobs (Only when webservice is activated)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6821212.Wrap( -1 )
+
+		bSizer13621212.Add( self.m_staticText6821212, 0, wx.ALL, 5 )
+
+
+		bSizer132.Add( bSizer13621212, 0, wx.EXPAND, 5 )
+
+		bSizer136212121 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_UseRemoteJob = wx.CheckBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_UseRemoteJob.SetValue(True)
+		self.m_UseRemoteJob.Enable( False )
+
+		bSizer136212121.Add( self.m_UseRemoteJob, 0, wx.ALL, 5 )
+
+		self.m_staticText68212121 = wx.StaticText( self, wx.ID_ANY, u"Use Remote Jobs when connected to a Relay (Recommended)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText68212121.Wrap( -1 )
+
+		self.m_staticText68212121.Enable( False )
+
+		bSizer136212121.Add( self.m_staticText68212121, 0, wx.ALL, 5 )
+
+
+		bSizer132.Add( bSizer136212121, 0, wx.EXPAND, 5 )
 
 
 		self.SetSizer( bSizer132 )
@@ -1058,6 +1098,59 @@ class wxRavenConnexionRelaysSettings_SettingPanel ( wx.Panel ):
 
 
 		bSizer113.Add( bSizer114, 1, wx.EXPAND, 5 )
+
+		self.m_staticline7 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer113.Add( self.m_staticline7, 0, wx.EXPAND |wx.ALL, 5 )
+
+		bSizer108 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap28 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/unknown_user.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer108.Add( self.m_bitmap28, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_checkNoPublicAuth = wx.CheckBox( self, wx.ID_ANY, u"Do not use wxRaven user session token", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer108.Add( self.m_checkNoPublicAuth, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_staticText58 = wx.StaticText( self, wx.ID_ANY, u" ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText58.Wrap( -1 )
+
+		bSizer108.Add( self.m_staticText58, 1, wx.ALL, 5 )
+
+		self.m_bpButtonHelp = wx.BitmapButton( self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+
+		self.m_bpButtonHelp.SetBitmap( wx.Bitmap( u"res/default_style/normal/help_contents.png", wx.BITMAP_TYPE_ANY ) )
+		self.m_bpButtonHelp.SetToolTip( u"Activated by default, this let know to the wxRaven Relay that you are a wxRaven user and increase the query limitation.\n\nRegistered user can extend further the query limitation, this feature is actually a Proof-of-concept for a Proof-Of-Work Application Experimentation.\n\nTo request a registered key, open the connexion menu." )
+
+		bSizer108.Add( self.m_bpButtonHelp, 0, wx.ALL, 5 )
+
+
+		bSizer113.Add( bSizer108, 0, wx.EXPAND, 5 )
+
+		bSizer1081 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap281 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/UserAccount_custom.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1081.Add( self.m_bitmap281, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_checkPrivateAuth = wx.CheckBox( self, wx.ID_ANY, u"Use a registered token (DEMO)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1081.Add( self.m_checkPrivateAuth, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_staticText56 = wx.StaticText( self, wx.ID_ANY, u"        ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText56.Wrap( -1 )
+
+		bSizer1081.Add( self.m_staticText56, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_bitmap31 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/lock_key.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1081.Add( self.m_bitmap31, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_staticText57 = wx.StaticText( self, wx.ID_ANY, u"Key :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText57.Wrap( -1 )
+
+		bSizer1081.Add( self.m_staticText57, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_textUserSessionToken = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1081.Add( self.m_textUserSessionToken, 2, wx.ALL, 5 )
+
+
+		bSizer113.Add( bSizer1081, 0, wx.EXPAND, 5 )
 
 
 		self.SetSizer( bSizer113 )
@@ -1274,5 +1367,400 @@ class wxRaven_General_WalletSettings ( wx.Panel ):
 
 	def __del__( self ):
 		pass
+
+
+###########################################################################
+## Class wxRaven_General_AboutConnexion
+###########################################################################
+
+class wxRaven_General_AboutConnexion ( wx.Panel ):
+
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 443,347 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		bSizer112 = wx.BoxSizer( wx.VERTICAL )
+
+		bSizer113 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap32 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/connexion_use_local_s.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer113.Add( self.m_bitmap32, 0, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer113, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer114 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticText59 = wx.StaticText( self, wx.ID_ANY, u"Select a connexion :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText59.Wrap( -1 )
+
+		self.m_staticText59.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, wx.EmptyString ) )
+
+		bSizer114.Add( self.m_staticText59, 0, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer114, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer115 = wx.BoxSizer( wx.HORIZONTAL )
+
+		m_choiceConnexionChoices = []
+		self.m_choiceConnexion = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choiceConnexionChoices, 0 )
+		self.m_choiceConnexion.SetSelection( 0 )
+		self.m_choiceConnexion.SetMinSize( wx.Size( 250,-1 ) )
+
+		bSizer115.Add( self.m_choiceConnexion, 3, wx.ALL|wx.EXPAND, 5 )
+
+		self.m_buttonSwitchTo = wx.Button( self, wx.ID_ANY, u"Switch To...", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer115.Add( self.m_buttonSwitchTo, 0, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer115, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		self.m_staticline8 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer112.Add( self.m_staticline8, 0, wx.EXPAND |wx.ALL, 5 )
+
+		bSizer116 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticText61 = wx.StaticText( self, wx.ID_ANY, u"URL :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText61.Wrap( -1 )
+
+		bSizer116.Add( self.m_staticText61, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_textURL = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_textURL.Enable( False )
+
+		bSizer116.Add( self.m_textURL, 1, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer116, 0, wx.EXPAND, 5 )
+
+		bSizer1161 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap33 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/lock_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1161.Add( self.m_bitmap33, 0, wx.ALL, 5 )
+
+		self.m_checkBoxSecure = wx.CheckBox( self, wx.ID_ANY, u" Secure", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxSecure.Enable( False )
+
+		bSizer1161.Add( self.m_checkBoxSecure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_bitmap331 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/computer_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1161.Add( self.m_bitmap331, 0, wx.ALL, 5 )
+
+		self.m_checkBoxLocal = wx.CheckBox( self, wx.ID_ANY, u" Local Connexion", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxLocal.Enable( False )
+
+		bSizer1161.Add( self.m_checkBoxLocal, 0, wx.ALL, 5 )
+
+		self.m_bitmap3311 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/connexion_speed_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1161.Add( self.m_bitmap3311, 0, wx.ALL, 5 )
+
+		self.m_checkBoxRelay = wx.CheckBox( self, wx.ID_ANY, u" Relay Connexion", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxRelay.Enable( False )
+
+		bSizer1161.Add( self.m_checkBoxRelay, 0, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer1161, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		self.m_staticline81 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer112.Add( self.m_staticline81, 0, wx.EXPAND |wx.ALL, 5 )
+
+		bSizer120 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_textCtrl9 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
+		self.m_textCtrl9.SetMinSize( wx.Size( -1,150 ) )
+
+		bSizer120.Add( self.m_textCtrl9, 1, wx.ALL|wx.EXPAND, 5 )
+
+
+		bSizer112.Add( bSizer120, 1, wx.EXPAND, 5 )
+
+
+		self.SetSizer( bSizer112 )
+		self.Layout()
+
+		# Connect Events
+		self.m_choiceConnexion.Bind( wx.EVT_CHOICE, self.OnSelectedConnexionChanged )
+		self.m_buttonSwitchTo.Bind( wx.EVT_BUTTON, self.OnSwitchConnexionClicked )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def OnSelectedConnexionChanged( self, event ):
+		event.Skip()
+
+	def OnSwitchConnexionClicked( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class wxRaven_General_RelaySessionTokenManagement
+###########################################################################
+
+class wxRaven_General_RelaySessionTokenManagement ( wx.Panel ):
+
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 443,567 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		bSizer112 = wx.BoxSizer( wx.VERTICAL )
+
+		bSizer113 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap32 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/connexion_use_relay_s.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer113.Add( self.m_bitmap32, 0, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer113, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer114 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticText59 = wx.StaticText( self, wx.ID_ANY, u"Select a Connexion :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText59.Wrap( -1 )
+
+		self.m_staticText59.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, wx.EmptyString ) )
+
+		bSizer114.Add( self.m_staticText59, 0, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer114, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer115 = wx.BoxSizer( wx.HORIZONTAL )
+
+		m_choiceConnexionChoices = []
+		self.m_choiceConnexion = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choiceConnexionChoices, 0 )
+		self.m_choiceConnexion.SetSelection( 0 )
+		self.m_choiceConnexion.SetMinSize( wx.Size( 250,-1 ) )
+
+		bSizer115.Add( self.m_choiceConnexion, 3, wx.ALL|wx.EXPAND, 5 )
+
+
+		bSizer112.Add( bSizer115, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		self.m_staticline8 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer112.Add( self.m_staticline8, 0, wx.EXPAND |wx.ALL, 5 )
+
+		bSizer1162 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap331 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/computer_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1162.Add( self.m_bitmap331, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_staticText611 = wx.StaticText( self, wx.ID_ANY, u"UUID :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText611.Wrap( -1 )
+
+		self.m_staticText611.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, wx.EmptyString ) )
+
+		bSizer1162.Add( self.m_staticText611, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_textUUID = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_textUUID.Enable( False )
+
+		bSizer1162.Add( self.m_textUUID, 1, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer1162, 0, wx.EXPAND, 5 )
+
+		bSizer116 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap33 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/lock_icon.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer116.Add( self.m_bitmap33, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_staticText61 = wx.StaticText( self, wx.ID_ANY, u"SESSION TOKEN :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText61.Wrap( -1 )
+
+		self.m_staticText61.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, wx.EmptyString ) )
+
+		bSizer116.Add( self.m_staticText61, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_textSESSIONTOKEN = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_textSESSIONTOKEN.Enable( False )
+
+		bSizer116.Add( self.m_textSESSIONTOKEN, 1, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer116, 0, wx.EXPAND, 5 )
+
+		bSizer1161 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_checkBoxValid = wx.CheckBox( self, wx.ID_ANY, u" Valid", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxValid.Enable( False )
+
+		bSizer1161.Add( self.m_checkBoxValid, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_checkBoxSecure = wx.CheckBox( self, wx.ID_ANY, u" Limited", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxSecure.SetValue(True)
+		self.m_checkBoxSecure.Enable( False )
+
+		bSizer1161.Add( self.m_checkBoxSecure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_bitmap3311 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/speedmeter_icon_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1161.Add( self.m_bitmap3311, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_staticText80 = wx.StaticText( self, wx.ID_ANY, u"Remaining :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText80.Wrap( -1 )
+
+		self.m_staticText80.Enable( False )
+
+		bSizer1161.Add( self.m_staticText80, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_textCtrl15 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_textCtrl15.Enable( False )
+
+		bSizer1161.Add( self.m_textCtrl15, 0, wx.ALL, 5 )
+
+
+		bSizer112.Add( bSizer1161, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		self.m_staticline81 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer112.Add( self.m_staticline81, 0, wx.EXPAND |wx.ALL, 5 )
+
+		bSizer120 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_textCtrl9 = wx.TextCtrl( self, wx.ID_ANY, u"In its current deployment state, the unique wxRaven Relay is used by all user and mainly as demonstrator purpose.\n\nFor this reason and to provide the best experience to everybody, the usage of wxraven.link relay is limited / restricted to the following scenarios :\n\n- Anonymous / Non-Token-Sessions :\n   - Unlimited amount of small queries (< 500Kb)\n\n- Token-Sessions (wxRaven Users) :\n   - Unlimited amount of small queries (< 500Kb)\n   - The session is granted with an additional 10Mb of data for queries over the limitation.\n    - No limit of token request (reboot of wxRaven required)\n\n- Private Token Session for Developers,Businessman  (1RVN=500Mb / 1 WXRAVEN/AIRDROP = 1Gb)\n    - A Demonstrator of private token session is available to allow\n       Developers or business man to test more in depth.\n       ", wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE|wx.TE_READONLY )
+		self.m_textCtrl9.SetMinSize( wx.Size( -1,150 ) )
+
+		bSizer120.Add( self.m_textCtrl9, 1, wx.ALL|wx.EXPAND, 5 )
+
+
+		bSizer112.Add( bSizer120, 1, wx.EXPAND, 5 )
+
+
+		self.SetSizer( bSizer112 )
+		self.Layout()
+
+		# Connect Events
+		self.m_choiceConnexion.Bind( wx.EVT_CHOICE, self.OnSelectedConnexionChanged )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def OnSelectedConnexionChanged( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class wxRaven_General_TxStandbyFrame
+###########################################################################
+
+class wxRaven_General_TxStandbyFrame ( wx.Panel ):
+
+	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 391,359 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+		bSizer121 = wx.BoxSizer( wx.VERTICAL )
+
+		bSizer123 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticTextTitle = wx.StaticText( self, wx.ID_ANY, u"Transaction Standby", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticTextTitle.Wrap( -1 )
+
+		self.m_staticTextTitle.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, wx.EmptyString ) )
+
+		bSizer123.Add( self.m_staticTextTitle, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+
+		bSizer121.Add( bSizer123, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer122 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bpButton12 = wx.BitmapButton( self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW|0 )
+
+		self.m_bpButton12.SetBitmap( wx.Bitmap( u"res/default_style/normal/qrcode_not_available.png", wx.BITMAP_TYPE_ANY ) )
+		bSizer122.Add( self.m_bpButton12, 0, wx.ALL, 5 )
+
+
+		bSizer121.Add( bSizer122, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer126 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_panelPayoutDetails = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer127 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticText70 = wx.StaticText( self.m_panelPayoutDetails, wx.ID_ANY, u"Amount :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText70.Wrap( -1 )
+
+		bSizer127.Add( self.m_staticText70, 0, wx.ALL, 5 )
+
+		self.m_staticTextAmount = wx.StaticText( self.m_panelPayoutDetails, wx.ID_ANY, u"0 RVN", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticTextAmount.Wrap( -1 )
+
+		bSizer127.Add( self.m_staticTextAmount, 0, wx.ALL, 5 )
+
+
+		self.m_panelPayoutDetails.SetSizer( bSizer127 )
+		self.m_panelPayoutDetails.Layout()
+		bSizer127.Fit( self.m_panelPayoutDetails )
+		bSizer126.Add( self.m_panelPayoutDetails, 1, wx.EXPAND |wx.ALL, 1 )
+
+
+		bSizer121.Add( bSizer126, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer124 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_bitmap44 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/ravencoin.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer124.Add( self.m_bitmap44, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.m_txTargetAddress = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		self.m_txTargetAddress.SetMinSize( wx.Size( 300,-1 ) )
+
+		bSizer124.Add( self.m_txTargetAddress, 1, wx.ALL, 5 )
+
+
+		bSizer121.Add( bSizer124, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer1261 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_panelPayoutDetails1 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer1271 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticText701 = wx.StaticText( self.m_panelPayoutDetails1, wx.ID_ANY, u"Status :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText701.Wrap( -1 )
+
+		self.m_staticText701.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, wx.EmptyString ) )
+
+		bSizer1271.Add( self.m_staticText701, 0, wx.ALL, 5 )
+
+		self.m_bitmap45 = wx.StaticBitmap( self.m_panelPayoutDetails1, wx.ID_ANY, wx.Bitmap( u"res/default_style/normal/clock_2.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1271.Add( self.m_bitmap45, 0, wx.ALL, 5 )
+
+		self.m_staticTextStatus = wx.StaticText( self.m_panelPayoutDetails1, wx.ID_ANY, u"Waiting for TX...", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticTextStatus.Wrap( -1 )
+
+		bSizer1271.Add( self.m_staticTextStatus, 0, wx.ALL, 5 )
+
+
+		self.m_panelPayoutDetails1.SetSizer( bSizer1271 )
+		self.m_panelPayoutDetails1.Layout()
+		bSizer1271.Fit( self.m_panelPayoutDetails1 )
+		bSizer1261.Add( self.m_panelPayoutDetails1, 1, wx.EXPAND |wx.ALL, 1 )
+
+
+		bSizer121.Add( bSizer1261, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer151 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_buttonClose = wx.Button( self, wx.ID_ANY, u"Close", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer151.Add( self.m_buttonClose, 0, wx.ALL, 5 )
+
+
+		bSizer121.Add( bSizer151, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+
+		self.SetSizer( bSizer121 )
+		self.Layout()
+
+		# Connect Events
+		self.m_buttonClose.Bind( wx.EVT_BUTTON, self.OnCloseClicked )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def OnCloseClicked( self, event ):
+		event.Skip()
 
 

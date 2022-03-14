@@ -16,6 +16,8 @@ from wxRavenGUI.view import *
 from wxRavenGUI.application.core import *
 from wxRavenGUI.application.core.wxRessourcesProvider import RessourcesProvider
 from wxRavenGUI.application.wxcustom.CustomUserIO import UserAdvancedMessage
+
+
 import sys
 
 
@@ -59,6 +61,9 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     JobManager = None
     
     Ressources = None
+    
+    SysTaskBar = None
+    
     Paths = {}
     
     def __init__(self, _ProfilePath='', mainApp=None):
@@ -160,7 +165,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         #self.wxRavenMainBook.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnPageClose)
 
         
-
+        self.SysTaskBar = wxRavenTaskBarManager(self)
         
         
         self.Log("wxRaven is ready !" )
@@ -236,7 +241,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     
     
     def NewJob(self, job):
-        self.JobManager.SubmitNewJob(job)
+        return self.JobManager.SubmitNewJob(job)
     
     def SetLogging(self, log=False, debug=False):
         self.logger.info(f'SetLogging L={log} D={debug}')
@@ -336,10 +341,12 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         if networkName != None:
             self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getConnexion(networkName), userdataPath=self.Paths['USERDATA'])
         else:
-            self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getCurrentConnexion(), userdataPath=self.Paths['USERDATA'])
-            
-            
+            self.RavencoinRPC  = RavenpyRPC(self.ConnexionManager.getCurrentConnexion(), userdataPath=self.Paths['USERDATA']) 
         return self.RavencoinRPC  
+    
+    
+    def getRavencoin(self,networkName=None):
+        return self.getRvnRPC(networkName)
     
     
     def setNetwork(self, networkName):  
@@ -352,7 +359,15 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         else:
             return self.ConnexionManager.getConnexion(networkName)
     
+    def getNetworkName(self):  
+        networkName= self.ConnexionManager.getCurrent()
+        return networkName
     
+    def getNetworkType(self,networkName=None):  
+        if  networkName == None:
+            networkName= self.ConnexionManager.getCurrent()
+            
+        return self.ConnexionManager.getConnexionType(networkName)
     
     def isCurrentNetworkActive(self):
         return self.ConnexionManager.net_active
@@ -480,7 +495,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
     def OnClose(self, event):
         self._Closing = True
         
-        x = threading.Thread(target=self.CloseSound, daemon=True)
+        x = threading.Thread(target=self.CloseSound)
         x.start()
         
         
@@ -492,7 +507,7 @@ class wxRavenAppMainFrame(wxRavenMainFrame):
         self.ConnexionManager.SaveCurrentConnexion()
         self.Settings.SaveSettingsToFile()
         
-        
+        self.SysTaskBar.Destroy()
         #self.logger.info( str(self.wxRavenMenuBar_Window_Perspectives.IsChecked(self.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId())) )
         if self.wxRavenMenuBar_Window_Perspectives.IsChecked(self.wxRavenMenuBar_Window_Perspectives_SaveOnClose.GetId()):
             

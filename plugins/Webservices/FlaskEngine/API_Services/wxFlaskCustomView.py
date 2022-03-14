@@ -13,13 +13,14 @@ import logging
 
 import json
 
-
+from threading import Thread, Lock
 
 
 #logger = logging.getLogger('wxRaven-Webservices')
 
 admin_tokens = []
 user_tokens = ['wxravenuser']
+user_tokens_query_count = {'wxravenuser':5}
 
 import secrets
 _newToken = secrets.token_urlsafe(16)
@@ -108,22 +109,48 @@ def auth_required(f):
         
         _noAuthRequired = False
         _validToken = False
+        _expiredToken = False
                 
         if len(admin_tokens) == 0:
             _noAuthRequired = True
         else:    
             if token in user_tokens :
-                _validToken = True
-                           
-                    
+                #_validToken = True
+                _validToken = False
                 
+                if user_tokens_query_count.__contains__(token):
+                    _remainingQueries = user_tokens_query_count[token]
+                    
+                    logging.getLogger('wxRaven-Webservices').info(f"Token has {_remainingQueries} queries")
+                    
+                    if _remainingQueries > 0:
+                        _validToken = True
+                        _remainingQueries = _remainingQueries-1
+                        user_tokens_query_count[token] = _remainingQueries
+                        
+                        
+                        
+                    else:
+                        _expiredToken = True
+                
+                else:
+                    logging.getLogger('wxRaven-Webservices').info(f"Token query count not found.")
+                    
                 
         if _noAuthRequired or _validToken:
             return f(*args, **kwargs)
         else:
+            
             #logger = logging.getLogger('wxRaven-Webservices')
+            
             logging.getLogger('wxRaven-Webservices').warning(f"Invalid authentification : {token}")
-            return jsonify( {'result':None, 'error': { 'code' : 99 , 'message': 'Not Allowed or invalid token.'}})
+            _basicError = {'result':None, 'error': { 'code' : 99 , 'message': 'Not Allowed or invalid token.'}}
+            
+            if _expiredToken :
+                _basicError = {'result':None, 'error': { 'code' : 99 , 'message': 'Token has expired or no query remainings, retrive another ws-token.'}}
+            
+            
+            return jsonify(_basicError)
         
 
     return wrap
@@ -138,7 +165,7 @@ class wxCustomFlaskView(FlaskView):
     '''
     classdocs
     '''
-    excluded_methods = ['returnNoneJSON', 'returnJSON','returnJSONError','returnJSON_ServiceNotAvailableOnNetwork','returnJSON_NotImplemented']
+    excluded_methods = ['returnNoneJSON', 'returnJSON','returnJSONError','returnJSON_ServiceNotAvailableOnNetwork','returnJSON_NotImplemented', 'returnJSON_Measured']
 
     def __init__(self, daemon):
         '''
@@ -149,12 +176,28 @@ class wxCustomFlaskView(FlaskView):
         self.wxRavenInstance = daemon.wxRavenInstance
         self.app = daemon.app
         
+        self._lock = Lock()
+        
+        
         if self.daemon.admintoken != '':
             self.logger.info(f'Admin Token Detected {self.daemon.admintoken} !')
             admin_tokens.append(self.daemon.admintoken)
     
-    
-    
+        self.__UpdateTokenListFromDaemon__()
+        
+    def __UpdateTokenListFromDaemon__(self):
+        
+        _ut_daemons = self.daemon.__GetUserTokens__()
+        if len(_ut_daemons):
+            for _row in _ut_daemons:
+                _key = _row['token']
+                _size = _row['size']
+                
+                if not user_tokens.__contains__(_key):
+                    user_tokens.append(_key)
+                user_tokens_query_count[_key] = _size
+                
+                #self.logger.info(f'User Session Token Updated {_row} !')        
     
         
     def returnNoneJSON(self):
@@ -163,10 +206,143 @@ class wxCustomFlaskView(FlaskView):
     
     def returnJSON(self, result, error=None):
         _JSON_RPC_Result = {'result': result, 'error':error}
+        
+        if self.daemon.limit_all_json_results:
+            self.logger.info(f'Webservice Query limiter enable, redirecting to measure fct.')
+            _JSON_RPC_Result = self.returnJSON_Measured(result, error)
+            
         return _JSON_RPC_Result
+    
+    #
+    #
+    # Experimental Measured Size JSON
+    #
+    def returnJSON_Measured(self, result, error=None, _byPassSizeLimit=False):
+        
+        
+        
+        if result!=None:
+            result_size = self.daemon.GetJSONResultSize(result)
+            result_size_f = self.daemon.convert_size(result_size)
+            
+            
+            _proceed = True
+            
+            _ud = self.__GetUserDatas__()
+            self.logger.info(f"returnJSON_Measured - result_size : {result_size_f}")
+            self.logger.info(f"USER : {_ud}")
+            self.logger.info(f"Bypass : {_byPassSizeLimit}")
+            
+            
+            #
+            # If size is over the standard limit defined in the related module
+            #
+            if result_size > self.daemon.max_query_size_mb_anonymous and not _byPassSizeLimit:
+                
+                if result_size >_ud['size'] :
+                    result = None 
+                    size_f = self.daemon.convert_size(_ud['size'])
+                    
+                    _optInfos = ''
+                    if _ud['user']==True:
+                        _optInfos = 'If you are a wxRaven User, activate the token option in the relay.'
+                    
+                    error = {'code': 910, 'message': f'Job Result Exceed Max Size Allowed ({result_size_f} / {size_f}).'}
+                else:
+                    newSize = _ud['size']-  result_size   
+                    if _ud['token']  != None : 
+                        self.logger.info(f'Updating token size with new size : {newSize} ')
+                        self.__SetUserTokenSize__(_ud['token'],newSize) 
+        
+        
+        _JSON_RPC_Result = {'result': result, 'error':error}
+        
+
+        
+        return _JSON_RPC_Result
+    
+    
+    
+    def __GetUserTokenSize__(self, usertoken):
+        _res = 0
+        
+        self.__UpdateTokenListFromDaemon__()
+        
+        if user_tokens_query_count.__contains__(usertoken):
+            self._lock.acquire()
+            _res = user_tokens_query_count[usertoken]
+            self._lock.release()
+        return _res
+    
+    def __SetUserTokenSize__(self, usertoken, newSize):
+        self._lock.acquire()
+        if not user_tokens.__contains__(usertoken):
+            user_tokens.append(usertoken)
+        user_tokens_query_count[usertoken] = newSize
+        self.daemon.__SaveUserToken__(usertoken, newSize)
+        
+        
+        self._lock.release()
+        
+    
+    def __GetUserTokenQueryCount__(self, usertoken):
+        _res = self.daemon.max_query_size_mb_anonymous
+        
+        self.__UpdateTokenListFromDaemon__()
+        
+        if user_tokens_query_count.__contains__(usertoken):
+            self._lock.acquire()
+            _res = user_tokens_query_count[usertoken]
+            self._lock.release()
+        
+        return _res
+    
+    def __NewUserToken__(self, size=100):
+        #self._lock.acquire()
+        self.logger.info('__NewUserToken__')
+        _newToken = secrets.token_urlsafe(16)
+        #user_tokens.append(_newToken)
+        #user_tokens_query_count[_newToken] = maxQueries
+        self.__SetUserTokenSize__(_newToken, size)
+        self.logger.info(f'__NewUserToken__ {_newToken}  -  {size}')
+        #self.daemon.__SaveUserToken__(_newToken,maxQueries)
+        #self._lock.release()
+        return _newToken
+    
+    
+    
+    
+        
+    def __GetUserDatas__(self, token=''):
+        
+        query_parameters = request.args
+        args = extract_parameters(request.args)
+        token = args.get('token')
+        
+        _size = self.daemon.max_query_size_mb_anonymous
+        _isUser = False
+        _isAdmin = False
+        if self.__isAuthentified__(token):
+            _size = self.__GetUserTokenSize__(token)
+            _isUser = True
+            if self.__isAuthentified__(token, _asAdmin=True):
+                _size = self.daemon.max_query_size_mb_admin
+                _isAdmin = True
+        
+        
+        return {'user':_isUser, 'admin':_isAdmin, 'size':_size, 'token':token}
+        
+        
+            
+    #
+    #
+    #
+    #
+    #
+    
      
-    def returnJSONError(self, errormsg): 
-        return self.returnJSON(None, {'code':-1, 'message':errormsg})
+    def returnJSONError(self, errormsg, errorcode=-1): 
+        return self.returnJSON(None, {'code':errorcode, 'message':errormsg})
      
     def returnJSON_ServiceNotAvailableOnNetwork(self):
         return self.returnJSONError('Feature Not available on this network')
@@ -175,7 +351,57 @@ class wxCustomFlaskView(FlaskView):
         return self.returnJSONError(f'The {fct} method is not implemented')
     
     
-    
+    def __isAuthentified__(self,token,_asAdmin=False):
+        #query_parameters = request.args
+        #token = query_parameters.get('token')
+            
+        logging.getLogger('wxRaven-Webservices').info(f"__isAuthentified__ : {token}")
+        logging.getLogger('wxRaven-Webservices').info(f"user_tokens : {user_tokens}")
+        
+        _noAuthRequired = False
+        _validToken = False
+        _expiredToken = False
+        _adminToken = False
+        
+        if token!=None:        
+            if len(admin_tokens) == 0:
+                _noAuthRequired = True
+            else:    
+                if token in user_tokens :
+                    #_validToken = True
+                    _validToken = False
+                    
+                    if user_tokens_query_count.__contains__(token):
+                        _remainingQueries = user_tokens_query_count[token]
+                        
+                        logging.getLogger('wxRaven-Webservices').info(f"Token has {_remainingQueries} queries")
+                        
+                        if _remainingQueries > 0:
+                            _validToken = True
+                            _remainingQueries = _remainingQueries-1
+                            user_tokens_query_count[token] = _remainingQueries
+                            
+                            
+                            
+                        else:
+                            _expiredToken = True
+                    
+                    else:
+                        logging.getLogger('wxRaven-Webservices').info(f"Token query count not found.")
+                        
+                if token in admin_tokens :  
+                    _validToken = False
+                    _adminToken = False  
+        
+        
+        
+        _isAuthentified = (_noAuthRequired or _validToken or _adminToken) and not _expiredToken
+        if _asAdmin:
+            _isAuthentified = _adminToken
+            
+        logging.getLogger('wxRaven-Webservices').info(f"__isAuthentified__ [Admin:{_asAdmin}] : {_isAuthentified} ")
+        return _isAuthentified
+        
     
     
     @classmethod

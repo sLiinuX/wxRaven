@@ -9,4 +9,4 @@ python-socketio
 qrcode[pil]
 flask
 flask-classful
-
+json_fix

@@ -67,7 +67,7 @@ class RavencoreHTMLViewer(wxRavenHTMLViewer):
         #self.Layout()
         
         
-        self.parent_frame.Views.UpdateGUIManager()
+        #self.parent_frame.Views.UpdateGUIManager()
         
         self.Bind(webview.EVT_WEBVIEW_LOADED, self.OnWebViewLoaded, self.wv)
         #self.wv.LoadURL(assetUrl)

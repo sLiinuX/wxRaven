@@ -160,7 +160,13 @@ class RessourcesProvider(object):
             
         return _img
             
-        
+    
+    
+    def GetTopicImage(self, _key):
+        return self.GetImage(''+_key.lower())    
+    
+    
+    
         
     def GetPanelBackground(self):
         return self._THEME_PANEL_BACKGROUND_COLOR    

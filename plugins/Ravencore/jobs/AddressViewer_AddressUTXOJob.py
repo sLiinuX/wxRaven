@@ -19,17 +19,25 @@ class Job_AddressUTXO(Job):
         '''
         Job.__init__(self, plugin.parentFrame, plugin, viewCallback, safeMode)
         self._add = self.plugin.getData('_address_viewer_current_address_text') 
+        
         self.jobName = f"Address UTXO : {self._add}"
-        self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
+        self.jobId = f"{self.jobName} - {self.getNetworkName()}"
+        
+        self.addExportParam('_add') 
+        self.setAllowRemoteExecution(True)
+        
+        
         #self._run_safe = False
         
         
     def JobProcess(self):
-        _add = self.plugin.getData('_address_viewer_current_address_text') 
+        #_add = self.plugin.getData('_address_viewer_current_address_text') 
+        _add = self._add
         self.logger.info(f'Job_AddressUTXO {_add}')
         
         
-        ravencoin = self.parentFrame.getRvnRPC()
+        #ravencoin = self.parentFrame.getRvnRPC()
+        ravencoin = self.getNetworkRavencoin()
         _DatasUtxo = {'RVN':[],'ASSETS':[] }
         self.setMax(2)
         

@@ -19,10 +19,21 @@ class Job_MarketUpdate(Job):
         '''
         
         Job.__init__(self, plugin.parentFrame, plugin, viewCallback, safeMode)
-        
+        #self._chanelsDatas = plugin.getData("P2P_Market_Listing")
         self._specificMarket=_specificMarket
+        
+        #self.addExportParam('_chanelsDatas') 
+        self.addExportParam('_specificMarket') 
+        self.setAllowRemoteExecution(True)
+        
         self.jobName = f"Market Listing Update"
-        self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
+        
+        
+        _forceNetwork = self.plugin.PLUGIN_SETTINGS['p2p_markets_force_network'] 
+        self.setNetwork(_forceNetwork)
+        
+        self.jobId = f"{self.jobName} - {self.getNetworkName()}"
+        
     
     
     def JobProcess(self):
@@ -33,6 +44,10 @@ class Job_MarketUpdate(Job):
         
         _specificMarket = self._specificMarket
         
+        
+        
+        _forceNetwork = self.plugin.PLUGIN_SETTINGS['p2p_markets_force_network'] 
+        self.setNetwork(_forceNetwork)
         
         market_chanels =[]
         if _specificMarket != "":
@@ -52,7 +67,11 @@ class Job_MarketUpdate(Job):
             _ipfsList =  self.parentFrame.GetPluginSetting('Ravencore', "ipfsgateway_providers")
             ipfsFallbacks = _ipfsList
         
+        
+        
+        
         print(f"__DoRefreshAllMarkets__")
+        print(f"market_chanels {market_chanels}")
         print(f"search_limit {search_limit}")
         print(f"search_limit {include_none_tx}")
         print(f"search_limit {include_none_tx}")
@@ -119,7 +138,7 @@ class Job_MarketUpdate(Job):
             #wx.CallAfter(self.RequestMarketSearch_T, ())
             
         except Exception as e:
-            self.RaisePluginLog( "Unable to retreive p2p market informations :"+ str(e), type="error")
+            self.plugin.RaisePluginLog( "Unable to retreive p2p market informations :"+ str(e), type="error")
             self.setError(e)
         
         

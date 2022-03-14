@@ -61,30 +61,39 @@ class ViewsManager(object):
     #
     #
     #    
+    
+    def __refreshGUI_Job__(self, evt=None):
+        p = self.parentframe.GetPlugin('General')
+        j = Job_RefreshGUI(p, viewCallback=None, safeMode=True)
+        self.parentframe.NewJob(j)
+    
         
     def OnAuiNotebookPageClose(self, evt):
-        self.logger.info("OnAuiPaneClose in view man ")
+        self.logger.info("OnAuiNotebookPageClose in view man ")
         self.OnPageClose(evt)
         
-        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
+        #wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
         #wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())
-    
+        self.__refreshGUI_Job__()
     
        
     def OnAuiPaneClose(self, evt):
         self.logger.info("OnAuiPaneClose in view man ")
-        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
-        wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())
+        #wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
+        #wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())
         
-        self.UpdateGUIManager()
-        
+        #self.UpdateGUIManager()
+        self.__refreshGUI_Job__()
         
         
     def OnAuiPaneActivated(self, evt):
         self.logger.info("OnAuiPaneActivated in view man : tweaked version in test") 
+        self.__refreshGUI_Job__()
+        '''
         p = self.parentframe.GetPlugin('General')
         j = Job_RefreshGUI(p, viewCallback=None, safeMode=True)
         self.parentframe.NewJob(j)
+        '''
         #wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())    
         #wx.CallAfter(self.parentframe.MenusAndTool.RefreshToolbar, ())      
         
@@ -135,7 +144,8 @@ class ViewsManager(object):
                     self.logger.error("_v['instance'].SafeClose() " + str(e))
         
         
-        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
+        #wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
+        self.__refreshGUI_Job__()
         event.Skip()       
         
         
@@ -187,8 +197,10 @@ class ViewsManager(object):
             self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("toolbox1"))
             self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("toolbox2"))
             self.parentframe.m_mgr.ClosePane(self.parentframe.m_mgr.GetPane("toolbox3"))
-            self.UpdateGUIManager()
-
+            #self.UpdateGUIManager()
+            
+            if self.parentframe._isReady:
+                self.__refreshGUI_Job__()
     
     
     
@@ -315,7 +327,8 @@ class ViewsManager(object):
                 
     
     
-        self.UpdateGUIManager()
+        #self.UpdateGUIManager()
+        self.__refreshGUI_Job__()
     
     
     def DestroyAllNonVisible(self):
@@ -357,8 +370,9 @@ class ViewsManager(object):
                       
                 
     
-        wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
-        self.UpdateGUIManager()
+        #wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
+        #self.UpdateGUIManager()
+        self.__refreshGUI_Job__()
         
     
                 
@@ -426,8 +440,8 @@ class ViewsManager(object):
                 if all_panes[ii].window == instanceParent:
                     all_panes[ii].Hide()
                 
-        self.UpdateGUIManager()
-    
+        #self.UpdateGUIManager()
+        self.__refreshGUI_Job__()
     
     
     def ShowParentInManager(self, instanceParent):
@@ -441,7 +455,8 @@ class ViewsManager(object):
                 if all_panes[ii].window == instanceParent:
                     all_panes[ii].Show(True)
                 
-        self.UpdateGUIManager()
+        #self.UpdateGUIManager()
+        self.__refreshGUI_Job__()
     
     
     
@@ -564,7 +579,8 @@ class ViewsManager(object):
                 
                 
                 
-        self.UpdateGUIManager()
+        #self.UpdateGUIManager()
+        self.__refreshGUI_Job__()
     
     
     def RenameView(self):
@@ -632,7 +648,8 @@ class ViewsManager(object):
                 if _v['position'] == 'mgr':
                     self.logger.info(f"{_v['position']} will be managed dynamically with Manager")
                     self.parentframe.m_mgr.GetPane(_v['name']).Show(True)
-                    self.UpdateGUIManager()
+                    #self.UpdateGUIManager()
+                    self.__refreshGUI_Job__()
                 
                 elif _v['position'] == 'main':
                     self.logger.info(f"{_v['position']} will be managed dynamically with MainNotebook")
@@ -783,7 +800,8 @@ class ViewsManager(object):
         self.parentframe.m_mgr.AddPane( obj, wx.aui.AuiPaneInfo() .Bottom() .Icon(icon)  .Name( nameFrame ) .Caption( u"> "+title+"" ).MaximizeButton( True ).MinimizeButton( True ).PinButton( True ).Dock().Resizable().FloatingSize( wx.DefaultSize ) )
         self.parentframe.m_mgr.GetPane(nameFrame).Icon(icon)
         #self.AddView(nameFrame, obj, icon=icon)
-        self.UpdateGUIManager()
+        #self.UpdateGUIManager()
+        self.__refreshGUI_Job__()
         
        
     def AddInMainbook(self, obj, nameFrame, icon=None):
@@ -820,8 +838,8 @@ class ViewsManager(object):
         else: 
             self.RaiseViewLog("Unable to addview '"+ nameFrame+"' unknown type : " + str(type(notebook)) , "error")
         #self.AddView(nameFrame, obj, icon)
-        self.UpdateGUIManager()
-        
+        #self.UpdateGUIManager()
+        self.__refreshGUI_Job__()
         
         
         
@@ -1055,7 +1073,7 @@ class RavenAddViewDialog(wxRavenAddView):
                 wx.CallAfter(self.parentframe.Views.AddDialog, (self._selected_view,))
             else:
                 self.parentframe.GetPlugin(self._selected_plugin).LoadView(self._selected_view, self._target)
-            wx.CallAfter(self.parentframe.MenusAndTool.refreshViewsListMenu, ())
+            wx.CallAfter(self.parentframe.Views.__refreshGUI_Job__, ())
             self.Close(force=True)
         
         

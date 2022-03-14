@@ -157,10 +157,11 @@ class wxRavenP2PMarket_RavencoreTxViewerWithLogic(wxRaven_Ravencore_TxViewer ):
         
         
     def setupPanel(self):
+        '''
         ravencoin = self.parent_frame.getRvnRPC()
         if not ravencoin.test_rpc_status():
             UserError(self.parent_frame, "You must have an active connexion !")
-            
+        '''    
         print('setup pannel')
         
         self._Tab_HexDecode = self.__SetupDynamicPanel__(wxRaven_Ravencore_TxViewer_HEX_PanelLogic)

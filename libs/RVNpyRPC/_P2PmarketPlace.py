@@ -36,7 +36,7 @@ _P2PMARKET_ID_ = {
     'Atomic Swap':0,
     'P2SH':1,
     }
-
+import json_fix
 class RavencoinP2PMarketPlaceAd(object):
     '''
     classdocs
@@ -110,6 +110,10 @@ class RavencoinP2PMarketPlaceAd(object):
     def __repr__(self, *args, **kwargs):
         return str(self.JSON())
         
+    
+    def __json__(self, **options):
+        return self.JSON()
+    
     
     def GetAvailableOrders(self):
         return len(self._adTxDatas)

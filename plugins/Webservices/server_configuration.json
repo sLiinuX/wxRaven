@@ -1,0 +1,16 @@
+{ 
+	
+	
+	"max_query_size_mb_anonymous" : 512000,
+	"max_query_size_mb_user" : 10485760,
+	
+	"rvn_to_mb_credit" : 524288000,
+	"ws_fund_address" : "myvwqtevizzpKDSvYXURoS8NXS374NpAZv",
+	
+	
+	"limit_all_json_results" : false, 
+	"limit_jobs_results" : true,
+	
+	
+	"service_description":"\t***Welcome to wxraven.link - Official Relay***\nIn its current deployment state, the unique wxRaven Relay is used by all user and mainly as demonstrator purpose.\n\nFor this reason and to provide the best experience to everybody, the usage of wxraven.link relay is limited / restricted to the following scenarios :\n\n- Anonymous / Non-Token-Sessions :\n\t- Unlimited amount of small queries (< 500Kb)\n\n- Token-Sessions (wxRaven Users) :\n\t- Unlimited amount of small queries (< 500Kb)\n\t- The session is granted with an additional 10Mb of data for queries over the limitation.\n\t - No limit of token request (reboot of wxRaven required)\n\n- Private Token Session for Developers,Businessman  (1RVN=500Mb / 1 WXRAVEN/AIRDROP = 1Gb)\n\t - A Demonstrator of private token session is available to allow\n\t\t Developers or business man to test more in depth.\n\t\t "
+}

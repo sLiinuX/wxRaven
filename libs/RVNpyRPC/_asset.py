@@ -14,15 +14,15 @@ import re
 
 
 
-class AssetType(enum.Enum):
-    MAINASSET = "MAINASSET"
-    SUBASSET = "SUBASSET"
-    UNIQUEASSET = "UNIQUEASSET"
-    MESSAGINGCHANNELASSET = "MESSAGINGCHANNELASSET"
-    QUALIFIERASSET = "QUALIFIERASSET"
-    SUBQUALIFIERASSET = "SUBQUALIFIERASSET"
+class AssetType(str ,enum.Enum):
+    MAINASSET:str  = "MAINASSET"
+    SUBASSET:str  = "SUBASSET"
+    UNIQUEASSET:str = "UNIQUEASSET"
+    MESSAGINGCHANNELASSET:str  = "MESSAGINGCHANNELASSET"
+    QUALIFIERASSET:str  = "QUALIFIERASSET"
+    SUBQUALIFIERASSET:str  = "SUBQUALIFIERASSET"
     RESTRICTEDASSET = "RESTRICTEDASSET"
-    UNDEFINED = "UNDEFINED"
+    UNDEFINED:str  = "UNDEFINED"
 
 
 
@@ -862,7 +862,7 @@ class RVNpyRPC_Asset():
         
         
         return _AssetRawList
-
+import json_fix
 
 class AssetTreeObj(object):
     
@@ -895,6 +895,45 @@ class AssetTreeObj(object):
         
         self.childs = []
 
+    @classmethod
+    def __from_json_childs__(cls, obj):
+        obj
+        newChilds= []
+        
+        for c in obj.childs:
+            nn = cls(c['name'], c['shortname'], c['shortname'], c['type'], c['datas'])
+            nn.childs = c['childs']
+            _recursive = AssetTreeObj.__from_json_childs__(nn)
+            newChilds.append(_recursive)
+            
+            
+            
+        obj.childs = newChilds
+        return obj
+            
+            
+    
+    @classmethod
+    def from_json(cls, data: dict):
+        newObj:AssetTreeObj
+        newObj = cls(data['name'], data['shortname'], data['shortname'], data['type'], data['datas'])
+        
+        
+        clearChilds= []
+        for c in data['childs'] :
+            newChildClass = cls(c['name'], c['shortname'], c['shortname'], c['type'], c['datas'])
+            newChildClass.childs = c['childs']
+            newChildClass = AssetTreeObj.__from_json_childs__(newChildClass)
+            clearChilds.append(newChildClass)
+            #newObj.childs.append(newChildClass)
+        
+        
+        newObj.childs = clearChilds
+            
+        return newObj
+    
+    def __json__(self, **options):
+        return self.__dict__
         
     def __repr__(self, level=0):
         ret = "\t"*level+repr(self.name)+"\n"

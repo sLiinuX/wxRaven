@@ -4,7 +4,7 @@ Created on 8 févr. 2022
 @author: slinux
 '''
 from wxRavenGUI.application.pluginsframework import PluginSettingsPanelObject
-from .wxRavenWebServicesDesign import wxRaven_Webservices_SettingsPanel
+from .wxRavenWebServicesDesign import wxRaven_Webservices_SettingsPanel,wxRaven_Webservices_RemoteJobs_Settings
 
 import wx
 import secrets
@@ -316,3 +316,118 @@ class wxRaven_Webservices_SettingsPanelLogic(PluginSettingsPanelObject):
                 
     '''    
         
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+class wxRaven_Webservices_RemoteJobs_SettingsPanelLogic(PluginSettingsPanelObject):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self,parent, parentFrame, pluginName):
+        
+        _Panel = wxRaven_Webservices_RemoteJobs_Settings(parent)
+        PluginSettingsPanelObject.__init__(self,_Panel, parentFrame, pluginName)
+    
+        _Panel.SetBackgroundColour( wx.Colour( 217, 228, 255 ) )
+        #_Panel.m_bpButtonGenerateAdmin.Bind( wx.EVT_BUTTON, self.OnGenerateToken )
+        
+        #self._settingsHasChanged =True
+        
+        #_Panel.Bind( wx.EVT_BUTTON, self.OnAddProvider,id = _Panel.bookmark_addbt.GetId()  )
+        #_Panel.Bind( wx.EVT_BUTTON, self.OnRemoveProvider,id = _Panel.bookmark_rembt.GetId()  )
+        #_Panel.Bind( wx.EVT_BUTTON, self.OnMoveProviderUp,id = _Panel.ipfs_provider_upbt.GetId()  )
+        
+        
+        """
+        _Panel.ipfs_provider_addbt.Bind( wx.EVT_BUTTON, self.OnChanged )
+        #_Panel.ipfs_provider_upbt.Bind( wx.EVT_BUTTON, self.OnChanged )
+        _Panel.ipfs_provider_rembt.Bind( wx.EVT_BUTTON, self.OnRemoveProvider )
+        
+        
+        _Panel.ipfs_provider_upbt.Bind( wx.EVT_BUTTON, self.OnMoveProviderUp )
+        """
+    
+        #self._Panel.Bind( wx.EVT_TIMER, self.OnRefreshStatus, id=wx.ID_ANY )
+        #self._Panel.Bind( wx.EVT_BUTTON, self.OnChangeServiceStatus, id=self._Panel.m_bpButton1.GetId()  )
+        #self._Panel.m_forceNetwork.Bind( wx.EVT_CHECKBOX, self.OnChanged )
+        
+        self._Panel.m_checkList1.Bind( wx.EVT_CHECKLISTBOX, self.OnChanged )
+        
+        self._Panel.m_choiceJobRedirection.Bind( wx.EVT_CHOICE, self.OnChanged )
+        
+        
+        
+    def safeClose(self):
+        pass
+    
+    
+    
+        
+        
+    def SavePanelSettings(self):
+        #_newValueForBoolSetting = self._Panel.booleansetting.IsChecked()
+        
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)    
+        
+
+        _currentDisableValueIndex = self._Panel.m_checkList1.GetCheckedStrings()
+        print(_currentDisableValueIndex)
+        _toSaveArray = []
+        
+        for _val in _currentDisableValueIndex:
+            _toSaveArray.append(_val)
+        
+        myPlugin.PLUGIN_SETTINGS['webservice_exclude_remotejobs'] = _toSaveArray   
+        
+        
+        
+        _currentChoice =  self._Panel.m_choiceJobRedirection.GetString(self._Panel.m_choiceJobRedirection.GetCurrentSelection())      
+        myPlugin.PLUGIN_SETTINGS['webservice_exclude_remotejobs_redirection'] = _currentChoice   
+             
+        
+    #
+    #
+    # method to be called at first panel creation
+    # 
+    def LoadPanelSettings(self):
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)    
+        
+        myPlugin = self.parentFrame.GetPlugin(self.pluginName)
+        _currentDisableValue = myPlugin.PLUGIN_SETTINGS['webservice_exclude_remotejobs']
+        
+        _AllJobsAva = self.parentFrame.JobManager.discoverAvailableJobs()
+        
+        self._Panel.m_checkList1.InsertItems(_AllJobsAva, 0) 
+        
+        iList=[]
+        for disable in _currentDisableValue:
+            i = self._Panel.m_checkList1.FindString(disable)
+            if i != -1:
+                iList.append(i)
+        
+        #print(iList)
+        self._Panel.m_checkList1.SetCheckedItems(iList)
+        
+        
+        _dc = self._Panel.m_choiceJobRedirection.FindString(myPlugin.PLUGIN_SETTINGS['webservice_exclude_remotejobs_redirection'])
+        if _dc != wx.NOT_FOUND:
+            self._Panel.m_choiceJobRedirection.SetSelection(_dc)
+                
+                
+        self._Panel.Layout()

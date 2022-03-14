@@ -10,8 +10,8 @@ import logging
 import wx
 import time
 from wxRavenGUI.application.wxcustom import *
-
-
+import secrets
+import math
 #
 #
 # Plugin Job is a class for WxRaven JobManager that execute background task to improve userexperience
@@ -36,6 +36,9 @@ class Job(object):
     _jobResult = None
     _jobError = None
     _jobStatus = 'New'
+    _jobNetwork = None
+    #_jobSize = 0
+    
     
     _jobSaved = False
 
@@ -50,14 +53,31 @@ class Job(object):
     _jobDelayBefore = 0
     _jobDelayAfter = 0
     
+    _jobNumber = 0
     
     _jobOtherJobRequirements = []
     
     
     _jobDirectCallBack = None
     _daemonize_job = True
+    
+    _export_params_list= []
+    _jobUniqueId = None
+    _JobAllowRemoteExecution = False
+    
+    _jobNetworkCompatibility = ['RPC']
+    _jobReusable = True
+    _jobFromRemote = False
+    
+    
+    _jobTxStandbyDescription = None
+    _jobPaymentStandby = None
+    _jobPaymentAmount = None
+    _jobTxStandby = None
+    _jobPaymentStatus = None
 
-    def __init__(self ,parentFrame, plugin=None, resultDirectCallback=None, safeMode=True, notifyAtEnd=True):
+
+    def __init__(self ,parentFrame, plugin=None, viewCallback=None, safeMode=True, notifyAtEnd=True):
         '''
         Constructor
         '''
@@ -72,9 +92,124 @@ class Job(object):
         self.jobId = 'UnknownJob'
         
         
-        self._jobDirectCallBack = resultDirectCallback
+        
+        _newToken = secrets.token_urlsafe(16)
+        self._jobUniqueId = _newToken
+        self._jobNetwork = None
+        self._jobDirectCallBack = viewCallback
         self._jobDetailedProgress = "No manager assigned"
+        
         self._notify_at_end = notifyAtEnd
+        
+        self._export_params_list=[]
+        self.addExportParam('jobName')
+        
+        self._jobNetworkCompatibility = ['RPC']
+    
+    
+    
+    
+    #
+    # Jsonify for Import Export through RPC
+    #
+    
+    def ExportRemoteJobResultJson(self):
+        return self._jobResult
+    
+    def ExportRemoteJobStatusJson(self, _withResult=False):
+        
+        self.__refreshProgessDatas__()
+        
+        _jsonData = {
+            'jobName':self.jobName,
+            '_jobStatus':self._jobStatus,
+            '_jobRunning':self._jobRunning,
+            '_jobDone':self._jobDone,
+            
+            
+            '_jobProgressPercent':self._jobProgressPercent,
+            '_jobDetailedProgress':self._jobDetailedProgress,
+            '_jobDetailedProgress_max':self._jobDetailedProgress_max,
+            '_jobDetailedProgress_cur':self._jobDetailedProgress_cur,
+            
+            
+            '_jobStartTime': self._jobStartTime,
+            '_jobElapsedTime': self._jobElapsedTime,
+            '_jobStopTime':self._jobStopTime,
+            
+            '_jobTxStandby': self._jobTxStandby,
+            '_jobPaymentStandby': self._jobPaymentStandby,
+            '_jobTxStandbyDescription': self._jobTxStandbyDescription,
+            '_jobPaymentAmount': self._jobPaymentAmount,
+            '_jobPaymentStatus': self._jobPaymentStatus,
+            
+            
+            
+
+            }
+        
+        if  self._jobError == None:
+            _jsonData['_jobError'] = None
+        else:
+            _jsonData['_jobError'] = str(self._jobError)
+        
+        if _withResult:
+            _jsonData['_jobResult'] = self._jobResult
+        else:
+            _jsonData['_jobResult'] = None
+        
+        
+        return _jsonData
+    
+    
+    
+    
+    def ExportRemoteParametersJson(self):
+        _jsonData = {}
+        for _key in self._export_params_list:
+            try:
+                self.logger.info(f'{self.jobName} : exporting param {_key} ')
+                _jsonData[_key] = getattr(self, _key)
+            except Exception as e:
+                self.logger.error(f'Unable to export {_key} in {self.jobName} : {e} ')
+        
+        return _jsonData    
+    
+    
+    
+    
+    
+    
+    def RestoreParameters(self,_jsonData ):
+        
+        #do not allow this setting to change
+        _sever_exceptions = ['_jobNetwork']
+        
+        for _k in _jsonData:
+            
+            if _k in _sever_exceptions:
+                self.logger.warning(f'Invalid or Not authorized Job parameter : {_k}')
+                continue
+            
+            self.logger.info(f'setting param {_k} ')
+            try:
+                setattr(self, _k, _jsonData[_k])
+    
+            except Exception as e:
+                self.logger.error(f'Unable to RestoreParameters {_k} ')
+        
+        self.jobId = f"{self.jobName} - {self.getNetworkName()}"
+                
+        return True
+        
+    
+    #
+    #
+    #
+    # Jobs CORE
+    #
+    #
+    #
     
     def DoJob(self):
         
@@ -84,15 +219,37 @@ class Job(object):
         t.start() 
     
     
+    def __refreshProgessDatas__(self):
+        
+        if self._jobRunning:
+            try:
+                self._jobElapsedTime = float(time.time() - self._jobStartTime).__round__(2)
+            except Exception as e:
+                pass  
+        
+        '''
+        if self._jobResult != None:
+            self._jobSize = self.__convert_size__(sys.getsizeof(str(self._jobResult)))
+        '''    
     
+        try:
+            _max = self._jobDetailedProgress_max
+            _cur = self._jobDetailedProgress_cur
+            self._jobProgressPercent = float(( _cur/_max)*100).__round__(2)
+        except Exception as e:
+            pass    
+            
     
     def __waitJobRequirements__(self):
         _allDone = False
-        
+        self.setProgress(f'Waiting Requirement Jobs : {self._jobOtherJobRequirements}')
         while not _allDone:
             self._jobStatus='Waiting'
+            
             _allDone = True
-            for _j in self._jobOtherJobRequirements:
+            for _jNum in self._jobOtherJobRequirements:
+                
+                _j = _jNum
                 if not _j._jobRunning and _j._jobDone:
                     _allDone = _allDone and True
             
@@ -100,7 +257,7 @@ class Job(object):
                 time.sleep(5)
 
     def __DoJob_T__(self, evt=None):
-        #self.jobId = f"{self.jobName} - {self.parentFrame.ConnexionManager.getCurrent()}"
+        #self.jobId = f"{self.jobName} - {self.getNetworkName()}"
         #self.logger.info(f'JOB : {self.jobId}')
         if self._jobRunning :
             return
@@ -181,25 +338,122 @@ class Job(object):
                 _m = f"{self._jobError}" 
                 _type = 'error'
            
-            UserSystemNotification(self.parentFrame, title=_t, message=_m, _type=_type)
-        
+            #UserSystemNotification(self.parentFrame, title=_t, message=_m, _type=_type)
+            wx.CallAfter(UserSystemNotification,self.parentFrame, title=_t, message=_m, _type=_type )
         
         if self._jobError == None:
             self.setProgress(f"Job Complete ({self._jobElapsedTime} seconds)")
         
         
         self._jobRunning = False
-        
     
+    
+    
+    def __RemoteProtection__(self):
+        if self._jobFromRemote:
+            _SafeGuardMessage = f"The requested job(s) is not allowed on the remote relay : {self._initalJobRequest}"  
+            self.setProgress(f'{_SafeGuardMessage}')
+            self.setError(_SafeGuardMessage)
+            
+        return self._jobFromRemote
+    
+    
+    
+    def __MainThreadCall__(self, function, *args):
+        try:
+            wx.CallAfter(function, *args)
+        except Exception as e:
+            self.logger.exception(f'JOB ERROR __MainThreadCall__ : {e}')
+    
+    
+    def __convert_size__(self,size_bytes):
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return "%s %s" % (s, size_name[i])  
+    
+    """
+     '_jobTxStandby': self._jobTxStandby,
+            '_jobPaymentStandby': self._jobPaymentStandby,
+            '_jobTxStandbyDescription': self._jobTxStandbyDescription,
+    """
+    def setPaymentStandby(self, PaymentDatas, PaymentDescription, PaymentAmount='1 RVN', PaymentTx=None, PaymentStatus=''):
+        self._jobTxStandby = PaymentTx
+        self._jobPaymentStandby = PaymentDatas
+        self._jobTxStandbyDescription = PaymentDescription
+        self._jobPaymentAmount = PaymentAmount
+        self._jobPaymentStatus = PaymentStatus
+        
+    def setPaymentDone(self, PaymentTxId=None):
+        self._jobTxStandby = PaymentTxId
+        self._jobPaymentStandby = '-'
+        #self._jobTxStandbyDescription = PaymentDescription
+        self._jobPaymentAmount = '0 RVN'
+        self._jobPaymentStatus = 'Transaction Complete'
+    
+    def setReusable(self, Reusable=True):
+        self._jobReusable = Reusable
+    
+    def removeNetworkCompatibility(self, val):
+        if self._jobNetworkCompatibility.__contains__(val):
+            self._jobNetworkCompatibility.remove(val)
+        
+        
+    def addNetworkCompatibility(self, val):
+        self._jobNetworkCompatibility.append(val)
+        
+    def setAllowRemoteExecution(self, val):
+        self.addNetworkCompatibility('WS-RPC')
+        self._JobAllowRemoteExecution = val
+    
+    def __setJobNumber__(self, jobNum):
+        self._jobNumber = jobNum
     
     def addJobRequirement(self, jobObj):
         self._jobOtherJobRequirements.append(jobObj)
     
     
+    
+    #
+    # Special function to handle network on tasks 
+    #    
+    def getNetworkName(self):
+        _returnNetwork = self._jobNetwork
+        if self._jobNetwork == None:
+            _returnNetwork = self.parentFrame.getNetworkName()
+        return self._jobNetwork
+    
+    
+    
+    def setNetwork(self, val=None):
+        self._jobNetwork = val
+        self.jobId = f"{self.jobName} - {self._jobNetwork}"
+    
+    
+    
+    def getNetworkRPC(self):
+        return self.parentFrame.getNetwork(self.getNetworkName())
+    
+    def getNetworkRavencoin(self):
+        return self.parentFrame.getRavencoin(self.getNetworkName())
+    
+    
+    
+    
+    
+    def setFromRemote(self, val):
+        self._jobFromRemote = True
+    
     def setDelays(self, before=0, after=0): 
         self._jobDelayAfter = after
         self._jobDelayBefore  = before 
         
+    
+    def addExportParam(self, paramname):
+        self._export_params_list.append(paramname)
     
     def setNotification(self, enabl=True):  
         self._notify_at_end =  enabl     
@@ -230,11 +484,31 @@ class Job(object):
     def getResult(self):
         return self._jobResult
     
+    def getResultRPCStyle(self):
+        _errRpc = None
+        _resultRpc = self._jobResult
+        if self._jobError != None:
+            _errRpc = {'code':-1, 'message': self._jobError}
+        return {'result':_resultRpc, 'error':_errRpc}
+        
+    
+    def getUniqueKey(self):
+        return self._jobUniqueId
+    
     def setStatus(self, newState):
         self._jobStatus = newState
         
     def getStatus(self):
         return self._jobStatus    
+    
+    
+    def getJobFriendlyName(self):
+        _prefix = ''
+        if self._jobFromRemote:
+            _prefix = 'R'
+            
+        _jobName = f'[{_prefix}'+str(self._jobNumber).zfill(4)+'] ' + self.jobName
+        return _jobName
     
     
     def JobProcess(self):

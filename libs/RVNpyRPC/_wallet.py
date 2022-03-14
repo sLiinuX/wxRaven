@@ -240,6 +240,8 @@ class RVNpyRPC_Wallet():
         return self.getAllAccounts(displayAddress=True, displayAssets=True, includeEmptyName=True)
     
     
+    def getAddressBalance(self, walletAdress=[], includeAsset=False):
+        return self.getaddressbalance(walletAdress=walletAdress, showAsset=includeAsset)['result']
     
     
     def getAddressAssetsBalance(self, walletAdress=[]):
@@ -247,10 +249,7 @@ class RVNpyRPC_Wallet():
         #self.logger.info(f"getAddressAssetsBalance {walletAdress}")
         
         allAssetsInAddress = self.getaddressbalance(walletAdress=walletAdress, showAsset=True)['result']
-        
         #self.logger.info(allAssetsInAddress)
-        
-        
         tableAssetData= []
         
         for asset in allAssetsInAddress:
@@ -291,16 +290,32 @@ class RVNpyRPC_Wallet():
     #
     
     
-    
-    
-    
+    def sendRVNFromAccount(self,fromName, toAd ,amount , pwd=""):
+        sent=False
+        validDest = self.validateaddress(toAd)
+        self.logger.info("Valid="+str(validDest))
+        
+        if validDest['isvalid']:
+            if pwd !="":
+                response = self.RPCconnexion.walletpassphrase(pwd)
+            
+            
+            
+            response = self.RPCconnexion.sendfrom(fromName,toAd , amount)
+            sent=response['result']    
+            if  sent == None:
+                sent=response['error']['message']
+                
+        return sent
+            
+        
     def sendRVN(self,  toAd, amount, fromAd="", pwd=""):
         
         
         sent=False
         validDest = self.validateaddress(toAd)
         
-        self.logger.info("Valide="+str(validDest))
+        self.logger.info("Valid="+str(validDest))
         
         if validDest['isvalid']:
             
@@ -338,23 +353,23 @@ class RVNpyRPC_Wallet():
     
     
     
-    def sendAsset(self, AssetName, toAd, amount, pwd=""):
+    def sendAsset(self, AssetName, toAd, amount, pwd="", rvn_change_addr='', asset_change_addr=''):
         
         sent=False
         validDest = self.validateaddress(toAd)
         
-        self.logger.info("Valide="+str(validDest))
+        self.logger.info("Valid="+str(validDest))
         
         if validDest['isvalid']:
                
             if pwd !="":
                 response = self.RPCconnexion.walletpassphrase(pwd)
 
-            response = self.RPCconnexion.transfer(AssetName, amount, toAd,"QmRL252afAwiaGwGgs7g3iYZJJFius66gVSbSd5UV1N1aK", 200000000)
+            response = self.RPCconnexion.transfer(AssetName, amount, toAd,"QmRL252afAwiaGwGgs7g3iYZJJFius66gVSbSd5UV1N1aK", 200000000,rvn_change_addr, asset_change_addr)
                 #response = self.RPCconnexion.sendfromaddress(fromAd,toAd , amount)
                 #sendfromaddress "from_address" "to_address" amount
             sent=response['result']
-            self.logger.info("sendfromaddress="+str(response))
+            self.logger.info("sendAsset="+str(response))
             
             if  sent == None:
                 sent=response['error']['message']
@@ -362,7 +377,24 @@ class RVNpyRPC_Wallet():
         return sent
     
     
-    
+    def sendAssetFromAddress(self,assetname, fromaddress, toAd ,amount , pwd="", rvn_change_addr='', asset_change_addr=''):
+        sent=False
+        validDest = self.validateaddress(toAd)
+        self.logger.info("Valid="+str(validDest))
+        
+        if validDest['isvalid']:
+            if pwd !="":
+                response = self.RPCconnexion.walletpassphrase(pwd)
+            
+            
+            
+            response = self.RPCconnexion.transferfromaddress(assetname,fromaddress,amount,toAd ,"QmRL252afAwiaGwGgs7g3iYZJJFius66gVSbSd5UV1N1aK", 200000000, rvn_change_addr, asset_change_addr )
+            sent=response['result'] 
+            self.logger.info("sendAssetFromAddress="+str(response))   
+            if  sent == None:
+                sent=response['error']['message']
+                
+        return sent
     
     
     
@@ -517,6 +549,20 @@ class RVNpyRPC_Wallet():
             #print(f"A {_allmatch[assetname]}")
         return _res
         #listunspent 
+    
+    
+    def SearchUnspentTxfromTxId(self, txId, _address=[]):
+        _addUnspent = self.GetUnspentList(_OnlySpendable=False, _ExlcudeAddresses=[], _IncludeOnlyAddresses=_address, _fullDatas=True, _includeLocked=False)
+        
+        _result=[]
+        _found = False
+        for _UnspentTx in _addUnspent:
+            if _UnspentTx['txid'] == txId:
+                _result.append(_UnspentTx)
+                _found  = True
+        return _found, _result
+    
+    
     
     def GetRavenUnspentTx(self, _amount,_takeBiggest=True, _OneTx=False, _OnlySpendable=True, _ExlcudeAddresses=[],_IncludeOnlyAddresses=[]):
         _list =self.GetUnspentList(_OnlySpendable,_ExlcudeAddresses,_IncludeOnlyAddresses  )

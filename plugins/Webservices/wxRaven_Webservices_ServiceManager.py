@@ -47,7 +47,7 @@ class wxRaven_Webservices_BackgroundServiceManager(object):
         #_user_token = pluginInstance.PLUGIN_SETTINGS['webservice_server_user_token']
         
         self.serviceInstance = wxRaven_Webservices_FlaskDaemon(parentFrame, _ip, _port, _path, _forceNetwork , _admin_token)
-        
+        #self.plugin.setData("webservice_daemon_instance",self.serviceInstance )
         
         
     def StartService(self):
@@ -59,11 +59,12 @@ class wxRaven_Webservices_BackgroundServiceManager(object):
             
             t=threading.Thread(target=self.Service_Run_T, daemon=True)
             t.start()
-            self.parent_frame.addLocalVarInShell(  t, "webserviceDaemonTH")
+            #self.parent_frame.addLocalVarInShell(  t, "webserviceDaemonTH")
+            self.parent_frame.addLocalVarInShell(  self.serviceInstance, "webserviceDaemonInstance")
             self.thread = t
             self.logger.info(" wxRaven_Webservices STARTED")
             self.plugin.setData("_status", "RUNNING")
-            
+            self.plugin.setData("webservice_daemon_instance",self.serviceInstance )
             
     
     
@@ -79,6 +80,7 @@ class wxRaven_Webservices_BackgroundServiceManager(object):
     
     def __service_ended__(self):
         self.plugin.setData("_status", "STOPPED")
+        self.plugin.setData("webservice_daemon_instance",None )
         self._isRunning = False
         
             
@@ -88,6 +90,7 @@ class wxRaven_Webservices_BackgroundServiceManager(object):
         
         self.serviceInstance.StartWebService()
         self.__service_ended__()
+        
         #self.plugin.setData("_status", "STOPPED")
         #self.__monitoring_loop__()
         

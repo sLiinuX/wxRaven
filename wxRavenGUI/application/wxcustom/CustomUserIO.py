@@ -209,6 +209,6 @@ def UserSystemNotification(parentframe, title, message, _type='info'):
         nmsg.SetIcon(icons[_type])
         
         
-        nmsg.Show(timeout=wx.adv.NotificationMessage.Timeout_Auto)    
-    
+        #nmsg.Show(timeout=wx.adv.NotificationMessage.Timeout_Auto)    
+        wx.CallAfter(nmsg.Show )
     

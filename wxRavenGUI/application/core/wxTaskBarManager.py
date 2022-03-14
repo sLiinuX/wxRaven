@@ -7,12 +7,12 @@ import wx
 from wx.adv import TaskBarIcon as TaskBarIcon
 
 
-class wxRavenTaskBarIcon(TaskBarIcon):
+class wxRavenTaskBarManager(TaskBarIcon):
     def __init__(self, parentframe):
         TaskBarIcon.__init__(self)
 
         self.frame = parentframe
-        _icon = parentframe.RessourcesProvider.GetImage('wxraven_icon')
+        _icon = parentframe.RessourcesProvider.GetIcon('wxraven_icon')
         self.SetIcon(_icon, 'wxRaven')
 
         #------------

@@ -167,6 +167,8 @@ class SplashScreenMgr():
                     _debug_mode = self.parentframe.GetPluginSetting("General", 'debug_mode')
                     logging.info(f"Application Started, changing log configuration log_mode={_log_mode} , debug_mode= {_debug_mode}")
                     
+                    
+                    print(f"Reconfigure Logging = {_log_mode} - {_debug_mode}")
                     self.parentObj.stop_logging()
                     if _log_mode:
                         self.parentObj.setup_logging(forcePath=self._profile, _debugMode=_debug_mode)
