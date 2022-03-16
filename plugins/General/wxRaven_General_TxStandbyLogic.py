@@ -256,7 +256,10 @@ class wxRaven_General_TxStandby_Logic(wxRaven_General_TxStandbyFrame):
             if self._datas['_jobError'] != None  :
                 self.m_buttonClose.Show()
                 #self.m_txTargetAddress.SetValue()
-                self.m_staticTextStatus.SetLabel(self._datas['_jobError']['message'])
+                err = str(self._datas['_jobError'])
+                if self._datas['_jobError'].__contains__('message'):
+                    err = str(self._datas['_jobError']['message'])
+                self.m_staticTextStatus.SetLabel(err)
                 self.m_bitmap45.SetBitmap(self.parent_frame.RessourcesProvider.GetImage('error_tsk'))
         """
         if self._JobId == None:

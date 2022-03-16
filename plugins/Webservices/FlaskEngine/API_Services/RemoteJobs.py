@@ -170,6 +170,11 @@ class RemoteJobsView(wxCustomFlaskView):
     def __CreateServerSideJob__(self,_pluginName="General", _class='' , _module='' , _jobparams={}):
         self.logger.warning(f'__CreateServerSideJob__ : {_class}   in   {_module}')
         newJob = self.wxRavenInstance.JobManager.CreateJob(_pluginName, _class , _module , _jobparams=_jobparams, _localJob=True)
+        
+        
+        newJob.setNetwork(self.daemon.forceNetwork)
+        
+        
         _submitKey = None
         if newJob!=None:
             uk = newJob.getUniqueKey()
@@ -177,6 +182,8 @@ class RemoteJobsView(wxCustomFlaskView):
             #Resuable serverside?
             _submitKey = uk
             _submitKey = self.wxRavenInstance.JobManager.NewJobFromRemote(newJob)
+            
+            
             self.logger.info(f'new server side job submited {_submitKey}')
         return  _submitKey 
             

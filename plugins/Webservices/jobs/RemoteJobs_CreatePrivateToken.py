@@ -55,6 +55,7 @@ class Job_CreatePrivateWsTokenRemoteJob_ClientRequest(Job):
         #self.setDelays(1, 0)
         #self.setNotification(False)
         self.addNetworkCompatibility('WS-RPC')
+        self.setMaxRunningTime(600)
         #self.removeNetworkCompatibility('RPC')
         #self.addNetworkCompatibility('SQL')
         
@@ -145,6 +146,7 @@ class Job_CreatePrivateWsTokenRemoteJob_ClientRequest(Job):
             if _jobDatas['result']['_jobDone'] == True:
                 self.setResult("Transaction Recevied, Request Done.")
                 _stopLoop = True
+                 
                 
             if not _stopLoop:    
                 time.sleep(self._jobTickTime)

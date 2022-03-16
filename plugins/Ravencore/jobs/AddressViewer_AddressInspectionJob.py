@@ -71,7 +71,7 @@ class Job_AddressInspection(Job):
                 try:
                     self.setCurrent(_cursor)  
                     self.setProgress(f'Inspecting Transactions ({_cursor} / {_max})')
-                    _txInspected = ravencoin.utils.GetAndScanRawTransaction(_item, _addressList, cleanData=True)
+                    _txInspected = ravencoin.utils.GetAndScanRawTransaction(_item, _addressList, cleanData=True, cleanDetails=True)
                     _DatasHistory.append(_txInspected)
                     
                     _cursor = _cursor+1

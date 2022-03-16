@@ -419,7 +419,7 @@ class RVNpyRPC_Utils():
     
     
     
-    def GetAndScanRawTransaction(self, txid,addressesArray,cleanData = False ):
+    def GetAndScanRawTransaction(self, txid,addressesArray,cleanData = False , cleanDetails = False, cleanInOutsDetails=False):
         
         _txDatas = self.GetRawTransaction(txid ,True,  addressesArray)       
         _txDatas = self.InspectTransaction(_txDatas, addressesArray)
@@ -444,6 +444,20 @@ class RVNpyRPC_Utils():
             _txDatas['hex']=''
             _txDatas['vin']=''
             _txDatas['vout']=''
+        
+        if cleanDetails:
+            _txDatas['details']=[]
+            _txDatas['asset_details']=[]
+        
+        
+        if cleanInOutsDetails:
+            _txDatas['addresses_out']=[]
+            _txDatas['addresses_in']=[]
+            
+            _txDatas['addresses_in_details']={}
+            _txDatas['addresses_out_details']={}
+        
+        
         
         return _txDatas
     
