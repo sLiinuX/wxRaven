@@ -80,13 +80,14 @@ class wxRavenMainApp(object):
         
         _root = os.getcwd()
         if forcePath :
+            print(f'setup_logging forcepath !')
             _root = forcePath
         
         
         #self.tradepath = _root + f"/userdata/atomicswap_session.log"
         self.savepath = _root + f"/userdata/wxraven_last_session.log"
         self.debugpath = _root + f"/userdata/wxraven_last_session-DEBUG.log"
-        
+        print(f'setup_logging at : {self.savepath}')
   
         
         '''

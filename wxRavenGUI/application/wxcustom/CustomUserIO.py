@@ -11,6 +11,7 @@ import wx.adv
 
 
 def UserInfo(parent, err):
+    '''
     dlg = wx.MessageDialog(parent, f'{err}',
                                'Info',
                                wx.OK| wx.ICON_INFORMATION
@@ -18,8 +19,11 @@ def UserInfo(parent, err):
                                )
     res = dlg.ShowModal()
     dlg.Destroy()
+    '''
+    UserAdvancedMessage(parent, message=err, type="info")
 
 def UserError(parent, err):
+    '''
     dlg = wx.MessageDialog(parent, f'{err}',
                                'Error',
                                wx.OK| wx.ICON_ERROR
@@ -27,6 +31,8 @@ def UserError(parent, err):
                                )
     res = dlg.ShowModal()
     dlg.Destroy()
+    '''
+    UserAdvancedMessage(parent, message=err, type="error")
     
 def UserQuestion(parent, question):
     dlg = wx.MessageDialog(parent, f'{question}',

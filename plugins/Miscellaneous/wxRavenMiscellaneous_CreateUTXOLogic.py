@@ -182,9 +182,17 @@ class wxRavenMiscellaneous_CreateUTXOWithLogic(wxRavenMiscellaneous_CreateUTXO):
             self.Enable(enable=True)    
         
     def setupPanel(self):
+        
+        
+        if self.parent_frame.getNetworkType() != 'RPC':
+            _err = f"This view is not available with your current connexion {self.parent_frame.getNetworkType()}"
+            #UserAdvancedMessage(parentf, message, type, msgdetails, showCancel)
+            wx.CallAfter(UserError, self.parent_frame, _err)
+            #UserError(self, )
+            raise ConnectionError
+        
+        
         ravencoin = self.parent_frame.getRvnRPC()
-        
-        
         self.m_AssetChoice.Clear()
         
         

@@ -13,6 +13,8 @@ from wxRavenGUI.application.wxcustom import *
 import secrets
 import math
 from multiprocessing import Process
+from threading import Thread, Lock
+import ctypes
 #
 #
 # Plugin Job is a class for WxRaven JobManager that execute background task to improve userexperience
@@ -50,8 +52,7 @@ class Job(object):
     _jobStartTime = 0
     _jobStopTime = 0
     _jobElapsedTime = 0
-    _jobMaxRunningTime = 0
-    
+    _jobMaxRunningTime = 1200 #20Minutes for the standard job 
     
     _jobDelayBefore = 0
     _jobDelayAfter = 0
@@ -80,7 +81,7 @@ class Job(object):
     _jobPaymentStatus = None
     
     
-    _useMultiProcess = True
+    _useMultiProcess = False
 
 
     def __init__(self ,parentFrame, plugin=None, viewCallback=None, safeMode=True, notifyAtEnd=True):
@@ -113,7 +114,7 @@ class Job(object):
         self._jobNetworkCompatibility = ['RPC']
     
         self.jobProcessInstance=None
-    
+        self._lock = Lock()
     
     #
     # Jsonify for Import Export through RPC
@@ -223,10 +224,15 @@ class Job(object):
         
         t=threading.Thread(target=self.__DoJob_T__, args=(), daemon=self._daemonize_job)
         t.start() 
+        
+        self.jobProcessInstance = t
+    
+    
+    
     
     
     def __refreshProgessDatas__(self):
-        
+        self._lock.acquire()
         if self._jobRunning:
             try:
                 self._jobElapsedTime = float(time.time() - self._jobStartTime).__round__(2)
@@ -243,7 +249,9 @@ class Job(object):
             _cur = self._jobDetailedProgress_cur
             self._jobProgressPercent = float(( _cur/_max)*100).__round__(2)
         except Exception as e:
-            pass    
+            pass  
+        
+        self._lock.release()  
             
     
     def __waitJobRequirements__(self):
@@ -304,13 +312,22 @@ class Job(object):
                 
                 _jobRunningTimeout = self._jobMaxRunningTime
                 
-                if not self._useMultiProcess or _jobRunningTimeout==0:
-                    self.JobProcess()
+                
+                    
+                    #self.setProgress(f'Start Job in same thread')
+                self.logger.info(f'{self.jobName} started in the same thread.' )
+                self.JobProcess()
+                '''    
                 else:
+                    self.logger.error(f'MULTIPROCESSING NOT IMPLEMENTED' )
+                    
+                    self.logger.info(f'{self.jobName} started in a new process for timeout management, no progress report available.' )
                     
                     jobProcessInstance = Process(target=self.JobProcess, name=f'JobProcess : {self.jobName}')
                     jobProcessInstance.start()
                     self.jobProcessInstance = jobProcessInstance
+                    
+                    self.setProgress(f'Process Running...')
                     
                     jobProcessInstance.join(timeout=_jobRunningTimeout)
                     if jobProcessInstance.exitcode != 0:
@@ -322,8 +339,8 @@ class Job(object):
                         self._jobStatus='error'
                         self.setProgress(f'JOB ERROR : Job Running Time exceeded')
                         #raise('JOB ERROR : Job Running Time exceeded')
-                        
-                
+                       
+                '''
                 
                 
             except Exception as e:
@@ -393,11 +410,37 @@ class Job(object):
             
         return self._jobFromRemote
     
-    def __KillJob__(self):
+    
+    def __GetThreadId__(self):
         if self.jobProcessInstance != None:
-            self.jobProcessInstance.terminate()
-            self._jobStatus='error'
-            self.setProgress(f'Job aborded')
+            # returns id of the respective thread
+            if hasattr(self.jobProcessInstance, '_thread_id'):
+                return self.jobProcessInstance._thread_id
+            for id, thread in threading._active.items():
+                if thread is self.jobProcessInstance:
+                    return id
+    
+    
+    def __KillJob__(self, reason="Job Killed (no reason)."):
+        if self.jobProcessInstance != None:
+            #self.jobProcessInstance.terminate()
+            self._lock.acquire()
+            #self.jobProcessInstance._set_tstate_lock()
+            #self.jobProcessInstance._stop()
+            self._jobStatus='Error'
+            self.setProgress(f'{reason}')
+            self.setError(f'{reason}')
+            #f"Job Manager : {j.jobName} as exceeded the maximum running time ({j._jobMaxRunningTime} seconds), killing thread..."
+            #self.setProgress(f'Running Time exceeded ({self._jobMaxRunningTime} seconds), Job aborded.')
+            thread_id = self.__GetThreadId__()
+            res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
+                  ctypes.py_object(SystemExit))
+            if res > 1:
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
+                #print('Exception raise failure')
+            
+            self._jobRunning = False
+            self._lock.release()
             return True
         return False
             
@@ -460,6 +503,16 @@ class Job(object):
     
     def setMaxRunningTime(self, seconds):
         self._jobMaxRunningTime = seconds
+    
+    
+    def __checkRunningTimeout__(self):
+        _timeout=False
+        if self._jobMaxRunningTime > 0:
+            self.__refreshProgessDatas__()
+            if self._jobElapsedTime > self._jobMaxRunningTime :
+                _timeout=True
+                
+        return _timeout
     
     #
     # Special function to handle network on tasks 

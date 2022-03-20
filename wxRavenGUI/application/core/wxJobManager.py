@@ -565,6 +565,9 @@ class JobManager(object):
             
             for j in self._running_list.copy():
                 
+                
+                #self.logger.info("Job Manager : TreatRunningJobs.")
+                
                 if j._jobDone:
                     _tomoveInDone.append(j)
                     #self.logger.info("Job Manager : found job done.")  
@@ -574,7 +577,23 @@ class JobManager(object):
                     #self.logger.info("Job Manager : found job error.")  
                     
                 else:
-                    pass
+                    #The job is stillRunning, checking job Thread 
+                    
+                    
+                    j.__refreshProgessDatas__()
+                    if j._jobMaxRunningTime > 0 and (j._jobElapsedTime > j._jobMaxRunningTime):
+                        
+                        
+                        self.logger.error(f"Job Manager : {j.jobName} as exceeded the maximum running time ({j._jobMaxRunningTime} seconds), killing thread...")  
+                        _killReason = f"Job Manager : {j.jobName} as exceeded the maximum running time ({j._jobMaxRunningTime} seconds), killing thread..."
+                        j.__KillJob__(_killReason)
+                        
+                        self.parentframe.Log(f'Job Manager : {j.jobName} as exceeded the maximum running time allowed ({j._jobMaxRunningTime} seconds)' ,  type="error")
+                        #_jobThread= j.jobProcessInstance
+                        #_jobThread.__KillJob__()
+                    
+                    
+                    
         
         self._lock.acquire()
         

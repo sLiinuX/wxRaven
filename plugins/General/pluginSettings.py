@@ -454,7 +454,7 @@ class wxRavenConnexionRelaysSettings_SettingLogic(PluginSettingsPanelObject):
         
         myPlugin.PLUGIN_SETTINGS['relay_private_session_key'] = self._Panel.m_checkPrivateAuth.GetValue()
         
-        myPlugin.PLUGIN_SETTINGS['relay_private_session_key_value'] = not self._Panel.m_textUserSessionToken.GetValue()
+        myPlugin.PLUGIN_SETTINGS['relay_private_session_key_value'] = self._Panel.m_textUserSessionToken.GetValue()
         
         
         #default =    allProviders[0] 

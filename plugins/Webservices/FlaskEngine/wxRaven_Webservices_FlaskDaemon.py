@@ -18,6 +18,8 @@ import json, sys
 from threading import Thread, Lock
 import pickle
 
+from wxRavenGUI.version import __VERSION__
+
 
 session = []
 
@@ -33,7 +35,7 @@ class wxRaven_Webservices_FlaskDaemon(object):
     port=5000
     _wsInfos = {'name':'wxRaven_Webservices_Daemon',
                 'active_services':[],
-                'version': 0.1}
+                'version': __VERSION__}
     
     activeServices = []
     routes = {}
@@ -92,6 +94,10 @@ class wxRaven_Webservices_FlaskDaemon(object):
         
         
         self.service_description = ''
+        
+        
+        
+        
         
         #
         # Path

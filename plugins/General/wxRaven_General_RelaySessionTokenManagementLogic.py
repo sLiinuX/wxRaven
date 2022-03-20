@@ -222,14 +222,14 @@ class wxRaven_General_RelaySessionTokenManagement_Logic(wxRaven_General_RelaySes
                     
                 self.m_textCtrl15.SetValue(_remaining)
                 if _connexion._user_token!=None:
-                    self.m_textSESSIONTOKEN.SetValue(_connexion._user_token)
+                    self.m_textSESSIONTOKEN.SetValue(str(_connexion._user_token))
                 _desc=''    
                 if wsInfos['result']!=None:
                     if wsInfos['result'].__contains__('service_description'):
                         _desc = wsInfos['result']["service_description"]
                         
                 if _desc!='':
-                    self.m_textCtrl9.SetValue(_desc)
+                    self.m_textCtrl9.SetValue(str(_desc))
             #myPluginData = self.parent_frame.GetPluginData("Tutorial","myPluginData2")
             #myPluginSetting =  self.parent_frame.GetPluginSetting("Tutorial","booleansetting")#SavePanelSettings GetPluginSetting
             #

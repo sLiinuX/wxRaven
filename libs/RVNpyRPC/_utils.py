@@ -192,16 +192,16 @@ class RVNpyRPC_Utils():
                 'amount':_vout['value']
                 }
             
-            
-            for _ad in _vout['scriptPubKey']['addresses']:
-                
-                #_AddressesInInfos.append({_ad:_vout['value']})
-                
-                
-                if _ad in addressesPOV:
-                    _addressPovOut = _addressPovOut + _vout['value']
-                else:
-                    _AddressesOut.append(_ad)
+            if _vout['scriptPubKey'].__contains__('addresses'):
+                for _ad in _vout['scriptPubKey']['addresses']:
+                    
+                    #_AddressesInInfos.append({_ad:_vout['value']})
+                    
+                    
+                    if _ad in addressesPOV:
+                        _addressPovOut = _addressPovOut + _vout['value']
+                    else:
+                        _AddressesOut.append(_ad)
             
             
             _types.append( _vout['scriptPubKey']['type'] )

@@ -116,7 +116,7 @@ import  wx.stc  as  stc
 from wx import stc
 import  wx.stc
 #from StyledTextCtrl import PythonSTC
-
+import ctypes
 
 
 if __name__ == '__main__':

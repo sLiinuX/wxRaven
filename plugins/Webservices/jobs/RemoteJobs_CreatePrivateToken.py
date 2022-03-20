@@ -203,6 +203,7 @@ class Job_CreatePrivateWsTokenRemoteJob_ServerProcess(Job):
         self._inputToken = None
         self._watchTick = 20
         self.setReusable(False)
+        self.setMaxRunningTime(600)
         #self.setExpiration(5)
         #self._initalJobRequest = ''
         #self.addExportParam('_initalJobRequest') 
