@@ -727,6 +727,12 @@ class JobManager(object):
             if self._RemoteForceNetwork != None:
                 self.logger.info(f"CreateJob : Forced on network : {self._RemoteForceNetwork}")
                 newJobInstance.setNetwork(self._RemoteForceNetwork)
+                
+                
+            #
+            # To add the webservices jobs settings
+            #    
+            
         '''
         for _key in _jobparams:
             newJobInstance.__setattr__(_key, _jobparams[_key])

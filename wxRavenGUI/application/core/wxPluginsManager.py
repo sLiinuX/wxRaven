@@ -383,7 +383,10 @@ class pluginsManager(object):
             
             
             #plugin_instance = self._LoadPluginSettings(pname,plugin_instance )
+            plugin_instance.__ApplyDefaultSettingsJSON__()
             plugin_instance._LoadPluginSettings()
+            #
+            
             
             #self.logger.info("Loading Plugin : " + plugin_name)
             #self.logger.info("    - Class : " + str(plugin_init_classe) )

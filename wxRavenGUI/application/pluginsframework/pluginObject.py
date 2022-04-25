@@ -122,6 +122,9 @@ class PluginObject(object):
     
     def setData(self, varName, _data):
         self.PLUGINS_DATAS_CACHE[varName] = _data
+        
+        
+        
     
     """
     
@@ -518,3 +521,25 @@ class PluginObject(object):
             self.logger.info(e) 
         
         return result
+    
+    
+    def __ApplyDefaultSettingsJSON__(self):
+        
+        _jsonDefaultConfigFile = self.parentFrame.GetPath('PLUGIN')+""+self.PLUGIN_NAME + '/'+'plugin_settings.json'
+        
+        if os.path.isfile(_jsonDefaultConfigFile):
+            self.logger.info(f'loading json setting file for plugin {self.PLUGIN_NAME}')   
+            with open(_jsonDefaultConfigFile, 'r') as f:
+                data = json.load(f)
+                
+                
+                for _key in data:
+                    _val = data[_key]
+                    
+                    self.PLUGIN_SETTINGS[_key]=_val
+                    
+        else:
+            self.logger.info(f'No json setting file for plugin {self.PLUGIN_NAME}')                
+                        
+                        
+                        

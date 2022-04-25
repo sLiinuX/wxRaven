@@ -5,6 +5,7 @@
 	"max_query_size_mb_user" : 10485760,
 	
 	"rvn_to_mb_credit" : 524288000,
+	"asset_to_mb_credit" : 524288000,
 	"ws_fund_address" : "myvwqtevizzpKDSvYXURoS8NXS374NpAZv",
 	
 	

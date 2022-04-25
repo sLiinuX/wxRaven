@@ -385,7 +385,7 @@ class wxRavenPlugin(PluginObject):
     def __waitLoop_T__(self,callback):
         while not self.parentFrame._isReady:
             time.sleep(2)
-        
+        time.sleep(2)
         wx.CallAfter(callback, ()) 
             
         #myPlugin = self.parent_frame.GetPlugin('P2PMarket')
@@ -412,9 +412,11 @@ class wxRavenPlugin(PluginObject):
             self.RequestMarketUpdate_T()
         
         ravencorep=self.parentFrame.GetPlugin("Ravencore")
-        _addins = ravencorep.getData("_utxo_manager_views_addons_callbacks") 
-        _addins.append(self.OpenMarketHistoryDetails)
-        ravencorep.setData("_utxo_manager_views_addons_callbacks", _addins) 
+        
+        if ravencorep !=None:
+            _addins = ravencorep.getData("_utxo_manager_views_addons_callbacks") 
+            _addins.append(self.OpenMarketHistoryDetails)
+            ravencorep.setData("_utxo_manager_views_addons_callbacks", _addins) 
     
     
     

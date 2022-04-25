@@ -91,7 +91,7 @@ class wxRaven_Webservices_FlaskDaemon(object):
         self.limit_jobs_results = True
         
         self.rvn_to_mb_credit = 104857600
-        
+        self.asset_to_mb_credit = 104857600
         
         self.service_description = ''
         
@@ -243,8 +243,15 @@ class wxRaven_Webservices_FlaskDaemon(object):
     def __CreditUserToken__(self, token, rvn_amount, asset_amount=0.0):
         self.logger.info(f'__CreditUserToken {token} with {rvn_amount} RVN and {asset_amount} AIRDROP')
         _curentSize = self.__GetTokenSize__(token)
+        _newCreditSize = _curentSize
         
-        _newCreditSize = self.rvn_to_mb_credit * rvn_amount
+        if rvn_amount > 0:
+            _newCreditSize = self.rvn_to_mb_credit * rvn_amount
+        
+        if asset_amount > 0:
+            _newCreditSize = self.asset_to_mb_credit * rvn_amount
+            
+            
         self.__SaveUserToken__(token, _newCreditSize)
         
         return self.convert_size(_newCreditSize)

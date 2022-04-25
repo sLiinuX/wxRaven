@@ -232,7 +232,7 @@ class Job_CreatePrivateWsTokenRemoteJob_ServerProcess(Job):
         _jobAddress = ravencoin.JobsUtils.NewJobReceiveAddress(_JobTxUniqueIdentifier)
          
         self.setProgress(f"Waiting funds in {_jobAddress}")
-        self.setPaymentStandby(_jobAddress, f"New Private WS Token Request - {self._inputToken}", PaymentAmount='1 RVN', PaymentTx=None, PaymentStatus='Waiting for TX...')        
+        self.setPaymentStandby(_jobAddress, f"New Private WS Token Request - {self._inputToken}", PaymentAmount='1 RVN or 1 WXRAVEN/AIRDROP', PaymentTx=None, PaymentStatus='Waiting for TX...')        
         #
         # 2 - Detect funding and credit the token in the ws
         #
@@ -242,12 +242,13 @@ class Job_CreatePrivateWsTokenRemoteJob_ServerProcess(Job):
         while _isfunded == False:
             
             #self.setProgress(f"Transaction found, session token update in progress !")
-            _funded, _bal = ravencoin.JobsUtils.IsJobFunded(_JobTxUniqueIdentifier, 1.0,satoshis=False, assetName='RVN')
-            self.logger.info(f'Checking job fund progress = {_funded} {_bal}')
+            _fundedRVN, _bal = ravencoin.JobsUtils.IsJobFunded(_JobTxUniqueIdentifier, 1.0,satoshis=False, assetName='RVN')
+            _fundedAsset, _balAsset = ravencoin.JobsUtils.IsJobFunded(_JobTxUniqueIdentifier, 1.0,satoshis=False, assetName='WXRAVEN/AIRDROP')
+            self.logger.info(f'Checking job fund progress = RVN : {_fundedRVN} {_bal} , ASSET : WXRAVEN/AIRDROP : {_fundedAsset} {_balAsset}')
             #
             # if funded, credits the token size to user
             #
-            if _funded:
+            if _fundedRVN:
                 #self.setResult("Transaction Recevied, Request Done.")
                 #self.setProgress(f"Transaction found, session token update in progress !")
                 self.setProgress(f"Transaction found, session token update in progress !")
@@ -255,7 +256,7 @@ class Job_CreatePrivateWsTokenRemoteJob_ServerProcess(Job):
                 self.setPaymentDone()
                 wsplugin = self.parentFrame.GetPlugin('Webservices')
                 _wsDaemon = wsplugin.GetWebserviceDaemonInstance()
-                newsize= _wsDaemon.__CreditUserToken__(self._inputToken, rvn_amount=_bal, asset_amount=0.0)
+                newsize= _wsDaemon.__CreditUserToken__(self._inputToken, rvn_amount=_bal, asset_amount=_balAsset)
                 _isfunded=True
                 break
             

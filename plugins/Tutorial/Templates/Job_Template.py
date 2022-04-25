@@ -38,7 +38,9 @@ class Job_TemplateJob(Job):
         
         
     def JobProcess(self):
-        
+        '''
+        Process here without interacting with HMI outside of MainThreadCall
+        '''
         pass
     
     
@@ -46,3 +48,9 @@ class Job_TemplateJob(Job):
     
     def SaveResult(self):
         pass
+    
+    
+    
+    
+    
+    
